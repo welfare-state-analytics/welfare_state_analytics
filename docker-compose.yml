@@ -1,0 +1,12 @@
+version: '3.2'
+services:
+  notebook:
+    image: jupyterlab_playground
+    env_file: '.env'
+    container_name: welfare_state_analytics
+    ports:
+      - "8888:8888"
+    volumes:
+       - type: bind
+         source: C:\\Users\\roma0050\\Documents\\Projects\\welfare_state_analytics
+         target: /home/humlab/notebooks
