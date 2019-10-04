@@ -21,3 +21,4 @@ clone/
 *.npy
 *.xlsx
 trashcan
+output

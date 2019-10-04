@@ -15,8 +15,13 @@
 
 # # Iteration #1: Create word frequency distribution over years
 
+# +
 # %load_ext autoreload
 # %autoreload 2
+
+import os, sys
+sys.path = list(set(sys.path + [ '../common' ]))
+
 import corpus_vectorizer
 import text_corpus
 import utility
@@ -24,11 +29,12 @@ import numpy as np
 import sklearn
 
 
+# -
+
 # # Helpers
 
 # +
-def create_corpus():
-    filename = '../data/test_corpus.zip'
+def create_corpus(filename):
     meta_extract = dict(year=r".{5}(\d{4})\_.*", serial_no=".{9}\_(\d+).*")
     reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
     kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=False)
@@ -82,18 +88,29 @@ def token_ids_above_threshold(vectorizer, threshold):
 import numpy as np
 from scipy import stats
 
-vectorizer = CorpusVectorizer()
-X = vectorizer.fit_transform(create_corpus())
-Y = sum_by_year(X, vectorizer.document_index)
+filename = './test/test_data/test_corpus.zip'
+#filename = './data/Sample_1945-1989_1.zip'
+#filename = './data/SOU_1945-1989.zip'
 
-Yn = sklearn.preprocessing.normalize(Y, axis=1, norm='l1') 
+vectorizer = corpus_vectorizer.CorpusVectorizer()
+corpus = create_corpus(filename)
 
-tokens_of_interest = list(tokens_above_threshold(vectorizer, 2).keys())
-indices = token_ids_above_threshold(vectorizer, 2)
+X = vectorizer.fit_transform(corpus)
 
-Ynw = Yn[:, indices]
+dump_name = os.path.basename(filename).split('.')[0]
+vectorizer.dump(dump_name, folder='./output')
 
-stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
+if False:
+    Y = sum_by_year(X, vectorizer.document_index)
+
+    Yn = sklearn.preprocessing.normalize(Y, axis=1, norm='l1') 
+
+    tokens_of_interest = list(tokens_above_threshold(vectorizer, 2).keys())
+    indices = token_ids_above_threshold(vectorizer, 2)
+
+    Ynw = Yn[:, indices]
+
+    stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
 
 # -
 
@@ -102,51 +119,17 @@ stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
 # See [this](https://stackabuse.com/hierarchical-clustering-with-python-and-scikit-learn/) tutorial.
 #
 
-# +
-from scipy.cluster.hierarchy import dendrogram, linkage
-from matplotlib import pyplot as plt
+# from scipy.cluster.hierarchy import dendrogram, linkage
+# from matplotlib import pyplot as plt
+#
+# linked = linkage(Z.todense(), 'ward')
+#
+# labelList = tokens_of_interest
+#
+# plt.figure(figsize=(10, 7))
+# dendrogram(linked, orientation='top', labels=labelList, distance_sort='descending', show_leaf_counts=True)
+# plt.show()
 
-linked = linkage(Z.todense(), 'ward')
-
-labelList = tokens_of_interest
-
-plt.figure(figsize=(10, 7))
-dendrogram(linked, orientation='top', labels=labelList, distance_sort='descending', show_leaf_counts=True)
-plt.show()
-
-# +
-import unittest
-import text_corpus
-
-class Test_CorpusVectorizer(unittest.TestCase):
-    
-    def setUp(self):
-        pass
-    
-    def create_corpus(self):
-        filename = '../data/test_corpus.zip'
-        meta_extract = dict(year=r".{5}(\d{4})\_.*", serial_no=".{9}\_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
-        kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
-        return corpus
-    
-    def test_fit_transform_(self):
-        corpus = self.create_corpus()
-        vectorizer = CorpusVectorizer()
-        vectorizer.fit_transform(corpus)
-        #print(vectorizer.vocabulary)
-        
-    def test_word_counts(self):
-        corpus = self.create_corpus()
-        vectorizer = CorpusVectorizer()
-        X = vectorizer.fit_transform(corpus)
-        word_counts = vectorizer.word_counts
-        print(word_counts)
-
-unittest.main(argv=['first-arg-is-ignored'], exit=False)
-
-# -
 # Load saved data
 
 # Find word with frequency > 10000
@@ -157,20 +140,27 @@ unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
 # Normalize to relative frequency
 
-# +
-#Xn = normalize(X, axis=1, norm='l1')
-#Y = collapse_to_year_matrix(X, df_documents)
-#df = pd.DataFrame(Y, columns=list(vectorizer.get_feature_names()))
-#df.to_excel('test.xlsx')
-
-if False:
-    df = pd.DataFrame(X.toarray(), columns=list(vectorizer.get_feature_names()))
-    df['year'] = df.index + 45
-    df = df.set_index('year')
-    df['year'] =  pd.Series(df.index).apply(lambda x: documents[x][0])
-    %matplotlib inline
-    df[['krig']].plot() #.loc[df["000"]==49]
-
-# -
+# #Xn = normalize(X, axis=1, norm='l1')
+# #Y = collapse_to_year_matrix(X, df_documents)
+# #df = pd.DataFrame(Y, columns=list(vectorizer.get_feature_names()))
+# #df.to_excel('test.xlsx')
 #
+# if False:
+#     df = pd.DataFrame(X.toarray(), columns=list(vectorizer.get_feature_names()))
+#     df['year'] = df.index + 45
+#     df = df.set_index('year')
+#     df['year'] =  pd.Series(df.index).apply(lambda x: documents[x][0])
+#     %matplotlib inline
+#     df[['krig']].plot() #.loc[df["000"]==49]
+#
+# Tara McPherson (Digital Literacy)
+# Fikkers: Filmad presentation
+#
+# - searching-what do algorthms do
+# - Documentation
+# - Analysis - how do they work, what are their limitations, ...
+# - Presentation  - recontextualization
+# - Narration
+#
+# new kind of crithisism - not only focues on source crithisism - digital critisism
 

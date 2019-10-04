@@ -9,21 +9,26 @@ import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 import sklearn.preprocessing
 import utility
+import os
 
 class CorpusVectorizer():
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.corpus = None
         self.X = None
         self.vectorizer = None
         self.vocabulary = None
         self.word_counts = None
+        self.kwargs = kwargs
         
     def fit_transform(self, corpus):
         
         texts = (' '.join(tokens) for _, tokens in corpus.documents())
+        tokenizer = lambda x: x.split()
+        
         #https://github.com/scikit-learn/scikit-learn/blob/1495f6924/sklearn/feature_extraction/text.py#L1147
-        self.vectorizer = CountVectorizer()
+        self.vectorizer = CountVectorizer(tokenizer=tokenizer, **self.kwargs)
+        
         self.X = self.vectorizer.fit_transform(texts)
         
         self.corpus = corpus
@@ -36,22 +41,29 @@ class CorpusVectorizer():
         
         return self.X
     
-    def dump(self, tag='vec.'):
+    def dump(self, tag=None, folder='./output'):
+        
+        tag = tag or time.strftime("%Y%m%d_%H%M%S")
+
         data = {
             'vectorizer': self.vectorizer,
             'vocabulary': self.vocabulary,
             'word_counts': self.word_counts,
             'document_index': self.document_index
         }
-
-        with open(tag + 'data.pickle', 'wb') as f:
+        data_filename = os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
+        
+        self.vectorizer.tokenizer = None
+        with open(data_filename, 'wb') as f:
             pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
             
-        np.save(tag + 'data.X.npy', self.X, allow_pickle=True)
+        matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
+        np.save(matrix_filename, self.X, allow_pickle=True)
         
-    def load(self, tag='vec.'):
+    def load(self, tag, folder='./output'):
         corpus = None
-        with open(tag + 'data.pickle', 'rb') as f:
+        data_filename = os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
+        with open(data_filename, 'rb') as f:
             data = pickle.load(f)
             
         self.vectorizer = data["vectorizer"]
@@ -59,8 +71,11 @@ class CorpusVectorizer():
         self.word_counts = data["word_counts"]
         self.document_index = data["document_index"]
         
-        self.X = np.load(tag + 'data.X.npy', allow_pickle=True)
+        matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
+        self.X = np.load(matrix_filename, allow_pickle=True)
         
+        return self
+    
     def _document_index(self):
         metadata = self.corpus.get_index()
         df = pd.DataFrame([ x.__dict__ for x in metadata ], columns=metadata[0].__dict__.keys())
