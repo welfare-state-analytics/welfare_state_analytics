@@ -82,20 +82,60 @@ class CorpusVectorizer():
         df['document_id'] = list(df.index)
         return df
 
-    def sum_by_attribute(self, column):
+    def collapse_by_category(self, column, X=None, df=None):
 
-        df = self.document_index
-        min_value, max_value = df[column].min(), df[column].max()
+        X = self.X if X is None else X
+        df = self.document_index if df is None else df
+        
+        categories = list(sorted(df[column].unique().tolist()))
+        
+        Y = np.zeros((len(categories), X.shape[1]), dtype=X.dtype)
+
+        for i, value in enumerate(categories):
+            indices = list((df.loc[df[column] == value].index))
+            Y[i,:] = X[indices,:].sum(axis=0)
+
+        return Y, categories
+
+    def collapse_to_year(self, X=None, df=None):
+        # return self.collapse_by_category('year')
+        X = self.X if X is None else X
+        df = self.document_index if df is None else df
+        
+        min_value, max_value = df.year.min(), df.year.max()
 
         Y = np.zeros(((max_value - min_value) + 1, X.shape[1]))
 
         for i in range(0, Y.shape[0]):
+
+            indices = list((df.loc[df.year == min_value + i].index))
             
-            indices = list((df.loc[df[column] == min_value + i].index))
             if len(indices) > 0:
                 Y[i,:] = X[indices,:].sum(axis=0)
 
         return Y
 
-    def normalize(self, X):
-        return sklearn.preprocessing.normalize(X, axis=1, norm='l1')
+    def normalize(self, X, axis=1, norm='l1'):
+        Xn = sklearn.preprocessing.normalize(X, axis=axis, norm=norm)
+        return Xn
+
+    def tokens_above_threshold(self, threshold):
+        words = {
+            w: c for w,c in self.word_counts.items() if c >= threshold
+        }
+        return words
+
+    def token_ids_above_threshold(self, threshold):
+        ids = [
+            self.vocabulary[w] for w in self.tokens_above_threshold(threshold).keys()
+        ]
+        return ids
+    
+    def slice_tokens_by_count_threshold(self, X, threshold_count):
+        indices = self.token_ids_above_threshold(threshold_count)
+
+        Y = X[:, indices]
+        
+        return Y
+        
+        
