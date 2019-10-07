@@ -12,12 +12,12 @@ def dehyphen(text: str):
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
 
-def list_files(path, pattern):
+def list_files(path_name, pattern):
     px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
-    if os.path.isdir(path):
-         files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    if os.path.isdir(path_name):
+        files = [ f for f in os.listdir(path_name) if os.path.isfile(os.path.join(path_name, f)) ]
     else:
-        with zipfile.ZipFile(path) as zf:
+        with zipfile.ZipFile(path_name) as zf:
             files = zf.namelist()
 
     return [ name for name in files if px(name) ]
@@ -101,3 +101,35 @@ class TextFilesReader:
             content = compress_whitespaces(content)
         return content
 
+class DfTextReader:
+
+    def __init__(self, df, year=None):
+
+        self.df = df
+
+        if year is not None:
+            self.df = self.df[self.df.year == year]
+
+        if len(self.df[self.df.txt.isna()]) > 0:
+            print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
+            self.df = self.df.dropna()
+
+        self.iterator = None
+        self.metadata = [ types.SimpleNamespace(filename=str(i), year=r) for i, r in enumerate(self.df.year.values)]
+        self.metadict = { x.filename: x for x in (self.metadata or [])}
+        self.filenames = [ x.filename for x in self.metadata ]
+
+    def __iter__(self):
+
+        self.iterator = None
+        return self
+
+    def __next__(self):
+
+        if self.iterator is None:
+            self.iterator = self.get_iterator()
+
+        return next(self.iterator)
+
+    def get_iterator(self):
+        return ((str(i), x) for i,x in enumerate(self.df.txt))
