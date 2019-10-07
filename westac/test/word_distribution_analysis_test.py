@@ -48,7 +48,14 @@ def create_text_files_reader(
     dehyphen=True,
     meta_extract=None
 ):
-    reader = utility.TextFilesReader(filename, pattern=pattern, itemfilter=itemfilter, compress_whitespaces=compress_whitespaces, dehyphen=dehyphen, meta_extract=meta_extract)
+    kwargs = dict(
+        pattern=pattern,
+        itemfilter=itemfilter,
+        compress_whitespaces=compress_whitespaces,
+        dehyphen=dehyphen,
+        meta_extract=meta_extract
+    )
+    reader = utility.TextFilesReader(filename, **kwargs)
     return reader
 
 class MockedProcessedCorpus():
@@ -510,7 +517,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
             [2, 0, 1, 1]
         ])
         df = pd.DataFrame({'year': [ 2013, 2013, 2014, 2014, 2014 ]})
-        Y, imap = vectorizer.collapse_by_category('year', X, df)
+        Y, _ = vectorizer.collapse_by_category('year', X, df)
         expected_ytm = [
             [4, 3, 7, 1],
             [6, 7, 4, 2]
@@ -549,7 +556,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
     def test_word_counts(self):
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
-        X = vectorizer.fit_transform(corpus)
+        _ = vectorizer.fit_transform(corpus)
         results = vectorizer.word_counts
         expected = {
             'tre': 1, 'svarta': 1, 'ekar': 1, 'ur': 2, 'snön': 1, 'så': 3, 'grova': 1, 'men': 2, 'fingerfärdiga': 1,
@@ -570,7 +577,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
         # Arrange
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
-        X = vectorizer.fit_transform(corpus)
+        _ = vectorizer.fit_transform(corpus)
 
         # Act
         vectorizer.dump('dump_test', folder='./westac/test/output')
@@ -660,6 +667,4 @@ def plot_dists(vectorizer):
     df[['krig']].plot() #.loc[df["000"]==49]
 
 
-
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
-
