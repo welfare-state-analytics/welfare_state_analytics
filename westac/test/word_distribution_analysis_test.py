@@ -604,8 +604,8 @@ unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
 # +
 import scipy
-from scipy.cluster.hierarchy import dendrogram, linkage
-from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage # pylint: disable=unused-import
+from matplotlib import pyplot as plt # pylint: disable=unused-import
 
 class Test_ChiSquare(unittest.TestCase):
 
@@ -637,16 +637,16 @@ class Test_ChiSquare(unittest.TestCase):
         indices = vectorizer.token_ids_above_threshold(1)
         Ynw = Yn[:, indices]
 
-        X2 = scipy.stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
+        X2 = scipy.stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
 
         # Use X2 so select top 500 words... (highest Power-Power_divergenceResult)
         # Ynw = largest_by_chisquare()
         #print(Ynw)
 
-        linked = linkage(Ynw.T, 'ward')
+        linked = linkage(Ynw.T, 'ward') # pylint: disable=unused-variable
         #print(linked)
 
-        labels = [ id2token[x] for x in indices ]
+        labels = [ id2token[x] for x in indices ] # pylint: disable=unused-variable
 
         #plt.figure(figsize=(24, 16))
         #dendrogram(linked, orientation='top', labels=labels, distance_sort='descending', show_leaf_counts=True)
