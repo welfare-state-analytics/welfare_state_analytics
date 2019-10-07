@@ -1,7 +1,7 @@
 import re
 import nltk.tokenize
-import utility
-               
+from westac.common import utility
+
 class CorpusTextStream():
 
     def __init__(self, reader):
@@ -15,7 +15,7 @@ class CorpusTextStream():
 
         for meta, content in self.reader.get_iterator():
             yield meta, content
-            
+
     def documents(self):
 
         for meta, content in self.texts():
@@ -40,9 +40,9 @@ class CorpusTokenStream(CorpusTextStream):
             self.n_raw_tokens[filename] = len(tokens)
             self.n_tokens[filename] = len(tokens)
             yield meta, tokens
-                
+
 class ProcessedCorpus(CorpusTokenStream):
-    
+
     def __init__(self, reader, tokenizer=None, isalnum=True, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True):
         super().__init__(reader, tokenizer=tokenizer, isalnum=isalnum)
         self.to_lower = to_lower
@@ -50,26 +50,26 @@ class ProcessedCorpus(CorpusTokenStream):
         self.min_len = min_len
         self.max_len = max_len
         self.numerals = numerals
-        
+
     def documents(self):
 
         for meta, tokens in super().documents():
-            
+
             if self.to_lower:
                 tokens = (x.lower() for x in tokens)
-                
+
             if self.min_len > 1:
                 tokens = (x for x in tokens if len(x) >= self.min_len)
-                
+
             if self.max_len is not None:
                 tokens = (x for x in tokens if len(x) <= self.max_len)
-                
+
             if self.numerals is False:
                 tokens = (x for x in tokens if not x.isnumeric())
-            
+
             tokens = list(tokens)
             filename = meta if isinstance(meta, str) else meta.filename
             self.n_tokens[filename] = len(tokens)
-            
+
             yield meta, tokens
-    
+

@@ -8,7 +8,7 @@ import os
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
-def dehyphen(text):
+def dehyphen(text: str):
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
 
@@ -19,13 +19,13 @@ def list_files(path, pattern):
     else:
         with zipfile.ZipFile(path) as zf:
             files = zf.namelist()
-        
+
     return [ name for name in files if px(name) ]
-    
+
 def compress_whitespaces(text):
     result = re.sub('\s+', ' ', text).strip()
     return result
-        
+
 def extract_metadata(filename, **kwargs):
     params = { x: None for x in kwargs.keys()}
     meta =  types.SimpleNamespace(filename=filename, **params)
@@ -50,7 +50,7 @@ def read_file(path, filename):
                 content = file.read()
     content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
     return content
-        
+
 class TextFilesReader:
 
     def __init__(self, path, pattern='*.txt', itemfilter=None, meta_extract=None, compress_whitespaces=True, dehyphen=True):
@@ -72,7 +72,7 @@ class TextFilesReader:
         self.iterator = None
         self.metadata = [ extract_metadata(x, **meta_extract) for x in self.filenames] if not meta_extract is None else None
         self.metadict = { x.filename: x for x in (self.metadata or [])}
-        
+
     def __iter__(self):
         self.iterator = None
         return self
