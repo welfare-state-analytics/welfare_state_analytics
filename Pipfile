@@ -1,0 +1,47 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pipreqs = "*"
+pipenv = "*"
+jupytext = "*"
+pylint = "*"
+
+[packages]
+cytoolz = "==0.10.0"
+decorator = "==4.4.0"
+scikit-learn = "==0.20.4"
+scipy = "==1.3.1"
+spacy = "==2.1.8"
+textacy = "==0.8.0"
+gensim = "*"
+nltk = "*"
+bokeh = "*"
+matplotlib = "*"
+wordcloud = "*"
+scattertext = "*"
+jupyterlab = "*"
+ipywidgets = "*"
+beakerx = "*"
+networkx = "==2.3"
+pydotplus = "*"
+python-louvain = "*"
+pandas = "*"
+humanfriendly = "*"
+traitlets = "*"
+typing = "*"
+py4j = "*"
+lxml = "*"
+beautifulsoup4 = "*"
+openpyxl = "*"
+xlrd = "*"
+statsmodels = "*"
+Cython = "==0.29.13"
+sql_magic = "*"
+Scrapy = "*"
+pytest = "<=5.0.1"
+
+[requires]
+python_version = "3.7"
