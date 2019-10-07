@@ -105,7 +105,7 @@ class CorpusVectorizer():
 
         Y = np.zeros(((max_value - min_value) + 1, X.shape[1]))
 
-        for i in range(0, Y.shape[0]):
+        for i in range(0, Y.shape[0]): # pylint: disable=unsubscriptable-object
 
             indices = list((df.loc[df.year == min_value + i].index))
 
