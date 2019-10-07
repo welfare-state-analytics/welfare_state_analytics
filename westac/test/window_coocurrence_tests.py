@@ -15,14 +15,21 @@
 
 # +
 import unittest
-import corpus_vectorizer
+import pandas as pd
+import numpy as np
+import scipy
+import types
+
+from westac.common import corpus_vectorizer
+from westac.common import utility
+from westac.common import text_corpus
 
 class Test_DfTextReader(unittest.TestCase):
-    
+
     def create_test_dataframe(self):
-        data = [ 
+        data = [
             (2000, 'A B C'),
-            (2000, 'B C D'), 
+            (2000, 'B C D'),
             (2001, 'C B'),
             (2003, 'A B F'),
             (2003, 'E B'),
@@ -30,10 +37,10 @@ class Test_DfTextReader(unittest.TestCase):
         ]
         df = pd.DataFrame(data, columns=['year', 'txt'])
         return df
-    
+
     def test_reader_with_all_documents(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df)
+        reader = utility.DfTextReader(df)
         result = [x for x in reader]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
         self.assertEqual(expected, result)
@@ -47,10 +54,10 @@ class Test_DfTextReader(unittest.TestCase):
                 types.SimpleNamespace(filename='5', year=2003)
             ], reader.metadata
         )
-        
+
     def test_reader_with_given_year(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df, 2003)
+        reader = utility.DfTextReader(df, 2003)
         result = [x for x in reader]
         expected = [('0', 'A B F'), ('1', 'E B'), ('2', 'F E E')]
         self.assertEqual(expected, result)
@@ -63,14 +70,14 @@ class Test_DfTextReader(unittest.TestCase):
         )
 
 class Test_DfVectorize(unittest.TestCase):
-    
+
     def setUp(self):
         pass
-    
+
     def create_test_dataframe(self):
-        data = [ 
+        data = [
             (2000, 'A B C'),
-            (2000, 'B C D'), 
+            (2000, 'B C D'),
             (2001, 'C B'),
             (2003, 'A B F'),
             (2003, 'E B'),
@@ -78,25 +85,25 @@ class Test_DfVectorize(unittest.TestCase):
         ]
         df = pd.DataFrame(data, columns=['year', 'txt'])
         return df
-    
+
     def create_corpus(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df)
+        reader = utility.DfTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
-    
+
     def test_corpus_text_stream(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df)
+        reader = utility.DfTextReader(df)
         corpus = text_corpus.CorpusTextStream(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
         self.assertEqual(expected, result)
-        
+
     def test_corpus_token_stream(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df)
+        reader = utility.DfTextReader(df)
         corpus = text_corpus.CorpusTokenStream(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
@@ -104,15 +111,15 @@ class Test_DfVectorize(unittest.TestCase):
 
     def test_processed_corpus_token_stream(self):
         df = self.create_test_dataframe()
-        reader = DfTextReader(df)
+        reader = utility.DfTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
         self.assertEqual(expected, result)
-        
+
     def test_fit_transform_gives_document_term_matrix(self):
-        reader = DfTextReader(self.create_test_dataframe())
+        reader = utility.DfTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
@@ -131,17 +138,17 @@ class Test_DfVectorize(unittest.TestCase):
         self.assertEqual(expected, results)
 
     def test_AxAt_of_document_term_matrix_gives_term_term_matrix(self):
-        
+
         # Arrange
-        reader = DfTextReader(self.create_test_dataframe())
+        reader = utility.DfTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
         vectorizer.fit_transform(corpus)
-        
+
         # Act
         term_term_matrix = np.dot(vectorizer.X.T, vectorizer.X)
-        
+
         # Assert
         expected = np.asarray([
              [2, 2, 1, 0, 0, 1],
@@ -152,7 +159,7 @@ class Test_DfVectorize(unittest.TestCase):
              [1, 1, 0, 0, 2, 2]
         ])
         self.assertTrue((expected == term_term_matrix).all())
-        
+
         term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
         expected = np.asarray([
              [0, 2, 1, 0, 0, 1],
@@ -162,7 +169,7 @@ class Test_DfVectorize(unittest.TestCase):
              [0, 0, 0, 0, 0, 2],
              [0, 0, 0, 0, 0, 0]
         ])
-        
+
         #print(term_term_matrix.todense())
         #print(term_term_matrix)
         coo = term_term_matrix
@@ -176,6 +183,6 @@ class Test_DfVectorize(unittest.TestCase):
         cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
         cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
         print(cdf[['w1', 'w2', 'value']])
-        
+
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
-        
+
