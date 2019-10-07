@@ -32,38 +32,6 @@ import types
 # df.to_csv('./data/year+text_window.txt', sep='\t')
 # -
 
-class DfTextReader:
-
-    def __init__(self, df, year=None):
-        
-        self.df = df
-        
-        if year is not None:
-            self.df = self.df[self.df.year == year]
-                              
-        if len(self.df[self.df.txt.isna()]) > 0:
-            print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
-            self.df = self.df.dropna()
-            
-        self.iterator = None
-        self.metadata = [ types.SimpleNamespace(filename=str(i), year=r) for i, r in enumerate(self.df.year.values)]
-        self.metadict = { x.filename: x for x in (self.metadata or [])}
-        self.filenames = [ x.filename for x in self.metadata ]
-        
-    def __iter__(self):
-                              
-        self.iterator = None
-        return self
-
-    def __next__(self):
-                              
-        if self.iterator is None:
-            self.iterator = self.get_iterator()
-                              
-        return next(self.iterator)
-
-    def get_iterator(self):
-        return ((str(i), x) for i,x in enumerate(self.df.txt))
 
 
 # +
@@ -74,11 +42,11 @@ def compute_coocurrence_matrix(reader, **kwargs):
     corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     vectorizer.fit_transform(corpus)
-        
+
     term_term_matrix = np.dot(vectorizer.X.T, vectorizer.X)
-        
+
     term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
-        
+
     coo = term_term_matrix
     id2token = { i: t for t,i in vectorizer.vocabulary.items()}
     cdf = pd.DataFrame({
@@ -89,11 +57,11 @@ def compute_coocurrence_matrix(reader, **kwargs):
         .reset_index(drop=True)
     cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
     cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
-    
+
     return cdf[['w1', 'w2', 'value']]
 
 def compute_co_ocurrence_for_year(source_filename, year, result_filename):
-    
+
     df = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
 
     reader = DfTextReader(df, year)
