@@ -41,7 +41,7 @@ class Test_DfTextReader(unittest.TestCase):
     def test_reader_with_all_documents(self):
         df = self.create_test_dataframe()
         reader = utility.DfTextReader(df)
-        result = [x for x in reader]
+        result = [ x for x in reader ]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
         self.assertEqual(expected, result)
         self.assertEqual(['0', '1', '2', '3', '4', '5'], reader.filenames)
