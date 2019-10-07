@@ -118,6 +118,63 @@ class Test_DfVectorize(unittest.TestCase):
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
         self.assertEqual(expected, result)
 
+    def create_simple_test_corpus(self, **kwargs):
+        data = [
+            (2000, 'Detta är en mening med 14 token, 3 siffror och 2 symboler.'),
+            (2000, 'Är det i denna mening en mening?'),
+        ]
+        df = pd.DataFrame(data, columns=['year', 'txt'])
+        reader = utility.DfTextReader(df)
+        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+        return corpus
+
+    def test_tokenized_document_where_symbols_are_filtered_out(self):
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=True, stopwords=None)
+        result = [ x for x in corpus.documents()]
+        expected = [
+            ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', '14', 'token', '3', 'siffror', 'och', '2', 'symboler' ]),
+            ('1',  [ 'Är', 'det', 'i', 'denna', 'mening', 'en', 'mening' ]),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_tokenized_document_where_symbols_and_numerals_are_filtered_out(self):
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False, stopwords=None)
+        result = [ x for x in corpus.documents()]
+        expected = [
+            ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
+            ('1',  [ 'Är', 'det', 'i', 'denna', 'mening', 'en', 'mening' ]),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_tokenized_document_where_symbols_and_numerals_are_filtered_out(self):
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False, stopwords=None)
+        result = [ x for x in corpus.documents()]
+        expected = [
+            ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
+            ('1',  [ 'Är', 'det', 'i', 'denna', 'mening', 'en', 'mening' ]),
+        ]
+        self.assertEqual(expected, result)
+
+
+    def test_tokenized_document_in_lowercase_where_symbols_and_numerals_and_one_letter_words_are_filtered_out(self):
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, stopwords=None)
+        result = [ x for x in corpus.documents()]
+        expected = [
+            ('0',  [ 'detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
+            ('1',  [ 'är', 'det', 'denna', 'mening', 'en', 'mening' ]),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_tokenized_document_in_lowercase_where_symbols_and_numerals_and_one_letter_words_and_stopwords_are_filtered_out(self):
+        stopwords = { 'är', 'en', 'med', 'och', 'det', 'detta', 'denna' }
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, stopwords=stopwords)
+        result = [ x for x in corpus.documents()]
+        expected = [
+            ('0',  [ 'mening', 'token', 'siffror', 'symboler' ]),
+            ('1',  [ 'mening', 'mening' ]),
+        ]
+        self.assertEqual(expected, result)
+
     def test_fit_transform_gives_document_term_matrix(self):
         reader = utility.DfTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
