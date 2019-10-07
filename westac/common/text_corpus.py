@@ -1,4 +1,5 @@
 import nltk.tokenize
+import string
 
 class CorpusTextStream():
 
@@ -41,14 +42,15 @@ class CorpusTokenStream(CorpusTextStream):
 
 class ProcessedCorpus(CorpusTokenStream):
 
-    def __init__(self, reader, tokenizer=None, isalnum=True, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True, stopwords=None):
-        super().__init__(reader, tokenizer=tokenizer, isalnum=isalnum)
-        self.to_lower = to_lower
-        self.deacc = deacc
-        self.min_len = min_len
-        self.max_len = max_len
-        self.numerals = numerals
-        self.stopwords = stopwords
+    def __init__(self, reader, **kwargs):
+        super().__init__(reader, tokenizer=kwargs.get('tokenizer', None), isalnum=kwargs.get('isalnum', True))
+        self.to_lower = kwargs.get('to_lower', False)
+        self.deacc = kwargs.get('deacc', False)
+        self.min_len = kwargs.get('min_len', 2)
+        self.max_len = kwargs.get('max_len', None)
+        self.numerals = kwargs.get('numerals', True)
+        self.stopwords = kwargs.get('stopwords', None)
+        self.symbols = kwargs.get('symbols', True)
 
     def documents(self):
 
@@ -68,6 +70,9 @@ class ProcessedCorpus(CorpusTokenStream):
 
             if self.stopwords is not None:
                 tokens = (x for x in tokens if not x in self.stopwords)
+
+            if self.symbols is False:
+                tokens = (x for x in tokens if all([ c in string.punctuation for c in x ]))
 
             tokens = list(tokens)
             filename = meta if isinstance(meta, str) else meta.filename
