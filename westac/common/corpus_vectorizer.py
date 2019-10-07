@@ -58,7 +58,9 @@ class CorpusVectorizer():
         np.save(matrix_filename, self.X, allow_pickle=True)
 
     def load(self, tag, folder='./output'):
-        corpus = None
+
+        self.corpus = None
+
         data_filename = os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
         with open(data_filename, 'rb') as f:
             data = pickle.load(f)
