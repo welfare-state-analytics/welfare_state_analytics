@@ -19,23 +19,17 @@
 import pandas as pd
 import numpy as np
 import scipy
-import os, sys
 
-sys.path = list(set(sys.path + [ '../common' ]))
-
-import utility
-import text_corpus
-import corpus_vectorizer
-import types
+from westac.common import corpus_vectorizer
+from westac.common import utility
+from westac.common import text_corpus
 
 # df = pd.read_excel('./data/year+text_window.xlsx')
 # df.to_csv('./data/year+text_window.txt', sep='\t')
 # -
 
 
-
 # +
-import numpy as np
 
 def compute_coocurrence_matrix(reader, **kwargs):
 
@@ -64,7 +58,7 @@ def compute_co_ocurrence_for_year(source_filename, year, result_filename):
 
     df = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
 
-    reader = DfTextReader(df, year)
+    reader = utility.DfTextReader(df, year)
 
     kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False)
 
