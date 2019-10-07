@@ -19,6 +19,8 @@
 import pandas as pd
 import numpy as np
 import scipy
+import os
+import nltk
 
 from westac.common import corpus_vectorizer
 from westac.common import utility
@@ -28,7 +30,23 @@ from westac.common import text_corpus
 # df.to_csv('./data/year+text_window.txt', sep='\t')
 # -
 
+def load_text_windows(filename):
 
+    filepath = os.path(filename)
+
+    if not os.path.isdir(filepath):
+        raise FileNotFoundError("Path {filepath} does not exist!")
+
+    filebase = os.path.basename(filename).split('.')[0]
+    textfile = os.path.join(filepath, filebase + '.txt')
+
+    if not os.path.isfile(textfile):
+        df = pd.read_excel('./data/year+text_window.xlsx')
+        df.to_csv('./data/year+text_window.txt', sep='\t')
+
+    df = pd.read_csv(textfile, sep='\t')[['year', 'txt']]
+
+    return df
 # +
 
 def compute_coocurrence_matrix(reader, **kwargs):
@@ -60,7 +78,9 @@ def compute_co_ocurrence_for_year(source_filename, year, result_filename):
 
     reader = utility.DfTextReader(df, year)
 
-    kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False)
+    # stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
+
+    kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False, filter_stopwords=False) #, stopwords=stopwords)
 
     coo_df = compute_coocurrence_matrix(reader, **kwargs)
     coo_df.to_excel(result_filename)
