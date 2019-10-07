@@ -78,9 +78,9 @@ def compute_co_ocurrence_for_year(source_filename, year, result_filename):
 
     reader = utility.DfTextReader(df, year)
 
-    # stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
+    stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
 
-    kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False, filter_stopwords=False) #, stopwords=stopwords)
+    kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False, filter_stopwords=False, stopwords=stopwords)
 
     coo_df = compute_coocurrence_matrix(reader, **kwargs)
     coo_df.to_excel(result_filename)

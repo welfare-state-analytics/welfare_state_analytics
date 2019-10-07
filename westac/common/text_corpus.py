@@ -1,6 +1,4 @@
-import re
 import nltk.tokenize
-from westac.common import utility
 
 class CorpusTextStream():
 
@@ -43,13 +41,14 @@ class CorpusTokenStream(CorpusTextStream):
 
 class ProcessedCorpus(CorpusTokenStream):
 
-    def __init__(self, reader, tokenizer=None, isalnum=True, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True):
+    def __init__(self, reader, tokenizer=None, isalnum=True, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True, stopwords=None):
         super().__init__(reader, tokenizer=tokenizer, isalnum=isalnum)
         self.to_lower = to_lower
         self.deacc = deacc
         self.min_len = min_len
         self.max_len = max_len
         self.numerals = numerals
+        self.stopwords = stopwords
 
     def documents(self):
 
@@ -66,6 +65,9 @@ class ProcessedCorpus(CorpusTokenStream):
 
             if self.numerals is False:
                 tokens = (x for x in tokens if not x.isnumeric())
+
+            if self.stopwords is not None:
+                tokens = (x for x in tokens if not x in self.stopwords)
 
             tokens = list(tokens)
             filename = meta if isinstance(meta, str) else meta.filename
