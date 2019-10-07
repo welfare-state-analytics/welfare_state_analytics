@@ -23,7 +23,7 @@ def list_files(path, pattern):
     return [ name for name in files if px(name) ]
 
 def compress_whitespaces(text):
-    result = re.sub('\s+', ' ', text).strip()
+    result = re.sub(r'\s+', ' ', text).strip()
     return result
 
 def extract_metadata(filename, **kwargs):

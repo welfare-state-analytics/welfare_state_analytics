@@ -34,8 +34,25 @@ from westac.common import text_corpus
 # %matplotlib inline
 
 TEST_CORPUS_FILENAME = './westac/test/test_data/test_corpus.zip'
+
+if __file__ in globals():
+    this_file = os.path.dirname(__file__)
+    this_path = os.path.abspath(this_file)
+    TEST_CORPUS_FILENAME = os.path.join(this_path, TEST_CORPUS_FILENAME)
+
 # +
 flatten = lambda l: [ x for ws in l for x in ws]
+
+def create_text_files_reader(
+    filename=TEST_CORPUS_FILENAME,
+    pattern="*.txt",
+    itemfilter=None,
+    compress_whitespaces=False,
+    dehyphen=True,
+    meta_extract=None
+):
+    reader = utility.TextFilesReader(filename, pattern=pattern, itemfilter=itemfilter, compress_whitespaces=compress_whitespaces, dehyphen=dehyphen, meta_extract=meta_extract)
+    return reader
 
 class MockedProcessedCorpus():
 
@@ -83,23 +100,21 @@ def mock_corpus():
 class test_TextFilesReader(unittest.TestCase):
 
     def test_archive_filenames_when_filter_txt_returns_txt_files(self):
-        reader = utility.TextFilesReader(TEST_CORPUS_FILENAME, pattern='*.txt')
+        reader = create_text_files_reader(pattern='*.txt')
         self.assertEqual(5, len(reader.archive_filenames))
 
     def test_archive_filenames_when_filter_md_returns_md_files(self):
-        reader = utility.TextFilesReader(TEST_CORPUS_FILENAME, pattern='*.md')
+        reader = create_text_files_reader(pattern='*.md')
         self.assertEqual(1, len(reader.archive_filenames))
 
     def test_archive_filenames_when_filter_function_txt_returns_txt_files(self):
-        filename = './test/test_data/test_corpus.zip'
         itemfilter = lambda _, x: x.endswith('txt')
-        reader = utility.TextFilesReader(filename, itemfilter=itemfilter)
+        reader = create_text_files_reader(itemfilter=itemfilter)
         self.assertEqual(5, len(reader.archive_filenames))
 
     def test_get_file_when_default_returns_unmodified_content(self):
-        filename = './test/test_data/test_corpus.zip'
         document_name = 'dikt_2019_01_test.txt'
-        reader = utility.TextFilesReader(filename, compress_whitespaces=False, dehyphen=True)
+        reader = create_text_files_reader(compress_whitespaces=False, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Tre svarta ekar ur snön.\r\n" + \
                    "Så grova, men fingerfärdiga.\r\n" + \
@@ -109,9 +124,8 @@ class test_TextFilesReader(unittest.TestCase):
         self.assertEqual(expected, result[1])
 
     def test_can_get_file_when_compress_whitespace_is_true_strips_whitespaces(self):
-        filename = './test/test_data/test_corpus.zip'
         document_name = 'dikt_2019_01_test.txt'
-        reader = utility.TextFilesReader(filename, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Tre svarta ekar ur snön. " + \
                    "Så grova, men fingerfärdiga. " + \
@@ -121,9 +135,8 @@ class test_TextFilesReader(unittest.TestCase):
         self.assertEqual(expected, result[1])
 
     def test_get_file_when_dehyphen_is_trye_removes_hyphens(self):
-        filename = './test/test_data/test_corpus.zip'
         document_name = 'dikt_2019_03_test.txt'
-        reader = utility.TextFilesReader(filename, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Nordlig storm. Det är den i den tid när rönnbärsklasar mognar. Vaken i mörkret hör man " + \
                    "stjärnbilderna stampa i sina spiltor " + \
@@ -132,10 +145,9 @@ class test_TextFilesReader(unittest.TestCase):
         self.assertEqual(expected, result[1])
 
     def test_get_file_when_file_exists_and_extractor_specified_returns_content_and_metadat(self):
-        filename = './test/test_data/test_corpus.zip'
         document_name = 'dikt_2019_03_test.txt'
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Nordlig storm. Det är den i den tid när rönnbärsklasar mognar. Vaken i mörkret hör man " + \
                    "stjärnbilderna stampa i sina spiltor " + \
@@ -146,9 +158,8 @@ class test_TextFilesReader(unittest.TestCase):
         self.assertEqual(expected, result[1])
 
     def test_get_index_when_extractor_passed_returns_metadata(self):
-        filename = './test/test_data/test_corpus.zip'
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         result = reader.metadata
         expected = [
             types.SimpleNamespace(filename='dikt_2019_01_test.txt', serial_no=1, year=2019),
@@ -228,8 +239,7 @@ class Test_ExtractMeta(unittest.TestCase):
 class Test_CorpusTextStream(unittest.TestCase):
 
     def test_next_document_when_new_corpus_returns_document(self):
-        filename = './test/test_data/test_corpus.zip'
-        reader = utility.TextFilesReader(filename, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTextStream(reader)
         result = next(corpus.documents())
         expected = "Tre svarta ekar ur snön. " + \
@@ -239,9 +249,8 @@ class Test_CorpusTextStream(unittest.TestCase):
         self.assertEqual(expected, result[1])
 
     def test_get_index_when_extract_passed_returns_metadata(self):
-        filename = './test/test_data/test_corpus.zip'
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTextStream(reader)
         result = corpus.get_index()
         expected = [
@@ -256,8 +265,7 @@ class Test_CorpusTextStream(unittest.TestCase):
             self.assertEqual(expected[i], result[i])
 
     def test_get_index_when_no_extract_passed_returns_none(self):
-        filename = './test/test_data/test_corpus.zip'
-        reader = utility.TextFilesReader(filename, meta_extract=None, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTextStream(reader)
         result = corpus.get_index()
         self.assertIsNone(result)
@@ -265,14 +273,13 @@ class Test_CorpusTextStream(unittest.TestCase):
 # +
 class Test_CorpusTokenStream(unittest.TestCase):
 
-    def create_reader(self, compress_whitespaces=True, dehyphen=True, meta_extract=None):
-        filename = './test/test_data/test_corpus.zip'
-        #meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=compress_whitespaces, dehyphen=dehyphen)
+    def create_reader(self):
+        meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         return reader
 
     def test_next_document_when_token_corpus_returns_tokenized_document(self):
-        reader = reader = self.create_reader()
+        reader = create_text_files_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTokenStream(reader, isalnum=False)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön", ".",
@@ -282,7 +289,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
         self.assertEqual(expected, tokens)
 
     def test_next_document_when_isalnum_true_skips_deliminators(self):
-        reader = self.create_reader()
+        reader = create_text_files_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTokenStream(reader, isalnum=True)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön",
@@ -292,7 +299,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
         self.assertEqual(expected, tokens)
 
     def test_get_index_when_extract_passed_returns_expected_count(self):
-        reader = self.create_reader(meta_extract=dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*"))
+        reader = self.create_reader()
         corpus = text_corpus.CorpusTokenStream(reader)
         result = corpus.get_index()
         self.assertEqual(5, len(result))
@@ -315,7 +322,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
         self.assertEqual(expected, r_n_tokens)
 
     def test_n_tokens_when_exhausted_and_isalnum_is_true_returns_expected_count(self):
-        reader = self.create_reader()
+        reader = create_text_files_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTokenStream(reader, isalnum=True)
         r_n_tokens = {}
         for filename, tokens in corpus.documents():
@@ -338,9 +345,8 @@ class Test_ProcessedCorpus(unittest.TestCase):
         pass
 
     def create_reader(self):
-        filename = './test/test_data/test_corpus.zip'
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         return reader
 
     def test_next_document_when_isalnum_is_true_returns_all_tokens(self):
@@ -444,10 +450,13 @@ class Test_CorpusVectorizer(unittest.TestCase):
         vectorizer.fit_transform(corpus)
         return vectorizer
 
-    def create_corpus(self):
-        filename = './test/test_data/test_corpus.zip'
+    def create_reader(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        return reader
+
+    def create_corpus(self):
+        reader = self.create_reader()
         kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
@@ -567,17 +576,17 @@ class Test_CorpusVectorizer(unittest.TestCase):
         X = vectorizer.fit_transform(corpus)
 
         # Act
-        vectorizer.dump('dump_test', folder='./output')
+        vectorizer.dump('dump_test', folder='./westac/test/output')
 
         # Assert
-        data_filename ="./output/dump_test_vectorizer_data.pickle"
-        matrix_filename = "./output/dump_test_vector_data.npy"
+        data_filename ="./westac/test/output/dump_test_vectorizer_data.pickle"
+        matrix_filename = "./westac/test/output/dump_test_vector_data.npy"
 
         self.assertTrue(os.path.isfile(data_filename))
         self.assertTrue(os.path.isfile(matrix_filename))
 
         # Act
-        loaded_vectorizer = corpus_vectorizer.CorpusVectorizer().load('dump_test', folder='./output')
+        loaded_vectorizer = corpus_vectorizer.CorpusVectorizer().load('dump_test', folder='./westac/test/output')
 
         # Assert
         self.assertEqual(vectorizer.word_counts, loaded_vectorizer.word_counts)
@@ -599,10 +608,13 @@ class Test_ChiSquare(unittest.TestCase):
     def setUp(self):
         pass
 
-    def create_corpus(self):
-        filename = './westac/test/test_data/test_corpus.zip'
+    def create_reader(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        return reader
+
+    def create_corpus(self):
+        reader = self.create_reader()
         kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
