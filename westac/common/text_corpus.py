@@ -72,7 +72,7 @@ class ProcessedCorpus(CorpusTokenStream):
                 tokens = (x for x in tokens if not x in self.stopwords)
 
             if self.symbols is False:
-                tokens = (x for x in tokens if all([ c in string.punctuation for c in x ]))
+                tokens = (x for x in tokens if not all([ c in string.punctuation for c in x ]))
 
             tokens = list(tokens)
             filename = meta if isinstance(meta, str) else meta.filename
