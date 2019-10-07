@@ -18,15 +18,12 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import os, sys
+import os
 
 import unittest
 import numpy as np
 import pandas as pd
 import types
-import typing
-import matplotlib
-import nltk.tokenize
 
 from westac.common import corpus_vectorizer
 from westac.common import utility
