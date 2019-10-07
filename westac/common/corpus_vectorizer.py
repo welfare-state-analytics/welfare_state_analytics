@@ -1,14 +1,10 @@
 
 import pandas as pd
 import numpy as np
-import scipy
-#import nltk.tokenize
-import types
 import pickle
-
+import time
 from sklearn.feature_extraction.text import CountVectorizer
 import sklearn.preprocessing
-from westac.common import utility
 import os
 
 class CorpusVectorizer():
@@ -20,6 +16,7 @@ class CorpusVectorizer():
         self.vocabulary = None
         self.word_counts = None
         self.kwargs = kwargs
+        self.document_index = None
 
     def fit_transform(self, corpus):
 
