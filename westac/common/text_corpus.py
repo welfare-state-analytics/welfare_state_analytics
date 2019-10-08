@@ -43,7 +43,9 @@ class CorpusTokenStream(CorpusTextStream):
 class ProcessedCorpus(CorpusTokenStream):
 
     def __init__(self, reader, **kwargs):
+
         super().__init__(reader, tokenizer=kwargs.get('tokenizer', None), isalnum=kwargs.get('isalnum', True))
+        
         self.to_lower = kwargs.get('to_lower', False)
         self.deacc = kwargs.get('deacc', False)
         self.min_len = kwargs.get('min_len', 2)
