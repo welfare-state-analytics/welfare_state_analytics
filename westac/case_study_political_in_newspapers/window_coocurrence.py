@@ -22,6 +22,8 @@ import scipy
 import os
 import nltk
 
+from sklearn import preprocessing
+
 from westac.common import corpus_vectorizer
 from westac.common import utility
 from westac.common import text_corpus
@@ -94,21 +96,38 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     if min_count > 1:
         cdf = cdf[cdf.value >= min_count]
 
+    n_documents = len(corpus.get_metadata())
+    n_tokens = sum(corpus.n_raw_tokens.values())
+
+    cdf['value_n_d'] = cdf.value / float(n_documents)
+    cdf['value_n_t'] = cdf.value / float(n_tokens)
+
     cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
     cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
 
-    return cdf[['w1', 'w2', 'value']]
+    return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
 def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_count=1, **options):
 
+    columns = ['w1', 'w2', 'value', 'value_n_d', 'value_n_t']
+
     df   = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
-    df_r = pd.DataFrame(columns=['year', 'w1', 'w2','value'])
+    df_r = pd.DataFrame(columns=columns)
 
     for year in years:
         reader = utility.DfTextReader(df, year)
         df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
         df_y['year'] = year
-        df_r = df_r.append(df_y[['year', 'w1', 'w2', 'value']], ignore_index=True)
+        df_r = df_r.append(df_y[columns], ignore_index=True)
+
+    # min_max_scaler = preprocessing.MinMaxScaler()
+    # # Scale a normalized data matrix to the [0, 1] range:
+    # df_r['value_n_t'] = min_max_scaler.fit_transform(df_r.value_n_t)
+    # df_r['value_n_d'] = min_max_scaler.fit_transform(df_r.value_n_d)
+
+    # Scale a normalized data matrix to the [0, 1] range:
+    df_r['value_n_t'] = df_r.value_n_t / df_r.value_n_t.max()
+    df_r['value_n_d'] = df_r.value_n_d / df_r.value_n_d.max()
 
     df_r.to_csv(target_filename, sep='\t', index=False, )
 
