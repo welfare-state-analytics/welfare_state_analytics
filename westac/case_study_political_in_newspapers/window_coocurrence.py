@@ -109,7 +109,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
 
 def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_count=1, **options):
 
-    columns = ['w1', 'w2', 'value', 'value_n_d', 'value_n_t']
+    columns = ['year', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
     df   = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
     df_r = pd.DataFrame(columns=columns)
@@ -129,7 +129,10 @@ def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_c
     df_r['value_n_t'] = df_r.value_n_t / df_r.value_n_t.max()
     df_r['value_n_d'] = df_r.value_n_d / df_r.value_n_d.max()
 
-    df_r.to_csv(target_filename, sep='\t', index=False, )
+    if target_filename.endswith(".xlsx"):
+        df_r.to_excel(target_filename, index=False, )
+    else:
+        df_r.to_csv(target_filename, sep='\t', index=False, )
 
 if __name__ == "__main__":
 
