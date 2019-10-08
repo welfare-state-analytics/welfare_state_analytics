@@ -60,7 +60,7 @@ def load_text_windows(filename: str):
 
     return df
 
-def compute_coocurrence_matrix(reader, **kwargs):
+def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     """Computes a term-term coocurrence matrix for documents in reader.
 
     Parameters
@@ -94,19 +94,22 @@ def compute_coocurrence_matrix(reader, **kwargs):
     })[['w1_id', 'w2_id', 'value']].sort_values(['w1_id', 'w2_id'])\
         .reset_index(drop=True)
 
+    if min_count > 1:
+        cdf = cdf[cdf.value >= min_count]
+
     cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
     cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
 
     return cdf[['w1', 'w2', 'value']]
 
-def compute_co_ocurrence_for_year(source_filename, years, target_filename, options):
+def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_count=1, **options):
 
     df   = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
     df_r = pd.DataFrame(columns=['year', 'w1', 'w2','value'])
 
     for year in years:
         reader = utility.DfTextReader(df, year)
-        df_y = compute_coocurrence_matrix(reader, **options)
+        df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
         df_y['year'] = year
         df_r = df_r.append(df_y[['year', 'w1', 'w2', 'value']], ignore_index=True)
 
@@ -117,4 +120,4 @@ if __name__ == "__main__":
     stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
     options   = dict(to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, filter_stopwords=False, stopwords=stopwords)
 
-    compute_co_ocurrence_for_year('./data/year+text_window.txt', [1957], 'test_1957.xlsx', options)
+    compute_co_ocurrence_for_year('./data/year+text_window.txt', [1957], 'test_1957.xlsx', min_count=1, options=options)
