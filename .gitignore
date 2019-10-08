@@ -21,5 +21,6 @@ clone/
 *.pickel
 *.npy
 *.xlsx
+*.csv
 trashcan
 output
