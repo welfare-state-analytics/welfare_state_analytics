@@ -41,7 +41,6 @@ def extract_metadata(filename, **kwargs):
 
 def read_file(path, filename):
     if os.path.isdir(path):
-        print('isdir')
         with open(os.path.join(path, filename), 'r') as file:
             content = file.read()
     else:
