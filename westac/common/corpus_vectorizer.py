@@ -76,7 +76,7 @@ class CorpusVectorizer():
         return self
 
     def _document_index(self):
-        metadata = self.corpus.get_index()
+        metadata = self.corpus.get_metadata()
         df = pd.DataFrame([ x.__dict__ for x in metadata ], columns=metadata[0].__dict__.keys())
         df['document_id'] = list(df.index)
         return df

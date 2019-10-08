@@ -6,7 +6,7 @@ class CorpusTextStream():
     def __init__(self, reader):
         self.reader = reader
 
-    def get_index(self):
+    def get_metadata(self):
 
         return self.reader.metadata
 

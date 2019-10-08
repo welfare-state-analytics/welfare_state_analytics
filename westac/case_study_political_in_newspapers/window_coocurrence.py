@@ -78,19 +78,16 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     vectorizer.fit_transform(corpus)
 
     term_term_matrix = np.dot(vectorizer.X.T, vectorizer.X)
-
     term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
-
-    coo = term_term_matrix
 
     id2token = {
         i: t for t,i in vectorizer.vocabulary.items()
     }
 
     cdf = pd.DataFrame({
-        'w1_id': coo.row,
-        'w2_id': coo.col,
-        'value': coo.data
+        'w1_id': term_term_matrix.row,
+        'w2_id': term_term_matrix.col,
+        'value': term_term_matrix.data
     })[['w1_id', 'w2_id', 'value']].sort_values(['w1_id', 'w2_id'])\
         .reset_index(drop=True)
 

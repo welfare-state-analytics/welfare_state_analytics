@@ -65,7 +65,7 @@ class MockedProcessedCorpus():
         self.vocabulary = self.create_vocabulary()
         self.n_tokens = { f: len(d) for f,y,d in mock_data }
 
-    def get_index(self):
+    def get_metadata(self):
 
         return [
             types.SimpleNamespace(filename=x[0],year=x[1]) for x in self.tokenized_documents
@@ -256,7 +256,7 @@ class Test_CorpusTextStream(unittest.TestCase):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
         reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTextStream(reader)
-        result = corpus.get_index()
+        result = corpus.get_metadata()
         expected = [
             types.SimpleNamespace(filename='dikt_2019_01_test.txt', serial_no=1, year=2019),
             types.SimpleNamespace(filename='dikt_2019_02_test.txt', serial_no=2, year=2019),
@@ -271,7 +271,7 @@ class Test_CorpusTextStream(unittest.TestCase):
     def test_get_index_when_no_extract_passed_returns_none(self):
         reader = create_text_files_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
         corpus = text_corpus.CorpusTextStream(reader)
-        result = corpus.get_index()
+        result = corpus.get_metadata()
         self.assertIsNone(result)
 
 # +
@@ -305,7 +305,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
     def test_get_index_when_extract_passed_returns_expected_count(self):
         reader = self.create_reader()
         corpus = text_corpus.CorpusTokenStream(reader)
-        result = corpus.get_index()
+        result = corpus.get_metadata()
         self.assertEqual(5, len(result))
 
     def test_n_tokens_when_exhausted_iterater_returns_expected_count(self):
@@ -412,7 +412,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
         reader = self.create_reader()
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
-        result = corpus.get_index()
+        result = corpus.get_metadata()
         self.assertEqual(5, len(result))
 
     def test_n_tokens_when_exhausted_and_isalnum_min_len_two_returns_expected_count(self):
