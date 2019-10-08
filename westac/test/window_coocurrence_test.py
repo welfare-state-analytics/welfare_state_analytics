@@ -146,16 +146,6 @@ class Test_DfVectorize(unittest.TestCase):
         ]
         self.assertEqual(expected, result)
 
-    def test_tokenized_document_where_symbols_and_numerals_are_filtered_out(self):
-        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False, stopwords=None)
-        result = [ x for x in corpus.documents()]
-        expected = [
-            ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
-            ('1',  [ 'Är', 'det', 'i', 'denna', 'mening', 'en', 'mening' ]),
-        ]
-        self.assertEqual(expected, result)
-
-
     def test_tokenized_document_in_lowercase_where_symbols_and_numerals_and_one_letter_words_are_filtered_out(self):
         corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, stopwords=None)
         result = [ x for x in corpus.documents()]
@@ -240,6 +230,23 @@ class Test_DfVectorize(unittest.TestCase):
         cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
         cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
         print(cdf[['w1', 'w2', 'value']])
+
+    def test_tokenized_document_token_counts_is_empty_if_enumerable_not_exhausted(self):
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=True, deacc=False, min_len=0, max_len=None, numerals=True, stopwords=None)
+        n_tokens = corpus.n_tokens
+        n_raw_tokens = corpus.n_raw_tokens
+        self.assertEqual({}, n_tokens)
+        self.assertEqual({}, n_raw_tokens)
+
+    def test_tokenized_document_token_counts_is_not_empty_if_enumerable_is_exhausted(self):
+        # Note: Symbols are always removed by reader - hence "symbols" filter has not effect
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=True, deacc=False, min_len=0, max_len=None, numerals=True, stopwords=None)
+        for _ in corpus.documents():
+            pass
+        n_tokens = corpus.n_tokens
+        n_raw_tokens = corpus.n_raw_tokens
+        self.assertEqual({'0': 12, '1': 7}, n_tokens)
+        self.assertEqual({'0': 12, '1': 7}, n_raw_tokens)
 
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
