@@ -38,6 +38,28 @@ class Test_DfTextReader(unittest.TestCase):
         df = pd.DataFrame(data, columns=['year', 'txt'])
         return df
 
+    def create_triple_meta_dataframe(self):
+        data = [
+            (2000, 'AB', 'A B C'),
+            (2000, 'AB', 'B C D'),
+            (2001, 'AB', 'C B'),
+            (2003, 'AB', 'A B F'),
+            (2003, 'AB', 'E B'),
+            (2003, 'F E E')
+        ]
+        df = pd.DataFrame(data, columns=['year', 'newspaper', 'txt'])
+        return df
+
+    def test_extract_metadata_when_sourcefile_has_year_and_newspaper(self):
+        df = self.create_triple_meta_dataframe()
+        df_m = df[[ x for x in list(df.columns) if x != 'txt' ]]
+        df_m['filename'] = df_m.index.str
+        metadata = [
+            types.SimpleNamespace(**meta) for meta in df_m.to_dict(orient='records')
+        ]
+        self.assertEqual(len(df), len(metadata))
+
+
     def test_reader_with_all_documents(self):
         df = self.create_test_dataframe()
         reader = utility.DfTextReader(df)
@@ -57,7 +79,7 @@ class Test_DfTextReader(unittest.TestCase):
 
     def test_reader_with_given_year(self):
         df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df, 2003)
+        reader = utility.DfTextReader(df, year=2003)
         result = [x for x in reader]
         expected = [('0', 'A B F'), ('1', 'E B'), ('2', 'F E E')]
         self.assertEqual(expected, result)
