@@ -102,19 +102,31 @@ class TextFilesReader:
 
 class DfTextReader:
 
-    def __init__(self, df, year=None):
+    def __init__(self, df, **column_filters):
 
         self.df = df
 
-        if year is not None:
-            self.df = self.df[self.df.year == year]
+        assert 'txt' in df.columns
+        assert 'year' in df.columns
+
+        for column, value in column_filters.items():
+            assert column in df.columns
+            self.df = self.df[self.df['column'] == value]
 
         if len(self.df[self.df.txt.isna()]) > 0:
             print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
             self.df = self.df.dropna()
 
         self.iterator = None
-        self.metadata = [ types.SimpleNamespace(filename=str(i), year=r) for i, r in enumerate(self.df.year.values)]
+
+        df_meta = df[[ x for x in df.columns if x != 'txt' ]]
+        df_meta['filename'] = df_meta.index.str;
+        self.metadata = [
+            types.SimpleNamespace(
+                filename=str(i),
+                year=r
+            ) for i, r in enumerate(self.df.year.values)
+        ]
         self.metadict = { x.filename: x for x in (self.metadata or [])}
         self.filenames = [ x.filename for x in self.metadata ]
 
