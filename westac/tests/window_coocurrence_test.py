@@ -59,10 +59,11 @@ class Test_DfTextReader(unittest.TestCase):
     def test_extract_metadata_when_sourcefile_has_year_and_newspaper(self):
         df = self.create_triple_meta_dataframe()
         df_m = df[[ x for x in list(df.columns) if x != 'txt' ]]
-        df_m['filename'] = df_m.index.str
+        df_m['filename'] = df_m.index.astype(str)
         metadata = [
             types.SimpleNamespace(**meta) for meta in df_m.to_dict(orient='records')
         ]
+        print(metadata)
         self.assertEqual(len(df), len(metadata))
 
 

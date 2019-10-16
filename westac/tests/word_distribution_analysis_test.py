@@ -30,7 +30,7 @@ from westac.common import utility
 from westac.common import text_corpus
 # %matplotlib inline
 
-TEST_CORPUS_FILENAME = './westac/test/test_data/test_corpus.zip'
+TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'
 
 if __file__ in globals():
     this_file = os.path.dirname(__file__)
@@ -580,17 +580,17 @@ class Test_CorpusVectorizer(unittest.TestCase):
         _ = vectorizer.fit_transform(corpus)
 
         # Act
-        vectorizer.dump('dump_test', folder='./westac/test/output')
+        vectorizer.dump('dump_test', folder='./westac/tests/output')
 
         # Assert
-        data_filename ="./westac/test/output/dump_test_vectorizer_data.pickle"
-        matrix_filename = "./westac/test/output/dump_test_vector_data.npy"
+        data_filename ="./westac/tests/output/dump_test_vectorizer_data.pickle"
+        matrix_filename = "./westac/tests/output/dump_test_vector_data.npy"
 
         self.assertTrue(os.path.isfile(data_filename))
         self.assertTrue(os.path.isfile(matrix_filename))
 
         # Act
-        loaded_vectorizer = corpus_vectorizer.CorpusVectorizer().load('dump_test', folder='./westac/test/output')
+        loaded_vectorizer = corpus_vectorizer.CorpusVectorizer().load('dump_test', folder='./westac/tests/output')
 
         # Assert
         self.assertEqual(vectorizer.word_counts, loaded_vectorizer.word_counts)
