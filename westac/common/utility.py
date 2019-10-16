@@ -100,6 +100,14 @@ class TextFilesReader:
             content = compress_whitespaces(content)
         return content
 
+def extract_metadata(df):
+    df_m = df[[ x for x in list(df.columns) if x != 'txt' ]]
+    df_m['filename'] = df_m.index.astype(str)
+    metadata = [
+        types.SimpleNamespace(**meta) for meta in df_m.to_dict(orient='records')
+    ]
+    return metadata
+
 class DfTextReader:
 
     def __init__(self, df, **column_filters):
@@ -110,8 +118,8 @@ class DfTextReader:
         assert 'year' in df.columns
 
         for column, value in column_filters.items():
-            assert column in df.columns
-            self.df = self.df[self.df['column'] == value]
+            assert column in df.columns, column + ' is missing'
+            self.df = self.df[self.df[column] == value]
 
         if len(self.df[self.df.txt.isna()]) > 0:
             print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
@@ -119,14 +127,7 @@ class DfTextReader:
 
         self.iterator = None
 
-        df_meta = df[[ x for x in df.columns if x != 'txt' ]]
-        df_meta['filename'] = df_meta.index.str;
-        self.metadata = [
-            types.SimpleNamespace(
-                filename=str(i),
-                year=r
-            ) for i, r in enumerate(self.df.year.values)
-        ]
+        self.metadata = extract_metadata(self.df)
         self.metadict = { x.filename: x for x in (self.metadata or [])}
         self.filenames = [ x.filename for x in self.metadata ]
 

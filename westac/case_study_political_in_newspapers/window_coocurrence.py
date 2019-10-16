@@ -20,9 +20,6 @@ import pandas as pd
 import numpy as np
 import scipy
 import os
-import nltk
-
-from sklearn import preprocessing
 
 from westac.common import corpus_vectorizer
 from westac.common import utility
@@ -58,7 +55,7 @@ def load_text_windows(filename: str):
         df = pd.read_excel(filename)
         df.to_csv(textfile, sep='\t')
 
-    df = pd.read_csv(textfile, sep='\t')[['year', 'txt']]
+    df = pd.read_csv(textfile, sep='\t')[['newspaper', 'year', 'txt']]
 
     return df
 
@@ -107,18 +104,25 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
 
     return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
-def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_count=1, **options):
+def compute_co_ocurrence_for_year(source_filename, newspapers, years, target_filename, min_count=1, **options):
 
-    columns = ['year', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
+    columns = ['newspaper', 'year', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
-    df   = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
+    df   = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
     df_r = pd.DataFrame(columns=columns)
 
-    for year in years:
-        reader = utility.DfTextReader(df, year)
-        df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
-        df_y['year'] = year
-        df_r = df_r.append(df_y[columns], ignore_index=True)
+    n_documents = 0
+    for newspaper in newspapers:
+        for year in years:
+            print("Processing: {} {}...".format(newspaper, year))
+            reader = utility.DfTextReader(df, year=year, newspaper=newspaper)
+            df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
+            df_y['newspaper'] = newspaper
+            df_y['year'] = year
+            df_r = df_r.append(df_y[columns], ignore_index=True)
+            n_documents += len(df_y)
+
+    print("Done! Processed {} rows...".format(n_documents))
 
     # min_max_scaler = preprocessing.MinMaxScaler()
     # # Scale a normalized data matrix to the [0, 1] range:
@@ -134,9 +138,9 @@ def compute_co_ocurrence_for_year(source_filename, years, target_filename, min_c
     else:
         df_r.to_csv(target_filename, sep='\t', index=False, )
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
-    options   = dict(to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, filter_stopwords=False, stopwords=stopwords)
+#     stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
+#     options   = dict(to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, filter_stopwords=False, stopwords=stopwords)
 
-    compute_co_ocurrence_for_year('./data/year+text_window.txt', [1957], 'test_1957.xlsx', min_count=1, options=options)
+#     compute_co_ocurrence_for_year('./data/year+newspaper+text.txt', [1957], 'test_1957.xlsx', min_count=1, options=options)
