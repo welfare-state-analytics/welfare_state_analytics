@@ -74,7 +74,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
 
-    def test_fit_transform_creates_a_vocabulary(self):
+    def test_fit_transform_creates_a_vocabulary_with_unique_tokens_with_an_id_sequence(self):
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         vectorizer.fit_transform(corpus)
@@ -134,7 +134,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
         ]
         self.assertTrue((expected_ytm == Y).all())
 
-    def test_normalize_returns_the_l1_norm_of_each_row(self):
+    def test_normalize_with_default_arguments_returns_matrix_normalized_by_l1_norm_for_each_row(self):
         vectorizer = self.mock_vectorizer()
         X = np.array([
             [4, 3, 7, 1],
@@ -147,13 +147,13 @@ class Test_CorpusVectorizer(unittest.TestCase):
         ]) / (np.array([[15,19]]).T)
         self.assertTrue((E == Y).all())
 
-    def test_tokens_above_threshold(self):
+    def test_tokens_above_threshold_returns_tokens_having_token_count_ge_to_threshold(self):
         vectorizer = self.mock_vectorizer()
         tokens = vectorizer.tokens_above_threshold(4)
         expected_tokens = {'a': 10, 'b': 10, 'c': 11 }
         self.assertEqual(expected_tokens, tokens)
 
-    def test_token_ids_above_threshold(self):
+    def test_tokens_above_threshold_returns_ids_of_tokens_having_token_count_ge_to_threshold(self):
         vectorizer = self.mock_vectorizer()
         ids = vectorizer.token_ids_above_threshold(4)
         expected_ids = [
@@ -163,7 +163,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
         ]
         self.assertEqual(expected_ids, ids)
 
-    def test_word_counts(self):
+    def test_word_counts_of_vectorized_corpus_are_absolute_word_of_entire_corpus(self):
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         _ = vectorizer.fit_transform(corpus)
@@ -182,7 +182,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
         }
         self.assertEqual(expected, results)
 
-    def test_dump_can_be_loaded(self):
+    def test_load_of_previously_dumped_vectorizer_has_same_values_as_dumped_vectorizer(self):
 
         # Arrange
         corpus = self.create_corpus()
