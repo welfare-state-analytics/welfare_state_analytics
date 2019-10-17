@@ -35,7 +35,7 @@ import sklearn
 ```python
 def create_corpus(filename):
     meta_extract = dict(year=r".{5}(\d{4})\_.*", serial_no=".{9}\_(\d+).*")
-    reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+    reader = utility.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
     kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=False)
     corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
     return corpus
@@ -48,7 +48,7 @@ https://github.com/davidmcclure/lint-analysis/tree/master/notebooks/2017
 
 ## Goodness-of-fit to uniform distribution (chi-square)
 
-See [scipy.stats.chisquare](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html): 
+See [scipy.stats.chisquare](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html):
 "*When just f_obs is given, it is assumed that the expected frequencies are uniform...*"
 
 
@@ -71,12 +71,12 @@ vectorizer.dump(dump_name, folder='./output')
 
 
 if False:
-    
+
     Y         = vectorizer.collapse_to_year()
-    Yn        = vectorizer.normalize(Y, axis=1, norm='l1') 
+    Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
     Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
     Yx2, imap = vectorizer.pick_by_top_variance(500)
-    
+
     stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
 
 ```
@@ -111,7 +111,7 @@ plt.show()
 #df.to_excel('test.xlsx')
 
 if False:
-    
+
     df = pd.DataFrame(X.toarray(), columns=list(vectorizer.get_feature_names()))
     df['year'] = df.index + 45
     df = df.set_index('year')

@@ -115,7 +115,7 @@ def compute_co_ocurrence_for_year(source_filename, newspapers, years, target_fil
     for newspaper in newspapers:
         for year in years:
             print("Processing: {} {}...".format(newspaper, year))
-            reader = utility.DfTextReader(df, year=year, newspaper=newspaper)
+            reader = dataframe_text_reader.DataFrameTextReader(df, year=year, newspaper=newspaper)
             df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
             df_y['newspaper'] = newspaper
             df_y['year'] = year
