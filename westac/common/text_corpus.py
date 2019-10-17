@@ -1,6 +1,7 @@
 import nltk.tokenize
 import string
 from . import utility
+from . import file_text_reader
 
 class CorpusTextStream():
 
@@ -85,7 +86,7 @@ class ProcessedCorpus(CorpusTokenStream):
 
 def create_corpus(filename):
     meta_extract = dict(year=r".{5}(\d{4})\_.*", serial_no=r".{9}\_(\d+).*")
-    reader = utility.TextFilesReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
     kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=False)
     corpus = ProcessedCorpus(reader, **kwargs)
     return corpus
