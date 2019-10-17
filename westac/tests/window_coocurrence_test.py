@@ -49,9 +49,9 @@ class Test_DfTextReader(unittest.TestCase):
             (2000, 'EX', 'A B C'),
             (2000, 'EX', 'B C D'),
             (2001, 'EX', 'C B'),
-            (2003, 'EX', 'A B F'),
-            (2003, 'EX', 'E B'),
-            (2003, 'EX', 'F E E')
+            (2003, 'EX', 'A A B'),
+            (2003, 'EX', 'B B'),
+            (2003, 'EX', 'A E')
         ]
         df = pd.DataFrame(data, columns=['year', 'newspaper', 'txt'])
         return df
@@ -85,16 +85,19 @@ class Test_DfTextReader(unittest.TestCase):
         )
 
     def test_reader_with_given_year(self):
-        df = self.create_test_dataframe()
+        df = self.create_triple_meta_dataframe()
         reader = utility.DfTextReader(df, year=2003)
         result = [x for x in reader]
-        expected = [('0', 'A B F'), ('1', 'E B'), ('2', 'F E E')]
+        expected = [('3', 'A B F'), ('4', 'E B'), ('5', 'F E E'), ('9', 'A A B'), ('10', 'B B'), ('11', 'A E')]
         self.assertEqual(expected, result)
-        self.assertEqual(['0', '1', '2'], reader.filenames)
+        self.assertEqual(['3', '4', '5', '9', '10', '11'], reader.filenames)
         self.assertEqual([
-                types.SimpleNamespace(filename='0', year=2003),
-                types.SimpleNamespace(filename='1', year=2003),
-                types.SimpleNamespace(filename='2', year=2003)
+                types.SimpleNamespace(filename='3', newspaper='AB', year=2003),
+                types.SimpleNamespace(filename='4', newspaper='AB', year=2003),
+                types.SimpleNamespace(filename='5', newspaper='AB', year=2003),
+                types.SimpleNamespace(filename='9', newspaper='EX', year=2003),
+                types.SimpleNamespace(filename='10', newspaper='EX', year=2003),
+                types.SimpleNamespace(filename='11', newspaper='EX', year=2003)
             ], reader.metadata
         )
 
