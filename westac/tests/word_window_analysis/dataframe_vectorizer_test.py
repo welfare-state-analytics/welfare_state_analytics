@@ -21,87 +21,11 @@ import scipy
 import types
 
 from westac.common import corpus_vectorizer
-from westac.common import utility
 from westac.common import text_corpus
-
-class Test_DfTextReader(unittest.TestCase):
-
-    def create_test_dataframe(self):
-        data = [
-            (2000, 'A B C'),
-            (2000, 'B C D'),
-            (2001, 'C B'),
-            (2003, 'A B F'),
-            (2003, 'E B'),
-            (2003, 'F E E')
-        ]
-        df = pd.DataFrame(data, columns=['year', 'txt'])
-        return df
-
-    def create_triple_meta_dataframe(self):
-        data = [
-            (2000, 'AB', 'A B C'),
-            (2000, 'AB', 'B C D'),
-            (2001, 'AB', 'C B'),
-            (2003, 'AB', 'A B F'),
-            (2003, 'AB', 'E B'),
-            (2003, 'AB', 'F E E'),
-            (2000, 'EX', 'A B C'),
-            (2000, 'EX', 'B C D'),
-            (2001, 'EX', 'C B'),
-            (2003, 'EX', 'A A B'),
-            (2003, 'EX', 'B B'),
-            (2003, 'EX', 'A E')
-        ]
-        df = pd.DataFrame(data, columns=['year', 'newspaper', 'txt'])
-        return df
-
-    def test_extract_metadata_when_sourcefile_has_year_and_newspaper(self):
-        df = self.create_triple_meta_dataframe()
-        df_m = df[[ x for x in list(df.columns) if x != 'txt' ]]
-        df_m['filename'] = df_m.index.astype(str)
-        metadata = [
-            types.SimpleNamespace(**meta) for meta in df_m.to_dict(orient='records')
-        ]
-        print(metadata)
-        self.assertEqual(len(df), len(metadata))
+from westac.common import dataframe_text_reader
 
 
-    def test_reader_with_all_documents(self):
-        df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df)
-        result = [ x for x in reader ]
-        expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
-        self.assertEqual(expected, result)
-        self.assertEqual(['0', '1', '2', '3', '4', '5'], reader.filenames)
-        self.assertEqual([
-                types.SimpleNamespace(filename='0', year=2000),
-                types.SimpleNamespace(filename='1', year=2000),
-                types.SimpleNamespace(filename='2', year=2001),
-                types.SimpleNamespace(filename='3', year=2003),
-                types.SimpleNamespace(filename='4', year=2003),
-                types.SimpleNamespace(filename='5', year=2003)
-            ], reader.metadata
-        )
-
-    def test_reader_with_given_year(self):
-        df = self.create_triple_meta_dataframe()
-        reader = utility.DfTextReader(df, year=2003)
-        result = [x for x in reader]
-        expected = [('3', 'A B F'), ('4', 'E B'), ('5', 'F E E'), ('9', 'A A B'), ('10', 'B B'), ('11', 'A E')]
-        self.assertEqual(expected, result)
-        self.assertEqual(['3', '4', '5', '9', '10', '11'], reader.filenames)
-        self.assertEqual([
-                types.SimpleNamespace(filename='3', newspaper='AB', year=2003),
-                types.SimpleNamespace(filename='4', newspaper='AB', year=2003),
-                types.SimpleNamespace(filename='5', newspaper='AB', year=2003),
-                types.SimpleNamespace(filename='9', newspaper='EX', year=2003),
-                types.SimpleNamespace(filename='10', newspaper='EX', year=2003),
-                types.SimpleNamespace(filename='11', newspaper='EX', year=2003)
-            ], reader.metadata
-        )
-
-class Test_DfVectorize(unittest.TestCase):
+class Test_DataFrameVectorize(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -120,14 +44,14 @@ class Test_DfVectorize(unittest.TestCase):
 
     def create_corpus(self):
         df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df)
+        reader = dataframe_text_reader.DataFrameTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
 
     def test_corpus_text_stream(self):
         df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df)
+        reader = dataframe_text_reader.DataFrameTextReader(df)
         corpus = text_corpus.CorpusTextStream(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
@@ -135,7 +59,7 @@ class Test_DfVectorize(unittest.TestCase):
 
     def test_corpus_token_stream(self):
         df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df)
+        reader = dataframe_text_reader.DataFrameTextReader(df)
         corpus = text_corpus.CorpusTokenStream(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
@@ -143,7 +67,7 @@ class Test_DfVectorize(unittest.TestCase):
 
     def test_processed_corpus_token_stream(self):
         df = self.create_test_dataframe()
-        reader = utility.DfTextReader(df)
+        reader = dataframe_text_reader.DataFrameTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         result = [ x for x in corpus.documents()]
@@ -156,7 +80,7 @@ class Test_DfVectorize(unittest.TestCase):
             (2000, 'Är det i denna mening en mening?'),
         ]
         df = pd.DataFrame(data, columns=['year', 'txt'])
-        reader = utility.DfTextReader(df)
+        reader = dataframe_text_reader.DataFrameTextReader(df)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
 
@@ -198,7 +122,7 @@ class Test_DfVectorize(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_fit_transform_gives_document_term_matrix(self):
-        reader = utility.DfTextReader(self.create_test_dataframe())
+        reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
@@ -219,7 +143,7 @@ class Test_DfVectorize(unittest.TestCase):
     def test_AxAt_of_document_term_matrix_gives_term_term_matrix(self):
 
         # Arrange
-        reader = utility.DfTextReader(self.create_test_dataframe())
+        reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
@@ -279,6 +203,4 @@ class Test_DfVectorize(unittest.TestCase):
         n_raw_tokens = corpus.n_raw_tokens
         self.assertEqual({'0': 12, '1': 7}, n_tokens)
         self.assertEqual({'0': 12, '1': 7}, n_raw_tokens)
-
-unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
