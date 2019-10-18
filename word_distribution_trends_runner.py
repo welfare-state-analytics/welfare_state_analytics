@@ -1,37 +1,45 @@
 import os
 import westac.common.corpus_vectorizer as corpus_vectorizer
 import westac.common.text_corpus as text_corpus
-import westac.common.utility as utility
-import numpy as np
-import sklearn
+
 from scipy import stats
 
-#filename = './test/test_data/test_corpus.zip'
-#filename = './data/Sample_1945-1989_1.zip'
-
-filename = './westac/case_study_word_distribution_trends/data/SOU_1945-1989.zip'
+filename = './data/SOU_1945-1989.zip'
 
 if not os.path.isfile(filename):
     print('error: no such file: {}'.format(filename))
     assert os.path.isfile(filename)
 
-dump_name = os.path.basename(filename).split('.')[0]
+dump_tag = os.path.basename(filename).split('.')[0]
 
 vectorizer = corpus_vectorizer.CorpusVectorizer()
 
-print('Creating corpus...')
-corpus = text_corpus.create_corpus(filename)
+if not vectorizer.dump_exists(dump_tag):
 
-X = vectorizer.fit_transform(corpus)
+    meta_extract = {
+        'year': r"SOU (\d{4})\_.*",
+        'serial_no': r"SOU \d{4}\_(\d+).*"
+    }
 
-vectorizer.dump(dump_name, folder='./output')
+    print('Creating new corpus...')
+    corpus = text_corpus.create_corpus(filename, meta_extract)
 
-#vectorizer.load(dump_name, folder='./output')
+    print('Creating document-term matrix...')
+    DTM = vectorizer.fit_transform(corpus)
 
-Y         = vectorizer.collapse_to_year()
-Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
-Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
-Yx2, imap = vectorizer.pick_by_top_variance(500)
+    print('Saving data matrix...')
+    vectorizer.dump(tag=dump_tag, folder='./output')
 
-data       = stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
+else:
+
+    print('Loading data matrix...')
+
+    vectorizer.load(dump_tag, folder='./output')
+
+#YTM       = vectorizer.collapse_to_year()
+#Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
+#Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
+#Yx2, imap = vectorizer.pick_by_top_variance(500)
+
+#data       = stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
 
