@@ -85,7 +85,7 @@ class CorpusVectorizer():
         self.document_index = data["document_index"]
 
         matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
-        self.X = np.load(matrix_filename, allow_pickle=True)
+        self.X = np.load(matrix_filename, allow_pickle=True).item()
 
         return self
 
