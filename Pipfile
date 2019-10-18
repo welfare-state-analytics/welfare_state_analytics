@@ -9,6 +9,7 @@ pipenv = "*"
 jupytext = "*"
 pylint = "*"
 pytest = "*"
+rope = "*"
 
 [packages]
 cytoolz = "*"
