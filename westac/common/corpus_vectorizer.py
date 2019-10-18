@@ -18,9 +18,19 @@ class CorpusVectorizer():
         self.kwargs = kwargs
         self.document_index = None
 
+
     def fit_transform(self, corpus):
 
-        texts = (' '.join(tokens) for _, tokens in corpus.documents())
+        def text_iterator(x):
+            n_documents = 0
+            for meta, tokens in x.documents():
+                n_documents += 1
+                print("{} ({})".format(meta, n_documents))
+                yield ' '.join(tokens)
+
+        #texts = (' '.join(tokens) for _, tokens in corpus.documents())
+        texts = text_iterator(corpus)
+
         tokenizer = lambda x: x.split()
 
         #https://github.com/scikit-learn/scikit-learn/blob/1495f6924/sklearn/feature_extraction/text.py#L1147
@@ -56,6 +66,10 @@ class CorpusVectorizer():
 
         matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
         np.save(matrix_filename, self.X, allow_pickle=True)
+
+    def dump_exists(self, tag, folder='./output'):
+        data_filename = os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
+        return os.path.isfile(data_filename)
 
     def load(self, tag, folder='./output'):
 
