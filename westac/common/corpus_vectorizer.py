@@ -11,7 +11,7 @@ class CorpusVectorizer():
 
     def __init__(self, **kwargs):
         self.corpus = None
-        self.X = None
+        self.doc_term_matrix = None
         self.vectorizer = None
         self.vocabulary = None
         self.word_counts = None
@@ -36,17 +36,17 @@ class CorpusVectorizer():
         #https://github.com/scikit-learn/scikit-learn/blob/1495f6924/sklearn/feature_extraction/text.py#L1147
         self.vectorizer = CountVectorizer(tokenizer=tokenizer, **self.kwargs)
 
-        self.X = self.vectorizer.fit_transform(texts)
+        self.doc_term_matrix = self.vectorizer.fit_transform(texts)
 
         self.corpus = corpus
         self.vocabulary = self.vectorizer.vocabulary_
 
-        Xsum = self.X.sum(axis=0)
+        Xsum = self.doc_term_matrix.sum(axis=0)
 
         self.word_counts = { w: Xsum[0, i] for w,i in self.vocabulary.items() }
         self.document_index = self._document_index()
 
-        return self.X
+        return self.doc_term_matrix
 
     def dump(self, tag=None, folder='./output'):
 
@@ -65,7 +65,7 @@ class CorpusVectorizer():
             pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
         matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
-        np.save(matrix_filename, self.X, allow_pickle=True)
+        np.save(matrix_filename, self.doc_term_matrix, allow_pickle=True)
 
     def dump_exists(self, tag, folder='./output'):
         data_filename = os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
@@ -85,7 +85,7 @@ class CorpusVectorizer():
         self.document_index = data["document_index"]
 
         matrix_filename = os.path.join(folder, "{}_vector_data.npy".format(tag))
-        self.X = np.load(matrix_filename, allow_pickle=True).item()
+        self.doc_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
 
         return self
 
@@ -97,7 +97,7 @@ class CorpusVectorizer():
 
     def collapse_by_category(self, column, X=None, df=None):
 
-        X = self.X if X is None else X
+        X = self.doc_term_matrix if X is None else X
         df = self.document_index if df is None else df
 
         categories = list(sorted(df[column].unique().tolist()))
@@ -112,7 +112,7 @@ class CorpusVectorizer():
 
     def collapse_to_year(self, X=None, df=None):
         # return self.collapse_by_category('year')
-        X = self.X if X is None else X
+        X = self.doc_term_matrix if X is None else X
         df = self.document_index if df is None else df
 
         min_value, max_value = df.year.min(), df.year.max()
