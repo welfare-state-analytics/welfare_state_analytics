@@ -56,7 +56,7 @@ class Test_ChiSquare(unittest.TestCase):
 
         id2token = { i: w for w, i in v_corpus.token2id.items() }
 
-        Y = v_corpus.collapse_to_year()
+        Y = v_corpus.group_by_year()
         Yn = v_corpus.normalize(Y, axis=1, norm='l1')
 
         indices = v_corpus.token_ids_above_threshold(1)

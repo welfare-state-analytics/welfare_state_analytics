@@ -24,7 +24,7 @@ class GoodnessOfFit():
 
         id2token = { i: w for w, i in vectorizer.token2id.items() }
 
-        Y = vectorizer.collapse_to_year()
+        Y = vectorizer.group_by_year()
         Yn = vectorizer.normalize(Y, axis=1, norm='l1')
 
         indices = vectorizer.token_ids_above_threshold(1)

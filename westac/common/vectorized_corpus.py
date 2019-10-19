@@ -107,7 +107,7 @@ class VectorizedCorpus():
 
         return Y, categories
 
-    def collapse_to_year(self):
+    def group_by_year(self):
 
         X = self.doc_term_matrix # if X is None else X
         df = self.document_index # if df is None else df

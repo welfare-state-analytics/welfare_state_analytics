@@ -59,9 +59,9 @@ class Test_VectorizedCorpus(unittest.TestCase):
         self.assertEqual(dumped_v_corpus.token2id, loaded_v_corpus.token2id)
         #self.assertEqual(dumped_v_corpus.X, loaded_v_corpus.X)
 
-    def test_collapse_to_year_aggregates_doc_term_matrix_to_year_term_matrix(self):
+    def test_group_by_year_aggregates_doc_term_matrix_to_year_term_matrix(self):
         v_corpus = self.create_vectorized_corpus()
-        ytm = v_corpus.collapse_to_year()
+        ytm = v_corpus.group_by_year()
         expected_ytm = [
             [4, 3, 7, 1],
             [6, 7, 4, 2]
@@ -69,7 +69,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
         self.assertTrue((expected_ytm == ytm).all())
 
     def test_collapse_to_category_aggregates_doc_term_matrix_to_category_term_matrix(self):
-        """ A more generic version of collapse_to_year (not used for now) """
+        """ A more generic version of group_by_year (not used for now) """
         v_corpus = self.create_vectorized_corpus()
         Y, _ = v_corpus.collapse_by_category('year')
         expected_ytm = [

@@ -36,7 +36,7 @@ else:
 
     vectorizer.load(dump_tag, folder='./output')
 
-#YTM       = vectorizer.collapse_to_year()
+#YTM       = vectorizer.group_by_year()
 #Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
 #Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
 #Yx2, imap = vectorizer.pick_by_top_variance(500)

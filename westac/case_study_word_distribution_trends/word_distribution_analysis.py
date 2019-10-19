@@ -71,7 +71,7 @@ vectorizer.dump(dump_name, folder='./output')
 
 if False:
 
-    Y         = vectorizer.collapse_to_year()
+    Y         = vectorizer.group_by_year()
     Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
     Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
     Yx2, imap = vectorizer.pick_by_top_variance(500)
@@ -103,7 +103,7 @@ plt.show()
 
 # +
 #Xn = normalize(X, axis=1, norm='l1')
-#Y = collapse_to_year_matrix(X, df_documents)
+#Y = group_by_year_matrix(X, df_documents)
 #df = pd.DataFrame(Y, columns=list(vectorizer.get_feature_names()))
 #df.to_excel('test.xlsx')
 
