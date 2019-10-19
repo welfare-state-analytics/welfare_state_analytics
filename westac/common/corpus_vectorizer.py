@@ -29,10 +29,10 @@ class CorpusVectorizer():
         self.vectorizer = CountVectorizer(tokenizer=self.tokenizer, **self.kwargs)
 
         doc_term_matrix = self.vectorizer.fit_transform(texts)
-        vocabulary = self.vectorizer.vocabulary_
+        token2id = self.vectorizer.vocabulary_
         document_index = self._document_index(corpus)
 
-        v_corpus = vectorized_corpus.VectorizedCorpus(doc_term_matrix, vocabulary, document_index)
+        v_corpus = vectorized_corpus.VectorizedCorpus(doc_term_matrix, token2id, document_index)
 
         return v_corpus
 

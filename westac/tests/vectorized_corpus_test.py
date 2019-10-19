@@ -56,7 +56,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
         # Assert
         self.assertEqual(dumped_v_corpus.word_counts, loaded_v_corpus.word_counts)
         self.assertEqual(dumped_v_corpus.document_index.to_dict(), loaded_v_corpus.document_index.to_dict())
-        self.assertEqual(dumped_v_corpus.vocabulary, loaded_v_corpus.vocabulary)
+        self.assertEqual(dumped_v_corpus.token2id, loaded_v_corpus.token2id)
         #self.assertEqual(dumped_v_corpus.X, loaded_v_corpus.X)
 
     def test_collapse_to_year_aggregates_doc_term_matrix_to_year_term_matrix(self):
@@ -79,12 +79,14 @@ class Test_VectorizedCorpus(unittest.TestCase):
         self.assertTrue((expected_ytm == Y).all())
 
     def test_normalize_with_default_arguments_returns_matrix_normalized_by_l1_norm_for_each_row(self):
-        v_corpus = self.create_vectorized_corpus()
-        X = np.array([
+        doc_term_matrix = np.array([
             [4, 3, 7, 1],
             [6, 7, 4, 2]
-        ], dtype=np.float)
-        n_corpus = v_corpus.normalize(X)
+        ])
+        token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
+        df = pd.DataFrame({'year': [ 2013,2014 ]})
+        v_corpus = vectorized_corpus.VectorizedCorpus(doc_term_matrix, token2id, df)
+        n_corpus = v_corpus.normalize()
         E = np.array([
             [4, 3, 7, 1],
             [6, 7, 4, 2]
@@ -102,8 +104,8 @@ class Test_VectorizedCorpus(unittest.TestCase):
         v_corpus = self.create_vectorized_corpus()
         ids = v_corpus.token_ids_above_threshold(4)
         expected_ids = [
-            v_corpus.vocabulary['a'],
-            v_corpus.vocabulary['b'],
-            v_corpus.vocabulary['c']
+            v_corpus.token2id['a'],
+            v_corpus.token2id['b'],
+            v_corpus.token2id['c']
         ]
         self.assertEqual(expected_ids, ids)

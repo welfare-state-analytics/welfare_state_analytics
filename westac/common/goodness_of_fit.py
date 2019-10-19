@@ -22,7 +22,7 @@ class GoodnessOfFit():
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         vectorizer.fit_transform(corpus)
 
-        id2token = { i: w for w, i in vectorizer.vocabulary.items() }
+        id2token = { i: w for w, i in vectorizer.token2id.items() }
 
         Y = vectorizer.collapse_to_year()
         Yn = vectorizer.normalize(Y, axis=1, norm='l1')

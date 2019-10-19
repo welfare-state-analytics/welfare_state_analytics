@@ -136,7 +136,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
             [0, 0, 0, 0, 2, 1]
         ])
         self.assertTrue((expected == v_corpus.doc_term_matrix).all())
-        results = v_corpus.vocabulary
+        results = v_corpus.token2id
         expected = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'F': 5, 'E': 4 }
         self.assertEqual(expected, results)
 
@@ -176,7 +176,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         #print(term_term_matrix.todense())
         #print(term_term_matrix)
         coo = term_term_matrix
-        id2token = { i: t for t,i in v_corpus.vocabulary.items()}
+        id2token = { i: t for t,i in v_corpus.token2id.items()}
         cdf = pd.DataFrame({
             'w1_id': coo.row,
             'w2_id': coo.col,

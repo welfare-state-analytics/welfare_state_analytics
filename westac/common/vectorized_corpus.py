@@ -7,12 +7,11 @@ import sklearn.preprocessing
 
 class VectorizedCorpus():
 
-    def __init__(self, doc_term_matrix, vocabulary, document_index, word_counts=None):
+    def __init__(self, doc_term_matrix, token2id, document_index, word_counts=None):
 
         self.doc_term_matrix = doc_term_matrix
-        self.vocabulary = vocabulary
+        self.token2id = token2id
         self.document_index = document_index
-
         self.word_counts = word_counts
 
         if self.word_counts is None:
@@ -20,15 +19,15 @@ class VectorizedCorpus():
             Xsum = self.doc_term_matrix.sum(axis=0)
             Xsum = np.ravel(Xsum)
 
-            self.word_counts = { w: Xsum[i] for w,i in self.vocabulary.items() }
-            # self.id2token = { i: t for t,i in self.vocabulary.items()}
+            self.word_counts = { w: Xsum[i] for w,i in self.token2id.items() }
+            # self.id2token = { i: t for t,i in self.token2id.items()}
 
     def dump(self, tag=None, folder='./output'):
 
         tag = tag or time.strftime("%Y%m%d_%H%M%S")
 
         data = {
-            'vocabulary': self.vocabulary,
+            'token2id': self.token2id,
             'word_counts': self.word_counts,
             'document_index': self.document_index
         }
@@ -53,13 +52,13 @@ class VectorizedCorpus():
         with open(data_filename, 'rb') as f:
             data = pickle.load(f)
 
-        vocabulary = data["vocabulary"]
+        token2id = data["token2id"]
         document_index = data["document_index"]
 
         matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
         doc_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
 
-        return VectorizedCorpus(doc_term_matrix, vocabulary, document_index)
+        return VectorizedCorpus(doc_term_matrix, token2id, document_index)
 
     @staticmethod
     def _data_filename(tag, folder):
@@ -122,11 +121,18 @@ class VectorizedCorpus():
             if len(indices) > 0:
                 Y[i,:] = X[indices,:].sum(axis=0)
 
+        self.doc_term_matrix = doc_term_matrix
+        self.token2id = token2id
+        self.document_index = document_index
+        self.word_counts = word_counts
+
+        v_corpus = VectorizedCorpus(normalized_doc_term_matrix, self.token2id, self.document_index, self.word_counts)
+
         return Y
 
-    def normalize(self, X, axis=1, norm='l1'):
-        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=axis, norm=norm)
-        return VectorizedCorpus(normalized_doc_term_matrix, self.vocabulary, self.document_index, self.word_counts)
+    def normalize(self, norm='l1'):
+        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=1, norm=norm)
+        return VectorizedCorpus(normalized_doc_term_matrix, self.token2id, self.document_index, self.word_counts)
 
     def tokens_above_threshold(self, threshold):
         words = {
@@ -136,7 +142,7 @@ class VectorizedCorpus():
 
     def token_ids_above_threshold(self, threshold):
         ids = [
-            self.vocabulary[w] for w in self.tokens_above_threshold(threshold).keys()
+            self.token2id[w] for w in self.tokens_above_threshold(threshold).keys()
         ]
         return ids
 

@@ -54,7 +54,7 @@ class Test_ChiSquare(unittest.TestCase):
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         v_corpus = vectorizer.fit_transform(corpus)
 
-        id2token = { i: w for w, i in v_corpus.vocabulary.items() }
+        id2token = { i: w for w, i in v_corpus.token2id.items() }
 
         Y = v_corpus.collapse_to_year()
         Yn = v_corpus.normalize(Y, axis=1, norm='l1')

@@ -80,7 +80,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
 
     id2token = {
-        i: t for t,i in vectorizer.vocabulary.items()
+        i: t for t,i in vectorizer.token2id.items()
     }
 
     cdf = pd.DataFrame({
