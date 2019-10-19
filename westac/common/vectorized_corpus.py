@@ -13,6 +13,7 @@ class VectorizedCorpus():
 
         self.doc_term_matrix = doc_term_matrix
         self.token2id = token2id
+        self.id2token_ = None
         self.document_index = document_index
         self.word_counts = word_counts
 
@@ -23,6 +24,12 @@ class VectorizedCorpus():
 
             self.word_counts = { w: Xsum[i] for w,i in self.token2id.items() }
             # self.id2token = { i: t for t,i in self.token2id.items()}
+
+    @property
+    def id2token(self):
+        if self.id2token_ is None and self.token2id is not None:
+            self.id2token_ = { i: t for t,i in self.token2id.items()}
+        return self.id2token_
 
     def dump(self, tag=None, folder='./output'):
 
@@ -141,21 +148,40 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    def tokens_above_threshold(self, threshold):
-        words = {
-            w: c for w,c in self.word_counts.items() if c >= threshold
-        }
-        return words
+    def slice_by_n_count(self, n_count):
 
-    def token_ids_above_threshold(self, threshold):
-        ids = [
-            self.token2id[w] for w in self.tokens_above_threshold(threshold).keys()
-        ]
-        return ids
+        # TODO: Sort by word_count?
 
-    def slice_tokens_by_count_threshold(self, X, threshold_count):
-        indices = self.token_ids_above_threshold(threshold_count)
+        word_counts = { w: c for w, c in self.word_counts.items() if c >= n_count }
 
-        Y = X[:, indices]
+        indices = [ self.token2id[w] for w in word_counts.keys() ]
 
-        return Y
+        indices.sort()
+
+        sliced_doc_term_matrix = self.doc_term_matrix[:, indices]
+
+        # token2id = { self.id2token[old_id]: new_id for new_id, old_id in enumerate(indices)}
+        token2id = { self.id2token[indices[i]]: i for i in range(0, len(indices)) }
+
+        v_corpus = VectorizedCorpus(sliced_doc_term_matrix, token2id, self.document_index, word_counts)
+
+        return v_corpus
+
+    # def tokens_above_threshold(self, threshold):
+    #     words = {
+    #         w: c for w, c in self.word_counts.items() if c >= threshold
+    #     }
+    #     return words
+
+    # def token_ids_above_threshold(self, threshold):
+    #     ids = [
+    #         self.token2id[w] for w in self.tokens_above_threshold(threshold).keys()
+    #     ]
+    #     return ids
+
+    # def slice_tokens_by_count_threshold(self, X, threshold_count):
+    #     indices = self.token_ids_above_threshold(threshold_count)
+
+    #     Y = X[:, indices]
+
+    #     return Y
