@@ -7,16 +7,21 @@ import sklearn.preprocessing
 
 class VectorizedCorpus():
 
-    def __init__(self, doc_term_matrix, vocabulary, document_index):
+    def __init__(self, doc_term_matrix, vocabulary, document_index, word_counts=None):
 
         self.doc_term_matrix = doc_term_matrix
         self.vocabulary = vocabulary
         self.document_index = document_index
 
-        Xsum = self.doc_term_matrix.sum(axis=0)
+        self.word_counts = word_counts
 
-        self.word_counts = { w: Xsum[i] for w,i in self.vocabulary.items() }
-        # self.id2token = { i: t for t,i in self.vocabulary.items()}
+        if self.word_counts is None:
+
+            Xsum = self.doc_term_matrix.sum(axis=0)
+            Xsum = np.ravel(Xsum)
+
+            self.word_counts = { w: Xsum[i] for w,i in self.vocabulary.items() }
+            # self.id2token = { i: t for t,i in self.vocabulary.items()}
 
     def dump(self, tag=None, folder='./output'):
 
@@ -120,8 +125,8 @@ class VectorizedCorpus():
         return Y
 
     def normalize(self, X, axis=1, norm='l1'):
-        Xn = sklearn.preprocessing.normalize(X, axis=axis, norm=norm)
-        return Xn
+        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=axis, norm=norm)
+        return VectorizedCorpus(normalized_doc_term_matrix, self.vocabulary, self.document_index, self.word_counts)
 
     def tokens_above_threshold(self, threshold):
         words = {
@@ -141,3 +146,4 @@ class VectorizedCorpus():
         Y = X[:, indices]
 
         return Y
+
