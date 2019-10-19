@@ -7,6 +7,57 @@ from sklearn.feature_extraction.text import CountVectorizer
 import sklearn.preprocessing
 import os
 
+class VectorizedCorpus():
+
+    def __init__(self, doc_term_matrix, vocabulary, word_counts, document_index):
+        self.doc_term_matrix = doc_term_matrix
+        self.vocabulary = vocabulary
+        self.word_counts = word_counts
+        self.document_index = document_index
+
+    def dump(self, tag=None, folder='./output'):
+
+        tag = tag or time.strftime("%Y%m%d_%H%M%S")
+
+        data = {
+            'vocabulary': self.vocabulary,
+            'word_counts': self.word_counts,
+            'document_index': self.document_index
+        }
+        data_filename = self._data_filename(tag, folder)
+
+        self.vectorizer.tokenizer = None
+        with open(data_filename, 'wb') as f:
+            pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+
+        matrix_filename = self._matrix_filename(tag, folder)
+        np.save(matrix_filename, self.doc_term_matrix, allow_pickle=True)
+
+    def dump_exists(self, tag, folder='./output'):
+        return os.path.isfile(self._data_filename(tag, folder))
+
+    def load(self, tag, folder='./output'):
+
+        data_filename = self._data_filename(tag, folder)
+        with open(data_filename, 'rb') as f:
+            data = pickle.load(f)
+
+        self.vocabulary = data["vocabulary"]
+        self.word_counts = data["word_counts"]
+        self.document_index = data["document_index"]
+
+        matrix_filename = self._matrix_filename(tag, folder)
+        self.doc_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
+
+        return self
+
+    def _data_filename(self, tag, folder):
+        return os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
+
+    def _matrix_filename(self, tag, folder):
+        return os.path.join(folder, "{}_vector_data.npy".format(tag))
+
+
 class CorpusVectorizer():
 
     def __init__(self, **kwargs):
@@ -17,7 +68,6 @@ class CorpusVectorizer():
         self.word_counts = None
         self.kwargs = kwargs
         self.document_index = None
-
 
     def fit_transform(self, corpus):
 
@@ -90,15 +140,38 @@ class CorpusVectorizer():
         return self
 
     def _document_index(self):
+        """ Groups matrix by vales in column summing up all values in each category
+        """
         metadata = self.corpus.get_metadata()
         df = pd.DataFrame([ x.__dict__ for x in metadata ], columns=metadata[0].__dict__.keys())
         df['document_id'] = list(df.index)
         return df
 
     def collapse_by_category(self, column, X=None, df=None):
+        """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
+
+        Parameters
+        ----------
+        column : str
+            The categorical column kn `df`that groups the rows in `X`
+
+        X : np.ndarray(N, M), optional
+            Matrix of shape (N, M), by default None
+
+        df : DataFrame, optional
+            DataFrame of size N, where each row `ì` contains data that describes row `i` in `X`, by default None
+
+        Returns
+        -------
+        tuple: np.ndarray(K, M), list
+            A matrix of size K wherw K is the number of unique categorical values in `df[column]`
+            A list of length K of category values, where i:th value is category of i:th row in returned matrix
+        """
 
         X = self.doc_term_matrix if X is None else X
         df = self.document_index if df is None else df
+
+        assert X.shape[0] == len(df)
 
         categories = list(sorted(df[column].unique().tolist()))
 
@@ -111,7 +184,7 @@ class CorpusVectorizer():
         return Y, categories
 
     def collapse_to_year(self, X=None, df=None):
-        # return self.collapse_by_category('year')
+
         X = self.doc_term_matrix if X is None else X
         df = self.document_index if df is None else df
 
