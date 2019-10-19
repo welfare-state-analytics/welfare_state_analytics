@@ -9,9 +9,9 @@ import sklearn.preprocessing
 
 class VectorizedCorpus():
 
-    def __init__(self, doc_term_matrix, token2id, document_index, word_counts=None):
+    def __init__(self, bag_term_matrix, token2id, document_index, word_counts=None):
 
-        self.doc_term_matrix = doc_term_matrix
+        self.bag_term_matrix = bag_term_matrix
         self.token2id = token2id
         self.id2token_ = None
         self.document_index = document_index
@@ -19,7 +19,7 @@ class VectorizedCorpus():
 
         if self.word_counts is None:
 
-            Xsum = self.doc_term_matrix.sum(axis=0)
+            Xsum = self.bag_term_matrix.sum(axis=0)
             Xsum = np.ravel(Xsum)
 
             self.word_counts = { w: Xsum[i] for w,i in self.token2id.items() }
@@ -30,6 +30,18 @@ class VectorizedCorpus():
         if self.id2token_ is None and self.token2id is not None:
             self.id2token_ = { i: t for t,i in self.token2id.items()}
         return self.id2token_
+
+    @property
+    def T(self):
+        return self.bag_term_matrix.T
+
+    @property
+    def bag_term_matrix(self):
+        return self.bag_term_matrix
+
+    @property
+    def term_bag_matrix(self):
+        return self.bag_term_matrix
 
     def dump(self, tag=None, folder='./output'):
 
@@ -46,7 +58,7 @@ class VectorizedCorpus():
             pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
         matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
-        np.save(matrix_filename, self.doc_term_matrix, allow_pickle=True)
+        np.save(matrix_filename, self.bag_term_matrix, allow_pickle=True)
 
         return self
 
@@ -65,9 +77,9 @@ class VectorizedCorpus():
         document_index = data["document_index"]
 
         matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
-        doc_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
+        bag_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
 
-        return VectorizedCorpus(doc_term_matrix, token2id, document_index)
+        return VectorizedCorpus(bag_term_matrix, token2id, document_index)
 
     @staticmethod
     def _data_filename(tag, folder):
@@ -99,7 +111,7 @@ class VectorizedCorpus():
             A list of length K of category values, where i:th value is category of i:th row in returned matrix
         """
 
-        X = self.doc_term_matrix if X is None else X
+        X = self.bag_term_matrix if X is None else X
         df = self.document_index if df is None else df
 
         assert X.shape[0] == len(df)
@@ -116,7 +128,7 @@ class VectorizedCorpus():
 
     def group_by_year(self):
 
-        X = self.doc_term_matrix # if X is None else X
+        X = self.bag_term_matrix # if X is None else X
         df = self.document_index # if df is None else df
 
         min_value, max_value = df.year.min(), df.year.max()
@@ -142,9 +154,9 @@ class VectorizedCorpus():
 
     def normalize(self, norm='l1'):
 
-        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=1, norm=norm)
+        normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=1, norm=norm)
 
-        v_corpus = VectorizedCorpus(normalized_doc_term_matrix, self.token2id, self.document_index, self.word_counts)
+        v_corpus = VectorizedCorpus(normalized_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
 
         return v_corpus
 
@@ -158,12 +170,12 @@ class VectorizedCorpus():
 
         indices.sort()
 
-        sliced_doc_term_matrix = self.doc_term_matrix[:, indices]
+        sliced_bag_term_matrix = self.bag_term_matrix[:, indices]
 
         # token2id = { self.id2token[old_id]: new_id for new_id, old_id in enumerate(indices)}
         token2id = { self.id2token[indices[i]]: i for i in range(0, len(indices)) }
 
-        v_corpus = VectorizedCorpus(sliced_doc_term_matrix, token2id, self.document_index, word_counts)
+        v_corpus = VectorizedCorpus(sliced_bag_term_matrix, token2id, self.document_index, word_counts)
 
         return v_corpus
 

@@ -59,7 +59,7 @@ class Test_ChiSquare(unittest.TestCase):
             .normalize()\
             .slice_by_n_count(0)
 
-        X2 = scipy.stats.chisquare(v_corpus.doc_term_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
+        X2 = scipy.stats.chisquare(v_corpus.bag_term_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
 
         # Use X2 so select top 500 words... (highest Power-Power_divergenceResult)
         # Ynw = largest_by_chisquare()
@@ -82,7 +82,7 @@ class Test_ChiSquare(unittest.TestCase):
 # -
 
 def plot_dists(v_corpus):
-    df = pd.DataFrame(v_corpus.doc_term_matrix.toarray(), columns=list(v_corpus.get_feature_names()))
+    df = pd.DataFrame(v_corpus.bag_term_matrix.toarray(), columns=list(v_corpus.get_feature_names()))
     df['year'] = df.index + 45
     df = df.set_index('year')
     df['year'] =  pd.Series(df.index).apply(lambda x: v_corpus.document_index[x][0])

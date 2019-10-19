@@ -135,7 +135,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
             [0, 1, 0, 0, 1, 0],
             [0, 0, 0, 0, 2, 1]
         ])
-        self.assertTrue((expected == v_corpus.doc_term_matrix).all())
+        self.assertTrue((expected == v_corpus.bag_term_matrix).all())
         results = v_corpus.token2id
         expected = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'F': 5, 'E': 4 }
         self.assertEqual(expected, results)
@@ -150,7 +150,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         v_corpus = vectorizer.fit_transform(corpus)
 
         # Act
-        term_term_matrix = np.dot(v_corpus.doc_term_matrix.T, v_corpus.doc_term_matrix)
+        term_term_matrix = np.dot(v_corpus.bag_term_matrix.T, v_corpus.bag_term_matrix)
 
         # Assert
         expected = np.asarray([
