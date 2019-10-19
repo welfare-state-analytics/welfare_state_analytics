@@ -52,14 +52,14 @@ class Test_ChiSquare(unittest.TestCase):
 
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
-        vectorizer.fit_transform(corpus)
+        v_corpus = vectorizer.fit_transform(corpus)
 
-        id2token = { i: w for w, i in vectorizer.vocabulary.items() }
+        id2token = { i: w for w, i in v_corpus.vocabulary.items() }
 
-        Y = vectorizer.collapse_to_year()
-        Yn = vectorizer.normalize(Y, axis=1, norm='l1')
+        Y = v_corpus.collapse_to_year()
+        Yn = v_corpus.normalize(Y, axis=1, norm='l1')
 
-        indices = vectorizer.token_ids_above_threshold(1)
+        indices = v_corpus.token_ids_above_threshold(1)
         Ynw = Yn[:, indices]
 
         X2 = scipy.stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
@@ -84,11 +84,11 @@ class Test_ChiSquare(unittest.TestCase):
 
 # -
 
-def plot_dists(vectorizer):
-    df = pd.DataFrame(vectorizer.X.toarray(), columns=list(vectorizer.get_feature_names()))
+def plot_dists(v_corpus):
+    df = pd.DataFrame(v_corpus.doc_term_matrix.toarray(), columns=list(v_corpus.get_feature_names()))
     df['year'] = df.index + 45
     df = df.set_index('year')
-    df['year'] =  pd.Series(df.index).apply(lambda x: vectorizer.document_index[x][0])
+    df['year'] =  pd.Series(df.index).apply(lambda x: v_corpus.document_index[x][0])
     df[['krig']].plot() #.loc[df["000"]==49]
 
 

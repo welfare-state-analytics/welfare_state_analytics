@@ -126,7 +126,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
-        vectorizer.fit_transform(corpus)
+        v_corpus = vectorizer.fit_transform(corpus)
         expected = np.asarray([
             [1, 1, 1, 0, 0, 0],
             [0, 1, 1, 1, 0, 0],
@@ -135,8 +135,8 @@ class Test_DataFrameVectorize(unittest.TestCase):
             [0, 1, 0, 0, 1, 0],
             [0, 0, 0, 0, 2, 1]
         ])
-        self.assertTrue((expected == vectorizer.X).all())
-        results = vectorizer.vocabulary
+        self.assertTrue((expected == v_corpus.doc_term_matrix).all())
+        results = v_corpus.vocabulary
         expected = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'F': 5, 'E': 4 }
         self.assertEqual(expected, results)
 
@@ -147,10 +147,10 @@ class Test_DataFrameVectorize(unittest.TestCase):
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
         corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
-        vectorizer.fit_transform(corpus)
+        v_corpus = vectorizer.fit_transform(corpus)
 
         # Act
-        term_term_matrix = np.dot(vectorizer.X.T, vectorizer.X)
+        term_term_matrix = np.dot(v_corpus.doc_term_matrix.T, v_corpus.doc_term_matrix)
 
         # Assert
         expected = np.asarray([
@@ -176,7 +176,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         #print(term_term_matrix.todense())
         #print(term_term_matrix)
         coo = term_term_matrix
-        id2token = { i: t for t,i in vectorizer.vocabulary.items()}
+        id2token = { i: t for t,i in v_corpus.vocabulary.items()}
         cdf = pd.DataFrame({
             'w1_id': coo.row,
             'w2_id': coo.col,
