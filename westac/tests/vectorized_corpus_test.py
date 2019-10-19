@@ -61,12 +61,12 @@ class Test_VectorizedCorpus(unittest.TestCase):
 
     def test_group_by_year_aggregates_doc_term_matrix_to_year_term_matrix(self):
         v_corpus = self.create_vectorized_corpus()
-        ytm = v_corpus.group_by_year()
+        g_corpus = v_corpus.group_by_year()
         expected_ytm = [
             [4, 3, 7, 1],
             [6, 7, 4, 2]
         ]
-        self.assertTrue((expected_ytm == ytm).all())
+        self.assertTrue((expected_ytm == g_corpus.doc_term_matrix).all())
 
     def test_collapse_to_category_aggregates_doc_term_matrix_to_category_term_matrix(self):
         """ A more generic version of group_by_year (not used for now) """
@@ -93,19 +93,64 @@ class Test_VectorizedCorpus(unittest.TestCase):
         ]) / (np.array([[15,19]]).T)
         self.assertTrue((E == n_corpus.doc_term_matrix).all())
 
+    def create_slice_by_n_count_test_corpus(self):
+        doc_term_matrix = np.array([
+            [1, 1, 4, 1],
+            [0, 2, 3, 0],
+            [0, 3, 2, 0],
+            [0, 4, 1, 3],
+            [2, 0, 1, 1]
+        ])
+        token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
+        df = pd.DataFrame({'year': [ 2013, 2013, 2014, 2014, 2014 ]})
+        return vectorized_corpus.VectorizedCorpus(doc_term_matrix, token2id, df)
 
-    def test_tokens_above_threshold_returns_tokens_having_token_count_ge_to_threshold(self):
-        v_corpus = self.create_vectorized_corpus()
-        tokens = v_corpus.tokens_above_threshold(4)
-        expected_tokens = {'a': 10, 'b': 10, 'c': 11 }
-        self.assertEqual(expected_tokens, tokens)
+    def test_slice_by_n_count_when_exists_tokens_below_count_returns_filtered_corpus(self):
 
-    def test_tokens_above_threshold_returns_ids_of_tokens_having_token_count_ge_to_threshold(self):
+        v_corpus = self.create_slice_by_n_count_test_corpus()
+
+        # Act
+        t_corpus = v_corpus.slice_by_n_count(6)
+
+        # Assert
+        expected_doc_term_matrix = np.array([
+            [1, 4],
+            [2, 3],
+            [3, 2],
+            [4, 1],
+            [0, 1]
+        ])
+
+        self.assertEqual({'b': 0, 'c': 1 }, t_corpus.token2id)
+        self.assertEqual({'b': 10, 'c': 11 }, t_corpus.word_counts)
+        self.assertTrue((expected_doc_term_matrix == t_corpus.doc_term_matrix).all())
+
+    def test_slice_by_n_count_when_all_below_below_n_count_returns_empty_corpus(self):
+
+        v_corpus = self.create_slice_by_n_count_test_corpus()
+
+        # Act
+        t_corpus = v_corpus.slice_by_n_count(20)
+
+        # Assert
+
+        self.assertEqual({}, t_corpus.token2id)
+        self.assertEqual({}, t_corpus.word_counts)
+        self.assertTrue((np.empty((5,0)) == t_corpus.doc_term_matrix).all())
+
+    def test_slice_by_n_count_when_all_tokens_above_n_count_returns_same_corpus(self):
+
+        v_corpus = self.create_slice_by_n_count_test_corpus()
+
+        # Act
+        t_corpus = v_corpus.slice_by_n_count(1)
+
+        # Assert
+        self.assertEqual(v_corpus.token2id, t_corpus.token2id)
+        self.assertEqual(v_corpus.word_counts, t_corpus.word_counts)
+        self.assertTrue((v_corpus.doc_term_matrix == t_corpus.doc_term_matrix).all())
+
+    def test_id2token_is_reversed_token2id(self):
         v_corpus = self.create_vectorized_corpus()
-        ids = v_corpus.token_ids_above_threshold(4)
-        expected_ids = [
-            v_corpus.token2id['a'],
-            v_corpus.token2id['b'],
-            v_corpus.token2id['c']
-        ]
-        self.assertEqual(expected_ids, ids)
+        id2token = { 0: 'a', 1: 'b', 2: 'c', 3: 'd' }
+        self.assertEqual(id2token, v_corpus.id2token)

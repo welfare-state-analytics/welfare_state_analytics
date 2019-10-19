@@ -52,17 +52,14 @@ class Test_ChiSquare(unittest.TestCase):
 
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
-        v_corpus = vectorizer.fit_transform(corpus)
 
-        id2token = { i: w for w, i in v_corpus.token2id.items() }
+        v_corpus = vectorizer\
+            .fit_transform(corpus)\
+            .group_by_year()\
+            .normalize()\
+            .slice_by_n_count(0)
 
-        Y = v_corpus.group_by_year()
-        Yn = v_corpus.normalize(Y, axis=1, norm='l1')
-
-        indices = v_corpus.token_ids_above_threshold(1)
-        Ynw = Yn[:, indices]
-
-        X2 = scipy.stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
+        X2 = scipy.stats.chisquare(v_corpus.doc_term_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
 
         # Use X2 so select top 500 words... (highest Power-Power_divergenceResult)
         # Ynw = largest_by_chisquare()
@@ -71,7 +68,7 @@ class Test_ChiSquare(unittest.TestCase):
         linked = linkage(Ynw.T, 'ward') # pylint: disable=unused-variable
         #print(linked)
 
-        labels = [ id2token[x] for x in indices ] # pylint: disable=unused-variable
+        labels = [ v_corpus.id2token[x] for x in indices ] # pylint: disable=unused-variable
 
         #plt.figure(figsize=(24, 16))
         #dendrogram(linked, orientation='top', labels=labels, distance_sort='descending', show_leaf_counts=True)
