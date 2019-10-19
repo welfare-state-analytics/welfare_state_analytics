@@ -1,8 +1,10 @@
 
-import numpy as np
+import os
 import pickle
 import time
-import os
+
+import numpy as np
+import pandas as pd
 import sklearn.preprocessing
 
 class VectorizedCorpus():
@@ -121,18 +123,23 @@ class VectorizedCorpus():
             if len(indices) > 0:
                 Y[i,:] = X[indices,:].sum(axis=0)
 
-        self.doc_term_matrix = doc_term_matrix
-        self.token2id = token2id
-        self.document_index = document_index
-        self.word_counts = word_counts
+        years = list(range(min_value, max_value + 1))
+        document_index = pd.DataFrame({
+            'year': years,
+            'filename': map(str, years)
+        })
+
+        v_corpus = VectorizedCorpus(Y, self.token2id, document_index, self.word_counts)
+
+        return v_corpus
+
+    def normalize(self, norm='l1'):
+
+        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=1, norm=norm)
 
         v_corpus = VectorizedCorpus(normalized_doc_term_matrix, self.token2id, self.document_index, self.word_counts)
 
-        return Y
-
-    def normalize(self, norm='l1'):
-        normalized_doc_term_matrix = sklearn.preprocessing.normalize(self.doc_term_matrix, axis=1, norm=norm)
-        return VectorizedCorpus(normalized_doc_term_matrix, self.token2id, self.document_index, self.word_counts)
+        return v_corpus
 
     def tokens_above_threshold(self, threshold):
         words = {
@@ -152,4 +159,3 @@ class VectorizedCorpus():
         Y = X[:, indices]
 
         return Y
-
