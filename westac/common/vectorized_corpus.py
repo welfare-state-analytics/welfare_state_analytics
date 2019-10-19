@@ -15,7 +15,7 @@ class VectorizedCorpus():
 
         Xsum = self.doc_term_matrix.sum(axis=0)
 
-        self.word_counts = { w: Xsum[0, i] for w,i in self.vocabulary.items() }
+        self.word_counts = { w: Xsum[i] for w,i in self.vocabulary.items() }
         # self.id2token = { i: t for t,i in self.vocabulary.items()}
 
     def dump(self, tag=None, folder='./output'):
@@ -32,7 +32,6 @@ class VectorizedCorpus():
         with open(data_filename, 'wb') as f:
             pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
-        self.vectorizer.tokenizer = None
         matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
         np.save(matrix_filename, self.doc_term_matrix, allow_pickle=True)
 
@@ -102,10 +101,10 @@ class VectorizedCorpus():
 
         return Y, categories
 
-    def collapse_to_year(self, X=None, df=None):
+    def collapse_to_year(self):
 
-        X = self.doc_term_matrix if X is None else X
-        df = self.document_index if df is None else df
+        X = self.doc_term_matrix # if X is None else X
+        df = self.document_index # if df is None else df
 
         min_value, max_value = df.year.min(), df.year.max()
 
