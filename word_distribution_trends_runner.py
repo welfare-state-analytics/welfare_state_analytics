@@ -1,8 +1,22 @@
 import os
-import westac.common.corpus_vectorizer as corpus_vectorizer
-import westac.common.text_corpus as text_corpus
+from westac.common import corpus_vectorizer
+from westac.common import text_corpus
+from westac.common import vectorized_corpus
+from westac.common import file_text_reader
 
-from scipy import stats
+def create_corpus(filename, meta_extract):
+    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+    kwargs = dict(
+        isalnum=False,
+        to_lower=True,
+        deacc=False,
+        min_len=2,
+        max_len=None,
+        numerals=False,
+        symbols=False
+    )
+    corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+    return corpus
 
 filename = './data/SOU_1945-1989.zip'
 
@@ -12,9 +26,7 @@ if not os.path.isfile(filename):
 
 dump_tag = os.path.basename(filename).split('.')[0]
 
-vectorizer = corpus_vectorizer.CorpusVectorizer()
-
-if not vectorizer.dump_exists(dump_tag):
+if not vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
 
     meta_extract = {
         'year': r"SOU (\d{4})\_.*",
@@ -25,16 +37,17 @@ if not vectorizer.dump_exists(dump_tag):
     corpus = text_corpus.create_corpus(filename, meta_extract)
 
     print('Creating document-term matrix...')
-    DTM = vectorizer.fit_transform(corpus)
+    vectorizer = corpus_vectorizer.CorpusVectorizer()
+    v_corpus = vectorizer.fit_transform(corpus)
 
     print('Saving data matrix...')
-    vectorizer.dump(tag=dump_tag, folder='./output')
+    v_corpus.dump(tag=dump_tag, folder='./output')
 
 else:
 
     print('Loading data matrix...')
 
-    vectorizer.load(dump_tag, folder='./output')
+    v_corpus = vectorized_corpus.VectorizedCorpus.load(dump_tag, folder='./output')
 
 #YTM       = vectorizer.group_by_year()
 #Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
