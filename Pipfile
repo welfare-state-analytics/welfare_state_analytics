@@ -45,6 +45,7 @@ sql_magic = "*"
 Scrapy = "*"
 pytest = "<=5.0.1"
 yapf = "*"
+numba = "*"
 
 [requires]
 python_version = "3.7"

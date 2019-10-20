@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import sklearn.preprocessing
 
+from numba import jit, autojit
+
 class VectorizedCorpus():
 
     def __init__(self, bag_term_matrix, token2id, document_index, word_counts=None):
@@ -122,6 +124,7 @@ class VectorizedCorpus():
 
         return Y, categories
 
+    @jit
     def group_by_year(self):
 
         X = self.bag_term_matrix # if X is None else X
@@ -148,6 +151,7 @@ class VectorizedCorpus():
 
         return v_corpus
 
+    @jit
     def normalize(self, norm='l1'):
 
         normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=1, norm=norm)
@@ -156,40 +160,26 @@ class VectorizedCorpus():
 
         return v_corpus
 
+    # @autojit
     def slice_by_n_count(self, n_count):
 
-        # TODO: Sort by word_count?
+        words = set(w for w,c in self.word_counts.items() if c >= n_count)
+        def _px(w):
+            return w in words
 
-        word_counts = { w: c for w, c in self.word_counts.items() if c >= n_count }
+        return self.slice_by(_px)
 
-        indices = [ self.token2id[w] for w in word_counts.keys() ]
+    #@autojit
+    def slice_by(self, px):
+
+        indices = [ self.token2id[w] for w in self.token2id.keys() if px(w) ]
 
         indices.sort()
 
         sliced_bag_term_matrix = self.bag_term_matrix[:, indices]
-
-        # token2id = { self.id2token[old_id]: new_id for new_id, old_id in enumerate(indices)}
         token2id = { self.id2token[indices[i]]: i for i in range(0, len(indices)) }
+        word_counts = { w: c for w,c in self.word_counts.items() if w in token2id }
 
         v_corpus = VectorizedCorpus(sliced_bag_term_matrix, token2id, self.document_index, word_counts)
 
         return v_corpus
-
-    # def tokens_above_threshold(self, threshold):
-    #     words = {
-    #         w: c for w, c in self.word_counts.items() if c >= threshold
-    #     }
-    #     return words
-
-    # def token_ids_above_threshold(self, threshold):
-    #     ids = [
-    #         self.token2id[w] for w in self.tokens_above_threshold(threshold).keys()
-    #     ]
-    #     return ids
-
-    # def slice_tokens_by_count_threshold(self, X, threshold_count):
-    #     indices = self.token_ids_above_threshold(threshold_count)
-
-    #     Y = X[:, indices]
-
-    #     return Y
