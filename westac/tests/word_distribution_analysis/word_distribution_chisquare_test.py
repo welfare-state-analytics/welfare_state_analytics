@@ -59,16 +59,16 @@ class Test_ChiSquare(unittest.TestCase):
             .normalize()\
             .slice_by_n_count(0)
 
-        X2 = scipy.stats.chisquare(v_corpus.bag_term_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
+        X2 = scipy.stats.chisquare(v_corpus.term_bag_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
 
         # Use X2 so select top 500 words... (highest Power-Power_divergenceResult)
         # Ynw = largest_by_chisquare()
         #print(Ynw)
 
-        linked = linkage(Ynw.T, 'ward') # pylint: disable=unused-variable
+        linked = linkage(v_corpus.term_bag_matrix, 'ward') # pylint: disable=unused-variable
         #print(linked)
 
-        labels = [ v_corpus.id2token[x] for x in indices ] # pylint: disable=unused-variable
+        ##labels = [ v_corpus.id2token[x] for x in indices ] # pylint: disable=unused-variable
 
         #plt.figure(figsize=(24, 16))
         #dendrogram(linked, orientation='top', labels=labels, distance_sort='descending', show_leaf_counts=True)
@@ -78,8 +78,6 @@ class Test_ChiSquare(unittest.TestCase):
         expected = None
 
         self.assertEqual(expected, results)
-
-# -
 
 def plot_dists(v_corpus):
     df = pd.DataFrame(v_corpus.bag_term_matrix.toarray(), columns=list(v_corpus.get_feature_names()))
