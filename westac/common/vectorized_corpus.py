@@ -36,12 +36,8 @@ class VectorizedCorpus():
         return self.bag_term_matrix.T
 
     @property
-    def bag_term_matrix(self):
-        return self.bag_term_matrix
-
-    @property
     def term_bag_matrix(self):
-        return self.bag_term_matrix
+        return self.bag_term_matrix.T
 
     def dump(self, tag=None, folder='./output'):
 
