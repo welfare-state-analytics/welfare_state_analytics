@@ -4,29 +4,18 @@ from westac.common import text_corpus
 from westac.common import vectorized_corpus
 from westac.common import file_text_reader
 
-def create_corpus(filename, meta_extract):
-    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
-    kwargs = dict(
-        isalnum=False,
-        to_lower=True,
-        deacc=False,
-        min_len=2,
-        max_len=None,
-        numerals=False,
-        symbols=False
-    )
-    corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
-    return corpus
+def generate_corpus(filename, output_folder, **kwargs):
 
-filename = './data/SOU_1945-1989.zip'
+    if not os.path.isfile(filename):
+        print('error: no such file: {}'.format(filename))
+        return
 
-if not os.path.isfile(filename):
-    print('error: no such file: {}'.format(filename))
-    assert os.path.isfile(filename)
+    dump_tag = os.path.basename(filename).split('.')[0]
 
-dump_tag = os.path.basename(filename).split('.')[0]
-
-if not vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
+    if vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
+        print('notice: removing existing result files...')
+        os.remove(os.path.join(output_folder, '{}_vector_data.npy'.format(dump_tag)))
+        os.remove(os.path.join(output_folder, '{}_vectorizer_data.pickle'.format(dump_tag)))
 
     meta_extract = {
         'year': r"SOU (\d{4})\_.*",
@@ -34,25 +23,28 @@ if not vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
     }
 
     print('Creating new corpus...')
-    corpus = text_corpus.create_corpus(filename, meta_extract)
+    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+    corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
 
     print('Creating document-term matrix...')
     vectorizer = corpus_vectorizer.CorpusVectorizer()
     v_corpus = vectorizer.fit_transform(corpus)
 
     print('Saving data matrix...')
-    v_corpus.dump(tag=dump_tag, folder='./output')
+    v_corpus.dump(tag=dump_tag, folder=output_folder)
 
-else:
+if __name__ == "__main__":
 
-    print('Loading data matrix...')
+    kwargs = dict(
+        isalnum=True,
+        to_lower=True,
+        deacc=False,
+        min_len=2,
+        max_len=None,
+        numerals=False,
+        symbols=False
+    )
 
-    v_corpus = vectorized_corpus.VectorizedCorpus.load(dump_tag, folder='./output')
+    filename = './data/SOU_1945-1989.zip'
 
-#YTM       = vectorizer.group_by_year()
-#Yn        = vectorizer.normalize(Y, axis=1, norm='l1')
-#Ynw       = vectorizer.slice_tokens_by_count_threshold(Yn, 1)
-#Yx2, imap = vectorizer.pick_by_top_variance(500)
-
-#data       = stats.chisquare(Ynw, f_exp=None, ddof=0, axis=0)
-
+    generate_corpus(filename, output_folder='./output', **kwargs)
