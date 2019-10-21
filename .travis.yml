@@ -6,7 +6,7 @@ cache:
 install:
 - 'pip install pipenv'
 - 'pipenv sync'
-- 'pip m nltk.downloader stopwords punkt -d $HOME/nltk_data'
+- 'pip -m nltk.downloader stopwords punkt -d $HOME/nltk_data'
 script:
 - 'python -m pytest'
 before_install:
