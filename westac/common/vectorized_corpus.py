@@ -2,12 +2,20 @@
 import os
 import pickle
 import time
+import logging
 
 import numpy as np
 import pandas as pd
 import sklearn.preprocessing
 
-from numba import jit, autojit
+from numba import jit
+from heapq import nlargest
+import logging
+
+# logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class VectorizedCorpus():
 
@@ -26,6 +34,12 @@ class VectorizedCorpus():
 
             self.word_counts = { w: Xsum[i] for w,i in self.token2id.items() }
             # self.id2token = { i: t for t,i in self.token2id.items()}
+
+        n_bags = self.bag_term_matrix.shape[0]
+        n_vocabulary = self.bag_term_matrix.shape[1]
+        n_tokens = sum(self.word_counts.values())
+
+        logger.info('Corpus size: #bags: {}, #vocabulary: {}, #tokens: {}'.format(n_bags, n_vocabulary, n_tokens))
 
     @property
     def id2token(self):
@@ -124,7 +138,7 @@ class VectorizedCorpus():
 
         return Y, categories
 
-    @jit
+    #@jit
     def group_by_year(self):
 
         X = self.bag_term_matrix # if X is None else X
@@ -151,21 +165,34 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    @jit
-    def normalize(self, norm='l1'):
+    #@jit
+    def normalize(self, axis=1, norm='l1'):
 
-        normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=1, norm=norm)
+        normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=axis, norm=norm)
 
         v_corpus = VectorizedCorpus(normalized_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
 
         return v_corpus
 
+    def n_top_tokens(self, n_top):
+        tokens = { w: self.word_counts[w] for w in nlargest(n_top, self.word_counts, key = self.word_counts.get) }
+        return tokens
+
     # @autojit
     def slice_by_n_count(self, n_count):
 
-        words = set(w for w,c in self.word_counts.items() if c >= n_count)
+        tokens = set(w for w,c in self.word_counts.items() if c >= n_count)
         def _px(w):
-            return w in words
+            return w in tokens
+
+        return self.slice_by(_px)
+
+    def slice_by_n_top(self, n_top):
+
+        tokens = set(nlargest(n_top, self.word_counts, key = self.word_counts.get))
+
+        def _px(w):
+            return w in tokens
 
         return self.slice_by(_px)
 
@@ -183,3 +210,4 @@ class VectorizedCorpus():
         v_corpus = VectorizedCorpus(sliced_bag_term_matrix, token2id, self.document_index, word_counts)
 
         return v_corpus
+
