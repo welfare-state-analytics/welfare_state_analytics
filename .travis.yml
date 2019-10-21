@@ -1,8 +1,13 @@
 language: python
 python:
 - '3.7.5'
+cache:
+- $HOME/nltk_data
 install:
 - 'pip install pipenv'
 - 'pipenv sync'
+- 'pip m nltk.downloader stopwords punkt -d $HOME/nltk_data'
 script:
 - 'python -m pytest'
+before_install:
+  export NLTK_DATA="$HOME/nltk_data"
