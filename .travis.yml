@@ -2,12 +2,21 @@ language: python
 python:
 - '3.7.5'
 cache:
-- $HOME/nltk_data
+  directories:
+    - $HOME/nltk_data
+    - $PIP_CACHE_DIR
+    - $PIPENV_CACHE_DIR
 install:
 - 'pip install pipenv'
 - 'pipenv sync'
-- 'pip -m nltk.downloader stopwords punkt -d $HOME/nltk_data'
+- 'python -m nltk.downloader stopwords punkt -d $HOME/nltk_data'
 script:
 - 'python -m pytest'
 before_install:
-  export NLTK_DATA="$HOME/nltk_data"
+env:
+    global:
+        - NLTK_DATA="$HOME/nltk_data"
+        - PIP_CACHE_DIR=$HOME/.cache/pip
+        - PIPENV_CACHE_DIR=$HOME/.cache/pipenv
+        - PIPENV_VENV_IN_PROJECT=1
+        - PIPENV_IGNORE_VIRTUALENVS=1
