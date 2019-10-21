@@ -8,8 +8,9 @@ pipreqs = "*"
 pipenv = "*"
 jupytext = "*"
 pylint = "*"
-pytest = "*"
+pytest = "<=5.0.1"
 rope = "*"
+pytest-cov = "*"
 
 [packages]
 cytoolz = "*"
@@ -43,7 +44,6 @@ statsmodels = "*"
 Cython = "*"
 sql_magic = "*"
 Scrapy = "*"
-pytest = "<=5.0.1"
 yapf = "*"
 numba = "*"
 
