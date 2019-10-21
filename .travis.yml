@@ -1,18 +1,19 @@
 language: python
 python:
 - '3.7.5'
+sudo: true
 cache:
   directories:
     - $HOME/nltk_data
     - $PIP_CACHE_DIR
     - $PIPENV_CACHE_DIR
 install:
-- 'pip install pipenv'
-- 'pipenv sync'
-- 'python -m nltk.downloader stopwords punkt -d $HOME/nltk_data'
+- pip install pipenv
+- pipenv sync
+- travis_wait 30 python -m nltk.downloader stopwords -d $HOME/nltk_data
+- travis_wait 30 python -m nltk.downloader punkt -d $HOME/nltk_data
 script:
-- 'python -m pytest'
-before_install:
+- python -m pytest
 env:
     global:
         - NLTK_DATA="$HOME/nltk_data"
