@@ -3,6 +3,11 @@
 *.swo
 *.gz
 *.bin
+*.pickle
+*.pickel
+*.npy
+*.xlsx
+*.csv
 .venv/
 tmp/
 __pycache__/
@@ -14,13 +19,9 @@ data/
 .ipynb_checkpoints/
 .vscode/
 .spyproject/
+.coverage
 desktop.ini
 nohup.out
 clone/
-*.pickle
-*.pickel
-*.npy
-*.xlsx
-*.csv
 trashcan
 output
