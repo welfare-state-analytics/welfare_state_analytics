@@ -1,7 +1,7 @@
 import nltk
 
 fredrik_stopwords = [
-    '""', '``',
+    '""', '``', '"', 'örn',
     'aderton',
     'adertonde',
     'adjö',
