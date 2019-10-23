@@ -19,7 +19,6 @@ class CorpusVectorizer():
             n_documents = 0
             for meta, tokens in x.documents():
                 n_documents += 1
-                print("{} ({})".format(meta, n_documents))
                 yield ' '.join(tokens)
 
         #texts = (' '.join(tokens) for _, tokens in corpus.documents())
