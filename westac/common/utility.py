@@ -8,6 +8,9 @@ import os
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
+def flatten(l):
+    return [ x for ws in l for x in ws]
+
 def dehyphen(text: str):
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
