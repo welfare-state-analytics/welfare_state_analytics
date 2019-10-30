@@ -5,7 +5,6 @@ class DataFrameTextReader:
     def __init__(self, df, **column_filters):
 
         assert 'txt' in df.columns
-        assert 'year' in df.columns
 
         self.df = df
 
@@ -14,7 +13,13 @@ class DataFrameTextReader:
 
         for column, value in column_filters.items():
             assert column in self.df.columns, column + ' is missing'
-            self.df = self.df[self.df[column] == value]
+            if isinstance(value, tuple):
+                assert len(value) == 2
+                self.df = self.df[self.df[column].between(*value)]
+            elif isinstance(value, list):
+                self.df = self.df[self.df[column].isin(value)]
+            else:
+                self.df = self.df[self.df[column] == value]
 
         if len(self.df[self.df.txt.isna()]) > 0:
             print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
