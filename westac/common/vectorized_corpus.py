@@ -215,3 +215,13 @@ class VectorizedCorpus():
 
         return v_corpus
 
+    def stats(self):
+        stats_data = {
+            'bags': self.bag_term_matrix.shape[0],
+            'words': self.bag_term_matrix.shape[1],
+            'total': self.bag_term_matrix.sum(),
+            'top': ' '.join(self.n_top_tokens(10).keys())
+        }
+        for key in stats_data.keys():
+            logger.info('{}: {}'.format(key, stats_data[key]))
+        return stats_data
