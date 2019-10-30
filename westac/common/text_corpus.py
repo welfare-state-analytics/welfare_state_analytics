@@ -3,6 +3,8 @@ import string
 from . import utility
 from . import file_text_reader
 
+ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
+
 class CorpusTextStream():
 
     def __init__(self, reader):
@@ -55,7 +57,7 @@ class ProcessedCorpus(CorpusTokenStream):
         self.numerals = kwargs.get('numerals', True)
         self.stopwords = kwargs.get('stopwords', None)
         self.symbols = kwargs.get('symbols', True)
-        #self.ignore_chars = "'*+,-./0123456789:=\\^_abcdefghijklmnopqrstuvwxyz|~¢£¥§©®°±àáâãäåæçèéêëîïñôöøùûüÿœ—•›€™"
+        self.alphabetic_chars = set(ALPHABETIC_LOWER_CHARS + ALPHABETIC_LOWER_CHARS.upper())
         self.symbols_chars = set("'\\¢£¥§©®°±øæç•›€™")\
             .union(set('!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~'))
         self.symbols_translation = dict.fromkeys(map(ord, self.symbols_chars), None)
@@ -77,6 +79,7 @@ class ProcessedCorpus(CorpusTokenStream):
                 # tokens = (x for x in tokens if not all([ c in string.punctuation for c in x ]))
                 tokens = (x.translate(self.symbols_translation) for x in tokens)
                 tokens = (x for x in tokens if len(x) >= self.min_len)
+                tokens = (x for x in tokens if any(c in x for c in self.alphabetic_chars))
 
             if self.numerals is False:
                 tokens = (x for x in tokens if not x.isnumeric())
