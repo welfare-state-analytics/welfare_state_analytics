@@ -10,7 +10,12 @@ def generate_corpus(filename, output_folder, **kwargs):
         print('error: no such file: {}'.format(filename))
         return
 
-    dump_tag = os.path.basename(filename).split('.')[0]
+    dump_tag = '{}_{}_{}_{}'.format(
+        os.path.basename(filename).split('.')[0],
+        'L{}'.format(kwargs.get('minlen', 0)),
+        '-N' if kwargs.get('numerals', False) else '+N',
+        '-S' if kwargs.get('symbols', False) else '+S',
+    )
 
     if vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
         print('notice: removing existing result files...')
