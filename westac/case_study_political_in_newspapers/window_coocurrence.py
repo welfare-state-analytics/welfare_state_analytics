@@ -22,8 +22,7 @@ import scipy
 import os
 
 from westac.common import corpus_vectorizer
-from westac.common import utility
-from westac.common import text_corpus
+from westac.common import text_corpus, dataframe_text_reader
 
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
@@ -74,13 +73,13 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     """
     corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
-    vectorizer.fit_transform(corpus)
+    v_corpus = vectorizer.fit_transform(corpus)
 
-    term_term_matrix = np.dot(vectorizer.X.T, vectorizer.X)
+    term_term_matrix = np.dot(v_corpus.bag_term_matrix.T, v_corpus.bag_term_matrix)
     term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
 
     id2token = {
-        i: t for t,i in vectorizer.token2id.items()
+        i: t for t,i in v_corpus.token2id.items()
     }
 
     cdf = pd.DataFrame({
@@ -104,43 +103,41 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
 
     return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
-def compute_co_ocurrence_for_year(source_filename, newspapers, years, target_filename, min_count=1, **options):
+def compute_for_period_newpaper(df, period, newspaper, min_count, options):
+    reader = dataframe_text_reader.DataFrameTextReader(df, year=period, newspaper=newspaper)
+    df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
+    df_y['newspaper'] = newspaper
+    df_y['period'] = str(period)
+    return df_y
 
-    columns = ['newspaper', 'year', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
+def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
+
+    columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
     df   = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
     df_r = pd.DataFrame(columns=columns)
 
     n_documents = 0
     for newspaper in newspapers:
-        for year in years:
-            print("Processing: {} {}...".format(newspaper, year))
-            reader = dataframe_text_reader.DataFrameTextReader(df, year=year, newspaper=newspaper)
-            df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
-            df_y['newspaper'] = newspaper
-            df_y['year'] = year
+        for period in periods:
+            print("Processing: {} {}...".format(newspaper, period))
+            df_y = compute_for_period_newpaper(df, period, newspaper, min_count, options)
             df_r = df_r.append(df_y[columns], ignore_index=True)
             n_documents += len(df_y)
 
     print("Done! Processed {} rows...".format(n_documents))
 
-    # min_max_scaler = preprocessing.MinMaxScaler()
-    # # Scale a normalized data matrix to the [0, 1] range:
-    # df_r['value_n_t'] = min_max_scaler.fit_transform(df_r.value_n_t)
-    # df_r['value_n_d'] = min_max_scaler.fit_transform(df_r.value_n_d)
-
     # Scale a normalized data matrix to the [0, 1] range:
     df_r['value_n_t'] = df_r.value_n_t / df_r.value_n_t.max()
     df_r['value_n_d'] = df_r.value_n_d / df_r.value_n_d.max()
 
-    if target_filename.endswith(".xlsx"):
-        df_r.to_excel(target_filename, index=False, )
+    extension = target_filename.split(".")[-1]
+    if extension == ".xlsx":
+        df_r.to_excel(target_filename, index=False)
+    elif extension in ["zip", "gzip"]:
+        df_r.to_csv(target_filename, sep='\t', compression=extension, index=False, header=True)
     else:
-        df_r.to_csv(target_filename, sep='\t', index=False, )
+        df_r.to_csv(target_filename, sep='\t', index=False, header=True)
 
-# if __name__ == "__main__":
 
-#     stopwords = set(nltk.corpus.stopwords.words('swedish')) + { "politisk", "politiska", "politiskt" }
-#     options   = dict(to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, filter_stopwords=False, stopwords=stopwords)
 
-#     compute_co_ocurrence_for_year('./data/year+newspaper+text.txt', [1957], 'test_1957.xlsx', min_count=1, options=options)
