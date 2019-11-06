@@ -105,6 +105,9 @@ class VectorizedCorpus():
     def _matrix_filename(tag, folder):
         return os.path.join(folder, "{}_vector_data.npy".format(tag))
 
+    def get_word_vector(self, word):
+        return self.bag_term_matrix[:, self.token2id[word]]
+
     # FIXME: Moved to service
     def collapse_by_category(self, column, X=None, df=None):
         """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
@@ -170,9 +173,15 @@ class VectorizedCorpus():
         return v_corpus
 
     #@jit
-    def normalize(self, axis=1, norm='l1'):
+    def normalize(self, axis=1, norm='l1', keep_magnitude=False):
 
         normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=axis, norm=norm)
+
+        if keep_magnitude is True:
+            X0 = self.bag_term_matrix[0]
+            Y0 = normalized_bag_term_matrix[0]
+            K  = X0 / Y0
+            normalized_bag_term_matrix = normalized_bag_term_matrix * K
 
         v_corpus = VectorizedCorpus(normalized_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
 
@@ -218,10 +227,16 @@ class VectorizedCorpus():
     def stats(self):
         stats_data = {
             'bags': self.bag_term_matrix.shape[0],
-            'words': self.bag_term_matrix.shape[1],
-            'total': self.bag_term_matrix.sum(),
-            'top': ' '.join(self.n_top_tokens(10).keys())
+            'vocabulay_size': self.bag_term_matrix.shape[1],
+            'sum_over_bags': self.bag_term_matrix.sum(),
+            '10_top_tokens': ' '.join(self.n_top_tokens(10).keys())
         }
         for key in stats_data.keys():
-            logger.info('{}: {}'.format(key, stats_data[key]))
+            logger.info('   {}: {}'.format(key, stats_data[key]))
         return stats_data
+
+    def to_n_top_dataframe(self, n_top):
+        v_n_corpus = self.slice_by_n_top(n_top)
+        data = v_n_corpus.bag_term_matrix.T
+        df = pd.DataFrame(data=data, index=[v_n_corpus.id2token[i] for i in range(0,n_top)], columns=list(range(1945, 1990)))
+        return df
