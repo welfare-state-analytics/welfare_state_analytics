@@ -11,6 +11,7 @@ pylint = "*"
 pytest = "<=5.0.1"
 rope = "*"
 pytest-cov = "*"
+invoke = "*"
 
 [packages]
 beakerx = "*"
@@ -46,6 +47,10 @@ typing = "*"
 wordcloud = "*"
 xlrd = "*"
 yapf = "*"
+pyemd = "*"
+click = "*"
+joblib = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.7"
