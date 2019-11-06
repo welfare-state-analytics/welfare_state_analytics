@@ -25,3 +25,6 @@ nohup.out
 clone/
 trashcan
 output
+log
+lint-analysis
+clone
