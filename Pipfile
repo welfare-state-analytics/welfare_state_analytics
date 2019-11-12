@@ -51,6 +51,9 @@ pyemd = "*"
 click = "*"
 joblib = "*"
 tqdm = "*"
+pandas-bokeh = "*"
+chartify = "*"
+seaborn = "*"
 
 [requires]
 python_version = "3.7"
