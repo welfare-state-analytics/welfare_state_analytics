@@ -201,6 +201,6 @@ class Test_DataFrameVectorize(unittest.TestCase):
             pass
         n_tokens = corpus.n_tokens
         n_raw_tokens = corpus.n_raw_tokens
-        self.assertEqual({'0': 12, '1': 7}, n_tokens)
+        self.assertEqual({'0': 9, '1': 7}, n_tokens)
         self.assertEqual({'0': 12, '1': 7}, n_raw_tokens)
 

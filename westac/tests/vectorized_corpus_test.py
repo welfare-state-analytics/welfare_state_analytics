@@ -93,6 +93,23 @@ class Test_VectorizedCorpus(unittest.TestCase):
         ]) / (np.array([[15,19]]).T)
         self.assertTrue((E == n_corpus.bag_term_matrix).all())
 
+    def test_normalize_with_keep_magnitude(self):
+        bag_term_matrix = np.array([
+            [4, 3, 7, 1],
+            [6, 7, 4, 2]
+        ])
+        token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
+        df = pd.DataFrame({'year': [ 2013,2014 ]})
+        v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
+        n_corpus = v_corpus.normalize(keep_magnitude=True)
+
+        factor = 15.0 / 19.0
+        E = np.array([
+            [4.0, 3.0, 7.0, 1.0],
+            [6.0*factor, 7.0*factor, 4.0*factor, 2.0*factor]
+        ])
+        self.assertTrue((E == n_corpus.bag_term_matrix).all())
+
     def create_slice_by_n_count_test_corpus(self):
         bag_term_matrix = np.array([
             [1, 1, 4, 1],
@@ -149,6 +166,39 @@ class Test_VectorizedCorpus(unittest.TestCase):
         self.assertEqual(v_corpus.token2id, t_corpus.token2id)
         self.assertEqual(v_corpus.word_counts, t_corpus.word_counts)
         self.assertTrue((v_corpus.bag_term_matrix == t_corpus.bag_term_matrix).all())
+
+    def test_slice_by_n_top_when_all_tokens_above_n_count_returns_same_corpus(self):
+
+        v_corpus = self.create_slice_by_n_count_test_corpus()
+
+        # Act
+        t_corpus = v_corpus.slice_by_n_top(4)
+
+        # Assert
+        self.assertEqual(v_corpus.token2id, t_corpus.token2id)
+        self.assertEqual(v_corpus.word_counts, t_corpus.word_counts)
+        self.assertTrue((v_corpus.bag_term_matrix == t_corpus.bag_term_matrix).all())
+
+    def test_slice_by_n_top_when_n_top_less_than_n_tokens_returns_corpus_with_top_n_counts(self):
+
+        v_corpus = self.create_slice_by_n_count_test_corpus()
+
+        # Act
+        t_corpus = v_corpus.slice_by_n_top(2)
+
+        # Assert
+        expected_bag_term_matrix = np.array([
+            [1, 4],
+            [2, 3],
+            [3, 2],
+            [4, 1],
+            [0, 1]
+        ])
+
+        self.assertEqual({'b': 0, 'c': 1 }, t_corpus.token2id)
+        self.assertEqual({'b': 10, 'c': 11 }, t_corpus.word_counts)
+        self.assertTrue((expected_bag_term_matrix == t_corpus.bag_term_matrix).all())
+
 
     def test_id2token_is_reversed_token2id(self):
         v_corpus = self.create_vectorized_corpus()
