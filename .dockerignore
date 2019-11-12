@@ -1,0 +1,16 @@
+.vscode
+*.log
+
+.ipynb_checkpoints
+**/.pytest_cache
+
+**/deprecated
+**/.git
+**/node_modules
+
+**/src
+**/test
+**/westac
+**/archive
+**/data
+**/output
