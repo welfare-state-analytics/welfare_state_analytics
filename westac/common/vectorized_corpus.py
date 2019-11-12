@@ -240,3 +240,43 @@ class VectorizedCorpus():
         data = v_n_corpus.bag_term_matrix.T
         df = pd.DataFrame(data=data, index=[v_n_corpus.id2token[i] for i in range(0,n_top)], columns=list(range(1945, 1990)))
         return df
+
+def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
+
+    v_corpus = VectorizedCorpus\
+        .load(tag, folder=folder)\
+        .group_by_year()
+
+    if n_count is not None:
+        v_corpus = v_corpus.slice_by_n_count(n_count)
+
+    if n_top is not None:
+        v_corpus = v_corpus.slice_by_n_top(n_top)
+
+    if axis is not None:
+        v_corpus = v_corpus.normalize(axis=axis, keep_magnitude=keep_magnitude)
+
+    return v_corpus
+
+def load_cached_normalized_vectorized_corpus(tag, folder, n_count=10000, n_top=100000, keep_magnitude=True):
+
+    year_cache_tag = "cached_year_{}_{}".format(tag, "km" if keep_magnitude else "")
+
+    v_corpus = None
+
+    if not VectorizedCorpus.dump_exists(year_cache_tag, folder=folder):
+        logger.info("Caching corpus grouped by year...")
+        v_corpus = VectorizedCorpus\
+            .load(tag, folder=folder)\
+            .group_by_year()\
+            .normalize(axis=1, keep_magnitude=keep_magnitude)\
+            .dump(year_cache_tag, folder)
+
+    if v_corpus is None:
+        v_corpus = VectorizedCorpus\
+            .load(year_cache_tag, folder=folder)\
+            .slice_by_n_count(n_count)\
+            .slice_by_n_top(n_top)
+
+    return v_corpus
+
