@@ -8,6 +8,7 @@
 *.npy
 *.xlsx
 *.csv
+*.log
 .venv/
 tmp/
 __pycache__/
