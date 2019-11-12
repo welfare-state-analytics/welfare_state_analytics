@@ -2,13 +2,15 @@ import nltk.tokenize
 import string
 from . import utility
 from . import file_text_reader
+from tqdm import tqdm
 
 ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
 
 class CorpusTextStream():
 
-    def __init__(self, reader):
+    def __init__(self, reader, use_tqdm=True):
         self.reader = reader
+        self.use_tqdm = use_tqdm
 
     def get_metadata(self):
 
@@ -21,13 +23,14 @@ class CorpusTextStream():
 
     def documents(self):
 
-        for meta, content in self.texts():
+        docs = tqdm(self.texts()) if self.use_tqdm else self.texts()
+        for meta, content in docs:
             yield meta, content
 
 class CorpusTokenStream(CorpusTextStream):
 
-    def __init__(self, reader, tokenizer=None, isalnum=True):
-        super().__init__(reader)
+    def __init__(self, reader, tokenizer=None, isalnum=True, use_tqdm=True):
+        super().__init__(reader, use_tqdm=use_tqdm)
         self.tokenizer = tokenizer or (lambda text: nltk.tokenize.word_tokenize(text, language='swedish'))
         self.n_raw_tokens =  { }
         self.n_tokens =  { }
@@ -48,7 +51,12 @@ class ProcessedCorpus(CorpusTokenStream):
 
     def __init__(self, reader, **kwargs):
 
-        super().__init__(reader, tokenizer=kwargs.get('tokenizer', None), isalnum=kwargs.get('isalnum', True))
+        super().__init__(
+            reader,
+            tokenizer=kwargs.get('tokenizer', None),
+            isalnum=kwargs.get('isalnum', True),
+            use_tqdm=kwargs.get('use_tqdm', True)
+        )
 
         self.to_lower = kwargs.get('to_lower', False)
         self.deacc = kwargs.get('deacc', False)
