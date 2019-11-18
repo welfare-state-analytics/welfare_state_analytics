@@ -187,11 +187,8 @@ def compile_most_deviating_words(df, n_count=500):
     return xf
 
 
-def plot_metric_histogram(x_corpus, df_gof, metric='l2_norm', bins=100):
+def plot_metric_histogram(df_gof, metric='l2_norm', bins=100):
 
-    token_column = metric + '_token'
-
-    xs  = np.arange(df_gof[metric].min(), df_gof[metric].max(), 0.1)
     p   = bokeh.plotting.figure(plot_width=300, plot_height=300)
 
     hist, edges = np.histogram(df_gof[metric].fillna(0), bins=bins)
@@ -201,16 +198,16 @@ def plot_metric_histogram(x_corpus, df_gof, metric='l2_norm', bins=100):
 
     return p
 
-def plot_metrics(x_corpus, df_gof, bins=100):
+def plot_metrics(df_gof, bins=100):
     gp = bokeh.layouts.gridplot([
         [
-            plot_metric_histogram(x_corpus, df_gof, metric='l2_norm', bins=bins),
-            plot_metric_histogram(x_corpus, df_gof, metric='earth_mover', bins=bins),
-            plot_metric_histogram(x_corpus, df_gof, metric='entropy', bins=bins),
+            plot_metric_histogram(df_gof, metric='l2_norm', bins=bins),
+            plot_metric_histogram(df_gof, metric='earth_mover', bins=bins),
+            plot_metric_histogram(df_gof, metric='entropy', bins=bins),
         ], [
-            plot_metric_histogram(x_corpus, df_gof, metric='kld', bins=bins),
-            plot_metric_histogram(x_corpus, df_gof, metric='slope', bins=bins),
-            plot_metric_histogram(x_corpus, df_gof, metric='chi2_stats', bins=bins)
+            plot_metric_histogram(df_gof, metric='kld', bins=bins),
+            plot_metric_histogram(df_gof, metric='slope', bins=bins),
+            plot_metric_histogram(df_gof, metric='chi2_stats', bins=bins)
         ]
     ])
 
@@ -255,7 +252,7 @@ def plot_slopes(x_corpus, most_deviating, metric):
             line_policy='next',
             tooltips=[('Token', '@token'), ('Slope', '@k{1.1111}')] #, ('P-value', '@p{1.1111}')]
         ))
-    
+
     bokeh.plotting.show(p)
 
     #return p
