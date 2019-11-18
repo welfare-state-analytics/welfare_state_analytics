@@ -10,6 +10,8 @@ import time
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
+def noop(x=None): pass
+
 def setup_logger(logger=None, filename=None, level=logging.DEBUG):
     '''
     Setup logging of import messages to both file and console
