@@ -80,5 +80,24 @@ def rolling_average_smoother(key, window_size):
         return xs, ys
     return smoother
 
+def boxplot_statistics(values):
 
+    if len(values) == 0:
+        return 0, 0, 0, 0, 0, np.empty(shape=(0,0))
 
+    q1, q2, q3 = np.percentile(values, q=(25, 50, 75))
+
+    # In descriptive statistics, the interquartile range (iqr), also called the midspread or middle 50%,
+    # or technically H-spread, is a measure of statistical dispersion, being equal to the difference
+    # between 75th and 25th percentiles (https://en.wikipedia.org/wiki/Interquartile_range)
+
+    iqr = q3 - q1
+
+    upper_whisker = values[values <= q3 + 1.5 * iqr].max()
+    lower_whisker = values[values >= q1 - 1.5 * iqr].min()
+
+    outliers = values[(values > upper_whisker) | (values < lower_whisker)]
+
+    m = values.mean()
+
+    return (q1, q2, q3), iqr, (upper_whisker, lower_whisker), outliers
