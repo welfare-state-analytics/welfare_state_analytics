@@ -1,6 +1,7 @@
 import types
 import sklearn
 import pandas as pd
+import sklearn.cluster
 
 def compute(x_corpus, n_clusters=8, indices=None):
 
@@ -15,8 +16,10 @@ def compute(x_corpus, n_clusters=8, indices=None):
         'token': list(token2cluster.keys()),
         'cluster': list(token2cluster.values())
     })
+
     return types.SimpleNamespace(
         result=clusters,
         token2cluster=token2cluster,
-        token_clusters=df_clusters
+        token_clusters=df_clusters,
+        centroids=clusters.cluster_centers_
     )
