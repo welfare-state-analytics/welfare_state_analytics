@@ -3,19 +3,33 @@ import ipywidgets
 import bokeh
 from IPython.display import display
 
-def display_gui(
-    x_corpus,
-    compute_clusters,
-    plot_clusters,
-    plot_cluster
- ):
+import westac.notebooks_gui.cluster_plot as cluster_plot
 
-    clusters = types.SimpleNamespace(
-        data=None,
-        df=None
+import westac.cluster_analysis.cluster_k_means as k_means
+import westac.cluster_analysis.cluster_hca as hca
+
+CLUSTER_METHODS = {
+    'k_means': types.SimpleNamespace(
+        key='k_means',
+        title='K-means',
+        max_clusters=200,
+        algorithm=k_means.compute
+    ),
+    'hca': types.SimpleNamespace(
+        key='hca',
+        title='HCA',
+        max_clusters=None,
+        algorithm=hca.compute,
+        threshold=(0.0,1.0)
     )
+}
+
+def display_gui(x_corpus):
+
+    data = None
 
     n_clusters = ipywidgets.IntSlider(description='Cluster count', min=1, max=200, step=1, value=20,  bar_style='info')
+    method = ipywidgets.Dropdown(description='Method', values=[('k_means', 'K-means'), ('hca', 'HCA')], value='k_means')
     progress = ipywidgets.IntProgress(description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='98%'))
     compute = ipywidgets.Button(description='Compute', layout=ipywidgets.Layout(width='100px'))
 
@@ -33,10 +47,10 @@ def display_gui(
         with output_cluster:
 
             #display(clusters.df[clusters.df.cluster==n_cluster.value])
-            p = plot_cluster(x_corpus, clusters.token_clusters, n_cluster.value, tick=tick)
+            p = cluster_plot.plot_cluster(x_corpus, data.token_clusters, n_cluster.value, tick=tick)
             tick(1, max=2)
             bokeh.plotting.show(p)
-            # cluster_boxplot(n_corpus, clusters, 99)
+            cluster_plot.cluster_boxplot(x_corpus, data.token_clusters, n_cluster.value,)
             tick(0)
 
     def on_goto(b):
@@ -65,8 +79,8 @@ def display_gui(
 
         with output_clusters:
             tick(1, max=10)
-            clusters = compute_clusters(x_corpus, n_clusters.value)
-            p = plot_clusters(clusters.token_clusters, tick)
+            clusters = CLUSTER_METHODS[method.value](x_corpus, n_clusters.value)
+            p = cluster_plot.plot_clusters(clusters.token_clusters, tick)
             bokeh.plotting.show(p)
             tick(0)
 
