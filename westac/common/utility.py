@@ -7,6 +7,7 @@ import typing
 import os
 import logging
 import time
+import numpy as np
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
@@ -80,3 +81,29 @@ def read_file(path, filename):
                 content = file.read()
     content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
     return content
+class IntStepper():
+
+    def __init__(self, min_value, max_value, step=1, callback=None, value=None, data=None):
+        self.min = min_value
+        self.max = max_value
+        self.step = step
+        self.value = value or min_value
+        self.data = data or {}
+        self.callback = callback
+
+    def trigger(self):
+        if callable(self.callback):
+            self.callback(self.value, self.data)
+        return self.value
+
+    def next(self):
+        self.value = self.min + (self.value - self.min + self.step) % (self.max - self.min)
+        return self.trigger()
+
+    def previous(self):
+        self.value = self.min + (self.value - self.min - self.step) % (self.max - self.min)
+        return self.trigger()
+
+    def reset(self):
+        self.value = self.min
+        return self.trigger()
