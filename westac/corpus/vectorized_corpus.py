@@ -8,9 +8,7 @@ import numpy as np
 import pandas as pd
 import sklearn.preprocessing
 
-from numba import jit
 from heapq import nlargest
-import logging
 
 # logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
 
@@ -240,6 +238,11 @@ class VectorizedCorpus():
         data = v_n_corpus.bag_term_matrix.T
         df = pd.DataFrame(data=data, index=[v_n_corpus.id2token[i] for i in range(0,n_top)], columns=list(range(1945, 1990)))
         return df
+
+    def year_range(self):
+        if 'year' in self.document_index.columns:
+            return (self.document_index.year.min(), self.document_index.year.max())
+        return (None, None)
 
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 

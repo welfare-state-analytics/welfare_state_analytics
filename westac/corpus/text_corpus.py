@@ -1,7 +1,5 @@
 import nltk.tokenize
 import string
-from . import utility
-from . import file_text_reader
 from tqdm import tqdm
 
 ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
