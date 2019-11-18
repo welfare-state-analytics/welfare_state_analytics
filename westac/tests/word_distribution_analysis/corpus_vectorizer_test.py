@@ -1,12 +1,8 @@
-import os
 import unittest
 import types
-import pandas as pd
-import numpy as np
 
-from westac.common import corpus_vectorizer
-from westac.common import text_corpus
-from westac.common import vectorized_corpus
+from westac.corpus import corpus_vectorizer
+from westac.corpus import text_corpus
 
 from westac.tests.utils  import create_text_files_reader
 

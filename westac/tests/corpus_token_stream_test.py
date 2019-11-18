@@ -1,6 +1,6 @@
 import unittest
 
-import westac.common.text_corpus as text_corpus
+import westac.corpus.text_corpus as text_corpus
 from westac.tests.utils import create_text_files_reader
 
 class Test_CorpusTokenStream(unittest.TestCase):

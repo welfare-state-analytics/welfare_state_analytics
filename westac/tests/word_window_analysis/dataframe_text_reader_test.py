@@ -4,9 +4,9 @@ import numpy as np
 import scipy
 import types
 
-from westac.common import corpus_vectorizer
-from westac.common import text_corpus
-from westac.common import dataframe_text_reader
+from westac.corpus import corpus_vectorizer
+from westac.corpus import text_corpus
+from westac.corpus import dataframe_text_reader
 
 class Test_DataFrameTextReader(unittest.TestCase):
 

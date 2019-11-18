@@ -3,10 +3,7 @@ import unittest
 from westac.common import utility
 import westac.common.goodness_of_fit as gof
 
-import scipy
-import scipy.stats
 import numpy as np
-import pandas as pd
 import statsmodels.api as sm
 
 logger = utility.setup_logger()
@@ -21,7 +18,7 @@ class test_goodness_of_fit(unittest.TestCase):
         # Add intercept (i.e. constant k when x = 0)
         xs =  sm.add_constant([1,2,3,4])
         ys = [1,2,3,4]
-        m, k, p, (x1, x2), (y1, y2) = gof.fit_ordinary_least_square(ys, xs)
+        m, k, p, _, _ = gof.fit_ordinary_least_square(ys, xs)
         self.assertAlmostEquals(0.0, m)
         self.assertAlmostEquals(1.0, k)
 
