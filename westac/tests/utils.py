@@ -1,6 +1,5 @@
 import os
-from westac.common import utility
-from westac.common import file_text_reader
+from westac.corpus import file_text_reader
 
 TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'
 
