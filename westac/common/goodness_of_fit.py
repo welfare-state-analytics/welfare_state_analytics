@@ -2,9 +2,13 @@
 import scipy
 import numpy as np
 import math
-
+import warnings
 import statsmodels.api as sm
+import itertools
+import collections
+import numpy as np
 import pandas as pd
+import bokeh
 
 from numpy.polynomial.polynomial import Polynomial as polyfit
 
@@ -115,9 +119,8 @@ def kullback_leibler_divergence(p, q):
 
 def kullback_leibler_divergence_to_uniform(p):
     q = p.mean()
-    if q == 0:
-        return np.nan
-    kld = np.sum(p * np.log(p / q))
+    e = 0.00001 # avoid div by zero
+    kld = np.sum((p + e) * np.log((p + e) / (q + e)))
     return kld
 
 def compute_goddness_of_fits_to_uniform(x_corpus):
@@ -182,3 +185,77 @@ def compile_most_deviating_words(df, n_count=500):
         .join(get_most_deviating_words(df, 'entropy', n_count))
 
     return xf
+
+
+def plot_metric_histogram(x_corpus, df_gof, metric='l2_norm', bins=100):
+
+    token_column = metric + '_token'
+
+    xs  = np.arange(df_gof[metric].min(), df_gof[metric].max(), 0.1)
+    p   = bokeh.plotting.figure(plot_width=300, plot_height=300)
+
+    hist, edges = np.histogram(df_gof[metric].fillna(0), bins=bins)
+    p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:], alpha=0.4)
+
+    p.title.text = metric.upper()
+
+    return p
+
+def plot_metrics(x_corpus, df_gof, bins=100):
+    gp = bokeh.layouts.gridplot([
+        [
+            plot_metric_histogram(x_corpus, df_gof, metric='l2_norm', bins=bins),
+            plot_metric_histogram(x_corpus, df_gof, metric='earth_mover', bins=bins),
+            plot_metric_histogram(x_corpus, df_gof, metric='entropy', bins=bins),
+        ], [
+            plot_metric_histogram(x_corpus, df_gof, metric='kld', bins=bins),
+            plot_metric_histogram(x_corpus, df_gof, metric='slope', bins=bins),
+            plot_metric_histogram(x_corpus, df_gof, metric='chi2_stats', bins=bins)
+        ]
+    ])
+
+    bokeh.plotting.show(gp)
+
+
+def plot_slopes(x_corpus, most_deviating, metric):
+
+    def generate_slopes(x_corpus, most_deviating, metric):
+
+        min_year = x_corpus.document_index.year.min()
+        max_year = x_corpus.document_index.year.max()
+        xs = np.arange(min_year, max_year + 1, 1)
+        token_ids = [  x_corpus.token2id[token] for token in most_deviating[metric + '_token'] ]
+        data = collections.defaultdict(list)
+        # plyfit of all columns: kx_m = np.polyfit(x=xs, y=x_corpus.data[:,token_ids], deg=1)
+        for token_id in token_ids:
+            ys = x_corpus.data[:,token_id]
+            data["token_id"].append(token_id)
+            data["token"].append(x_corpus.id2token[token_id])
+            _, k, p, lx, ly = fit_ordinary_least_square(ys, xs)
+            data['k'].append(k)
+            data['p'].append(p)
+            data['xs'].append(np.array(lx))
+            data['ys'].append(np.array(ly))
+        return data
+
+    data = generate_slopes(x_corpus, most_deviating, metric)
+
+    source = bokeh.models.ColumnDataSource(data)
+
+    palette = itertools.cycle(bokeh.palettes.Category20[20])
+
+    color_mapper = bokeh.models.LinearColorMapper(palette='Magma256', low=min(data['k']), high=max(data['k']))
+
+    p = bokeh.plotting.figure(plot_height=300, plot_width=300, tools='pan,wheel_zoom,box_zoom,reset')
+    p.multi_line(xs='xs', ys='ys', line_width=1, line_color={'field': 'k', 'transform': color_mapper}, line_alpha=0.6,hover_line_alpha=1.0, source=source) #, legend="token"
+
+    p.add_tools(
+        bokeh.models.HoverTool(
+            show_arrow=False,
+            line_policy='next',
+            tooltips=[('Token', '@token'), ('Slope', '@k{1.1111}')] #, ('P-value', '@p{1.1111}')]
+        ))
+    
+    bokeh.plotting.show(p)
+
+    #return p
