@@ -19,11 +19,10 @@
 # %autoreload 2
 
 import unittest
-import numpy as np
 import pandas as pd
 
-from westac.common import corpus_vectorizer
-from westac.common import text_corpus
+from westac.corpus import corpus_vectorizer
+from westac.corpus import text_corpus
 from westac.tests.utils  import create_text_files_reader
 
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
