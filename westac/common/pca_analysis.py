@@ -33,3 +33,13 @@ def plot(X_pca, clusters=None):
     bokeh.plotting.show(p)
 
     return p
+
+# def plot_clusters(x_corpus, metric, df_most_deviating):
+
+#     tokens  = df_most_deviating.head(100)[metric+'_token'].tolist()
+#     indices = [ x_corpus.token2id[w] for w in tokens ]
+#     data    = x_corpus.data[:,indices].T
+
+#     x_PCA   = compute(data)
+#     p       = plot(x_PCA, clusters=df_clusters_at.label.values)
+
