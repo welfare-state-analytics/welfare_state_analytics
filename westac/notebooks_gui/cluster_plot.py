@@ -1,51 +1,71 @@
-
+import itertools
 import numpy as np
 import pandas as pd
 import holoviews as hv
 import bokeh
 import westac.common.curve_fit as cf
 import westac.common.goodness_of_fit as gof
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram
+from bokeh.models import Legend, LegendItem
 
-def noop(x=None, p=None, max=None): pass
+def noop(x=None, p=None, max=None): pass  # pylint: disable=redefined-builtin,unused-argument
 
-def cluster_plot(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
+def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     # palette = itertools.cycle(bokeh.palettes.Category20[20])
     assert n_cluster <= token_clusters.cluster.max()
 
-    xs = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
+    xs                 = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
+    token_ids          = list(token_clusters[token_clusters.cluster==n_cluster].index)
+    word_distributions = x_corpus.data[:,token_ids]
 
-    token_ids = list(token_clusters[token_clusters.cluster==n_cluster].index)
     tick(1,max=len(token_ids))
 
-    p = bokeh.plotting.figure(plot_width=kwargs.get('plot_width', 600), plot_height=kwargs.get('plot_height', 400))
-    p.xaxis.axis_label = 'Year'
-    p.yaxis.axis_label = 'Frequency'
+    title=kwargs.get('title', 'Cluster #{}'.format(n_cluster))
 
-    Y = x_corpus.data[:,token_ids]
-    xsr = np.repeat(xs, Y.shape[1])
-    ysr = Y.ravel()
-    p.scatter(xsr, ysr, size=3, color='green', alpha=0.1)
+    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 600), plot_height=kwargs.get('plot_height', 600))
+
+    p.yaxis.axis_label = 'Frequency'
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+
+    xsr = np.repeat(xs, word_distributions.shape[1])
+    ysr = word_distributions.ravel()
+
+    p.scatter(xsr, ysr, size=3, color='green', alpha=0.1, marker='square', legend_label='actual')
+    p.line(xsr, ysr, line_width=1.0, color='green', alpha=0.1, legend_label='actual')
 
     tick(1)
-    _, k, _, lx, ly = gof.fit_ordinary_least_square_ravel(x_corpus.data[:,token_ids], xs)
-    p.line(lx, ly, line_width=0.6, color='green', alpha=0.8)
+    _, _, _, lx, ly = gof.fit_ordinary_least_square_ravel(word_distributions, xs)
+    p.line(lx, ly, line_width=0.6, color='black', alpha=0.8, legend_label='trend')
 
-    xsp, ysp = cf.fit_curve_ravel(cf.polynomial3, xs, x_corpus.data[:,token_ids])
-    p.line(xsp, ysp, line_width=1.0, color='blue', alpha=1)
+    xsp, ysp = cf.fit_curve_ravel(cf.polynomial3, xs, word_distributions)
+    p.line(xsp, ysp, line_width=0.5, color='blue', alpha=0.5, legend_label='poly3')
 
     if hasattr(token_clusters, 'centroids'):
-        ys_cluster_center = token_clusters.centroids[n_cluster, :]
-        p.line(xs, ys_cluster_center, line_width=2.0, color='black')
 
-    xs_spline, ys_spline = cf.pchip_spline(xs, ys_cluster_center)
-    p.line(xs_spline, ys_spline, line_width=2.0, color='green')
+        ys_cluster_center = token_clusters.centroids[n_cluster, :]
+        p.line(xs, ys_cluster_center, line_width=2.0, color='black', legend_label='centroid')
+
+        xs_spline, ys_spline = cf.pchip_spline(xs, ys_cluster_center)
+        p.line(xs_spline, ys_spline, line_width=2.0, color='red', legend_label='centroid (pchip)')
+
+    else:
+        ys_mean = word_distributions.mean(axis=1)
+        ys_median = np.median(word_distributions, axis=1)
+
+        xs_spline, ys_spline = cf.pchip_spline(xs, ys_mean)
+        p.line(xs_spline, ys_spline, line_width=2.0, color='red', legend_label='mean (pchip)')
+
+        xs_spline, ys_spline = cf.pchip_spline(xs, ys_median)
+        p.line(xs_spline, ys_spline, line_width=2.0, color='blue', legend_label='median (pchip)')
 
     tick(2)
 
     return p
 
-def cluster_boxplot(x_corpus, token_clusters, n_cluster):
+def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster):
 
     xs = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
 
@@ -69,29 +89,134 @@ def cluster_boxplot(x_corpus, token_clusters, n_cluster):
     }
     return violin.opts(**violin_opts)
 
-def clusters_plot(token_clusters, tick=noop):
+def plot_clusters_count(token_clusters):
 
-    tick()
-    n_clusters = len(token_clusters.cluster.unique())
+    token_counts = token_clusters.groupby('cluster').count()
 
-    cluster_hist, edges = np.histogram(token_clusters['cluster'], bins=range(0, n_clusters))
-    tick()
+    clusters = [ str(x) for x in token_counts.index ]
+    counts = token_counts.token
 
-    # Put the information in a dataframe
-    df = pd.DataFrame({'cluster': cluster_hist,  'left': edges[:-1],  'right': edges[1:]})
-    tick()
+    p = bokeh.plotting.figure(y_range=clusters, plot_width=500, plot_height=600, title="Cluster token counts")
 
-    p = bokeh.plotting.figure(plot_height = 600, plot_width = 600,  title = 'Histogram of clusters', x_axis_label = 'Cluster',  y_axis_label = 'Number of tokens')
-    tick()
+    source = bokeh.models.ColumnDataSource(data=dict(clusters=clusters, counts=counts))
 
-    p.quad(bottom=0, top=df['cluster'],  left=df['left'], right=df['right'],  fill_color='green', line_color='black')
-    tick()
+    p.hbar(y='clusters', right='counts', height=0.75, source=source) #, fill_color=factor_cmap('clusters', palette=Spectral6, factors=fruits))
+
+    p.yaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+    p.axis.minor_tick_line_color = None
+    p.x_range.start = 0
 
     return p
 
-# def display_cluster(x_corpus, token_clusters, n_cluster, output_type='table'):
+def plot_clusters_mean(x_corpus, clusters_mean, tick=noop):
 
-#     if output_type == 'table':
-#         display(token_clusters[token_clusters.cluster==n_cluster])
+    colors = itertools.cycle(bokeh.palettes.Category20[20])
 
-#        # df_clusters.to_csv('k_means_clusters.txt', sep='\t')
+    xs_range = x_corpus.year_range()
+    xs = np.arange(xs_range[0], xs_range[1] + 1, 1)
+
+    p = bokeh.plotting.figure(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)")
+
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+    p.axis.minor_tick_line_color = None
+    p.y_range.start = 0
+
+    n_clusters = clusters_mean.shape[1]
+
+    tick(x=0, max=n_clusters)
+
+    ml_xs = []
+    ml_ys = []
+    ml_colors = []
+    ml_legends = []
+    for n_cluster in range(0, n_clusters):
+
+        ml_colors.append(next(colors))
+
+        ys = clusters_mean[:, n_cluster]
+
+        xs_spline, ys_spline  = cf.pchip_spline(xs, ys)
+
+        ml_xs.append(xs_spline)
+        ml_ys.append(ys_spline)
+
+        ml_legends.append('cluster {}'.format(n_cluster))
+
+    source = bokeh.models.ColumnDataSource(dict(xs=ml_xs, ys=ml_ys, color=ml_colors, legend=ml_legends))
+
+    r = p.multi_line(xs='xs', ys='ys', line_color='color', line_width=5, source=source, legend_field='legend')
+
+    # legend = Legend(items=[
+    #     LegendItem(label= 'cluster #{}'.format(i), renderers=[r], index=i) for i in range(0, n_clusters)
+    # ])
+    # p.add_layout(legend)
+    p.legend.location = "top_left"
+    p.legend.click_policy="mute"
+
+    # for n_cluster in range(0, n_clusters):
+    #     legend = 'cluster #{}'.format(n_cluster)
+    #     color = next(colors)
+    #     ys = clusters_mean[:, n_cluster]
+
+    #     if n_clusters < 10:
+    #         p.scatter(xs, ys, size=4, color=color, alpha=1.0, marker='square', legend_label=legend)
+
+    #     #p.line(xs, ys, line_width=2, color=color, legend_label=legend)
+
+    #     xs_spline, ys_spline  = cf.pchip_spline(xs, ys)
+    #     p.line(xs_spline, ys_spline, line_width=2.0, color=color, legend_label=legend)
+
+    #     tick()
+
+    return p
+
+def plot_clusters(token_clusters):
+
+    p = plot_clusters_count(token_clusters)
+
+    return p
+
+def plot_dendogram(linkage_matrix, labels):
+
+    plt.figure(figsize=(16, 40))
+
+    dendrogram(
+        linkage_matrix,
+        truncate_mode="level",
+        color_threshold = 1.8,
+        show_leaf_counts = True,
+        no_labels = False,
+        orientation="right",
+        labels = labels,
+        leaf_rotation = 0,  # rotates the x axis labels
+        leaf_font_size = 12,  # font size for the x axis labels
+    )
+    plt.show()
+
+# from ipywidgets import interact, interactive, fixed, interact_manual
+# import ipywidgets as widgets
+
+# def plot_seaborn_clustermap(x_corpus, token_clusters, n_cluster=0):
+
+#     token_ids          = list(token_clusters[token_clusters.cluster==n_cluster].index)
+#     tokens             = [ x_corpus.id2token[token_id] for token_id in token_ids ]
+#     word_distributions = x_corpus.data[:,token_ids].T
+#     xs                 = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
+#     df                 = pd.DataFrame(data=word_distributions[:,:], index=tokens, columns=[str(x) for x in xs])
+
+#     sns.clustermap(df, metric="correlation", method="single", cmap="Blues", standard_scale=1) #, row_colors=row_colors)
+
+# token_clusters = cluster_analysis_gui.DEBUG_CONTAINER['data'].token_clusters
+
+# interact(
+#     plot_seaborn_clustermap,
+#     x_corpus=fixed(n_corpus),
+#     token_clusters=fixed(token_clusters),
+#     n_cluster=token_clusters.cluster.unique().tolist()
+# )
+
+# #plot_seaborn_clustermap(n_corpus, cluster_analysis_gui.CURRENT_CLUSTER.clusters.token_clusters)
