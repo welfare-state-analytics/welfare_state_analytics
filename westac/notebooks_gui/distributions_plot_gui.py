@@ -1,49 +1,70 @@
-import numpy as np
 import ipywidgets
 from IPython.display import display
-import westac.notebooks_gui.distributions_plot as pld
+from bokeh.plotting import show
+import westac.notebooks_gui.distributions_plot as plotter
 
-def display_gui(x_corpus, most_deviating, metric, columns=None):
+def display_gui(x_corpus, tokens, n_columns=3):
 
-    progress = ipywidgets.IntProgress(description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='600px'))
-    n_start  = ipywidgets.IntSlider(description='Jump', min=0, max=len(most_deviating)-4, step=1, continuous_update=False, layout=ipywidgets.Layout(width='600px'))
-    n_count  = ipywidgets.IntSlider(description='Count', min=0, max=10, step=1, value=4, continuous_update=False, layout=ipywidgets.Layout(width='300px'))
-    forward  = ipywidgets.Button(description=">>", layout=ipywidgets.Layout(width='40px', color='green'))
-    back     = ipywidgets.Button(description="<<", layout=ipywidgets.Layout(width='40px', color='green'))
-    split    = ipywidgets.ToggleButton(description="Split", layout=ipywidgets.Layout(width='80px', color='green'))
-    output   = ipywidgets.Output(layout=ipywidgets.Layout(width='99%'))
+    tokens  = sorted(list(tokens))
+    tokens_map = {
+        token: index for index, token in enumerate(tokens)
+    }
+    progress  = ipywidgets.IntProgress(description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='98%'))
+    n_count   = ipywidgets.IntSlider(description='Count', min=0, max=100, step=1, value=3, continuous_update=False, layout=ipywidgets.Layout(width='300px'))
+    forward   = ipywidgets.Button(description=">>", button_style='Success', layout=ipywidgets.Layout(width='40px', color='green'))
+    back      = ipywidgets.Button(description="<<", button_style='Success', layout=ipywidgets.Layout(width='40px', color='green'))
+    split     = ipywidgets.ToggleButton(description="Split", layout=ipywidgets.Layout(width='80px', color='green'))
+    output    = ipywidgets.Output(layout=ipywidgets.Layout(width='99%'))
+    wtokens   = ipywidgets.SelectMultiple(options=tokens, value=[], rows=30)
 
-    x_range  = x_corpus.year_range()
-    indices  = [ x_corpus.token2id[token] for token in most_deviating[metric + '_token'] ]
-    xs       = np.arange(x_range[0], x_range[1] + 1, 1)
-
-    def update_plot(*args):
+    def update_plot(*args): # pylint: disable=unused-argument
 
         output.clear_output()
 
-        with output:
-            pld.plot_distributions(x_corpus, xs, indices, n_count=n_count.value, start=n_start.value, columns=columns)
+        selected_tokens = wtokens.value
 
-    def on_button_clicked(b):
+        if len(selected_tokens) == 0:
+            selected_tokens = tokens[:n_count.value]
+
+        indices = [ x_corpus.token2id[token] for token in selected_tokens ]
+
+        with output:
+            x_columns = n_columns if split.value else None
+            p = plotter.plot_distributions(x_corpus, indices, n_columns=x_columns)
+            show(p)
+
+    def stepper_clicked(b):
+
+        current_token = wtokens.value[0] if len(wtokens.value) > 0 else tokens[0]
+        current_index = tokens.index(current_token)
 
         if b.description == "<<":
-            n_start.value = max(n_start.value - n_count.value, 0)
+            current_index = max(current_index - n_count.value, 0)
 
         if b.description == ">>":
-            n_start.value = min(n_start.value + n_count.value, n_start.max - n_count.value+1)
+            current_index = min(current_index + n_count.value, len(tokens) - n_count.value + 1)
 
-    n_start.observe(update_plot, 'value')
+        wtokens.value = tokens[current_index:current_index + n_count.value]
+
+    def split_changed(*args): # pylint: disable=unused-argument)
+        update_plot()
+
+    def token_select_changed(*args): # pylint: disable=unused-argument)
+        update_plot()
+
     n_count.observe(update_plot, 'value')
-    split.observe(update_plot, 'value')
+    split.observe(split_changed, 'value')
+    wtokens.observe(token_select_changed, 'value')
 
-    forward.on_click(on_button_clicked)
-    back.on_click(on_button_clicked)
+    forward.on_click(stepper_clicked)
+    back.on_click(stepper_clicked)
 
     display(ipywidgets.VBox([
         progress,
         ipywidgets.HBox([
-            back, forward, n_start, n_count, split
+            back, forward,
+            n_count, split
         ]),
-        output
+        ipywidgets.HBox([wtokens, output])
     ]))
     update_plot()

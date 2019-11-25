@@ -24,7 +24,7 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     title=kwargs.get('title', 'Cluster #{}'.format(n_cluster))
 
-    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 600), plot_height=kwargs.get('plot_height', 600))
+    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 900), plot_height=kwargs.get('plot_height', 600))
 
     p.yaxis.axis_label = 'Frequency'
     p.xgrid.grid_line_color = None
@@ -89,33 +89,22 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster):
     }
     return violin.opts(**violin_opts)
 
-def plot_clusters_count(token_clusters):
+def plot_clusters_count(source):
 
-    token_counts = token_clusters.groupby('cluster').count()
+    p = bokeh.plotting.figure(plot_width=500, plot_height=600, title="Cluster token counts")
 
-    clusters = [ str(x) for x in token_counts.index ]
-    counts = token_counts.token
-
-    p = bokeh.plotting.figure(y_range=clusters, plot_width=500, plot_height=600, title="Cluster token counts")
-
-    source = bokeh.models.ColumnDataSource(data=dict(clusters=clusters, counts=counts))
-
-    p.hbar(y='clusters', right='counts', height=0.75, source=source) #, fill_color=factor_cmap('clusters', palette=Spectral6, factors=fruits))
-
+    # y_range=source.data['clusters'],
     p.yaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
     p.axis.minor_tick_line_color = None
     p.x_range.start = 0
 
+    r = p.hbar(y='clusters', right='counts', height=0.75, source=source)
+
     return p
 
-def plot_clusters_mean(x_corpus, clusters_mean, tick=noop):
-
-    colors = itertools.cycle(bokeh.palettes.Category20[20])
-
-    xs_range = x_corpus.year_range()
-    xs = np.arange(xs_range[0], xs_range[1] + 1, 1)
+def plot_clusters_mean(source):
 
     p = bokeh.plotting.figure(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)")
 
@@ -125,58 +114,10 @@ def plot_clusters_mean(x_corpus, clusters_mean, tick=noop):
     p.axis.minor_tick_line_color = None
     p.y_range.start = 0
 
-    n_clusters = clusters_mean.shape[1]
-
-    tick(x=0, max=n_clusters)
-
-    ml_xs = []
-    ml_ys = []
-    ml_colors = []
-    ml_legends = []
-    for n_cluster in range(0, n_clusters):
-
-        ml_colors.append(next(colors))
-
-        ys = clusters_mean[:, n_cluster]
-
-        xs_spline, ys_spline  = cf.pchip_spline(xs, ys)
-
-        ml_xs.append(xs_spline)
-        ml_ys.append(ys_spline)
-
-        ml_legends.append('cluster {}'.format(n_cluster))
-
-    source = bokeh.models.ColumnDataSource(dict(xs=ml_xs, ys=ml_ys, color=ml_colors, legend=ml_legends))
-
     r = p.multi_line(xs='xs', ys='ys', line_color='color', line_width=5, source=source, legend_field='legend')
 
-    # legend = Legend(items=[
-    #     LegendItem(label= 'cluster #{}'.format(i), renderers=[r], index=i) for i in range(0, n_clusters)
-    # ])
-    # p.add_layout(legend)
     p.legend.location = "top_left"
-    p.legend.click_policy="mute"
-
-    # for n_cluster in range(0, n_clusters):
-    #     legend = 'cluster #{}'.format(n_cluster)
-    #     color = next(colors)
-    #     ys = clusters_mean[:, n_cluster]
-
-    #     if n_clusters < 10:
-    #         p.scatter(xs, ys, size=4, color=color, alpha=1.0, marker='square', legend_label=legend)
-
-    #     #p.line(xs, ys, line_width=2, color=color, legend_label=legend)
-
-    #     xs_spline, ys_spline  = cf.pchip_spline(xs, ys)
-    #     p.line(xs_spline, ys_spline, line_width=2.0, color=color, legend_label=legend)
-
-    #     tick()
-
-    return p
-
-def plot_clusters(token_clusters):
-
-    p = plot_clusters_count(token_clusters)
+    p.legend.click_policy="hide"
 
     return p
 

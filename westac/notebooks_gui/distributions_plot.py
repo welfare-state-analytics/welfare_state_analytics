@@ -32,11 +32,10 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
 
     _ = p.line(xs, ys , line_width=2, color=color, alpha=0.5, legend_label=title)
 
-    #p.vbar(x=xs, top=ys, width=0.5, color=color, alpha=0.1)
-    #p.step(xs, ys, line_width=2, color=color, alpha=0.5)
-
-    #_, _, _, lx, ly = gof.fit_ordinary_least_square(ys, xs)
-    #p.line(x=lx, y=ly, line_width=1, color=color, alpha=0.6, legend_label=title)
+    # p.vbar(x=xs, top=ys, width=0.5, color=color, alpha=0.1)
+    # p.step(xs, ys, line_width=2, color=color, alpha=0.5)
+    # _, _, _, lx, ly = gof.fit_ordinary_least_square(ys, xs)
+    # p.line(x=lx, y=ly, line_width=1, color=color, alpha=0.6, legend_label=title)
 
     p.legend.location = "top_left"
     p.legend.click_policy="hide"
@@ -44,34 +43,40 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
 
     return p
 
-def plot_distributions(x_corpus, xs, indices, n_count=4, start=0, columns=3, width=1000, height=600, smoothers=None):
+def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, smoothers=None):
 
     smoothers = smoothers or [
         cf.rolling_average_smoother('nearest', 3),
         cf.pchip_spline
     ]
-    colors = itertools.cycle(bokeh.palettes.Category10[10])
+
+    colors  = itertools.cycle(bokeh.palettes.Category10[10])
+    x_range = x_corpus.year_range()
+    xs      = np.arange(x_range[0], x_range[1] + 1, 1)
 
     plots = []
-    plot = None
-    for i in range(0, n_count):
-        plot = plot_distribution(
-            xs,
-            x_corpus.data[:,indices[start+i]],
-            plot=plot if columns is None else None,
-            title=x_corpus.id2token[indices[start+i]].upper(),
-            color=next(colors),
-            plot_width=width if columns is None else max(int(width/columns), 400),
-            plot_height=height if columns is None else  max(int(height/columns), 300),
-            ticker_labels=xs if columns is None else None,
-            smoothers=smoothers
-        )
-        plots.append(plot)
+    p = None
+    for token_id in indices:
+        try:
+            p = plot_distribution(
+                xs,
+                x_corpus.data[:,token_id],
+                plot=p if n_columns is None else None,
+                title=x_corpus.id2token[token_id].upper(),
+                color=next(colors),
+                plot_width=width if n_columns is None else max(int(width/n_columns), 400),
+                plot_height=height if n_columns is None else  max(int(height/n_columns), 300),
+                ticker_labels=xs if n_columns is None else None,
+                smoothers=smoothers
+            )
+            plots.append(p)
+        except:
+            pass
 
-    if columns is not None:
-        plot = bokeh.layouts.gridplot([ plots[u:u+columns] for u in range(0, len(plots), columns) ])
+    if n_columns is not None:
+        p = bokeh.layouts.gridplot([ plots[u:u+n_columns] for u in range(0, len(indices), n_columns) ])
 
-    return plot
+    return p
 
 def plot_distribution2(ys, window_size, mode='nearest'):
 
@@ -90,4 +95,4 @@ def plot_distribution2(ys, window_size, mode='nearest'):
 
     p.line(x=xw, y=yw, line_width=1, color='green', alpha=1, legend_label='rolling')
 
-    bokeh.plotting.show(p)
+    return p
