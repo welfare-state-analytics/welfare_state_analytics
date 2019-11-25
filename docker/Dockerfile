@@ -57,70 +57,58 @@ RUN npm install npm@latest -g \
     \
     && n stable
 
-# STEP: Add tini init (see https://github.com/krallin/tini) and entrypoint
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
 
 RUN chmod +x /usr/local/bin/tini
 
-# STEP: install global Python packages
-COPY . .
+
 RUN python --version \
     && pip install --upgrade pip \
     && pip install pipenv \
-    && pipenv install \
     && exit 0
 
-RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords punkt sentiwordnet \
-    \
-    && python -m spacy download en_core_web_sm \
-    && python -m spacy download fr_core_news_sm \
-    && python -m spacy download en_core_web_md \
-    && exit 0
+COPY docker/scripts /tmp/
 
-RUN jupyter labextension install \
+RUN ls -al /tmp && chmod 0555 /tmp/*.sh \
+    && /tmp/setup-user.sh \
+    # && /tmp/fix-it.sh \
+    && cp /tmp/start-jupyterlab.sh /usr/local/bin/
+
+USER $PUSER
+
+ENV HOME=/home/$PUSER
+
+WORKDIR $HOME
+
+COPY Pipfile .
+
+RUN \
+    pipenv install \
+    && pipenv shell \
+    && jupyter labextension install \
          @jupyter-widgets/jupyterlab-manager \
          jupyter-matplotlib \
          jupyterlab-jupytext \
          jupyterlab_bokeh \
          @jupyterlab/toc \
-         @jupyterlab/google-drive
+         @jupyterlab/google-drive \
+    && jupyter lab --generate-config \
+    && /tmp/setup-jupyterlab.sh \
+    && cp -f /tmp/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
 
-    #      \
-    # \
-    # && jupyter nbextension enable --py widgetsnbextension
+# RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords punkt sentiwordnet \
+#     \
+#     && python -m spacy download en_core_web_sm \
+#     && python -m spacy download fr_core_news_sm \
+#     && python -m spacy download en_core_web_md \
+#     && exit 0
 
 # RUN beakerx install \
 #     && jupyter labextension install \
 #          beakerx-jupyterlab \
-#     \
-#     && npm install -g ijavascript itypescript --unsafe-perm \
-#     && ijsinstall --install=global \
-#     && its --install=global
+#
 
 ENV NLTK_DATA=/usr/local/share/nltk_data
-ENV HOME=/home/$PUSER
-
-COPY scripts /tmp/
-
-RUN ls -al /tmp && chmod 0555 /tmp/*.sh \
-    && /tmp/setup-user.sh \
-    && /tmp/fix-it.sh \
-    && cp /tmp/start-jupyterlab.sh /usr/local/bin/
-
-COPY motd /etc/motd
-
-# $ pip install ipysheet
-# $ jupyter labextension install ipysheet
-
-USER $PUSER
-
-WORKDIR $HOME
-
-RUN jupyter lab --generate-config \
-    && /tmp/setup-jupyterlab.sh \
-    && cp -f /tmp/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
-
-# RUN pipenv install --python=three --skip-lock
 
 EXPOSE ${LAB_PORT}
 
