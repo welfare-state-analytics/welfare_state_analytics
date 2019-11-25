@@ -244,6 +244,11 @@ class VectorizedCorpus():
             return (self.document_index.year.min(), self.document_index.year.max())
         return (None, None)
 
+    def xs_years(self):
+        (low, high) = self.year_range()
+        xs = np.arange(low, high + 1, 1)
+        return xs
+
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 
     v_corpus = VectorizedCorpus\
