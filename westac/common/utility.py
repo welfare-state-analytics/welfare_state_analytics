@@ -20,7 +20,7 @@ def setup_logger(logger=None, filename=None, level=logging.DEBUG):
     if logger is None:
         logger = logging.getLogger("westac")
 
-    filename = filename or 'westac_{}.log'.format(time.strftime("%Y%m%d-%H%M%S"))
+    filename = filename or 'westac_{}.log'.format(time.strftime("%Y%m%d"))
     logger.handlers = []
 
     logger.setLevel(level)
