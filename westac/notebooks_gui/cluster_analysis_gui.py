@@ -215,7 +215,7 @@ def display_gui(x_corpus, df_gof):
             wnc.disabled = True
             wth.disabled = False
         else:
-            wnc.min, wnc.max, wnc.value = 2, 250, 8
+            wnc.max, wnc.value, wnc.min = 250, 8, 2
             wnc.disabled = False
             wth.disabled = True
 
