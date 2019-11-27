@@ -8,6 +8,7 @@ import os
 import logging
 import time
 import numpy as np
+import itertools
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
@@ -36,6 +37,10 @@ def setup_logger(logger=None, filename=None, level=logging.DEBUG):
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     return logger
+
+def nth(iterable, n, default=None):
+    "Returns the nth item or a default value"
+    return next(itertools.islice(iterable, n, None), default)
 
 def flatten(l):
     return [ x for ws in l for x in ws]
