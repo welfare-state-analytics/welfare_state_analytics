@@ -62,6 +62,7 @@ class HCACorpusClusters(CorpusClusters):
 
         self.key = 'hca'
 
+        self.token2id = corpus.token2id
         self.linkage_matrix = linkage_matrix
         self.cluster_distances = self._compile_cluster_distances(linkage_matrix)
         self.threshold = threshold
@@ -104,7 +105,8 @@ class HCACorpusClusters(CorpusClusters):
     def _compile_token_clusters(self, clusters):
         cluster_lists = [ [ (x, y, i) for x, y in itertools.product([k], clusters[k])] for i, k in enumerate(clusters) ]
         df = pd.DataFrame(data=[ x for ws in cluster_lists for x in ws], columns=["cluster_name", "token", "cluster"])
-        return df
+        df['token_id'] = df.token.apply(lambda w: self.token2id[w])
+        return df.set_index('token_id')
 
 class KMeansCorpusClusters(CorpusClusters):
 
@@ -113,6 +115,7 @@ class KMeansCorpusClusters(CorpusClusters):
         super().__init__(corpus, indices, tokens)
 
         self.key = 'k_means'
+        self.token2id = corpus.token2id
         self.compute_result = compute_result
         self.token2cluster = self._compile_token2cluster_map(corpus, compute_result)
         self.token_clusters = self._compile_token_clusters(self.token2cluster)
@@ -125,10 +128,15 @@ class KMeansCorpusClusters(CorpusClusters):
         return token2cluster
 
     def _compile_token_clusters(self, token2cluster):
-        return pd.DataFrame({
+
+        df = pd.DataFrame({
             'token': list(token2cluster.keys()),
             'cluster': list(token2cluster.values())
         })
+
+        df['token_id'] = df.token.apply(lambda w: self.token2id[w])
+
+        return df.set_index('token_id')
 
 
 def compute_kmeans(x_corpus, indices=None, tokens=None, n_clusters=8):

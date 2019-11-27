@@ -30,11 +30,15 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
     p.yaxis.axis_label = 'Frequency'
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
+    p.xaxis.ticker = xs
+    p.xaxis.major_label_orientation = 3.14 / 2
+    p.y_range.start = 0
 
     xsr = np.repeat(xs, word_distributions.shape[1])
     ysr = word_distributions.ravel()
 
     p.scatter(xsr, ysr, size=3, color='green', alpha=0.1, marker='square', legend_label='actual')
+
     p.line(xsr, ysr, line_width=1.0, color='green', alpha=0.1, legend_label='actual')
 
     tick(1)
@@ -85,7 +89,7 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster, color):
         'height': 600,
         'width': 900,
         'box_fill_color': color,
-        'xrotation': 45,
+        'xrotation': 90,
         #'violin_width': 0.8
     }
     return violin.opts(**violin_opts)
@@ -162,6 +166,7 @@ def plot_clusters_mean(source):
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
     p.axis.minor_tick_line_color = None
+    # p.xaxis.ticker = list(range(1945, 1990))
     p.y_range.start = 0
 
     r = p.multi_line(**line_opts)
