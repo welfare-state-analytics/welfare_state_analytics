@@ -9,6 +9,7 @@
 *.xlsx
 *.csv
 *.log
+.env
 .venv/
 tmp/
 __pycache__/
