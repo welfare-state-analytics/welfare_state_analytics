@@ -106,16 +106,16 @@ def display_gui(x_corpus, df_gof):
 
     DEBUG_CONTAINER['data'] = container
 
-    cluster_output_types = [('Scatter', 'scatter'), ('Boxplot', 'boxplot'), ('Table', 'table') ]
+    cluster_output_types = [('Scatter', 'scatter'), ('Boxplot', 'boxplot') ]
     clusters_output_types = [('Bar', 'count'), ('Dendogram', 'dendogram'), ('Table', 'table') ]
     metrics_list = [('L2-norm', 'l2_norm'), ('EMD', 'emd'), ('KLD', 'kld') ]
-
+    methods_list = [('K-means++', 'k_means++'), ('K-means', 'k_means'), ('K-means/scipy', 'k_means2'), ('HCA', 'hca')]
     n_metric_top_words = [ 10, 100, 250, 500, 1000, 2000, 5000, 10000, 20000 ]
 
     widgets = types.SimpleNamespace(
 
         n_cluster_count=ipywidgets.IntSlider(description='#Cluster', min=1, max=200, step=1, value=20,  bar_style='info', continuous_update=False,),
-        method_key=ipywidgets.Dropdown(description='Method', options=[('K-means', 'k_means'), ('HCA', 'hca')], value='k_means', layout=ipywidgets.Layout(width='200px')),
+        method_key=ipywidgets.Dropdown(description='Method', options=methods_list, value='k_means2', layout=ipywidgets.Layout(width='200px')),
         metric=ipywidgets.Dropdown(description='Metric', options=metrics_list, value='l2_norm', layout=ipywidgets.Layout(width='200px')),
         n_metric_top=ipywidgets.Dropdown(description='Words', options=n_metric_top_words, value=5000, layout=ipywidgets.Layout(width='200px'), tooltip="HEJ!"),
         clusters_output_type=ipywidgets.Dropdown(description='Output', options=clusters_output_types, value='count', layout=ipywidgets.Layout(width='200px')),
@@ -156,17 +156,23 @@ def display_gui(x_corpus, df_gof):
 
             tick(1, max=2)
 
-            if cluster_output_type == "scatter":
-                p = cluster_plot.plot_cluster(x_corpus, token_clusters, widgets.cluster_index.value, tick=tick)
-                bokeh.plotting.show(p)
+            out_table = ipywidgets.Output()
+            out_chart = ipywidgets.Output()
 
-            if cluster_output_type == "boxplot":
-                color = nth(itertools.cycle(bokeh.palettes.Category20[20]), widgets.cluster_index.value)
-                p = cluster_plot.plot_cluster_boxplot(x_corpus, token_clusters, widgets.cluster_index.value, color=color)
-                p = hv.render(p)
-                bokeh.plotting.show(p)
+            display(ipywidgets.HBox([out_table, out_chart]))
 
-            if cluster_output_type == "table":
+            with out_chart:
+                if cluster_output_type == "scatter":
+                    p = cluster_plot.plot_cluster(x_corpus, token_clusters, widgets.cluster_index.value, tick=tick)
+                    bokeh.plotting.show(p)
+
+                if cluster_output_type == "boxplot":
+                    color = nth(itertools.cycle(bokeh.palettes.Category20[20]), widgets.cluster_index.value)
+                    p = cluster_plot.plot_cluster_boxplot(x_corpus, token_clusters, widgets.cluster_index.value, color=color)
+                    p = hv.render(p)
+                    bokeh.plotting.show(p)
+
+            with out_table:
                 df = token_clusters[token_clusters.cluster==widgets.cluster_index.value]
                 display(df)
 
@@ -296,12 +302,16 @@ def display_gui(x_corpus, df_gof):
 
     def compute_clusters():
 
-        indices, tokens = get_top_tokens_by_metric()
+        _, tokens = get_top_tokens_by_metric()
 
-        if widgets.method_key.value == 'k_means':
-            corpus_cluster = cluster_analysis.compute_kmeans(x_corpus, indices, tokens, widgets.n_cluster_count.value)
+        if widgets.method_key.value == 'k_means++':
+            corpus_cluster = cluster_analysis.compute_kmeans(x_corpus, tokens, widgets.n_cluster_count.value, n_jobs=2, init='k-means++')
+        elif widgets.method_key.value == 'k_means':
+            corpus_cluster = cluster_analysis.compute_kmeans(x_corpus, tokens, widgets.n_cluster_count.value, n_jobs=2, init='random')
+        elif widgets.method_key.value == 'k_means2':
+            corpus_cluster = cluster_analysis.compute_kmeans2(x_corpus, tokens, widgets.n_cluster_count.value)
         else:
-            corpus_cluster = cluster_analysis.compute_hca(x_corpus, indices, tokens, linkage_method='ward', linkage_metric='euclidean')
+            corpus_cluster = cluster_analysis.compute_hca(x_corpus, tokens, linkage_method='ward', linkage_metric='euclidean')
 
         return corpus_cluster
 
@@ -339,8 +349,7 @@ def display_gui(x_corpus, df_gof):
                 ipywidgets.HTML(md("## Clusters overview")),
                 ipywidgets.HBox([
                     widgets.clusters_count_output,
-                    widgets.clusters_mean_output,
-                    # widgets.cluster_legends
+                    widgets.clusters_mean_output
                 ])
             ])
         ]),

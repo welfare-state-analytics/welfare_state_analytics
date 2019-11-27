@@ -8,10 +8,9 @@ from scipy.cluster.hierarchy import linkage
 
 class CorpusClusters():
 
-    def __init__(self, corpus, indices, tokens):
+    def __init__(self, corpus, tokens):
         self._token_clusters = None
         self.corpus = corpus
-        self.indices = indices
         self.tokens = tokens
         self.cluster_labels = []
 
@@ -28,19 +27,19 @@ class CorpusClusters():
         self._token_clusters = value
         self.cluster_labels = [] if self.token_clusters is None else sorted(self.token_clusters.cluster.unique().tolist())
 
-    def cluster_indices(self, n_cluster):
+    def cluster_token_ids(self, n_cluster):
         return self.token_clusters[self.token_clusters.cluster==n_cluster].index.tolist()
 
-    def clusters_indices(self):
+    def clusters_token_ids(self):
 
         for n_cluster in self.cluster_labels:
-            yield n_cluster, self.cluster_indices(n_cluster)
+            yield n_cluster, self.cluster_token_ids(n_cluster)
 
     def cluster_means(self):
 
         cluster_means = np.array([
-            self.corpus.data[:, indices].mean(axis=1)
-                for _, indices in self.clusters_indices()
+            self.corpus.data[:, token_ids].mean(axis=1)
+                for _, token_ids in self.clusters_token_ids()
         ])
 
         return cluster_means
@@ -48,17 +47,17 @@ class CorpusClusters():
     def cluster_medians(self):
 
         cluster_medians = np.array([
-            np.median(self.corpus.data[:, indices], axis=1)
-                for _, indices in self.clusters_indices()
+            np.median(self.corpus.data[:, token_ids], axis=1)
+                for _, token_ids in self.clusters_token_ids()
         ])
 
         return cluster_medians
 
 class HCACorpusClusters(CorpusClusters):
 
-    def __init__(self, corpus, indices, tokens, linkage_matrix, threshold=0.5):
+    def __init__(self, corpus, tokens, linkage_matrix, threshold=0.5):
 
-        super().__init__(corpus, indices, tokens)
+        super().__init__(corpus, tokens)
 
         self.key = 'hca'
 
@@ -110,20 +109,20 @@ class HCACorpusClusters(CorpusClusters):
 
 class KMeansCorpusClusters(CorpusClusters):
 
-    def __init__(self, corpus, indices, tokens, compute_result):
+    def __init__(self, corpus, tokens, compute_result):
 
-        super().__init__(corpus, indices, tokens)
+        super().__init__(corpus, tokens)
 
         self.key = 'k_means'
         self.token2id = corpus.token2id
         self.compute_result = compute_result
-        self.token2cluster = self._compile_token2cluster_map(corpus, compute_result)
+        self.token2cluster = self._compile_token2cluster_map(compute_result.labels_)
         self.token_clusters = self._compile_token_clusters(self.token2cluster)
         self.centroids = compute_result.cluster_centers_
 
-    def _compile_token2cluster_map(self, corpus, compute_result):
+    def _compile_token2cluster_map(self, labels):
         token2cluster = {
-            corpus.id2token[i]: x for i, x in enumerate(compute_result.labels_)
+            self.tokens[i]: label for i, label in enumerate(labels)
         }
         return token2cluster
 
@@ -138,15 +137,23 @@ class KMeansCorpusClusters(CorpusClusters):
 
         return df.set_index('token_id')
 
+def compute_kmeans(x_corpus, tokens=None, n_clusters=8, **kwargs):
 
-def compute_kmeans(x_corpus, indices=None, tokens=None, n_clusters=8):
+    data = (x_corpus.data if tokens is None else x_corpus.data[:, x_corpus.token_indices(tokens) ])
 
-    data = (x_corpus.data if indices is None else x_corpus.data[:, indices])
+    compute_result = sklearn.cluster.KMeans(n_clusters=n_clusters, **kwargs).fit(data.T)
 
-    compute_result = sklearn.cluster.KMeans(n_clusters=n_clusters, random_state=0, n_jobs=2).fit(data.T)
+    return KMeansCorpusClusters(x_corpus, tokens, compute_result)
 
-    return KMeansCorpusClusters(x_corpus, indices, tokens, compute_result)
+import scipy, types
 
+def compute_kmeans2(x_corpus, tokens=None, n_clusters=8, **kwargs):
+
+    data = (x_corpus.data if tokens is None else x_corpus.data[:, x_corpus.token_indices(tokens) ])
+
+    centroids, labels = scipy.cluster.vq.kmeans2(data.T, n_clusters, **kwargs)
+
+    return KMeansCorpusClusters(x_corpus, tokens, types.SimpleNamespace(cluster_centers_=centroids, labels_=labels))
 
 LINKAGE_METHODS = [ 'single', 'complete', 'average', 'weighted', 'centroid', 'median', 'ward' ]
 
@@ -166,19 +173,19 @@ LINKAGE_METRICS = {
 }
 
 
-def compute_hca(x_corpus, indices, tokens, linkage_method='ward', linkage_metric='euclidean'):
+def compute_hca(x_corpus, tokens, linkage_method='ward', linkage_metric='euclidean'):
 
-    data = (x_corpus.data if indices is None else x_corpus.data[:, indices])
+    data = (x_corpus.data if tokens is None else x_corpus.data[:,  x_corpus.token_indices(tokens) ])
 
     linkage_matrix = linkage(data.T, method=linkage_method, metric=linkage_metric)
 
     """ from documentation
 
-        A (n-1) by 4 matrix Z is returned. At the i-th iteration, clusters with indices Z[i, 0] and Z[i, 1] are combined to form cluster n + i.
+        A (n-1) by 4 matrix Z is returned. At the i-th iteration, clusters with token_ids Z[i, 0] and Z[i, 1] are combined to form cluster n + i.
         A cluster with an index less than n corresponds to one of the original observations.
         The distance between clusters Z[i, 0] and Z[i, 1] is given by Z[i, 2].
         The fourth value Z[i, 3] represents the number of original observations in the newly formed cluster.
 
     """
 
-    return HCACorpusClusters(x_corpus, indices, tokens, linkage_matrix)
+    return HCACorpusClusters(x_corpus, tokens, linkage_matrix)

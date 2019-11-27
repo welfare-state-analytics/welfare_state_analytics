@@ -249,6 +249,10 @@ class VectorizedCorpus():
         xs = np.arange(low, high + 1, 1)
         return xs
 
+    def token_indices(self, tokens):
+
+        return [ self.token2id[token] for token in tokens ]
+
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 
     v_corpus = VectorizedCorpus\
