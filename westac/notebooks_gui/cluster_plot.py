@@ -7,7 +7,8 @@ import westac.common.curve_fit as cf
 import westac.common.goodness_of_fit as gof
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
-from bokeh.models import Legend, LegendItem
+#from bokeh.models import Legend, LegendItem
+from bokeh.models import HoverTool, TapTool
 
 def noop(x=None, p=None, max=None): pass  # pylint: disable=redefined-builtin,unused-argument
 
@@ -65,7 +66,7 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     return p
 
-def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster):
+def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster, color):
 
     xs = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
 
@@ -83,7 +84,7 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster):
     violin_opts = {
         'height': 600,
         'width': 900,
-        #'violin_fill_color': 'green',
+        'box_fill_color': color,
         'xrotation': 45,
         #'violin_width': 0.8
     }
@@ -91,7 +92,32 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster):
 
 def plot_clusters_count(source):
 
-    p = bokeh.plotting.figure(plot_width=500, plot_height=600, title="Cluster token counts")
+    figure_opts = dict(
+        plot_width=500,
+        plot_height=600,
+        title="Cluster token count"
+    )
+
+    hover_opts = dict(
+        tooltips='@legend: @count words',
+        show_arrow=False,
+        line_policy='next'
+    )
+
+    bar_opts = dict(
+        legend_field='legend',
+        fill_color='color',
+        fill_alpha=0.4,
+        hover_fill_alpha=1.0,
+        hover_fill_color='color',
+        line_color='color',
+        hover_line_color='color',
+        line_alpha=1.0,
+        hover_line_alpha=1.0,
+        height=0.75
+    )
+
+    p = bokeh.plotting.figure(tools=[HoverTool(**hover_opts), TapTool()], **figure_opts)
 
     # y_range=source.data['clusters'],
     p.yaxis.major_label_orientation = 1
@@ -100,13 +126,37 @@ def plot_clusters_count(source):
     p.axis.minor_tick_line_color = None
     p.x_range.start = 0
 
-    r = p.hbar(y='clusters', right='counts', height=0.75, source=source)
+    r = p.hbar(source=source, y='cluster', right='count', **bar_opts)
 
     return p
 
 def plot_clusters_mean(source):
 
-    p = bokeh.plotting.figure(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)")
+    figure_opts = dict(
+        plot_width=600,
+        plot_height=620,
+        title="Cluster mean trends (pchip spline)"
+    )
+
+    hover_opts = dict(
+        tooltips=[('Cluster', '@legend')],
+        show_arrow=False,
+        line_policy='next'
+    )
+
+    line_opts = dict(
+        source=source,
+        xs='xs',
+        ys='ys',
+        legend_field='legend',
+        line_color='color',
+        line_width=5,
+        line_alpha=0.4,
+        hover_line_color='color',
+        hover_line_alpha=1.0
+    )
+
+    p = bokeh.plotting.figure(tools=[HoverTool(**hover_opts), TapTool()], **figure_opts)
 
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
@@ -114,7 +164,7 @@ def plot_clusters_mean(source):
     p.axis.minor_tick_line_color = None
     p.y_range.start = 0
 
-    r = p.multi_line(xs='xs', ys='ys', line_color='color', line_width=5, source=source, legend_field='legend')
+    r = p.multi_line(**line_opts)
 
     p.legend.location = "top_left"
     p.legend.click_policy="hide"

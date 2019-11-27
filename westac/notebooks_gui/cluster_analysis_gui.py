@@ -18,7 +18,7 @@ import itertools
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-from westac.common.utility import setup_logger
+from westac.common.utility import setup_logger, nth
 
 logger = setup_logger()
 
@@ -74,7 +74,8 @@ class ClustersCountPlot:
     def __init__(self, output):
 
         self.output = output
-        # self.source = bokeh.models.ColumnDataSource(dict(clusters=[1,2,3], counts=[1,2,3]))
+        self.plot = None
+        # self.source = bokeh.models.ColumnDataSource(dict(cluster=[1,2,3], count=[1,2,3]))
 
         # with self.output:
 
@@ -84,10 +85,13 @@ class ClustersCountPlot:
     def update(self, token_clusters):
 
         token_counts = token_clusters.groupby('cluster').count()
+        colors = itertools.cycle(bokeh.palettes.Category20[20])
 
         source = dict(
-            clusters=[ x for x in token_counts.index ], # [ str(x) for x in token_counts.index ],
-            counts=[ x for x in token_counts.token ]
+            cluster=[ x for x in token_counts.index ], # [ str(x) for x in token_counts.index ],
+            count=[ x for x in token_counts.token ],
+            legend=[ 'cluster {}'.format(i) for i in token_counts.index ],
+            color=[ next(colors) for i in token_counts.index ]
         )
         # self.source.data = source
         # bokeh.io.push_notebook(self.handle)
@@ -117,6 +121,10 @@ def display_gui(x_corpus, df_gof):
         clusters_output_type=ipywidgets.Dropdown(description='Output', options=clusters_output_types, value='count', layout=ipywidgets.Layout(width='200px')),
         compute=ipywidgets.Button(description='Compute', button_style='Success', layout=ipywidgets.Layout(width='100px')),
         progress=ipywidgets.IntProgress(description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='98%')),
+
+        # cluster_legends=ipywidgets.SelectMultiple(options=[], value=[], rows=30),
+        # cluster_legend_map=None,
+
         clusters_count_output=ipywidgets.Output(),
         clusters_mean_output=ipywidgets.Output(),
 
@@ -153,7 +161,8 @@ def display_gui(x_corpus, df_gof):
                 bokeh.plotting.show(p)
 
             if cluster_output_type == "boxplot":
-                p = cluster_plot.plot_cluster_boxplot(x_corpus, token_clusters, widgets.cluster_index.value,)
+                color = nth(itertools.cycle(bokeh.palettes.Category20[20]), widgets.cluster_index.value)
+                p = cluster_plot.plot_cluster_boxplot(x_corpus, token_clusters, widgets.cluster_index.value, color=color)
                 p = hv.render(p)
                 bokeh.plotting.show(p)
 
@@ -185,6 +194,10 @@ def display_gui(x_corpus, df_gof):
                 print('Heatmap: not implemented')
 
         clusters_mean_plot.update(x_corpus, ys_matrix=container.data.cluster_means().T)
+
+        #widgets.cluster_legends_map = { 'Cluster #{}'.format(x): x for x in token_clusters.cluster.unique().tolist() }
+        #widgets.cluster_legends.options = sorted(widgets.cluster_legends_map.keys())
+        #idgets.cluster_legends.value = widgets.cluster_legends.options
 
     def plot_words(*argv): # pylint: disable=unused-argument
         widgets.cluster_words_output.clear_output()
@@ -325,7 +338,9 @@ def display_gui(x_corpus, df_gof):
                 ]),
                 ipywidgets.HTML(md("## Clusters overview")),
                 ipywidgets.HBox([
-                    widgets.clusters_count_output, widgets.clusters_mean_output
+                    widgets.clusters_count_output,
+                    widgets.clusters_mean_output,
+                    # widgets.cluster_legends
                 ])
             ])
         ]),
