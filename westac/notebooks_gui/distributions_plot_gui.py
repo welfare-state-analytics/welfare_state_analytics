@@ -17,6 +17,10 @@ def display_gui(x_corpus, tokens, n_columns=3):
     output    = ipywidgets.Output(layout=ipywidgets.Layout(width='99%'))
     wtokens   = ipywidgets.SelectMultiple(options=tokens, value=[], rows=30)
 
+    def tick(x=None, p=progress, max=10): # pylint: disable=redefined-builtin
+        if p.max != max: p.max = max
+        p.value = x if x is not None else p.value + 1
+
     def update_plot(*args): # pylint: disable=unused-argument
 
         output.clear_output()
@@ -30,7 +34,7 @@ def display_gui(x_corpus, tokens, n_columns=3):
 
         with output:
             x_columns = n_columns if split.value else None
-            p = plotter.plot_distributions(x_corpus, indices, n_columns=x_columns)
+            p = plotter.plot_distributions(x_corpus, indices, n_columns=x_columns, tick=tick)
             show(p)
 
     def stepper_clicked(b):

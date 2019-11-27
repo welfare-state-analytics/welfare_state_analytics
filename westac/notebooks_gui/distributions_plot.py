@@ -5,6 +5,8 @@ import bokeh
 import itertools
 import westac.common.curve_fit as cf
 
+def noop(x=None, p=None, max=None): pass  # pylint: disable=redefined-builtin,unused-argument
+
 def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=None, smoothers=None, **kwargs):
 
     if plot is None:
@@ -13,7 +15,7 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
         p.y_range.start = 0
         #p.y_range.end = 0.5
         #p.title.text = title.upper()
-        # p.yaxis.axis_label = 'Frequency'
+        p.yaxis.axis_label = 'Frequency'
         p.toolbar.autohide = True
         if ticker_labels is not None:
             p.xaxis.ticker = ticker_labels
@@ -43,7 +45,7 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
 
     return p
 
-def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, smoothers=None):
+def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, smoothers=None, tick=noop):
 
     smoothers = smoothers or [
         cf.rolling_average_smoother('nearest', 3),
@@ -56,6 +58,7 @@ def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, s
 
     plots = []
     p = None
+    tick(0, max=len(indices))
     for token_id in indices:
         try:
             p = plot_distribution(
@@ -72,9 +75,12 @@ def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, s
             plots.append(p)
         except:
             pass
+        tick()
 
     if n_columns is not None:
         p = bokeh.layouts.gridplot([ plots[u:u+n_columns] for u in range(0, len(indices), n_columns) ])
+
+    tick(0)
 
     return p
 
