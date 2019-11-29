@@ -170,13 +170,12 @@ def plot_clusters_mean(source, filter_source=None):
             title='Show/hide',
             options=filter_source['options'],
             value=filter_source['values'],
-            size=min(len(filter_source['options']), 20)
+            size=min(len(filter_source['options']), 30)
         )
 
         multi_select.js_on_change('value', callback)
 
         p = bokeh.layouts.row(p, multi_select)
-
 
     return p
 
@@ -185,23 +184,15 @@ def create_multiline_multiselect_callback(source):
     full_source = bokeh.models.ColumnDataSource(source.data)
 
     callback = bokeh.models.CustomJS(args = dict(source=source, full_source=full_source), code = """
-
-        const indices = cb_obj.value;
-
-        const full_xs = full_source.data['xs']
-        const full_ys = full_source.data['ys']
-
-        source.data['xs'].length = 0;
-        source.data['ys'].length = 0;
-
-        for (var x of indices) {
-            let i = parseInt(x);
-
-            source.data['xs'].push(full_xs[i])
-            source.data['ys'].push(full_ys[i])
+        const indices = cb_obj.value.map(x => parseInt(x));
+        let items = ['xs', 'ys', 'color', 'legend'];
+        for (const item of items) {
+            let full_item = full_source.data[item];
+            source.data[item].length = 0;
+            for (var i of indices) {
+                source.data[item].push(full_item[i]);
+            }
         }
-
-        // only need this because source.data is being updated "in place"
         source.change.emit()
         """)
     return callback
