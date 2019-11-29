@@ -40,19 +40,14 @@ class ClustersMeanPlot:
     def __init__(self, output):
 
         self.output = output
-        self.source = bokeh.models.ColumnDataSource(dict(xs=[], ys=[], color=[], legend=[]))
-
-        with self.output:
-
-            self.plot = cluster_plot.plot_clusters_mean(source=self.source)
-            self.handle = bokeh.plotting.show(self.plot, notebook_handle=True)
+        self.source = None
 
         self.smoothers = [
             cf.rolling_average_smoother('nearest', 3),
             cf.pchip_spline
         ]
 
-    def update(self, x_corpus, ys_matrix, smoothers=None):
+    def update(self, x_corpus, ys_matrix, filter_source=None, smoothers=None):
 
         colors = itertools.cycle(bokeh.palettes.Category20[20])
 
@@ -65,9 +60,13 @@ class ClustersMeanPlot:
         ml_colors = list(itertools.islice(colors, ys_matrix.shape[1]))
         ml_legends = [ 'cluster {}'.format(i) for i in range(0, ys_matrix.shape[1]) ]
 
-        self.source.data = dict(xs=ml_xs, ys=ml_ys, color=ml_colors, legend=ml_legends)
+        self.source = bokeh.models.ColumnDataSource(dict(xs=ml_xs, ys=ml_ys, color=ml_colors, legend=ml_legends))
 
-        bokeh.io.push_notebook(self.handle)
+        with self.output:
+
+            self.plot = cluster_plot.plot_clusters_mean(source=self.source, filter_source=filter_source)
+
+            bokeh.plotting.show(self.plot)
 
 class ClustersCountPlot:
 
@@ -82,9 +81,8 @@ class ClustersCountPlot:
         #     self.plot = cluster_plot.plot_clusters_count(source=self.source)
         #     self.handle = bokeh.plotting.show(self.plot, notebook_handle=True)
 
-    def update(self, token_clusters):
+    def update(self, token_counts):
 
-        token_counts = token_clusters.groupby('cluster').count()
         colors = itertools.cycle(bokeh.palettes.Category20[20])
 
         source = dict(
@@ -121,9 +119,6 @@ def display_gui(x_corpus, df_gof):
         clusters_output_type=ipywidgets.Dropdown(description='Output', options=clusters_output_types, value='count', layout=ipywidgets.Layout(width='200px')),
         compute=ipywidgets.Button(description='Compute', button_style='Success', layout=ipywidgets.Layout(width='100px')),
         progress=ipywidgets.IntProgress(description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='98%')),
-
-        # cluster_legends=ipywidgets.SelectMultiple(options=[], value=[], rows=30),
-        # cluster_legend_map=None,
 
         clusters_count_output=ipywidgets.Output(),
         clusters_mean_output=ipywidgets.Output(),
@@ -184,9 +179,10 @@ def display_gui(x_corpus, df_gof):
 
         output_type = widgets.clusters_output_type.value
         token_clusters = container.data.token_clusters
+        token_counts = token_clusters.groupby('cluster').count()
 
         if output_type== 'count':
-            clusters_count_plot.update(token_clusters)
+            clusters_count_plot.update(token_counts)
 
         with widgets.clusters_count_output:
 
@@ -199,11 +195,18 @@ def display_gui(x_corpus, df_gof):
             if output_type== 'heatmap':
                 print('Heatmap: not implemented')
 
-        clusters_mean_plot.update(x_corpus, ys_matrix=container.data.cluster_means().T)
+        filter_source = create_filter_source(token_counts)
 
-        #widgets.cluster_legends_map = { 'Cluster #{}'.format(x): x for x in token_clusters.cluster.unique().tolist() }
-        #widgets.cluster_legends.options = sorted(widgets.cluster_legends_map.keys())
-        #idgets.cluster_legends.value = widgets.cluster_legends.options
+        clusters_mean_plot.update(x_corpus, ys_matrix=container.data.cluster_means().T, filter_source=filter_source)
+
+    def create_filter_source(token_counts):
+
+        cluster_info = token_counts['token'].sort_values().to_dict()
+
+        cluster_options = [ (str(n), 'Cluster {}, {} types'.format(n, wc)) for (n, wc) in cluster_info.items() ]
+        cluster_values  = [ n for (n, _) in cluster_options ]
+
+        return dict(options=cluster_options, values=cluster_values)
 
     def plot_words(*argv): # pylint: disable=unused-argument
         widgets.cluster_words_output.clear_output()
@@ -370,3 +373,4 @@ def display_gui(x_corpus, df_gof):
     clusters_count_plot = ClustersCountPlot(widgets.clusters_count_output)
     clusters_mean_plot = ClustersMeanPlot(widgets.clusters_mean_output)
 
+    return container

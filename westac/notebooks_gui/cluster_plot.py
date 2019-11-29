@@ -25,7 +25,7 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     title=kwargs.get('title', 'Cluster #{}'.format(n_cluster))
 
-    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 900), plot_height=kwargs.get('plot_height', 600))
+    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 900), plot_height=kwargs.get('plot_height', 600), output_backend="webgl")
 
     p.yaxis.axis_label = 'Frequency'
     p.xgrid.grid_line_color = None
@@ -134,24 +134,12 @@ def plot_clusters_count(source):
 
     return p
 
-def plot_clusters_mean(source):
+def plot_clusters_mean(source, filter_source=None):
 
-    figure_opts = dict(
-        plot_width=600,
-        plot_height=620,
-        title="Cluster mean trends (pchip spline)"
-    )
-
-    hover_opts = dict(
-        tooltips=[('Cluster', '@legend')],
-        show_arrow=False,
-        line_policy='next'
-    )
+    figure_opts = dict(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)" )
+    hover_opts = dict(tooltips=[('Cluster', '@legend')], show_arrow=False, line_policy='next')
 
     line_opts = dict(
-        source=source,
-        xs='xs',
-        ys='ys',
         legend_field='legend',
         line_color='color',
         line_width=5,
@@ -169,12 +157,54 @@ def plot_clusters_mean(source):
     # p.xaxis.ticker = list(range(1945, 1990))
     p.y_range.start = 0
 
-    r = p.multi_line(**line_opts)
+    r = p.multi_line(source=source, xs='xs', ys='ys',**line_opts)
 
     p.legend.location = "top_left"
     p.legend.click_policy="hide"
 
+    if filter_source is not None:
+
+        callback = create_multiline_multiselect_callback(source)
+
+        multi_select = bokeh.models.MultiSelect(
+            title='Show/hide',
+            options=filter_source['options'],
+            value=filter_source['values'],
+            size=min(len(filter_source['options']), 20)
+        )
+
+        multi_select.js_on_change('value', callback)
+
+        p = bokeh.layouts.row(p, multi_select)
+
+
     return p
+
+def create_multiline_multiselect_callback(source):
+
+    full_source = bokeh.models.ColumnDataSource(source.data)
+
+    callback = bokeh.models.CustomJS(args = dict(source=source, full_source=full_source), code = """
+
+        const indices = cb_obj.value;
+
+        const full_xs = full_source.data['xs']
+        const full_ys = full_source.data['ys']
+
+        source.data['xs'].length = 0;
+        source.data['ys'].length = 0;
+
+        for (var x of indices) {
+            let i = parseInt(x);
+
+            source.data['xs'].push(full_xs[i])
+            source.data['ys'].push(full_ys[i])
+        }
+
+        // only need this because source.data is being updated "in place"
+        source.change.emit()
+        """)
+    return callback
 
 def plot_dendogram(linkage_matrix, labels):
 
