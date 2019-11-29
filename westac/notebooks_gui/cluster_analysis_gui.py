@@ -61,6 +61,7 @@ class ClustersMeanPlot:
         ml_legends = [ 'cluster {}'.format(i) for i in range(0, ys_matrix.shape[1]) ]
 
         self.source = bokeh.models.ColumnDataSource(dict(xs=ml_xs, ys=ml_ys, color=ml_colors, legend=ml_legends))
+        self.output.clear_output()
 
         with self.output:
 
@@ -201,7 +202,8 @@ def display_gui(x_corpus, df_gof):
 
     def create_filter_source(token_counts):
 
-        cluster_info = token_counts['token'].sort_values().to_dict()
+        # cluster_info = token_counts['token'].sort_values().to_dict()
+        cluster_info = token_counts['token'].to_dict()
 
         cluster_options = [ (str(n), 'Cluster {}, {} types'.format(n, wc)) for (n, wc) in cluster_info.items() ]
         cluster_values  = [ n for (n, _) in cluster_options ]
