@@ -9,7 +9,7 @@
 *.xlsx
 *.csv
 *.log
-.env
+.env*
 .venv/
 tmp/
 __pycache__/
@@ -17,6 +17,7 @@ __pycache__/
 output.xml
 **/output/
 **/data/
+**/secrets/
 data/
 .ipynb_checkpoints/
 .vscode/
