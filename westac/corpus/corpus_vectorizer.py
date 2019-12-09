@@ -4,7 +4,7 @@ import numpy as np
 import sklearn.preprocessing
 
 from sklearn.feature_extraction.text import CountVectorizer
-from westac.common import vectorized_corpus
+from westac.corpus import vectorized_corpus
 
 class CorpusVectorizer():
 
