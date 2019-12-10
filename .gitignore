@@ -9,6 +9,8 @@
 *.xlsx
 *.csv
 *.log
+*.zip
+userlist
 .env*
 .venv/
 tmp/
