@@ -125,7 +125,7 @@ def kullback_leibler_divergence_to_uniform(p):
 
 def compute_goddness_of_fits_to_uniform(x_corpus):
 
-    xs_years = np.arange(1945, 1990, 1)
+    xs_years = x_corpus.xs_years()
 
     df = pd.DataFrame(
         {
