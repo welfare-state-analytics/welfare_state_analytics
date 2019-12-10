@@ -4,7 +4,7 @@ from westac.corpus import text_corpus
 from westac.corpus import vectorized_corpus
 from westac.corpus import file_text_reader
 
-def generate_corpus(filename, output_folder, **kwargs):
+def generate_corpus(filename, output_folder, pattern='*.txt', **kwargs):
 
     if not os.path.isfile(filename):
         print('error: no such file: {}'.format(filename))
@@ -28,7 +28,7 @@ def generate_corpus(filename, output_folder, **kwargs):
     }
 
     print('Creating new corpus...')
-    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True, pattern=pattern)
     corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
 
     print('Creating document-term matrix...')
@@ -50,6 +50,6 @@ if __name__ == "__main__":
         symbols=False
     )
 
-    filename = './data/Sample_1945-1989.zip'
+    filename = './data/SOU_test.zip'
 
-    generate_corpus(filename, output_folder='./output', **kwargs)
+    generate_corpus(filename, output_folder='./output', pattern='SOU*.txt', **kwargs)
