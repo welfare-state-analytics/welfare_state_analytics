@@ -1,0 +1,24 @@
+debug = true
+
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+      certFile = "/etc/fullchain.pem"
+      keyFile = "/etc/privkey.pem"
+
+[docker]
+domain = "docker.local"
+watch = true
+
+[api]
+  [api.statistics]
+    recentErrors = 10
