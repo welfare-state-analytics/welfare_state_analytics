@@ -47,7 +47,8 @@ if __name__ == "__main__":
         min_len=2,
         max_len=None,
         numerals=False,
-        symbols=False
+        symbols=False,
+        only_alphabetic=True
     )
 
     filename = './data/SOU_test.zip'

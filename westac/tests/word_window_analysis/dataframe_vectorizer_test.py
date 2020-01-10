@@ -85,7 +85,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         return corpus
 
     def test_tokenized_document_where_symbols_are_filtered_out(self):
-        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=True, stopwords=None)
+        corpus = self.create_simple_test_corpus(symbols=False, isalnum=True, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=True, stopwords=None, only_alphabetic=False)
         result = [ x for x in corpus.documents()]
         expected = [
             ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', '14', 'token', '3', 'siffror', 'och', '2', 'symboler' ]),

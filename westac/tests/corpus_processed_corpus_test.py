@@ -16,7 +16,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_isalnum_is_true_returns_all_tokens(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=1, max_len=None, numerals=True)
+        kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=1, max_len=None, numerals=True, only_alphabetic=False)
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön", ".",

@@ -56,6 +56,7 @@ class ProcessedCorpus(CorpusTokenStream):
             use_tqdm=kwargs.get('use_tqdm', True)
         )
 
+        self.only_alphabetic = kwargs.get('only_alphabetic', True)
         self.to_lower = kwargs.get('to_lower', False)
         self.deacc = kwargs.get('deacc', False)
         self.min_len = kwargs.get('min_len', 2)
@@ -85,6 +86,8 @@ class ProcessedCorpus(CorpusTokenStream):
                 # tokens = (x for x in tokens if not all([ c in string.punctuation for c in x ]))
                 tokens = (x.translate(self.symbols_translation) for x in tokens)
                 tokens = (x for x in tokens if len(x) >= self.min_len)
+
+            if self.only_alphabetic:
                 tokens = (x for x in tokens if any(c in x for c in self.alphabetic_chars))
 
             if self.numerals is False:
