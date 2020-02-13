@@ -1,6 +1,4 @@
-import os
 import unittest
-import types
 import pandas as pd
 import numpy as np
 import scipy
@@ -90,6 +88,25 @@ class Test_VectorizedCorpus(unittest.TestCase):
         ]
         self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
 
+    def test_group_by_year2_sum_bag_term_matrix_to_year_term_matrix(self):
+        v_corpus = self.create_vectorized_corpus()
+        g_corpus = v_corpus.group_by_year2(aggregate_function='sum')
+        expected_ytm = [
+            [4, 3, 7, 1],
+            [6, 7, 4, 2]
+        ]
+        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
+        self.assertEqual(v_corpus.data.dtype, g_corpus.data.dtype)
+
+    def test_group_by_year2_mean_bag_term_matrix_to_year_term_matrix(self):
+        v_corpus = self.create_vectorized_corpus()
+        g_corpus = v_corpus.group_by_year2(aggregate_function='mean', dtype=np.float)
+        expected_ytm = [
+            np.array([4.0, 3.0, 7.0, 1.0]) / 2.0,
+            np.array([6.0, 7.0, 4.0, 2.0]) / 3.0
+        ]
+        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
+
     def test_collapse_to_category_aggregates_bag_term_matrix_to_category_term_matrix(self):
         """ A more generic version of group_by_year (not used for now) """
         v_corpus = self.create_vectorized_corpus()
@@ -99,6 +116,53 @@ class Test_VectorizedCorpus(unittest.TestCase):
             [6, 7, 4, 2]
         ]
         self.assertTrue(np.allclose(expected_ytm, Y))
+
+    def test_collapse_to_category_sums_bag_term_matrix_to_category_term_matrix(self):
+        """ A more generic version of group_by_year (not used for now) """
+        v_corpus = self.create_vectorized_corpus()
+        Y, _ = v_corpus.collapse_by_category('year', aggregate_function='sum')
+        expected_ytm = [
+            [4, 3, 7, 1],
+            [6, 7, 4, 2]
+        ]
+        self.assertTrue(np.allclose(expected_ytm, Y))
+
+    def test_collapse_to_category_means_bag_term_matrix_to_category_term_matrix(self):
+        """ A more generic version of group_by_year (not used for now) """
+        v_corpus = self.create_vectorized_corpus()
+        Y, _ = v_corpus.collapse_by_category('year', aggregate_function='mean', dtype=np.float)
+        expected_ytm = [
+            np.array([4.0, 3.0, 7.0, 1.0]) / 2.0,
+            np.array([6.0, 7.0, 4.0, 2.0]) / 3.0
+        ]
+        self.assertTrue(np.allclose(expected_ytm, Y))
+
+    def test_group_by_year(self):
+
+        corpus = [
+            "the house had a tiny little mouse",
+            "the cat saw the mouse",
+            "the mouse ran away from the house",
+            "the cat finally ate the mouse",
+            "the end of the mouse story"
+        ]
+        document_index = pd.DataFrame({
+            'year': [1, 1, 1, 2, 2]
+        })
+        vectorizer = CountVectorizer()
+        bag_term_matrix = vectorizer.fit_transform(corpus)
+
+        # token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
+        # bag_term_matrix = np.array([
+        #     [2, 1, 4, 1],
+        #     [2, 2, 3, 0],
+        #     [2, 3, 2, 0],
+        #     [2, 4, 1, 1],
+        #     [2, 0, 1, 1]
+        # ])
+        # df = pd.DataFrame({'year': [ 2013, 2013, 2014, 2014, 2014 ]})
+        # v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
+        # return v_corpus
 
     def test_normalize_with_default_arguments_returns_matrix_normalized_by_l1_norm_for_each_row(self):
         bag_term_matrix = np.array([
@@ -226,31 +290,3 @@ class Test_VectorizedCorpus(unittest.TestCase):
         v_corpus = self.create_vectorized_corpus()
         id2token = { 0: 'a', 1: 'b', 2: 'c', 3: 'd' }
         self.assertEqual(id2token, v_corpus.id2token)
-
-
-    def test_group_by_year(self):
-
-        corpus = [
-            "the house had a tiny little mouse",
-            "the cat saw the mouse",
-            "the mouse ran away from the house",
-            "the cat finally ate the mouse",
-            "the end of the mouse story"
-        ]
-        document_index = pd.DataFrame({
-            'year': [1, 1, 1, 2, 2]
-        })
-        vectorizer = CountVectorizer()
-        bag_term_matrix = vectorizer.fit_transform(corpus)
-
-        # token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
-        # bag_term_matrix = np.array([
-        #     [2, 1, 4, 1],
-        #     [2, 2, 3, 0],
-        #     [2, 3, 2, 0],
-        #     [2, 4, 1, 1],
-        #     [2, 0, 1, 1]
-        # ])
-        # df = pd.DataFrame({'year': [ 2013, 2013, 2014, 2014, 2014 ]})
-        # v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
-        # return v_corpus

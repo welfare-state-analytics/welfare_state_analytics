@@ -124,7 +124,7 @@ class VectorizedCorpus():
         return self.bag_term_matrix[:, self.token2id[word]]
 
     # FIXME: Moved to service
-    def collapse_by_category(self, column, X=None, df=None):
+    def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float):
         """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
 
         Parameters
@@ -138,6 +138,9 @@ class VectorizedCorpus():
         df : DataFrame, optional
             DataFrame of size N, where each row `ì` contains data that describes row `i` in `X`, by default None
 
+        aggregate_function : str, optional, values `sum` or `mean`
+            DataFrame of size N, where each row `ì` contains data that describes row `i` in `X`, by default None
+
         Returns
         -------
         tuple: np.ndarray(K, M), list
@@ -148,15 +151,21 @@ class VectorizedCorpus():
         X = self.bag_term_matrix if X is None else X
         df = self.document_index if df is None else df
 
+        assert aggregate_function in { 'sum', 'mean' }
         assert X.shape[0] == len(df)
 
         categories = list(sorted(df[column].unique().tolist()))
 
-        Y = np.zeros((len(categories), X.shape[1]), dtype=X.dtype)
+        Y = np.zeros((len(categories), X.shape[1]), dtype=(dtype or X.dtype))
 
         for i, value in enumerate(categories):
+
             indices = list((df.loc[df[column] == value].index))
-            Y[i,:] = X[indices,:].sum(axis=0)
+
+            if aggregate_function == 'mean':
+                Y[i,:] = X[indices,:].mean(axis=0)
+            else:
+                Y[i,:] = X[indices,:].sum(axis=0)
 
         return Y, categories
 
@@ -187,23 +196,36 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    def group_by_year2(self, fx_agg=np.nansum):
+    # _group_aggregate_functions = {
+    #     'sum': scipy.sparse.nansum,
+    #     'mean': scipy.sparse.nanmean
+    # }
+
+    def group_by_year2(self, aggregate_function='sum', dtype=None):
+
+        assert aggregate_function in { 'sum', 'mean' }
 
         X = self.bag_term_matrix # if X is None else X
         df = self.document_index # if df is None else df
 
         min_value, max_value = df.year.min(), df.year.max()
 
-        Y = np.zeros(((max_value - min_value) + 1, X.shape[1]))
+        Y = np.zeros(((max_value - min_value) + 1, X.shape[1]), dtype=(dtype or X.dtype))
 
         for i in range(0, Y.shape[0]): # pylint: disable=unsubscriptable-object
 
             indices = list((df.loc[df.year == min_value + i].index))
 
             if len(indices) > 0:
-                Y[i,:] = fx_agg(X[indices,:], axis=0)
+                if aggregate_function == 'mean':
+                    Y[i,:] = X[indices,:].mean(axis=0)
+                else:
+                    Y[i,:] = X[indices,:].sum(axis=0)
+
+                #Y[i,:] = self._group_aggregate_functions[aggregate_function](X[indices,:], axis=0)
 
         years = list(range(min_value, max_value + 1))
+
         document_index = pd.DataFrame({
             'year': years,
             'filename': map(str, years)
