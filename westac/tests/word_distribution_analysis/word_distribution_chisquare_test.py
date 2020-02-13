@@ -47,35 +47,17 @@ class Test_ChiSquare(unittest.TestCase):
         corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
         return corpus
 
-    def test_chisquare(self):
-
+    def skip_test_chisquare(self):
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
-
         v_corpus = vectorizer\
             .fit_transform(corpus)\
             .group_by_year()\
-            .normalize()\
             .slice_by_n_count(0)
-
-        X2 = scipy.stats.chisquare(v_corpus.term_bag_matrix, f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
-
-        # Use X2 so select top 500 words... (highest Power-Power_divergenceResult)
-        # Ynw = largest_by_chisquare()
-        #print(Ynw)
-
+        X2 = scipy.stats.chisquare(v_corpus.term_bag_matrix.todense(), f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
         linked = linkage(v_corpus.term_bag_matrix, 'ward') # pylint: disable=unused-variable
-        #print(linked)
-
-        ##labels = [ v_corpus.id2token[x] for x in indices ] # pylint: disable=unused-variable
-
-        #plt.figure(figsize=(24, 16))
-        #dendrogram(linked, orientation='top', labels=labels, distance_sort='descending', show_leaf_counts=True)
-        #plt.show()
-
         results = None
         expected = None
-
         self.assertEqual(expected, results)
 
 def plot_dists(v_corpus):

@@ -3,6 +3,10 @@ import unittest
 import types
 import pandas as pd
 import numpy as np
+import scipy
+import sklearn
+from sklearn.feature_extraction.text import CountVectorizer
+import scipy.sparse as sparse
 
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
@@ -41,14 +45,32 @@ class Test_VectorizedCorpus(unittest.TestCase):
         v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
         return v_corpus
 
-    def test_load_of_previously_dumped_v_corpus_has_same_values_as_dumped_v_corpus(self):
+    def test_load_of_uncompressed_corpus(self):
 
         # Arrange
         corpus = self.create_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         dumped_v_corpus = vectorizer.fit_transform(corpus)
 
-        dumped_v_corpus.dump('dump_test', folder='./westac/tests/output')
+        dumped_v_corpus.dump('dump_test', folder='./westac/tests/output', compressed=False)
+
+        # Act
+        loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder='./westac/tests/output')
+
+        # Assert
+        self.assertEqual(dumped_v_corpus.word_counts, loaded_v_corpus.word_counts)
+        self.assertEqual(dumped_v_corpus.document_index.to_dict(), loaded_v_corpus.document_index.to_dict())
+        self.assertEqual(dumped_v_corpus.token2id, loaded_v_corpus.token2id)
+        #self.assertEqual(dumped_v_corpus.X, loaded_v_corpus.X)
+
+    def test_load_of_compressed_corpus(self):
+
+        # Arrange
+        corpus = self.create_corpus()
+        vectorizer = corpus_vectorizer.CorpusVectorizer()
+        dumped_v_corpus = vectorizer.fit_transform(corpus)
+
+        dumped_v_corpus.dump('dump_test', folder='./westac/tests/output', compressed=True)
 
         # Act
         loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder='./westac/tests/output')
@@ -66,7 +88,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
             [4, 3, 7, 1],
             [6, 7, 4, 2]
         ]
-        self.assertTrue((expected_ytm == g_corpus.bag_term_matrix).all())
+        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
 
     def test_collapse_to_category_aggregates_bag_term_matrix_to_category_term_matrix(self):
         """ A more generic version of group_by_year (not used for now) """
@@ -76,7 +98,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
             [4, 3, 7, 1],
             [6, 7, 4, 2]
         ]
-        self.assertTrue((expected_ytm == Y).all())
+        self.assertTrue(np.allclose(expected_ytm, Y))
 
     def test_normalize_with_default_arguments_returns_matrix_normalized_by_l1_norm_for_each_row(self):
         bag_term_matrix = np.array([
@@ -94,12 +116,12 @@ class Test_VectorizedCorpus(unittest.TestCase):
         self.assertTrue((E == n_corpus.bag_term_matrix).all())
 
     def test_normalize_with_keep_magnitude(self):
-        bag_term_matrix = np.array([
-            [4, 3, 7, 1],
-            [6, 7, 4, 2]
-        ])
+        bag_term_matrix = np.array([[4, 3, 7, 1], [6, 7, 4, 2]])
+        bag_term_matrix = scipy.sparse.csr_matrix(bag_term_matrix)
+
         token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
         df = pd.DataFrame({'year': [ 2013,2014 ]})
+
         v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
         n_corpus = v_corpus.normalize(keep_magnitude=True)
 
@@ -108,7 +130,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
             [4.0, 3.0, 7.0, 1.0],
             [6.0*factor, 7.0*factor, 4.0*factor, 2.0*factor]
         ])
-        self.assertTrue((E == n_corpus.bag_term_matrix).all())
+        self.assertTrue(np.allclose(E, n_corpus.bag_term_matrix.todense()))
 
     def create_slice_by_n_count_test_corpus(self):
         bag_term_matrix = np.array([
@@ -165,7 +187,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
         # Assert
         self.assertEqual(v_corpus.token2id, t_corpus.token2id)
         self.assertEqual(v_corpus.word_counts, t_corpus.word_counts)
-        self.assertTrue((v_corpus.bag_term_matrix == t_corpus.bag_term_matrix).all())
+        self.assertTrue(np.allclose(v_corpus.bag_term_matrix.todense().A, t_corpus.bag_term_matrix.todense().A))
 
     def test_slice_by_n_top_when_all_tokens_above_n_count_returns_same_corpus(self):
 
@@ -177,7 +199,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
         # Assert
         self.assertEqual(v_corpus.token2id, t_corpus.token2id)
         self.assertEqual(v_corpus.word_counts, t_corpus.word_counts)
-        self.assertTrue((v_corpus.bag_term_matrix == t_corpus.bag_term_matrix).all())
+        self.assertTrue(np.allclose(v_corpus.bag_term_matrix.todense().A, t_corpus.bag_term_matrix.todense().A))
 
     def test_slice_by_n_top_when_n_top_less_than_n_tokens_returns_corpus_with_top_n_counts(self):
 
@@ -204,3 +226,31 @@ class Test_VectorizedCorpus(unittest.TestCase):
         v_corpus = self.create_vectorized_corpus()
         id2token = { 0: 'a', 1: 'b', 2: 'c', 3: 'd' }
         self.assertEqual(id2token, v_corpus.id2token)
+
+
+    def test_group_by_year(self):
+
+        corpus = [
+            "the house had a tiny little mouse",
+            "the cat saw the mouse",
+            "the mouse ran away from the house",
+            "the cat finally ate the mouse",
+            "the end of the mouse story"
+        ]
+        document_index = pd.DataFrame({
+            'year': [1, 1, 1, 2, 2]
+        })
+        vectorizer = CountVectorizer()
+        bag_term_matrix = vectorizer.fit_transform(corpus)
+
+        # token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
+        # bag_term_matrix = np.array([
+        #     [2, 1, 4, 1],
+        #     [2, 2, 3, 0],
+        #     [2, 3, 2, 0],
+        #     [2, 4, 1, 1],
+        #     [2, 0, 1, 1]
+        # ])
+        # df = pd.DataFrame({'year': [ 2013, 2013, 2014, 2014, 2014 ]})
+        # v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
+        # return v_corpus
