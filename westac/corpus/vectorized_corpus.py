@@ -7,6 +7,7 @@ import logging
 import numpy as np
 import pandas as pd
 import sklearn.preprocessing
+import scipy
 
 from heapq import nlargest
 
@@ -19,7 +20,13 @@ class VectorizedCorpus():
 
     def __init__(self, bag_term_matrix, token2id, document_index, word_counts=None):
 
-        self.bag_term_matrix = bag_term_matrix
+        if not scipy.sparse.issparse(bag_term_matrix):
+            self.bag_term_matrix = scipy.sparse.csr_matrix(bag_term_matrix)
+        else:
+            self.bag_term_matrix = bag_term_matrix
+
+        assert scipy.sparse.issparse(self.bag_term_matrix), "only sparse data allowed"
+
         self.token2id = token2id
         self.id2token_ = None
         self.document_index = document_index
@@ -57,7 +64,7 @@ class VectorizedCorpus():
     def term_bag_matrix(self):
         return self.bag_term_matrix.T
 
-    def dump(self, tag=None, folder='./output'):
+    def dump(self, tag=None, folder='./output', compressed=True):
 
         tag = tag or time.strftime("%Y%m%d_%H%M%S")
 
@@ -72,7 +79,12 @@ class VectorizedCorpus():
             pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
         matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
-        np.save(matrix_filename, self.bag_term_matrix, allow_pickle=True)
+
+        if compressed:
+            assert scipy.sparse.issparse(self.bag_term_matrix)
+            scipy.sparse.save_npz(matrix_filename, self.bag_term_matrix, compressed=True)
+        else:
+            np.save(matrix_filename + '.npy', self.bag_term_matrix, allow_pickle=True)
 
         return self
 
@@ -90,8 +102,12 @@ class VectorizedCorpus():
         token2id = data["token2id"]
         document_index = data["document_index"]
 
-        matrix_filename = VectorizedCorpus._matrix_filename(tag, folder)
-        bag_term_matrix = np.load(matrix_filename, allow_pickle=True).item()
+        matrix_basename = VectorizedCorpus._matrix_filename(tag, folder)
+
+        if os.path.isfile(matrix_basename + '.npz'):
+            bag_term_matrix = scipy.sparse.load_npz(matrix_basename + '.npz')
+        else:
+            bag_term_matrix = np.load(matrix_basename + '.npy', allow_pickle=True).item()
 
         return VectorizedCorpus(bag_term_matrix, token2id, document_index)
 
@@ -101,9 +117,10 @@ class VectorizedCorpus():
 
     @staticmethod
     def _matrix_filename(tag, folder):
-        return os.path.join(folder, "{}_vector_data.npy".format(tag))
+        return os.path.join(folder, "{}_vector_data".format(tag))
 
     def get_word_vector(self, word):
+
         return self.bag_term_matrix[:, self.token2id[word]]
 
     # FIXME: Moved to service
@@ -170,16 +187,40 @@ class VectorizedCorpus():
 
         return v_corpus
 
+    def group_by_year2(self, fx_agg=np.nansum):
+
+        X = self.bag_term_matrix # if X is None else X
+        df = self.document_index # if df is None else df
+
+        min_value, max_value = df.year.min(), df.year.max()
+
+        Y = np.zeros(((max_value - min_value) + 1, X.shape[1]))
+
+        for i in range(0, Y.shape[0]): # pylint: disable=unsubscriptable-object
+
+            indices = list((df.loc[df.year == min_value + i].index))
+
+            if len(indices) > 0:
+                Y[i,:] = fx_agg(X[indices,:], axis=0)
+
+        years = list(range(min_value, max_value + 1))
+        document_index = pd.DataFrame({
+            'year': years,
+            'filename': map(str, years)
+        })
+
+        v_corpus = VectorizedCorpus(Y, self.token2id, document_index, self.word_counts)
+
+        return v_corpus
+
     #@jit
     def normalize(self, axis=1, norm='l1', keep_magnitude=False):
 
         normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=axis, norm=norm)
 
         if keep_magnitude is True:
-            X0 = self.bag_term_matrix[0]
-            Y0 = normalized_bag_term_matrix[0]
-            K  = X0 / Y0
-            normalized_bag_term_matrix = normalized_bag_term_matrix * K
+            factor = self.bag_term_matrix[0,:].sum() / normalized_bag_term_matrix[0,:].sum()
+            normalized_bag_term_matrix = normalized_bag_term_matrix * factor
 
         v_corpus = VectorizedCorpus(normalized_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
 
