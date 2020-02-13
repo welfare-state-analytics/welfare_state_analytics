@@ -1,10 +1,11 @@
 import os
+
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
 from westac.corpus import vectorized_corpus
 from westac.corpus import file_text_reader
 
-def generate_corpus(filename, output_folder, pattern='*.txt', **kwargs):
+def generate_corpus(filename, output_folder, **kwargs):
 
     if not os.path.isfile(filename):
         print('error: no such file: {}'.format(filename))
@@ -22,13 +23,13 @@ def generate_corpus(filename, output_folder, pattern='*.txt', **kwargs):
         os.remove(os.path.join(output_folder, '{}_vector_data.npy'.format(dump_tag)))
         os.remove(os.path.join(output_folder, '{}_vectorizer_data.pickle'.format(dump_tag)))
 
-    meta_extract = {
-        'year': r"SOU (\d{4})\_.*",
-        'serial_no': r"SOU \d{4}\_(\d+).*"
-    }
-
     print('Creating new corpus...')
-    reader = file_text_reader.FileTextReader(filename, meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True, pattern=pattern)
+    reader = file_text_reader.FileTextReader(
+        filename, meta_extract=kwargs.get("meta_extract"),
+        compress_whitespaces=True,
+        dehyphen=True,
+        pattern=kwargs.get("pattern", "*.txt")
+    )
     corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
 
     print('Creating document-term matrix...')
@@ -48,9 +49,14 @@ if __name__ == "__main__":
         max_len=None,
         numerals=False,
         symbols=False,
-        only_alphabetic=True
+        only_alphabetic=True,
+        pattern='*.txt',
+        meta_extract = {
+            'year': r"(\d{4})\_.*",
+            'serial_no': r"\d{4}\_(\d+).*"
+        }
     )
 
-    filename = './data/SOU_test.zip'
+    filename = './data/SOU_1945-1989_NN+VB+JJ_lemma.zip'
 
-    generate_corpus(filename, output_folder='./output', pattern='SOU*.txt', **kwargs)
+    generate_corpus(filename, output_folder='./output', **kwargs)
