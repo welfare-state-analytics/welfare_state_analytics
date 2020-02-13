@@ -5,6 +5,7 @@ import scipy
 import sklearn
 from sklearn.feature_extraction.text import CountVectorizer
 import scipy.sparse as sparse
+from pprint import pprint as print
 
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
@@ -137,7 +138,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
         ]
         self.assertTrue(np.allclose(expected_ytm, Y))
 
-    def test_group_by_year(self):
+    def test_group_by_year_with_average(self):
 
         corpus = [
             "the house had a tiny little mouse",
@@ -146,11 +147,39 @@ class Test_VectorizedCorpus(unittest.TestCase):
             "the cat finally ate the mouse",
             "the end of the mouse story"
         ]
-        document_index = pd.DataFrame({
-            'year': [1, 1, 1, 2, 2]
-        })
+        expected_bag_term_matrix = np.array([
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 2, 0],
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 2, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 2, 0]
+        ])
+
+        expected_bag_term_matrix_sums = np.array([
+            expected_bag_term_matrix[[0,1,2],:].sum(axis=0),
+            expected_bag_term_matrix[[3,4],:].sum(axis=0)
+        ])
+
+        expected_bag_term_matrix_means = np.array([
+            expected_bag_term_matrix[[0,1,2],:].sum(axis=0) / 3.0,
+            expected_bag_term_matrix[[3,4],:].sum(axis=0) / 2.0
+        ])
+
+        document_index = pd.DataFrame({'year': [1, 1, 1, 2, 2]})
+
         vectorizer = CountVectorizer()
         bag_term_matrix = vectorizer.fit_transform(corpus)
+
+        v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id=vectorizer.vocabulary_, document_index=document_index)
+
+        self.assertTrue(np.allclose(expected_bag_term_matrix, bag_term_matrix.todense()))
+
+        y_sum_corpus = v_corpus.group_by_year2(aggregate_function='sum', dtype=np.float)
+        y_mean_corpus = v_corpus.group_by_year2(aggregate_function='mean', dtype=np.float)
+
+        self.assertTrue(np.allclose(expected_bag_term_matrix_sums, y_sum_corpus.data.todense()))
+        self.assertTrue(np.allclose(expected_bag_term_matrix_means, y_mean_corpus.data.todense()))
+
 
         # token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3 }
         # bag_term_matrix = np.array([
