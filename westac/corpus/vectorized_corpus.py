@@ -10,6 +10,9 @@ import sklearn.preprocessing
 import scipy
 
 from heapq import nlargest
+from sklearn.feature_extraction.text import TfidfTransformer
+
+import numpy as np
 
 # logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
 
@@ -315,6 +318,17 @@ class VectorizedCorpus():
     def token_indices(self, tokens):
 
         return [ self.token2id[token] for token in tokens ]
+
+
+    def tf_idf(self, norm='l2', use_idf=True, smooth_idf=True):
+
+        transformer = TfidfTransformer(norm=norm, use_idf=use_idf, smooth_idf=smooth_idf)
+
+        tfidf_bag_term_matrix = transformer.fit_transform(self.bag_term_matrix)
+
+        n_corpus = VectorizedCorpus(tfidf_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
+
+        return n_corpus
 
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 
