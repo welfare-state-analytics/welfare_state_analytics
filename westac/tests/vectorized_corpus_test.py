@@ -44,6 +44,28 @@ class Test_VectorizedCorpus(unittest.TestCase):
         v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, df)
         return v_corpus
 
+    def test_bag_term_matrix_to_bag_term_docs(self):
+
+        v_corpus = self.create_vectorized_corpus()
+        
+        doc_ids = (0, 1, )
+        expected = [
+            ['a', 'a', 'b', 'c', 'c', 'c', 'c', 'd'],
+            ['a', 'a', 'b', 'b', 'c', 'c', 'c']
+        ]
+        docs = v_corpus.to_bag_of_terms(doc_ids)
+        assert expected == ([ list(d) for d in docs ])
+
+        expected = [
+            ['a', 'a', 'b', 'c', 'c', 'c', 'c', 'd'],
+            ['a', 'a', 'b', 'b', 'c', 'c', 'c'],
+            ['a', 'a', 'b', 'b', 'b', 'c', 'c'],
+            ['a', 'a', 'b', 'b', 'b', 'b', 'c', 'd'],
+            ['a', 'a', 'c', 'd']
+        ]
+        docs = v_corpus.to_bag_of_terms()
+        assert expected == ([ list(d) for d in docs ])
+
     def test_load_of_uncompressed_corpus(self):
 
         # Arrange

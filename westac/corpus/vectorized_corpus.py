@@ -12,8 +12,6 @@ import scipy
 from heapq import nlargest
 from sklearn.feature_extraction.text import TfidfTransformer
 
-import numpy as np
-
 # logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
 
 logger = logging.getLogger()
@@ -124,7 +122,7 @@ class VectorizedCorpus():
 
     def get_word_vector(self, word):
 
-        return self.bag_term_matrix[:, self.token2id[word]]
+        return self.bag_term_matrix[:, self.token2id[word]].todense().A1 # x.A1 == np.asarray(x).ravel()
 
     # FIXME: Moved to service
     def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float):
@@ -319,7 +317,6 @@ class VectorizedCorpus():
 
         return [ self.token2id[token] for token in tokens ]
 
-
     def tf_idf(self, norm='l2', use_idf=True, smooth_idf=True):
 
         transformer = TfidfTransformer(norm=norm, use_idf=use_idf, smooth_idf=smooth_idf)
@@ -329,6 +326,17 @@ class VectorizedCorpus():
         n_corpus = VectorizedCorpus(tfidf_bag_term_matrix, self.token2id, self.document_index, self.word_counts)
 
         return n_corpus
+
+    def to_bag_of_terms(self, indicies=None):
+        dtm = self.bag_term_matrix
+        indicies = indicies or range(0, dtm.shape[0])
+        id2token = self.id2token
+        return (
+            ( w for ws in (
+                    dtm[doc_id,i]  * [ id2token[i] ] for i in dtm[doc_id,:].nonzero()[1]
+                ) for w in ws )
+                    for doc_id in indicies
+        )
 
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 
