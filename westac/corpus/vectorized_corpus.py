@@ -338,6 +338,24 @@ class VectorizedCorpus():
                     for doc_id in indicies
         )
 
+    def get_top_n_words(self, n=1000, indices=None):
+        """
+        List the top n words in a subset of the corpus sorted according to occurrence.
+
+        """
+        if indices is None:
+            sum_words = self.bag_term_matrix.sum(axis=0)
+        else:
+            sum_words = self.bag_term_matrix[indices, :].sum(axis=0)
+
+        id2token = self.id2token
+        token_ids = sum_words.nonzero()[1]
+        words_freq = [ (id2token[i], sum_words[0,i]) for i in token_ids ]
+
+        words_freq = sorted(words_freq, key = lambda x: x[1], reverse=True)
+
+        return words_freq[:n]
+
 def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
 
     v_corpus = VectorizedCorpus\
