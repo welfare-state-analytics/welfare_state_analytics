@@ -58,6 +58,8 @@ colorcet = "*"
 holoviews = "*"
 markdown = "*"
 attrs = "*"
+pyreadr = "*"
+rpy2 = "*"
 
 [requires]
 python_version = "3.7"
