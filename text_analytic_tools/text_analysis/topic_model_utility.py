@@ -1,5 +1,6 @@
 import types
 import pandas as pd
+import numpy as np
 import text_analytic_tools.utility as utility
 import gensim
 
@@ -78,7 +79,7 @@ def compile_dictionary(model, vectorizer=None):
     }).set_index('token_id')[['token', 'dfs']]
     return dictionary
 
-def compile_topic_token_weights(model, dictionary, n_tokens=200):
+def compile_topic_token_weights(model, dictionary, n_tokens=200, minimum_probability=0.000001):
 
     logger.info('Compiling topic-tokens weights...')
 
@@ -87,18 +88,21 @@ def compile_topic_token_weights(model, dictionary, n_tokens=200):
 
     if hasattr(model, 'show_topics'):
         # Gensim LDA model
-        #topic_data = model.show_topics(model.num_topics, num_words=n_tokens, formatted=False)
         topic_data = model.show_topics(num_topics=-1, num_words=n_tokens, formatted=False)
-    else:
+    elif hasattr(model, 'top_topic_terms'):
         # Textacy/scikit-learn model
         topic_data = model.top_topic_terms(id2term, topics=-1, top_n=n_tokens, weights=True)
+    else:
+        assert False, "Unknown model type"
 
     df_topic_weights = pd.DataFrame(
         [ (topic_id, token, weight)
             for topic_id, tokens in topic_data
-                for token, weight in tokens if weight > 0.0 ],
+                for token, weight in tokens if weight > minimum_probability ],
         columns=['topic_id', 'token', 'weight']
     )
+
+    df_topic_weights['topic_id'] = df_topic_weights.topic_id.astype(np.unit16)
 
     term2id = { v: k for k,v in id2term.items() }
     df_topic_weights['token_id'] = df_topic_weights.token.apply(lambda x: term2id[x])
@@ -123,6 +127,7 @@ def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
 def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, minimum_probability=0.001):
 
     try:
+
         def document_topics_iter(model, corpus, minimum_probability=0.0):
 
             if isinstance(model, gensim.models.LsiModel):
@@ -161,8 +166,11 @@ def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, min
         logger.info('  Creating frame from iterator...')
         df_doc_topics = pd.DataFrame(data, columns=[ 'document_id', 'topic_id', 'weight' ]).set_index('document_id')
 
-        logger.info('  Merging data...')
-        df = pd.merge(documents, df_doc_topics, how='inner', left_index=True, right_index=True)
+        df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.unit16)
+
+        # logger.info('  Merging data...')
+        # df = pd.merge(documents, df_doc_topics, how='inner', left_index=True, right_index=True)
+        logger.warning('[compile_document_topics] documents no longer merged to save space!')
         logger.info('  DONE!')
         return df
     except Exception as ex:
@@ -180,17 +188,13 @@ def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_top
     topic_token_overview = compile_topic_token_overview(topic_token_weights, alpha)
     document_topic_weights = compile_document_topics(model, corpus, documents, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
 
-    # PATCH: take care of case when year is 0
     assert year_column in documents.columns
     years_series = documents[year_column]
     year_period = (years_series[years_series > 0].min(), years_series.max())
-    #year_period = (documents[year_column].min(), documents[year_column].max()) if year_column in documents.columns else (None, None)
 
     relevant_topic_ids = list(document_topic_weights.topic_id.unique())
 
     return types.SimpleNamespace(
-        dictionary=dictionary,
-        documents=documents,
         topic_token_weights=topic_token_weights,
         topic_token_overview=topic_token_overview,
         document_topic_weights=document_topic_weights,
