@@ -34,3 +34,6 @@ log
 lint-analysis
 clone
 archive
+tCoIR
+.RData
+.Rhistory
