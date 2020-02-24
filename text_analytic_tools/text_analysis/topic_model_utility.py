@@ -1,64 +1,14 @@
+import os
 import types
 import pandas as pd
 import numpy as np
 import text_analytic_tools.utility as utility
 import gensim
+import pickle
+import glob
+import json
 
 logger = utility.getLogger('corpus_text_analysis')
-
-class TopicModelException(Exception):
-    pass
-
-class TopicModelContainer():
-    """Class for current (last) computed or loaded model
-    """
-    _singleton = None
-
-    def __init__(self):
-        self._data = None
-
-    @staticmethod
-    def singleton():
-        TopicModelContainer._singleton = TopicModelContainer._singleton or TopicModelContainer()
-        return TopicModelContainer._singleton
-
-    @property
-    def data(self):
-        if self._data is None:
-            raise TopicModelException('Model not loaded or computed')
-        return self._data
-
-    @data.setter
-    def data(self, value):
-        self._data = value
-
-    @property
-    def topic_model(self):
-        return self.data.topic_model
-
-    @property
-    def id2term(self):
-        return self.data.id2term
-
-    @property
-    def processed(self):
-        return self.data.processed
-
-    @property
-    def num_topics(self):
-        tm = self.topic_model
-        if tm is None:
-            return 0
-        if hasattr(tm, 'num_topics'):
-            return tm.num_topics
-        if hasattr(tm, 'n_topics'):
-            return tm.n_topics
-
-        return 0
-
-    @property
-    def relevant_topics(self):
-        return self.processed.relevant_topic_ids
 
 def compile_dictionary(model, vectorizer=None):
     logger.info('Compiling dictionary...')
@@ -102,7 +52,7 @@ def compile_topic_token_weights(model, dictionary, n_tokens=200, minimum_probabi
         columns=['topic_id', 'token', 'weight']
     )
 
-    df_topic_weights['topic_id'] = df_topic_weights.topic_id.astype(np.unit16)
+    df_topic_weights['topic_id'] = df_topic_weights.topic_id.astype(np.uint16)
 
     term2id = { v: k for k,v in id2term.items() }
     df_topic_weights['token_id'] = df_topic_weights.token.apply(lambda x: term2id[x])
@@ -124,7 +74,7 @@ def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
 
     return df.set_index('topic_id')
 
-def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, minimum_probability=0.001):
+def compile_document_topics(model, corpus, doc_topic_matrix=None, minimum_probability=0.001):
 
     try:
 
@@ -166,41 +116,63 @@ def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, min
         logger.info('  Creating frame from iterator...')
         df_doc_topics = pd.DataFrame(data, columns=[ 'document_id', 'topic_id', 'weight' ]).set_index('document_id')
 
-        df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.unit16)
+        df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.uint16)
 
-        # logger.info('  Merging data...')
-        # df = pd.merge(documents, df_doc_topics, how='inner', left_index=True, right_index=True)
-        logger.warning('[compile_document_topics] documents no longer merged to save space!')
         logger.info('  DONE!')
-        return df
+
+        return df_doc_topics
+
     except Exception as ex:
         logger.error(ex)
         return None
 
-# FIXME VARYING ASPECTS: year_column='signed_year' for tCoIR
 def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_topic_matrix=None, n_tokens=200, year_column='year'):
     '''
     Compile metadata associated to given model and corpus
     '''
-    dictionary = compile_dictionary(model, vectorizer)
-    topic_token_weights = compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
-    alpha = model.alpha if 'alpha' in model.__dict__ else None
-    topic_token_overview = compile_topic_token_overview(topic_token_weights, alpha)
-    document_topic_weights = compile_document_topics(model, corpus, documents, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
+    try:
+        dictionary = compile_dictionary(model, vectorizer)
+        topic_token_weights = compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
+        alpha = model.alpha if 'alpha' in model.__dict__ else None
+        topic_token_overview = compile_topic_token_overview(topic_token_weights, alpha)
+        document_topic_weights = compile_document_topics(model, corpus, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
 
-    assert year_column in documents.columns
-    years_series = documents[year_column]
-    year_period = (years_series[years_series > 0].min(), years_series.max())
+        assert year_column in documents.columns
+        years_series = documents[year_column]
+        year_period = (years_series[years_series > 0].min(), years_series.max())
 
-    relevant_topic_ids = list(document_topic_weights.topic_id.unique())
+        relevant_topic_ids = list(document_topic_weights.topic_id.unique())
 
-    return types.SimpleNamespace(
-        topic_token_weights=topic_token_weights,
-        topic_token_overview=topic_token_overview,
-        document_topic_weights=document_topic_weights,
-        year_period=year_period,
-        relevant_topic_ids=relevant_topic_ids
-    )
+        return types.SimpleNamespace(
+            topic_token_weights=topic_token_weights,
+            topic_token_overview=topic_token_overview,
+            document_topic_weights=document_topic_weights,
+            year_period=year_period,
+            relevant_topic_ids=relevant_topic_ids
+        )
+    except Exception as ex:
+        logger.exception(ex)
+        return None
+
+def store_compiled_data(compiled_data, data_folder, model_name):
+    target_folder = os.path.join(data_folder, model_name)
+    if not os.path.isdir(target_folder):
+        os.mkdir(target_folder)
+    filename = os.path.join(target_folder, "compiled_data.pickle")
+    with open(filename, 'wb') as f:
+        pickle.dump(compiled_data, f, pickle.HIGHEST_PROTOCOL)
+
+def load_compiled_data(data_folder, model_name):
+    filename = os.path.join(data_folder, model_name, "compiled_data.pickle")
+    with open(filename, 'rb') as f:
+        data = pickle.load(f)
+    return data
+
+def compiled_data_sizes(compiled_data):
+    for o_name in [ k for k in compiled_data.__dict__ if not k.startswith("__")]:
+        o_data = getattr(compiled_data, o_name)
+        o_size = sys.getsizeof(o_data)
+        print('{:>20s}: {:.4f} Mb {}'.format(o_name, o_size / (1024*1024), type(o_data)))
 
 def get_topic_titles(topic_token_weights, topic_id=None, n_tokens=100):
     df_temp = topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id==topic_id)]
@@ -294,3 +266,19 @@ def malletmodel2ldamodel(mallet_model, gamma_threshold=0.001, iterations=50):
     model_gensim.state.sstats[...] = mallet_model.wordtopics
     model_gensim.sync_state()
     return model_gensim
+
+def read_json(path):
+    with open(path) as fp:
+        return json.load(fp)
+
+def find_models(corpus_folder):
+    folders = [ os.path.split(x)[0] for x in glob.glob(os.path.join(corpus_folder, "*", "model_data.pickle")) ]
+    models = [
+        {
+            'folder': x,
+            'name': os.path.split(x)[1],
+            'options': read_json(os.path.join(x, "model_options.json"))
+        }
+        for x in folders
+    ]
+    return models
