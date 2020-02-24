@@ -4,6 +4,7 @@ import pandas as pd
 import gensim
 import os
 import pickle
+import json
 
 import text_analytic_tools.utility as utility
 import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
@@ -62,7 +63,7 @@ def setup_gensim_algorithms(algorithm, document_index, g_corpus, id2word, tm_arg
 
     if algorithm == 'LDA':
         return {
-            'engine': gensim.models.LdaMulticore,
+            'engine': gensim.models.LdaModel,
             'options': {
                 'corpus': g_corpus,
                 'num_topics':  tm_args.get('n_topics', 20),
@@ -71,7 +72,7 @@ def setup_gensim_algorithms(algorithm, document_index, g_corpus, id2word, tm_arg
                 'passes': tm_args.get('passes', 40),
                 'eval_every': 2,
                 'update_every': 1,
-                #'alpha': 'auto',
+                'alpha': 'auto',
                 'eta': 'auto', # None
                 'decay': 0.1, # 0.5
 
@@ -88,6 +89,32 @@ def setup_gensim_algorithms(algorithm, document_index, g_corpus, id2word, tm_arg
             }
         }
 
+    if algorithm == 'LDA-MULTICORE':
+        return {
+            'engine': gensim.models.LdaMulticore,
+            'options': {
+                'corpus': g_corpus,
+                'num_topics':  tm_args.get('n_topics', 20),
+                'id2word':  id2word,
+                'iterations': tm_args.get('max_iter', 1000),
+                'passes': tm_args.get('passes', 40),
+                'workers': tm_args.get('workers', 7),
+                'eta': 'auto', # None
+                'per_word_topics': True,
+                'random_state': 100
+
+                #'decay': 0.1, # 0.5
+                #'chunksize': 10,
+                #'eval_every': 2,
+                #'update_every': 1,
+                #'offset': 1.0,
+                #'dtype': np.float64
+                #'callbacks': [
+                #    gensim.models.callbacks.PerplexityMetric(corpus=corpus, logger='visdom'),
+                #    gensim.models.callbacks.ConvergenceMetric(distance='jaccard', num_words=100, logger='shell')
+                #]
+            }
+        }
     if algorithm =='HDP':
         return {
             'engine': gensim.models.HdpModel,
@@ -161,9 +188,6 @@ def vectorize_terms(terms, vec_args):
     id2word = vectorizer.id_to_term
     return doc_term_matrix, id2word
 
-# FIXME VARYING ASPECTS:
-# documents = textacy_utility.tCoIR_get_corpus_documents(corpus)
-### def compute(corpus, documents, tick=utility.noop, method='sklearn_lda', vec_args=None, term_args=None, tm_args=None, **args):
 def compute(
     terms=None,
     documents=None,
@@ -175,7 +199,7 @@ def compute(
     **args
 ):
 
-    vec_args = utility.extend({}, DEFAULT_VECTORIZE_PARAMS, vec_args)
+    vec_args = utility.extend({}, DEFAULT_VECTORIZE_PARAMS, vec_args or {})
 
     perplexity_score = None
     coherence_score = None
@@ -226,7 +250,7 @@ def compute(
         model = engine(**engine_options)
 
         if hasattr(model, 'log_perplexity'):
-            perplexity_score = model.log_perplexity(g_corpus, len(g_corpus))
+            perplexity_score = 2 ** model.log_perplexity(g_corpus, len(g_corpus))
 
         # try:
         #     coherence_model_lda =  gensim.models.CoherenceModel(model=model, texts=terms, dictionary=id2word, coherence='c_v')
@@ -235,7 +259,7 @@ def compute(
         #     logger.error(ex)
         #     coherence_score = None
 
-    processed = topic_model_utility.compile_metadata(
+    compiled_data = topic_model_utility.compile_metadata(
         model,
         g_corpus,
         id2word,
@@ -250,34 +274,34 @@ def compute(
         id2term=id2word,
         g_corpus=g_corpus,
         doc_term_matrix=doc_term_matrix,
-        #doc_topic_matrix=doc_topic_matrix,
-        #vectorizer=vectorizer,
-        processed=processed,
         perplexity_score=perplexity_score,
-        #coherence_score=coherence_score,
         options=dict(method=method, vec_args=vec_args, tm_args=tm_args, **args),
         coherence_scores=None
+        #coherence_score=coherence_score,
+        #doc_topic_matrix=doc_topic_matrix,
     )
 
-    return model_data
+    return model_data, compiled_data
 
-def store_model(data, filename):
+def store_model(model_data, data_folder, model_name):
 
-    data = types.SimpleNamespace(
-        topic_model=data.topic_model,
-        id2term=data.id2term,
-        g_corpus=data.g_corpus,
-        doc_term_matrix=None, #doc_term_matrix,
-        doc_topic_matrix=None, #doc_topic_matrix,
-        vectorizer=None, #vectorizer,
-        processed=data.processed,
-        coherence_scores=data.coherence_scores
-    )
+    target_folder = os.path.join(data_folder, model_name)
+    if not os.path.isdir(target_folder):
+        os.mkdir(target_folder)
 
-    with open(filename, 'wb') as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+    model_data.doc_term_matrix = None
 
-def load_model(filename):
+    filename = os.path.join(target_folder, "model_data.pickle")
+
+    with open(filename, 'wb') as fp:
+        pickle.dump(model_data, fp, pickle.HIGHEST_PROTOCOL)
+
+    filename = os.path.join(target_folder, "model_options.json")
+    with open(filename, 'w') as fp:
+        json.dump(model_data.options, fp)
+
+def load_model(data_folder, model_name):
+    filename = os.path.join(data_folder, model_name, "model_data.pickle")
     with open(filename, 'rb') as f:
         data = pickle.load(f)
     return data
