@@ -45,6 +45,34 @@ def nth(iterable, n, default=None):
 def flatten(l):
     return [ x for ws in l for x in ws]
 
+def extend(target, *args, **kwargs):
+    """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
+
+    Parameters
+    ----------
+    target : dict
+        Default dictionary (to be extended)
+
+    args: [dict]
+        Optional. List of dicts to use when updating target
+
+    args: [key=value]
+        Optional. List of key-value pairs to use when updating target
+
+    Returns
+    -------
+    [dict]
+        Target dict updated with supplied dicts/key-values.
+        Multiple keys are overwritten inorder of occrence i.e. keys to right have higher precedence
+
+    """
+
+    target = dict(target)
+    for source in args:
+        target.update(source)
+    target.update(kwargs)
+    return target
+    
 def dehyphen(text: str):
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
