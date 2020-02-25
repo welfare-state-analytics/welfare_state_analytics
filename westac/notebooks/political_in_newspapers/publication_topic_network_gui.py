@@ -58,7 +58,8 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
 def display_document_topic_network(
     layout_algorithm,
     state,
-    threshold=0.10,
+    document_threshold=0.0,
+    mean_threshold=0.10,
     period=None,
     ignores=None,
     scale=1.0,
@@ -81,9 +82,12 @@ def display_document_topic_network(
     if len(ignores or []) > 0:
         df = df[~df.topic_id.isin(ignores)]
 
+    df = df[(df['weight'] >= document_threshold)]
+
     df = df.groupby(['publication_id', 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
     df.columns = ['publication_id', 'topic_id', 'mean', 'max']
-    df = df[(df[aggregate] > threshold)].reset_index()
+
+    df = df[(df[aggregate] > mean_threshold)].reset_index()
 
     if len(df) == 0:
         print('No data')
@@ -104,7 +108,19 @@ def display_document_topic_network(
         p = plot_document_topic_network(network, layout, scale=scale, titles=titles)
         bokeh.plotting.show(p)
 
-    elif output_format == 'table':
+    else:
+
+        df = df[['publication', 'topic_id',  'weight', 'mean', 'max']]
+        df.columns = ['Source', 'Target',  'weight', 'mean', 'max']
+        if output_format == 'table':
+            display(df)
+        if output_format == 'excel':
+            filename = utility.timestamp("{}publication_topic__network.xlsx")
+            df.to_excel(filename)
+        if output_format == 'CSV':
+            filename = utility.timestamp("{}publication_topic__network.csv")
+            df.to_csv(filename, sep='\t')
+
         display(df)
 
     tick(0)
@@ -122,8 +138,10 @@ def display_gui(state):
         text=widgets_helper.text(TEXT_ID),
         period=widgets.IntRangeSlider(description='Time', min=year_min, max=year_max, step=1, value=(year_min, year_max), continues_update=False),
         scale=widgets.FloatSlider(description='Scale', min=0.0, max=1.0, step=0.01, value=0.1, continues_update=False),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=1.0, step=0.01, value=0.10, continues_update=False),
-        output_format=widgets.Dropdown(description='Output', options={ 'Network': 'network', 'Table': 'table' }, value='network', layout=lw('200px')),
+        document_threshold=widgets.FloatSlider(description='Threshold(D)', min=0.0, max=1.0, step=0.01, value=0.00, continues_update=False),
+        mean_threshold=widgets.FloatSlider(description='Threshold(G)', min=0.0, max=1.0, step=0.01, value=0.10, continues_update=False),
+        aggregate=widgets.Dropdown(description='Aggregate', options=['mean', 'max'], value='mean', layout=widgets.Layout(width="200px")),
+        output_format=widgets.Dropdown(description='Output', options={ 'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv' }, value='network', layout=lw('200px')),
         layout=widgets.Dropdown(description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
         ignores=widgets.SelectMultiple(description='Ignore', options=[('', None)] + [ ('Topic #'+str(i), i) for i in range(0, n_topics) ], value=[], rows=8, layout=lw('180px')),
@@ -132,29 +150,23 @@ def display_gui(state):
     def tick(x=None):
         gui.progress.value = gui.progress.value + 1 if x is None else x
 
-    # def on_party_preset_change(change):  # pylint: disable=W0613
-    #     if gui.party_preset.value is None:
-    #         return
-    #     gui.parties.value = gui.parties.options if 'ALL' in gui.party_preset.value else gui.party_preset.value
-
-    # gui.party_preset.observe(on_party_preset_change, names='value')
-
     iw = widgets.interactive(
         display_document_topic_network,
         layout_algorithm=gui.layout,
         state=widgets.fixed(state),
-        threshold=gui.threshold,
+        document_threshold=gui.document_threshold,
+        mean_threshold=gui.mean_threshold,
         period=gui.period,
         ignores=gui.ignores,
         scale=gui.scale,
+        aggregate=gui.aggregate,
         output_format=gui.output_format,
         tick=widgets.fixed(tick)
     )
 
     display(widgets.VBox([
         widgets.HBox([
-            widgets.VBox([gui.layout, gui.threshold, gui.scale, gui.period]),
-            # widgets.VBox([gui.parties, gui.party_preset]),
+            widgets.VBox([gui.layout, gui.document_threshold, gui.mean_threshold, gui.scale, gui.period]),
             widgets.VBox([gui.ignores]),
             widgets.VBox([gui.output_format, gui.progress]),
         ]),

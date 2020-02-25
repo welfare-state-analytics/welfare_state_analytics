@@ -24,7 +24,9 @@ def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=No
     xs = df[category_column].astype(np.str)
     ys = df[value_column]
 
-    figopts = utility.extend(dict(title='', toolbar_location="right"), figopts)
+    y_max = max(ys.max(),0.3)
+
+    figopts = utility.extend(dict(title='', toolbar_location="right",y_range = (0.0, y_max+0.05)), figopts)
 
     p = bokeh.plotting.figure(**figopts)
 
@@ -34,6 +36,7 @@ def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=No
     p.xgrid.grid_line_color = None
     p.xaxis[0].axis_label = (x_label or category_column.title().replace('_', ' ')).title()
     p.yaxis[0].axis_label = (y_label or value_column.title().replace('_', ' ')).title()
+    #p.y_range.start = 0.0
     p.y_range.start = 0.0
     p.x_range.range_padding = 0.01
 
@@ -60,9 +63,14 @@ def display_topic_trend(
         df = df[(df[year_column] == year)]
 
     if pivot_column is not None:
+
+        df = df[df['weight'] >= threshold]
+
         df = df.groupby([pivot_column, 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
         df.columns = [pivot_column, 'topic_id', 'mean', 'max']
-        df = df[(df[year_aggregate] > threshold)].reset_index()
+
+        #df = df[(df[year_aggregate] > threshold)].reset_index()
+
         category_column = pivot_column
         min_year = document_topic_weights[year_column].min()
         max_year = document_topic_weights[year_column].max()
@@ -93,7 +101,7 @@ def display_gui(state):
         year=widgets.Dropdown(description='Year', options=year_options, value=None, layout=widgets.Layout(width="200px")),
         publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
         year_aggregate=widgets.Dropdown(description='Aggregate', options=['mean', 'max'], value='mean', layout=widgets.Layout(width="200px")),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=0.25, step=0.01, value=0.10, continuous_update=False),
+        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=0.25, step=0.01, value=0.0, continuous_update=False),
         topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
         output_format=widgets.Dropdown(description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
@@ -141,6 +149,7 @@ def display_gui(state):
     gui.topic_id.observe(update_handler, names='value')
     gui.year.observe(update_handler, names='value')
     gui.publication_id.observe(update_handler, names='value')
+    gui.threshold.observe(update_handler, names='value')
     gui.year_aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
