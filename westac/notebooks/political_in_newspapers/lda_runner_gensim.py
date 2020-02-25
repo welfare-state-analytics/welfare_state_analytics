@@ -54,10 +54,10 @@ def run_model(model_name, n_topics, data_folder, passes, alpha):
     """ runner """
     method = 'gensim_lda-multicore'
 
-    # dtm, documents, id2token = corpus_data.load_as_dtm(data_folder)
+    dtm, documents, id2token = corpus_data.load_as_dtm(data_folder)
 
     # dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16"])
-    dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16", "1989-06-16"])
+    # dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16", "1989-06-16"])
 
     model_data, compiled_data = topic_model.compute(
         doc_term_matrix=dtm,
