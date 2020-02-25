@@ -221,7 +221,8 @@ def compute(
 
         doc_topic_matrix = model.transform(doc_term_matrix)
 
-        g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
+        g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=True)
+        assert g_corpus.shape[0] == doc_term_matrix.shape[0]
 
         perplexity_score = None
         coherence_score = None
@@ -235,8 +236,8 @@ def compute(
             g_corpus = [ id2word.doc2bow(tokens) for tokens in terms ]
         else:
             assert id2word is not None
-            g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
-
+            g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=True)
+            assert g_corpus.shape[0] == doc_term_matrix.shape[0]
         if args.get('tfidf_weiging', False):
             # assert algorithm_name != 'MALLETLDA', 'MALLET training model cannot (currently) use TFIDF weighed corpus'
             tfidf_model = gensim.models.tfidfmodel.TfidfModel(g_corpus)
@@ -328,6 +329,13 @@ def compute_topic_proportions(document_topic_weights, doc_length_series):
     # (this determines the areas of the default topic circles when no term is highlighted)
     # topic.frequency <- colSums(theta * doc.length)
     # topic.proportion <- topic.frequency/sum(topic.frequency)
+
+    # index = document_topic_weights.index if \
+    #     document_topic_weights.index.name == 'document_id' \
+    #     else document_topic_weights.document_id
+
+    if document_topic_weights.index.name == 'document_id':
+        document_topic_weights.index.name = 'id'
 
     theta = pd.pivot_table(
         document_topic_weights,

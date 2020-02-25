@@ -152,7 +152,7 @@ def load_as_dtm(corpus_folder):
 
 def load_as_gensim_sparse_corpus(corpus_folder):
     v_dtm = load_as_sparse_matrix(corpus_folder)
-    g_corpus = Sparse2Corpus(v_dtm, documents_columns=False)
+    g_corpus = Sparse2Corpus(v_dtm, documents_columns=True)
     df_documents = load_documents(corpus_folder)
     df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
     id2token = df_vocabulary['token'].to_dict()
@@ -162,9 +162,11 @@ def load_dates_subset_as_dtm(corpus_folder, dates):
     dtm, documents, id2token = load_as_dtm(corpus_folder)
     documents = documents[documents.date.isin(dates)]
     dtm = dtm.tocsr()[documents.index, :]
+    documents = documents.reset_index().drop('id', axis=1)
     token_ids = dtm.sum(axis=0).nonzero()[1]
     dtm = dtm[:, token_ids]
     id2token = { i: id2token[k] for i,k in enumerate(token_ids)}
+
     return dtm, documents, id2token
 
 PUBLICATION2ID = {'AFTONBLADET':1, 'EXPRESSEN':2, 'DAGENS NYHETER':3, 'SVENSKA DAGBLADET':4}
