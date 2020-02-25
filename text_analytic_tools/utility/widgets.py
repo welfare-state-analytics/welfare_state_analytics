@@ -61,10 +61,15 @@ def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyp
             if (id !== current_id) {
                 current_id = id;
                 var text = """ + glyph_data + """.data.""" + text_name + """[id];
-                $('.""" + element_id + """').html('ID ' + id.toString() + ': ' + text);
+                document.getElementsByClassName('""" + element_id + """')[0].innerText = 'ID ' + id.toString() + ': ' + text;
             }
     }
     """
+def glyph_hover_callback2(glyph_source, glyph_id, text_ids, text, element_id):
+    source = bokeh.models.ColumnDataSource(dict(text_id=text_ids, text=text))
+    code = glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
+    callback = bokeh.models.CustomJS(args={'glyph': glyph_source, 'glyph_data': source}, code=code)
+    return callback
 
 def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
     code = glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
