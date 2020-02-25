@@ -42,8 +42,34 @@ def nth(iterable, n, default=None):
     "Returns the nth item or a default value"
     return next(itertools.islice(iterable, n, None), default)
 
+def timestamp(format_string=None):
+    """ Add timestamp to string that must contain exacly one placeholder """
+    tz = time.now.strftime("%Y%m%d%H%M%S")
+    return tz if format_string is None else format_string.format(tz)
+
 def flatten(l):
     return [ x for ws in l for x in ws]
+
+def isint(s):
+    try:
+        int(s)
+        return True
+    except:
+        return False
+
+def project_series_to_range(series, low, high):
+    """Project a sequence of elements to a range defined by (low, high)"""
+    norm_series = series / series.max()
+    return norm_series.apply(lambda x: low + (high - low) * x)
+
+def project_to_range(value, low, high):
+    """Project a singlevalue to a range (low, high)"""
+    return low + (high - low) * value
+
+def clamp_values(values, low_high):
+    """Clamps value to supplied interval."""
+    mw = max(values)
+    return [ project_to_range(w / mw, low_high[0], low_high[1]) for w in values ]
 
 def extend(target, *args, **kwargs):
     """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
@@ -72,7 +98,7 @@ def extend(target, *args, **kwargs):
         target.update(source)
     target.update(kwargs)
     return target
-    
+
 def dehyphen(text: str):
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
