@@ -4,8 +4,14 @@ import ipywidgets as widgets
 import text_analytic_tools.utility.widgets_utility as widgets_utility
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import westac.common.utility as utility
 
 from IPython.display import display
+
+import pandas as pd
+
+pd.set_option("display.max_rows", None)
+pd.set_option('max_colwidth', 200)
 
 opts = { 'max_font_size': 100, 'background_color': 'white', 'width': 900, 'height': 600 }
 
@@ -48,17 +54,22 @@ def display_wordcloud(
         if output_format == 'Wordcloud':
             plot_wordcloud(df, 'token', 'weight', max_words=n_words, **opts)
         else:
-            tick()
             df = topic_model_utility.get_topic_tokens(topic_token_weights, topic_id=topic_id, n_tokens=n_words)
-            tick()
-            display(df)
+            if output_format == 'Table':
+                display(df)
+            if output_format == 'Excel':
+                filename = utility.timestamp("{}_wordcloud_tokens.xlsx")
+                df.to_excel(filename)
+            if output_format == 'CSV':
+                filename = utility.timestamp("{}_wordcloud_tokens.csv")
+                df.to_csv(filename, sep='\t')
     except IndexError:
         print('No data for topic')
     tick(0)
 
 def display_gui(state):
 
-    output_options = ['Wordcloud', 'Table']
+    output_options = ['Wordcloud', 'Table', 'CSV', 'Excel']
     text_id = 'tx02'
 
     gui = widgets_utility.WidgetUtility(
