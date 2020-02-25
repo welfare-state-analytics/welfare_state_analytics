@@ -1,9 +1,22 @@
 import os
 import types
 import ipywidgets as widgets
+import pandas as pd
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import westac.common.utility as utility
+
+logger = utility.setup_logger(filename=None)
+
+# from beakerx import *
+# from beakerx.object import beakerx
+# beakerx.pandas_display_table()
+
+pd.set_option("max_rows", None)
+pd.set_option("max_columns", None)
+pd.set_option('colheader_justify', 'left')
+pd.set_option('max_colwidth', 300)
 
 from IPython.display import display
 
@@ -16,15 +29,20 @@ def load_model(corpus_folder, state, model_name, model_infos=None, documents=Non
 
     df = compiled_data.document_topic_weights
     if 'year' not in df.columns and documents is not None:
-        compiled_data.document_topic_weights = corpus_data.extend_with_document_info(df, documents)
+        logger.info("Adding document meta data to document_topic_weights")
+        documents2 = corpus_data.slim_documents(documents)
+        compiled_data.document_topic_weights = corpus_data.extend_with_document_info(df, documents2)
 
     state.set_data(model_data, compiled_data)
 
     # topics = topic_model_utility.get_lda_topics(state.topic_model, n_tokens=20)
     topics = compiled_data.topic_token_overview
+    topics.style.set_properties(**{'text-align': 'left'})\
+        .set_table_styles([ dict(selector='td', props=[('text-align', 'left')] ) ])
+
     display(topics)
 
-def display_gui(corpus_folder, state):
+def display_gui(corpus_folder, state, documents=None):
 
     model_infos = topic_model_utility.find_models(corpus_folder)
     model_names = list(x['name'] for x in model_infos)
@@ -43,7 +61,7 @@ def display_gui(corpus_folder, state):
                 if gui.model_name.value is None:
                     print("Please specify which model to load.")
                     return
-                load_model(corpus_folder, state, gui.model_name.value, model_infos)
+                load_model(corpus_folder, state, gui.model_name.value, model_infos, documents)
         finally:
             gui.load.disabled = False
 
