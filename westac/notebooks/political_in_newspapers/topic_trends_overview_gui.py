@@ -22,11 +22,11 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger()
 
-def setup_glyph_coloring(df):
+def setup_glyph_coloring(df, color_high=0.3):
 
     #colors = list(reversed(bokeh.palettes.Greens[9]))
     colors = ['#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b']
-    mapper = bokeh.models.LinearColorMapper(palette=colors, low=0.0, high=1.0)
+    mapper = bokeh.models.LinearColorMapper(palette=colors, low=0.0, high=color_high)
     color_transform = bokeh.transform.transform('weight', mapper)
     color_bar = bokeh.models.ColorBar(color_mapper=mapper, location=(0, 0),
                          ticker=bokeh.models.BasicTicker(desired_num_ticks=len(colors)),
@@ -53,7 +53,8 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
     x_range = compute_int_range_categories(df[xs])
     y_range = compute_int_range_categories(df[ys])
 
-    color_transform, color_bar = setup_glyph_coloring(df)
+    color_high = max(df.weight.max(), 0.3)
+    color_transform, color_bar = setup_glyph_coloring(df, color_high=color_high)
 
     source = bokeh.models.ColumnDataSource(df)
 
