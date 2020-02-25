@@ -156,6 +156,10 @@ def load_as_gensim_sparse_corpus(corpus_folder):
     df_documents = load_documents(corpus_folder)
     df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
     id2token = df_vocabulary['token'].to_dict()
+
+    assert g_corpus.sparse.shape[0] == len(df_documents)
+    assert g_corpus.sparse.shape[1] == len(df_vocabulary)
+
     return g_corpus, df_documents, id2token
 
 def load_dates_subset_as_dtm(corpus_folder, dates):
