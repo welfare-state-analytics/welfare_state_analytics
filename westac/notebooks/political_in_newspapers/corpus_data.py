@@ -152,7 +152,7 @@ def load_as_dtm(corpus_folder):
 
 def load_as_gensim_sparse_corpus(corpus_folder):
     v_dtm = load_as_sparse_matrix(corpus_folder)
-    g_corpus = Sparse2Corpus(v_dtm, documents_columns=True)
+    g_corpus = Sparse2Corpus(v_dtm, documents_columns=False)
     df_documents = load_documents(corpus_folder)
     df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
     id2token = df_vocabulary['token'].to_dict()
