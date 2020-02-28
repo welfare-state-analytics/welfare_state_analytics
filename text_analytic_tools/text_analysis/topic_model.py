@@ -307,7 +307,7 @@ def load_model(data_folder, model_name):
         data = pickle.load(f)
     return data
 
-def compute_topic_proportions(document_topic_weights, doc_length_series):
+def compute_topic_proportions(document_topic_weights, doc_length_series, n_terms_column='words'):
 
     '''
     Topic proportions are computed in the same as in LDAvis.
@@ -344,7 +344,7 @@ def compute_topic_proportions(document_topic_weights, doc_length_series):
         columns=['topic_id']
     ) #.set_index('document_id')
 
-    theta_mult_doc_length = theta.mul(doc_length_series.words, axis=0)
+    theta_mult_doc_length = theta.mul(doc_length_series[n_terms_column], axis=0)
 
     topic_frequency = theta_mult_doc_length.sum()
     topic_proportion = topic_frequency / topic_frequency.sum()
