@@ -4,14 +4,13 @@ import ipywidgets as widgets
 import bokeh
 import bokeh.plotting
 import numpy as np
-import text_analytic_tools.utility.widgets_utility as widgets_utility
 import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 
 from text_analytic_tools.common.network.plot_utility import layout_algorithms, PlotNetworkUtility
-from text_analytic_tools.common.network.utility import NetworkUtility, DISTANCE_METRICS, NetworkMetricHelper
+import text_analytic_tools.common.network.utility as network_utility
 
 from IPython.display import display
 
@@ -19,13 +18,13 @@ TEXT_ID = 'nx_pub_topic'
 
 def plot_document_topic_network(network, layout, scale=1.0, titles=None):
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
-    source_nodes, target_nodes = NetworkUtility.get_bipartite_node_set(network, bipartite=0)
+    source_nodes, target_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
-    source_source = NetworkUtility.get_node_subset_source(network, layout, source_nodes)
-    target_source = NetworkUtility.get_node_subset_source(network, layout, target_nodes)
-    lines_source = NetworkUtility.get_edges_source(network, layout, scale=6.0, normalize=False)
+    source_source = network_utility.get_node_subset_source(network, layout, source_nodes)
+    target_source = network_utility.get_node_subset_source(network, layout, target_nodes)
+    lines_source = network_utility.get_edges_source(network, layout, scale=6.0, normalize=False)
 
-    edges_alphas = NetworkMetricHelper.compute_alpha_vector(lines_source.data['weights'])
+    edges_alphas = network_utility.compute_alpha_vector(lines_source.data['weights'])
 
     lines_source.add(edges_alphas, 'alphas')
 
@@ -98,7 +97,7 @@ def display_document_topic_network(
     df['publication'] = df.publication_id.apply(lambda x: corpus_data.ID2PUBLICATION[x])
     df['weight'] = df[aggregate]
 
-    network = NetworkUtility.create_bipartite_network(df[['publication', 'topic_id', 'weight']], 'publication', 'topic_id')
+    network = network_utility.create_bipartite_network(df[['publication', 'topic_id', 'weight']], 'publication', 'topic_id')
     tick()
 
     if output_format == 'network':
@@ -115,10 +114,10 @@ def display_document_topic_network(
         if output_format == 'table':
             display(df)
         if output_format == 'excel':
-            filename = utility.timestamp("{}publication_topic__network.xlsx")
+            filename = utility.timestamp("{}publication_topic_network.xlsx")
             df.to_excel(filename)
         if output_format == 'CSV':
-            filename = utility.timestamp("{}publication_topic__network.csv")
+            filename = utility.timestamp("{}publication_topic_network.csv")
             df.to_csv(filename, sep='\t')
 
         display(df)
