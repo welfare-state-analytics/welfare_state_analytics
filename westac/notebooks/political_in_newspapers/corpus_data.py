@@ -167,7 +167,7 @@ def load_as_gensim_sparse_corpus(corpus_folder):
     vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
     id2token = vocabulary['token'].to_dict()
 
-    documents['n_terms'] = np.asarray(g_corpus.sparse.sum(axis=1)).reshape(-1).astype(np.uint16)
+    documents['n_terms'] = np.asarray(g_corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
 
     return g_corpus, documents, id2token
 
