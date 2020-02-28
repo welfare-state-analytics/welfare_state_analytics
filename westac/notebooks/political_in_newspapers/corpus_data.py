@@ -5,6 +5,9 @@ import scipy
 from gensim.matutils import Sparse2Corpus
 from westac.common.utility import flatten
 
+PUBLICATION2ID = {'AFTONBLADET':1, 'EXPRESSEN':2, 'DAGENS NYHETER':3, 'SVENSKA DAGBLADET':4}
+ID2PUBLICATION = { v: k for k, v in PUBLICATION2ID.items() }
+
 corpus_dataset_filename = "corpus_dataset.zip"
 document_dataset_filename = "document_dataset.zip"
 vocabulary_dataset_filename = "vocabulary_dataset.zip"
@@ -83,6 +86,7 @@ def load_documents(corpus_folder, force=False):
         # Add year
         df_document['date'] = pd.to_datetime(df_document.date)
         df_document['year'] = df_document.date.dt.year
+        df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
 
         df_document.to_csv(
             processed_filename,
@@ -104,7 +108,10 @@ def load_documents(corpus_folder, force=False):
             quotechar='"',
             na_filter=False,
             index_col="id"
-    )
+        )
+        if 'publication_id' not in df_document.columns:
+            df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+
 
     return df_document
 
@@ -136,11 +143,14 @@ def load_reconstructed_text_corpus(corpus_folder):
         df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
         id2token = df_vocabulary['token'].to_dict()
         df_reconstructed_text_corpus = (df_corpus.groupby('document_id')).apply( lambda x: ' '.join(flatten(x['tf'] * (x['token_id'].apply(lambda y: [id2token[y]])))))
+        # FIXME Is extra index written? Is headers written? Might be that first row is ignored???
         df_reconstructed_text_corpus.to_csv(filename, compression='zip', header=0, sep=',', quotechar='"')
     else:
-        df_reconstructed_text_corpus = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"')
+        df_reconstructed_text_corpus = pd.read_csv(filename, compression='zip', header=None, sep=',', quotechar='"')
+        df_reconstructed_text_corpus.columns = ['document_id', 'text']
+        df_reconstructed_text_corpus = df_reconstructed_text_corpus.set_index('document_id')
 
-    df_reconstructed_text_corpus.head()
+    return df_reconstructed_text_corpus
 
 def load_as_dtm(corpus_folder):
 
@@ -153,14 +163,16 @@ def load_as_dtm(corpus_folder):
 def load_as_gensim_sparse_corpus(corpus_folder):
     v_dtm = load_as_sparse_matrix(corpus_folder)
     g_corpus = Sparse2Corpus(v_dtm, documents_columns=True)
-    df_documents = load_documents(corpus_folder)
-    df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
-    id2token = df_vocabulary['token'].to_dict()
+    documents = load_documents(corpus_folder)
+    vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
+    id2token = vocabulary['token'].to_dict()
 
-    assert g_corpus.sparse.shape[0] == len(df_documents)
-    assert g_corpus.sparse.shape[1] == len(df_vocabulary)
+    assert g_corpus.sparse.shape[0] == len(documents)
+    assert g_corpus.sparse.shape[1] == len(vocabulary)
 
-    return g_corpus, df_documents, id2token
+    documents['n_terms'] = np.asarray(g_corpus.sparse.sum(axis=1)).reshape(-1).astype(np.uint16)
+
+    return g_corpus, documents, id2token
 
 def load_dates_subset_as_dtm(corpus_folder, dates):
     dtm, documents, id2token = load_as_dtm(corpus_folder)
@@ -173,15 +185,12 @@ def load_dates_subset_as_dtm(corpus_folder, dates):
 
     return dtm, documents, id2token
 
-PUBLICATION2ID = {'AFTONBLADET':1, 'EXPRESSEN':2, 'DAGENS NYHETER':3, 'SVENSKA DAGBLADET':4}
-ID2PUBLICATION = { v: k for k, v in PUBLICATION2ID.items() }
-
 def slim_documents(documents):
 
-    df = documents[['publication', 'year']].copy()
-    df['publication_id'] = df.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
-    df = df[['publication_id', 'year']]
-    return df
+    # df = documents[['publication', 'year']].copy()
+    # df['publication_id'] = df.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+    # df = df[['publication_id', 'year']]
+    return documents[['publication_id', 'year']].copy()
 
 def extend_with_document_info(df, documents):
     """ Adds document meta data to given data frame (must have a document_id) """
