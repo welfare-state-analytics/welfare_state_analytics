@@ -14,51 +14,59 @@ pytest-cov = "*"
 invoke = "*"
 
 [packages]
+attrs = "*"
 beakerx = "*"
 beautifulsoup4 = "*"
 bokeh = "*"
-Cython = "*"
-cytoolz = "*"
+chartify = "*"
+click = "*"
+colorcet = "*"
+Cython = {version = "*",sys_platform = "== 'linux'"}
+Cython_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/Cython-0.29.15-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+cytoolz = {version = "*",sys_platform = "== 'linux'"}
+cytoolz_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/cytoolz-0.10.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
 decorator = "*"
-gensim = "*"
+ftfy = "*"
+gensim = {version = "*",sys_platform = "== 'linux'"}
+gensim_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/gensim-3.8.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+holoviews = "*"
 humanfriendly = "*"
 ipywidgets = "*"
+joblib = "*"
 jupyterlab = "*"
 lxml = "*"
+markdown = "*"
 matplotlib = "*"
 networkx = "*"
 nltk = "*"
 numba = "*"
+numpy = {version = "*",sys_platform = "== 'linux'"}
+numpy_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/numpy-1.18.1+mkl-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
 openpyxl = "*"
-pandas = "*"
+pandas = {version = "*",sys_platform = "== 'linux'"}
+pandas_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/pandas-1.0.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+pandas-bokeh = "*"
 py4j = "*"
 pydotplus = "*"
+pyemd = "*"
+pywin32 = {version = "*",sys_platform = "== 'win32'"}
 python-louvain = "*"
 scattertext = "*"
 scikit-learn = "*"
-scipy = "*"
+scipy = {version = "*",sys_platform = "== 'linux'"}
+scipy_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/scipy-1.4.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
 Scrapy = "*"
+seaborn = "*"
 spacy = "*"
 sql_magic = "*"
 statsmodels = "*"
 textacy = "*"
+tqdm = "*"
 traitlets = "*"
 typing = "*"
 wordcloud = "*"
 xlrd = "*"
 yapf = "*"
-pyemd = "*"
-click = "*"
-joblib = "*"
-tqdm = "*"
-pandas-bokeh = "*"
-chartify = "*"
-seaborn = "*"
-colorcet = "*"
-holoviews = "*"
-markdown = "*"
-attrs = "*"
-ftfy = "*"
 
 [requires]
 python_version = "3.7"
