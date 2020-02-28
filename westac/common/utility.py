@@ -7,6 +7,7 @@ import typing
 import os
 import logging
 import time
+import datetime
 import numpy as np
 import itertools
 
@@ -44,7 +45,7 @@ def nth(iterable, n, default=None):
 
 def timestamp(format_string=None):
     """ Add timestamp to string that must contain exacly one placeholder """
-    tz = time.now.strftime("%Y%m%d%H%M%S")
+    tz = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     return tz if format_string is None else format_string.format(tz)
 
 def flatten(l):
