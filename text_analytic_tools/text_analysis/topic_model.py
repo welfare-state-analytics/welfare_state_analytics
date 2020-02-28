@@ -221,8 +221,8 @@ def compute(
 
         doc_topic_matrix = model.transform(doc_term_matrix)
 
-        g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=True)
-        assert g_corpus.sparse.shape[0] == doc_term_matrix.shape[0]
+        g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
+        # assert g_corpus.sparse.shape[0] == doc_term_matrix.shape[0]
 
         perplexity_score = None
         coherence_score = None
@@ -236,8 +236,8 @@ def compute(
             g_corpus = [ id2word.doc2bow(tokens) for tokens in terms ]
         else:
             assert id2word is not None
-            g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=True)
-            assert g_corpus.sparse.shape[0] == doc_term_matrix.shape[0]
+            g_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
+            # assert g_corpus.sparse.shape[0] == doc_term_matrix.shape[0]
         if args.get('tfidf_weiging', False):
             # assert algorithm_name != 'MALLETLDA', 'MALLET training model cannot (currently) use TFIDF weighed corpus'
             tfidf_model = gensim.models.tfidfmodel.TfidfModel(g_corpus)
