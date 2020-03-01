@@ -1,6 +1,8 @@
 import os
+import sys
 import inspect
 import logging
+import re
 
 from gensim import models
 from gensim.utils import check_output
@@ -13,14 +15,15 @@ def filter_fn_args(f, args):
         if k in inspect.getfullargspec(f).args }
 
 class MalletTopicModel(models.wrappers.LdaMallet):
+    """Python wrapper for LDA using `MALLET <http://mallet.cs.umass.edu/>`_.
+    This is a derived file of gensim.models.wrappers.LdaMallet
+    The following has been added:
+        1. Use of --topic-word-weights-file has been added
+    """
 
-    def __init__(self, corpus, id2word, default_mallet_home, **args):
+    def __init__(self, corpus, id2word, default_mallet_home=None, **args):
 
         args = filter_fn_args(super(MalletTopicModel, self).__init__, args)
-
-        args.update({ "workers": 4, "optimize_interval": 10 })
-
-        # os.environ["MALLET_HOME"] = default_mallet_home
 
         mallet_home = os.environ.get('MALLET_HOME', default_mallet_home)
 
@@ -38,17 +41,39 @@ class MalletTopicModel(models.wrappers.LdaMallet):
         return self.prefix + 'topicwordweights.txt'
 
     def train(self, corpus):
+        """Train Mallet LDA.
+        Parameters
+        ----------
+        corpus : iterable of iterable of (int, int)
+            Corpus in BoW format
+        """
         self.convert_input(corpus, infer=False)
         cmd = self.mallet_path + ' train-topics --input %s --num-topics %s  --alpha %s --optimize-interval %s '\
             '--num-threads %s --output-state %s --output-doc-topics %s --output-topic-keys %s --topic-word-weights-file %s '\
-            '--num-iterations %s --inferencer-filename %s --doc-topics-threshold %s'
+            '--num-iterations %s --inferencer-filename %s --doc-topics-threshold %s  --random-seed %s'
+
         cmd = cmd % (
             self.fcorpusmallet(), self.num_topics, self.alpha, self.optimize_interval,
             self.workers, self.fstate(), self.fdoctopics(), self.ftopickeys(), self.ftopicwordweights(), self.iterations,
-            self.finferencer(), self.topic_threshold
+            self.finferencer(), self.topic_threshold, str(self.random_seed)
         )
         # NOTE "--keep-sequence-bigrams" / "--use-ngrams true" poorer results + runs out of memory
         logger.info("training MALLET LDA with %s", cmd)
         check_output(args=cmd, shell=True)
         self.word_topics = self.load_word_topics()
+        # NOTE - we are still keeping the wordtopics variable to not break backward compatibility.
+        # word_topics has replaced wordtopics throughout the code;
+        # wordtopics just stores the values of word_topics when train is called.
         self.wordtopics = self.word_topics
+
+    def xlog_perplexity(self, content):
+
+        perplexity = None
+        try:
+            #content = open(filename).read()
+            p = re.compile(r"<\d+> LL/token\: (-[\d\.]+)")
+            matches = p.findall(content)
+            if len(matches) > 0:
+                perplexity = float(matches[-1])
+        finally:
+            return perplexity
