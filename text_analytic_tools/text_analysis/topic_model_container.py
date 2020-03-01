@@ -16,9 +16,9 @@ class TopicModelContainer():
         TopicModelContainer._singleton = TopicModelContainer._singleton or TopicModelContainer()
         return TopicModelContainer._singleton
 
-    def set_data(self, model_data, compiled_data):
-        self._model_data = model_data
-        self._compiled_data= compiled_data
+    def set_data(self, m_data, c_data):
+        self._model_data = m_data
+        self._compiled_data= c_data
 
     @property
     def model_data(self):
