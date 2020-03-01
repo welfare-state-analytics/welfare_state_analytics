@@ -5,7 +5,7 @@ import bokeh
 import bokeh.plotting
 import text_analytic_tools.utility.widgets_utility as widgets_utility
 import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 
 from IPython.display import display
 
@@ -53,13 +53,17 @@ def display_topic_tokens(state, topic_id=0, n_words=100, output_format='Chart', 
 
     tick(1)
 
-    tokens = topic_model_utility.get_topic_tokens(state.compiled_data.topic_token_weights, topic_id=topic_id, n_tokens=n_words).\
+    tokens = derived_data_compiler.get_topic_tokens(state.compiled_data.topic_token_weights, topic_id=topic_id, n_tokens=n_words).\
         copy()\
         .drop('topic_id', axis=1)\
         .assign(weight=lambda x: 100.0 * x.weight)\
         .sort_values('weight', axis=0, ascending=False)\
         .reset_index()\
         .head(n_words)
+
+    if len(tokens) == 0:
+        print("No data! Please change selection.")
+        return
 
     if output_format == 'Chart':
         tick()

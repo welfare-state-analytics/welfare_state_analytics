@@ -4,11 +4,11 @@ import glob
 import ipywidgets
 import logging
 import text_analytic_tools.utility as utility
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import text_analytic_tools.common.text_corpus as text_corpus
 import text_analytic_tools.common.textacy_utility as textacy_utility
-from . topic_model_compute import compute_topic_model
+#from . topic_model_compute import compute_topic_model
 
 logger = utility.getLogger('corpus_text_analysis')
 
@@ -115,9 +115,9 @@ class ComputeTopicModelUserInterface():
                     terms = list(self.get_corpus_terms(corpus))
 
                     # FIXME API change, use named args
-                    self.state.data = compute_topic_model(self.data_folder, method, terms, self.document_index, vectorizer_args, topic_modeller_args)
+                    self.state.data = topic_model.compute(self.data_folder, method, terms, self.document_index, vectorizer_args, topic_modeller_args)
 
-                    topics = topic_model_utility.get_topics_unstacked(self.state.topic_model, n_tokens=100, id2term=self.state.id2term, topic_ids=self.state.relevant_topics)
+                    topics = derived_data_compiler.get_topics_unstacked(self.state.topic_model, n_tokens=100, id2term=self.state.id2term, topic_ids=self.state.relevant_topics)
 
                     display(topics)
 

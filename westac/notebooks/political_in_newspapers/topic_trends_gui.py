@@ -5,7 +5,7 @@ import ipywidgets as widgets
 import bokeh
 import bokeh.plotting
 import text_analytic_tools.utility.widgets_utility as widgets_utility
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -90,7 +90,8 @@ def display_topic_trend(
 
 def display_gui(state):
 
-    year_options = [ ('all years', None) ] + [ (x,x) for x in range(state.compiled_data.year_period[0], state.compiled_data.year_period[1] + 1)]
+    year_min, year_max = state.compiled_data.year_period
+    year_options = [ ('all years', None) ] + [ (x,x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_share_plot'
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
@@ -118,7 +119,7 @@ def display_gui(state):
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = topic_model_utility.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
+        tokens = derived_data_compiler.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
