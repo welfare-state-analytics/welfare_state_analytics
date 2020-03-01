@@ -3,9 +3,13 @@ import types
 import ipywidgets as widgets
 import pandas as pd
 import text_analytic_tools.text_analysis.topic_model as topic_model
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
+import text_analytic_tools.text_analysis.utility as tmutility
 import westac.common.utility as utility
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
 
@@ -20,31 +24,25 @@ pd.set_option('max_colwidth', 300)
 
 from IPython.display import display
 
-def load_model(corpus_folder, state, model_name, model_infos=None, documents=None):
+def load_model(corpus_folder, state, model_name, model_infos=None):
 
-    model_infos = model_infos or topic_model_utility.find_models(corpus_folder)
+    model_infos = model_infos or tmutility.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x['name'] == model_name)
-    model_data = topic_model.load_model(*os.path.split(model_info['folder']))
-    compiled_data = topic_model_utility.load_compiled_data(corpus_folder, model_info['name'])
 
-    df = compiled_data.document_topic_weights
-    if 'year' not in df.columns and documents is not None:
-        logger.info("Adding document meta data to document_topic_weights")
-        documents2 = corpus_data.slim_documents(documents)
-        compiled_data.document_topic_weights = corpus_data.extend_with_document_info(df, documents2)
+    m_data = topic_model.load_model(*os.path.split(model_info['folder']))
+    c_data = derived_data_compiler.CompiledData.load(corpus_folder, model_info['name'])
 
-    state.set_data(model_data, compiled_data)
+    state.set_data(m_data, c_data)
 
-    # topics = topic_model_utility.get_lda_topics(state.topic_model, n_tokens=20)
-    topics = compiled_data.topic_token_overview
+    topics = c_data.topic_token_overview
     topics.style.set_properties(**{'text-align': 'left'})\
         .set_table_styles([ dict(selector='td', props=[('text-align', 'left')] ) ])
 
     display(topics)
 
-def display_gui(corpus_folder, state, documents=None):
+def display_gui(corpus_folder, state):
 
-    model_infos = topic_model_utility.find_models(corpus_folder)
+    model_infos = tmutility.find_models(corpus_folder)
     model_names = list(x['name'] for x in model_infos)
 
     gui = types.SimpleNamespace(
@@ -61,7 +59,7 @@ def display_gui(corpus_folder, state, documents=None):
                 if gui.model_name.value is None:
                     print("Please specify which model to load.")
                     return
-                load_model(corpus_folder, state, gui.model_name.value, model_infos, documents)
+                load_model(corpus_folder, state, gui.model_name.value, model_infos)
         finally:
             gui.load.disabled = False
 
