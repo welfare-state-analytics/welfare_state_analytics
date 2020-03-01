@@ -4,7 +4,7 @@ import ipywidgets as widgets
 import bokeh
 import bokeh.plotting
 import numpy as np
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -72,7 +72,7 @@ def display_document_topic_network(
     topic_token_weights = state.compiled_data.topic_token_weights
     document_topic_weights = state.compiled_data.document_topic_weights
 
-    titles = topic_model_utility.get_topic_titles(topic_token_weights)
+    titles = derived_data_compiler.get_topic_titles(topic_token_weights)
 
     df = document_topic_weights
     if len(period or []) == 2:
@@ -89,7 +89,7 @@ def display_document_topic_network(
     df = df[(df[aggregate] > mean_threshold)].reset_index()
 
     if len(df) == 0:
-        print('No data')
+        print('No data! Please change selection.')
         return
 
     df[aggregate] = utility.clamp_values(list(df[aggregate]), (0.1, 1.0))
@@ -114,10 +114,10 @@ def display_document_topic_network(
         if output_format == 'table':
             display(df)
         if output_format == 'excel':
-            filename = utility.timestamp("{}publication_topic_network.xlsx")
+            filename = utility.timestamp("{}_publication_topic_network.xlsx")
             df.to_excel(filename)
         if output_format == 'CSV':
-            filename = utility.timestamp("{}publication_topic_network.csv")
+            filename = utility.timestamp("{}_publication_topic_network.csv")
             df.to_csv(filename, sep='\t')
 
         display(df)
