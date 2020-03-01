@@ -160,16 +160,42 @@ def load_as_dtm(corpus_folder):
 
     return dtm, documents, id2token
 
+def load_as_dtm2(corpus_folder, publication_ids=None):
+
+    dtm, documents, id2token = load_as_dtm(corpus_folder)
+
+    if publication_ids is not None:
+
+        documents = documents[documents.publication_id.isin(publication_ids)]
+        dtm = dtm.tocsr()[documents.index, :]
+        documents = documents.reset_index().drop('id', axis=1)
+        token_ids = dtm.sum(axis=0).nonzero()[1]
+        dtm = dtm[:, token_ids]
+        id2token = { i: id2token[k] for i,k in enumerate(token_ids)}
+
+    return dtm, documents, id2token
+
 def load_as_gensim_sparse_corpus(corpus_folder):
-    v_dtm = load_as_sparse_matrix(corpus_folder)
-    g_corpus = Sparse2Corpus(v_dtm, documents_columns=False)
-    documents = load_documents(corpus_folder)
-    vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
-    id2token = vocabulary['token'].to_dict()
+    dtm, documents, id2token = load_as_dtm(corpus_folder)
+    corpus = Sparse2Corpus(dtm, documents_columns=False)
+    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
+    return corpus, documents, id2token
 
-    documents['n_terms'] = np.asarray(g_corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
+def load_as_gensim_sparse_corpus2(corpus_folder, publication_ids=None):
 
-    return g_corpus, documents, id2token
+    dtm, documents, id2token = load_as_dtm(corpus_folder)
+
+    if publication_ids is not None:
+        documents = documents[documents.publication_id.isin(publication_ids)]
+        dtm = dtm.tocsr()[documents.index, :]
+        documents = documents.reset_index().drop('id', axis=1)
+        token_ids = dtm.sum(axis=0).nonzero()[1]
+        dtm = dtm[:, token_ids]
+        id2token = { i: id2token[k] for i,k in enumerate(token_ids)}
+
+    corpus = Sparse2Corpus(dtm, documents_columns=False)
+    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
+    return corpus, documents, id2token
 
 def load_dates_subset_as_dtm(corpus_folder, dates):
     dtm, documents, id2token = load_as_dtm(corpus_folder)
@@ -179,7 +205,6 @@ def load_dates_subset_as_dtm(corpus_folder, dates):
     token_ids = dtm.sum(axis=0).nonzero()[1]
     dtm = dtm[:, token_ids]
     id2token = { i: id2token[k] for i,k in enumerate(token_ids)}
-
     return dtm, documents, id2token
 
 def slim_documents(documents):
