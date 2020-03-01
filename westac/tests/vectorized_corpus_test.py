@@ -47,7 +47,7 @@ class Test_VectorizedCorpus(unittest.TestCase):
     def test_bag_term_matrix_to_bag_term_docs(self):
 
         v_corpus = self.create_vectorized_corpus()
-        
+
         doc_ids = (0, 1, )
         expected = [
             ['a', 'a', 'b', 'c', 'c', 'c', 'c', 'd'],
@@ -104,31 +104,31 @@ class Test_VectorizedCorpus(unittest.TestCase):
 
     def test_group_by_year_aggregates_bag_term_matrix_to_year_term_matrix(self):
         v_corpus = self.create_vectorized_corpus()
-        g_corpus = v_corpus.group_by_year()
+        c_data = v_corpus.group_by_year()
         expected_ytm = [
             [4, 3, 7, 1],
             [6, 7, 4, 2]
         ]
-        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
+        self.assertTrue(np.allclose(expected_ytm, c_data.bag_term_matrix.todense()))
 
     def test_group_by_year2_sum_bag_term_matrix_to_year_term_matrix(self):
         v_corpus = self.create_vectorized_corpus()
-        g_corpus = v_corpus.group_by_year2(aggregate_function='sum')
+        c_data = v_corpus.group_by_year2(aggregate_function='sum')
         expected_ytm = [
             [4, 3, 7, 1],
             [6, 7, 4, 2]
         ]
-        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
-        self.assertEqual(v_corpus.data.dtype, g_corpus.data.dtype)
+        self.assertTrue(np.allclose(expected_ytm, c_data.bag_term_matrix.todense()))
+        self.assertEqual(v_corpus.data.dtype, c_data.data.dtype)
 
     def test_group_by_year2_mean_bag_term_matrix_to_year_term_matrix(self):
         v_corpus = self.create_vectorized_corpus()
-        g_corpus = v_corpus.group_by_year2(aggregate_function='mean', dtype=np.float)
+        c_data = v_corpus.group_by_year2(aggregate_function='mean', dtype=np.float)
         expected_ytm = [
             np.array([4.0, 3.0, 7.0, 1.0]) / 2.0,
             np.array([6.0, 7.0, 4.0, 2.0]) / 3.0
         ]
-        self.assertTrue(np.allclose(expected_ytm, g_corpus.bag_term_matrix.todense()))
+        self.assertTrue(np.allclose(expected_ytm, c_data.bag_term_matrix.todense()))
 
     def test_collapse_to_category_aggregates_bag_term_matrix_to_category_term_matrix(self):
         """ A more generic version of group_by_year (not used for now) """

@@ -7,7 +7,8 @@ import ipywidgets as widgets
 import bokeh
 import bokeh.plotting
 import text_analytic_tools.utility.widgets_utility as widgets_utility
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
+import text_analytic_tools.text_analysis.utility as tmutility
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import text_analytic_tools.common.network.utility as network_utility
 import text_analytic_tools.common.network.plot_utility as plot_utility
@@ -30,8 +31,7 @@ def get_topic_titles(topic_token_weights, topic_id=None, n_words=100):
     return df
 
 def display_topic_co_occurrence_network(
-    compiled_data,
-    documents,
+    c_data,
     publication_id,
     period=None,
     ignores=None,
@@ -42,11 +42,12 @@ def display_topic_co_occurrence_network(
     text_id=''
 ):
     try:
-        titles = topic_model_utility.get_topic_titles(compiled_data.topic_token_weights)
-        df = compiled_data.document_topic_weights
+        documents = c_data.documents
+        titles = derived_data_compiler.get_topic_titles(c_data.topic_token_weights)
+        df = c_data.document_topic_weights
         df['document_id'] = df.index
 
-        node_sizes = topic_model.compute_topic_proportions(df, documents, n_terms_column='n_terms')
+        node_sizes = tmutility.compute_topic_proportions(df, documents, n_terms_column='n_terms')
 
         if ignores is not None:
             df = df[~df.topic_id.isin(ignores)]
@@ -62,7 +63,6 @@ def display_topic_co_occurrence_network(
         if isinstance(period, int):
             df = df[df.year == period]
 
-        print(df.weight.mean(), df.weight.max())
         df = df.loc[(df.weight >= threshold)]
 
         df = pd.merge(df, df, how='inner', left_on='document_id', right_on='document_id')
@@ -142,8 +142,7 @@ def display_gui(state, documents):
         with gui.output:
 
             display_topic_co_occurrence_network(
-                compiled_data=state.compiled_data,
-                documents=documents,
+                c_data=state.compiled_data,
                 publication_id=gui.publication_id.value,
                 period=gui.period.value,
                 ignores=gui.ignores.value,
