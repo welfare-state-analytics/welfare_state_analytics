@@ -6,7 +6,7 @@ import bokeh
 import bokeh.plotting
 import bokeh.transform
 import text_analytic_tools.utility.widgets_utility as widgets_utility
-import text_analytic_tools.text_analysis.topic_model_utility as topic_model_utility
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -93,9 +93,6 @@ def display_heatmap(document_topic_weights, titles, key='max', flip_axis=False, 
 
         df = document_topic_weights.copy()
 
-        if year is not None:
-            df = df[(df.year == year)]
-
         if year is None:
 
             ''' Display aggregate value grouped by year  '''
@@ -104,12 +101,18 @@ def display_heatmap(document_topic_weights, titles, key='max', flip_axis=False, 
             df['weight'] = df[aggregate]
 
         else:
-            assert False, "Not implemented"
-            ''' Display individual documents for selected year  '''
-            # df[category_column] = df.index
+
+            df = df[(df.year == year)]
+            df = df.groupby([category_column, 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
+            df.columns = [category_column, 'topic_id', 'mean', 'max']
+            df['weight'] = df[aggregate]
 
         df[category_column] = df[category_column].astype(str)
         df['topic_id'] = df.topic_id.astype(str)
+
+        if len(df) == 0:
+            print("No data! Please change selection.")
+            return
 
         if output_format.lower() == 'heatmap':
 
@@ -141,7 +144,7 @@ def display_gui(state):
     year_options = [ ('all years', None) ] + [ (x,x) for x in range(year_min, year_max + 1)]
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-    titles = topic_model_utility.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
+    titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
 
     gui = types.SimpleNamespace(
         text_id=text_id,
@@ -174,7 +177,7 @@ def display_gui(state):
                 output_format=gui.output_format.value
             )
 
-    gui.year.disabled = True
+    #gui.year.disabled = True
 
     gui.year.observe(update_handler, names='value')
     gui.publication_id.observe(update_handler, names='value')
