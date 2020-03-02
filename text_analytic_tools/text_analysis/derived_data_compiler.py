@@ -72,11 +72,11 @@ class CompiledData(object):
 
         else:
             return CompiledData(
-                pd.read_csv(os.path.join(target_folder, 'documents.zip'), '\t', header=0, index_col=0),
-                pd.read_csv(os.path.join(target_folder, 'dictionary.zip'), '\t', header=0, index_col=0),
-                pd.read_csv(os.path.join(target_folder, 'topic_token_weights.zip'), '\t', header=0, index_col=0),
-                pd.read_csv(os.path.join(target_folder, 'topic_token_overview.zip'), '\t', header=0, index_col=0),
-                pd.read_csv(os.path.join(target_folder, 'document_topic_weights.zip'), '\t', header=0, index_col=0)
+                pd.read_csv(os.path.join(target_folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(target_folder, 'dictionary.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(target_folder, 'topic_token_weights.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(target_folder, 'topic_token_overview.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(target_folder, 'document_topic_weights.zip'), '\t', header=0, index_col=0, na_filter=False)
             )
 
     def info(self):
