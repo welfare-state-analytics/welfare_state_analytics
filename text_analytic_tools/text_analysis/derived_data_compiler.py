@@ -198,7 +198,7 @@ def compile_document_topics(model, corpus, doc_topic_matrix=None, minimum_probab
         logger.info('  Creating frame from iterator...')
         df_doc_topics = pd.DataFrame(data, columns=[ 'document_id', 'topic_id', 'weight' ])
 
-        df_doc_topics['document_id'] = df_doc_topics.document_id.astype(np.uint16)
+        df_doc_topics['document_id'] = df_doc_topics.document_id.astype(np.uint32)
         df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.uint16)
 
         logger.info('  DONE!')

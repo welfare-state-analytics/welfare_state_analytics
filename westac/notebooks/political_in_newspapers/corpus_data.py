@@ -178,7 +178,7 @@ def load_as_dtm2(corpus_folder, publication_ids=None):
 def load_as_gensim_sparse_corpus(corpus_folder):
     dtm, documents, id2token = load_as_dtm(corpus_folder)
     corpus = Sparse2Corpus(dtm, documents_columns=False)
-    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
+    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
     return corpus, documents, id2token
 
 def load_as_gensim_sparse_corpus2(corpus_folder, publication_ids=None):
@@ -194,7 +194,7 @@ def load_as_gensim_sparse_corpus2(corpus_folder, publication_ids=None):
         id2token = { i: id2token[k] for i,k in enumerate(token_ids)}
 
     corpus = Sparse2Corpus(dtm, documents_columns=False)
-    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint16)
+    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
     return corpus, documents, id2token
 
 def load_dates_subset_as_dtm(corpus_folder, dates):
