@@ -22,9 +22,11 @@ class VectorizedCorpus():
     def __init__(self, bag_term_matrix, token2id, document_index, word_counts=None):
 
         if not scipy.sparse.issparse(bag_term_matrix):
-            self.bag_term_matrix = scipy.sparse.csr_matrix(bag_term_matrix)
-        else:
-            self.bag_term_matrix = bag_term_matrix
+            bag_term_matrix = scipy.sparse.csr_matrix(bag_term_matrix)
+        elif not scipy.sparse.isspmatrix_csr(bag_term_matrix):
+            bag_term_matrix = bag_term_matrix.tocsr()
+
+        self.bag_term_matrix = bag_term_matrix
 
         assert scipy.sparse.issparse(self.bag_term_matrix), "only sparse data allowed"
 
@@ -64,6 +66,20 @@ class VectorizedCorpus():
     @property
     def term_bag_matrix(self):
         return self.bag_term_matrix.T
+
+    def todense(self):
+
+        dtm = self.data
+
+        if scipy.sparse.issparse(dtm):
+            dtm = dtm.todense()
+
+        if isinstance(dtm, np.matrix):
+            dtm = np.asarray(dtm)
+
+        self.bag_term_matrix = dtm
+
+        return self
 
     def dump(self, tag=None, folder='./output', compressed=True):
 

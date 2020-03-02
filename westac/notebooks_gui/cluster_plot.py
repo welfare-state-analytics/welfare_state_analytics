@@ -19,7 +19,7 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     xs                 = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
     token_ids          = list(token_clusters[token_clusters.cluster==n_cluster].index)
-    word_distributions = x_corpus.data[:,token_ids]
+    word_distributions = x_corpus.todense()[:,token_ids]
 
     tick(1,max=len(token_ids))
 

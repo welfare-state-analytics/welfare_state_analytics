@@ -12,7 +12,7 @@ import bokeh
 
 from numpy.polynomial.polynomial import Polynomial as polyfit
 
-def gof_by_l2_norm(matrix, axis=1):
+def gof_by_l2_norm(matrix, axis=1, scale=True):
 
     """ Computes L2 norm for rows (axis = 1) or columns (axis = 0).
 
@@ -26,9 +26,15 @@ def gof_by_l2_norm(matrix, axis=1):
     that's the reason it might be suitable to measure non-uniformity"
 
     """
-    d = matrix.shape[int(not axis)]
+    d = matrix.shape[axis] # int(not axis)]
 
-    l2_norm = (np.linalg.norm(matrix, axis=axis) * math.sqrt(d) - 1 ) / (math.sqrt(d) - 1)
+    if scipy.sparse.issparse(matrix):
+        matrix = matrix.todense()
+
+    l2_norm = np.linalg.norm(matrix, axis=axis)
+
+    if scale:
+        l2_norm = (l2_norm * math.sqrt(d) - 1) / (math.sqrt(d) - 1)
 
     return l2_norm
 
@@ -125,18 +131,21 @@ def kullback_leibler_divergence_to_uniform(p):
 
 def compute_goddness_of_fits_to_uniform(x_corpus):
 
+    x_corpus = x_corpus.todense()
     xs_years = x_corpus.xs_years()
+
+    dtm = x_corpus.data
 
     df = pd.DataFrame(
         {
-            'token': [ x_corpus.id2token[i] for i in range(0, x_corpus.data.shape[1]) ],
-            'word_count': [ x_corpus.word_counts[x_corpus.id2token[i]] for i in range(0, x_corpus.data.shape[1]) ],
-            'l2_norm': gof_by_l2_norm(x_corpus.data, axis=0),
+            'token': [ x_corpus.id2token[i] for i in range(0, dtm.shape[1]) ],
+            'word_count': [ x_corpus.word_counts[x_corpus.id2token[i]] for i in range(0, dtm.shape[1]) ],
+            'l2_norm': gof_by_l2_norm(dtm, axis=0),
         }
     )
 
-    chi2_stats, chi2_p    = list(zip(*[ gof_chisquare_to_uniform(x_corpus.data[:,i]) for i in range(0, x_corpus.data.shape[1]) ]))
-    ks, ms                = list(zip(*[ fit_polynomial(x_corpus.data[:,i], xs_years, 1) for i in range(0, x_corpus.data.shape[1]) ]))
+    chi2_stats, chi2_p    = list(zip(*[ gof_chisquare_to_uniform(dtm[:,i]) for i in range(0, dtm.shape[1]) ]))
+    ks, ms                = list(zip(*[ fit_polynomial(dtm[:,i], xs_years, 1) for i in range(0, dtm.shape[1]) ]))
 
     df['slope']           = ks
     df['intercept']       = ms
@@ -144,25 +153,25 @@ def compute_goddness_of_fits_to_uniform(x_corpus):
     df['chi2_stats']      = chi2_stats
     df['chi2_p']          = chi2_p
 
-    df['min']             = [ x_corpus.data[:,i].min() for i in range(0, x_corpus.data.shape[1]) ]
-    df['max']             = [ x_corpus.data[:,i].max() for i in range(0, x_corpus.data.shape[1]) ]
-    df['mean']            = [ x_corpus.data[:,i].mean() for i in range(0, x_corpus.data.shape[1]) ]
-    df['var']             = [ x_corpus.data[:,i].var() for i in range(0, x_corpus.data.shape[1]) ]
+    df['min']             = [ dtm[:,i].min() for i in range(0, dtm.shape[1]) ]
+    df['max']             = [ dtm[:,i].max() for i in range(0, dtm.shape[1]) ]
+    df['mean']            = [ dtm[:,i].mean() for i in range(0, dtm.shape[1]) ]
+    df['var']             = [ dtm[:,i].var() for i in range(0, dtm.shape[1]) ]
 
-    df['earth_mover']     = [ earth_mover_distance(x_corpus.data[:,i]) for i in range(0, x_corpus.data.shape[1]) ]
-    df['entropy']         = [ entropy(x_corpus.data[:,i]) for i in range(0, x_corpus.data.shape[1]) ]
-    df['kld']             = [ kullback_leibler_divergence_to_uniform(x_corpus.data[:,i]) for i in range(0, x_corpus.data.shape[1]) ]
+    df['earth_mover']     = [ earth_mover_distance(dtm[:,i]) for i in range(0, dtm.shape[1]) ]
+    df['entropy']         = [ entropy(dtm[:,i]) for i in range(0, dtm.shape[1]) ]
+    df['kld']             = [ kullback_leibler_divergence_to_uniform(dtm[:,i]) for i in range(0, dtm.shape[1]) ]
 
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skew.html
-    df['skew']             = [ scipy.stats.skew(x_corpus.data[:,i]) for i in range(0, x_corpus.data.shape[1]) ]
+    df['skew']             = [ scipy.stats.skew(dtm[:,i]) for i in range(0, dtm.shape[1]) ]
 
-    # df['ols_m_k_p_xs_ys'] = [ gof.fit_ordinary_least_square(x_corpus.data[:,i], xs=xs_years) for i in range(0, x_corpus.data.shape[1]) ]
+    # df['ols_m_k_p_xs_ys'] = [ gof.fit_ordinary_least_square(dtm[:,i], xs=xs_years) for i in range(0, dtm.shape[1]) ]
     # df['ols_k']           = [ m_k_p_xs_ys[1] for m_k_p_xs_ys in df.ols_m_k_p_xs_ys.values ]
     # df['ols_m']           = [ m_k_p_xs_ys[0] for m_k_p_xs_ys in df.ols_m_k_p_xs_ys.values ]
 
     df.sort_values(['l2_norm'], ascending=False, inplace=True)
 
-    # uniform_constant = 1.0 / math.sqrt(float(x_corpus.data.shape[0]))
+    # uniform_constant = 1.0 / math.sqrt(float(dtm.shape[0]))
 
     return df
 
@@ -238,8 +247,6 @@ def plot_slopes(x_corpus, most_deviating, metric):
     data = generate_slopes(x_corpus, most_deviating, metric)
 
     source = bokeh.models.ColumnDataSource(data)
-
-    palette = itertools.cycle(bokeh.palettes.Category20[20])
 
     color_mapper = bokeh.models.LinearColorMapper(palette='Magma256', low=min(data['k']), high=max(data['k']))
 

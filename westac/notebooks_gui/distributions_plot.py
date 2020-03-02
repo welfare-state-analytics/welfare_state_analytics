@@ -47,6 +47,8 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
 
 def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, smoothers=None, tick=noop):
 
+    x_corpus = x_corpus.todense()
+
     smoothers = smoothers or [
         cf.rolling_average_smoother('nearest', 3),
         cf.pchip_spline
@@ -59,11 +61,13 @@ def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, s
     plots = []
     p = None
     tick(0, max=len(indices))
+
     for token_id in indices:
         try:
+            ys = x_corpus.data[:,token_id]
             p = plot_distribution(
                 xs,
-                x_corpus.data[:,token_id],
+                ys,
                 plot=p if n_columns is None else None,
                 title=x_corpus.id2token[token_id].upper(),
                 color=next(colors),
@@ -73,8 +77,9 @@ def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, s
                 smoothers=smoothers
             )
             plots.append(p)
-        except:
-            pass
+        except Exception as ex:
+            print(ex)
+
         tick()
 
     if n_columns is not None:

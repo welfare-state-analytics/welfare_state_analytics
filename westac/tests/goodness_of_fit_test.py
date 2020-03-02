@@ -31,7 +31,7 @@ class test_goodness_of_fit(unittest.TestCase):
         self.assertAlmostEquals(4.0, m)
         self.assertAlmostEquals(3.0, k)
 
-    def skip_test_gof_by_l2_norm(self):
+    def test_gof_by_l2_norm(self):
 
         m = np.array([
             [ 0.10, 0.11, 0.10, 0.09, 0.09, 0.11, 0.10, 0.10, 0.12, 0.08 ],
@@ -45,7 +45,9 @@ class test_goodness_of_fit(unittest.TestCase):
 
         result = gof.gof_by_l2_norm(m, axis=1)
 
-        assert (expected == np.round(result, 4)).all()
+        print(result)
+
+        self.assertTrue(np.allclose(expected, result.round(4)))
 
     def test_fit_ordinary_least_square(self):
         Y = [1,3,4,5,2,3,4]
