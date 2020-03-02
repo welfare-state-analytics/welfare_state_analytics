@@ -52,8 +52,9 @@ def store_model(data, filename):
 @click.option('--passes', default=None, help='Number of passes.')
 @click.option('--alpha', default='symmetric', help='Prior belief of topic probability.')
 @click.option('--workers', default=None, help='Number of workers (if applicable).')
+@click.option('--max-iter', default=None, help='Max number of iterations.')
 @click.option('--prefix', default=None, help='Prefix.')
-def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, prefix):
+def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix):
     """ runner """
 
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
@@ -69,6 +70,9 @@ def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, prefi
 
     if passes is not None:
         kwargs.update(dict(passes=passes))
+
+    if max_iter is not None:
+        kwargs.update(dict(max_iter=max_iter))
 
     if prefix is not None:
         kwargs.update(dict(prefix=prefix))
