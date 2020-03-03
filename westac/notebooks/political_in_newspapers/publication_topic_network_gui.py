@@ -143,7 +143,7 @@ def display_gui(state):
         output_format=widgets.Dropdown(description='Output', options={ 'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv' }, value='network', layout=lw('200px')),
         layout=widgets.Dropdown(description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
-        ignores=widgets.SelectMultiple(description='Ignore', options=[('', None)] + [ ('Topic #'+str(i), i) for i in range(0, n_topics) ], value=[], rows=8, layout=lw('180px')),
+        ignores=widgets.SelectMultiple(description='Ignore', options=[('', None)] + [ ('Topic #'+str(i), i) for i in range(0, n_topics) ], value=[], rows=8, layout=lw('240px')),
     )
 
     def tick(x=None):
