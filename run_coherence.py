@@ -45,29 +45,35 @@ def store_model(data, filename):
         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
 @click.command()
-@click.argument('name') #, help='Model name.')
-@click.option('--n-topics', default=50, help='Number of topics.')
+@click.option('--n-start', default=50, help='Number of topics, start.')
+@click.option('--n-stop', default=250, help='Number of topics, stop.')
+@click.option('--n-step', default=25, help='Number of topics, step.')
 @click.option('--data-folder', default=CORPUS_FOLDER, help='Corpus folder.')
 @click.option('--engine', default="gensim_lda-multicore", help='LDA implementation')
-@click.option('--passes', default=20, help='Number of passes.')
+@click.option('--passes', default=None, help='Number of passes.')
 @click.option('--alpha', default='symmetric', help='Prior belief of topic probability.')
 @click.option('--workers', default=None, help='Number of workers (if applicable).')
-def run_model(name, n_topics, data_folder, engine, passes, alpha, workers):
+@click.option('--prefix', default=None, help='Prefix.')
+def compute(n_start, n_stop, n_step, data_folder, engine, passes, alpha, workers, prefix):
     """ runner """
 
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
         logging.error("Unknown method {}".format(engine))
 
-    #dtm, documents, id2token = corpus_data.load_as_dtm2(data_folder, [1, 3])
+    dtm, documents, id2token = corpus_data.load_as_dtm2(data_folder, [1, 3])
 
-    dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16", "1989-06-16"])
-
-    kwargs = dict(n_topics=n_topics)
+    kwargs = dict(n_start=n_start, n_stop=n_stop, n_step=n_step)
 
     if workers is not None:
         kwargs.update(dict(workers=workers))
 
-    m_data, c_data = topic_model.compute(
+    if passes is not None:
+        kwargs.update(dict(passes=passes))
+
+    if prefix is not None:
+        kwargs.update(dict(prefix=prefix))
+
+    _, c_data = topic_model.compute(
         doc_term_matrix=dtm,
         id2word=id2token,
         documents=documents,
@@ -75,21 +81,6 @@ def run_model(name, n_topics, data_folder, engine, passes, alpha, workers):
         engine_args=kwargs
     )
 
-    target_folder = os.path.join(data_folder, name)
-    if not os.path.isdir(target_folder):
-        os.mkdir(target_folder)
-
-    target_name = os.path.join(target_folder, 'gensim.model')
-    m_data.topic_model.save(target_name)
-
-    topic_model.store_model(m_data, data_folder, name)
-
-    c_data.document_topic_weights = corpus_data.extend_with_document_info(
-        c_data.document_topic_weights,
-        corpus_data.slim_documents(documents)
-    )
-
-    c_data.store(data_folder, name)
 
 if __name__ == '__main__':
-    run_model()
+    compute()

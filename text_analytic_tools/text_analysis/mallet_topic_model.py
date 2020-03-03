@@ -77,3 +77,50 @@ class MalletTopicModel(models.wrappers.LdaMallet):
                 perplexity = float(matches[-1])
         finally:
             return perplexity
+
+
+    # def check_output(self, stdout=subprocess.PIPE, *popenargs, **kwargs):
+    #     r"""Run OS command with the given arguments and return its output as a byte string.
+
+    #     Backported from Python 2.7 with a few minor modifications. Widely used for :mod:`gensim.models.wrappers`.
+    #     Behaves very similar to https://docs.python.org/2/library/subprocess.html#subprocess.check_output.
+
+    #     Examples
+    #     --------
+    #     .. sourcecode:: pycon
+
+    #         >>> from gensim.utils import check_output
+    #         >>> check_output(args=['echo', '1'])
+    #         '1\n'
+
+    #     Raises
+    #     ------
+    #     KeyboardInterrupt
+    #         If Ctrl+C pressed.
+
+    #     """
+    #     try:
+    #         logger.debug("COMMAND: %s %s", popenargs, kwargs)
+    #         process = subprocess.Popen(stdout=stdout, *popenargs, **kwargs)
+    #         while True:
+
+    #         output, unused_err = process.communicate()
+    #         retcode = process.poll()
+    #         if retcode:
+    #             cmd = kwargs.get("args")
+    #             if cmd is None:
+    #                 cmd = popenargs[0]
+    #             error = subprocess.CalledProcessError(retcode, cmd)
+    #             error.output = output
+    #             raise error
+    #         return output
+    #     except KeyboardInterrupt:
+    #         process.terminate()
+    #         raise
+
+    # import io
+    # import subprocess
+
+    # proc = subprocess.Popen(["prog", "arg"], stdout=subprocess.PIPE)
+    # for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):  # or another encoding
+    #     # do something with line
