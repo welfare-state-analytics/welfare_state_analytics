@@ -7,6 +7,7 @@ from westac.common.utility import flatten
 
 PUBLICATION2ID = {'AFTONBLADET':1, 'EXPRESSEN':2, 'DAGENS NYHETER':3, 'SVENSKA DAGBLADET':4}
 ID2PUBLICATION = { v: k for k, v in PUBLICATION2ID.items() }
+ID2PUB = { 1: 'AB', 2: 'EX', 3: 'DN', 4: 'SVD'}
 
 corpus_dataset_filename = "corpus_dataset.zip"
 document_dataset_filename = "document_dataset.zip"
