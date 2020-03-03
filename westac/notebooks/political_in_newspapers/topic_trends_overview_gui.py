@@ -36,12 +36,13 @@ def setup_glyph_coloring(df, color_high=0.3):
 def compute_int_range_categories(values):
     categories = values.unique()
     if all(map(utility.isint, categories)):
-        categories = sorted(list(map(int, categories)))
-        return list(map(str, categories))
+        #values = [ int(v) for v in values]
+        categories = [ str(x) for x in sorted([ int(y) for y in categories]) ]
+        return categories
     else:
         return sorted(list(categories))
 
-HEATMAP_FIGOPTS = dict(title="Topic heatmap", toolbar_location="right",  x_axis_location="above", plot_width=1000)
+HEATMAP_FIGOPTS = dict(title="Topic heatmap", toolbar_location="right",  x_axis_location="above", plot_width=1200)
 
 def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figopts):
 
@@ -49,6 +50,14 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
     if flip_axis is True:
         xs, ys = ys, xs
         line_height = 10
+
+    # import holoviews as hv
+    # from holoviews import opts
+
+    # heatmap = hv.HeatMap((df[xs], df[ys], np.random.randn(100), np.random.randn(100)), vdims=['z', 'z2']).redim.range(z=(-2, 2))
+    # heatmap.opts(opts.HeatMap(tools=['hover'], colorbar=True, width=325, toolbar='above'))
+
+    # return heatmap
 
     x_range = compute_int_range_categories(df[xs])
     y_range = compute_int_range_categories(df[ys])
@@ -63,7 +72,7 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
 
     if y_range is not None:
         figopts['y_range'] = y_range
-        figopts['plot_height'] = max(len(y_range) * line_height, 500)
+        figopts['plot_height'] = max(len(y_range) * line_height, 600)
 
     p = bokeh.plotting.figure(**figopts)
 
