@@ -10,6 +10,7 @@ import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_c
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import westac.notebooks.political_in_newspapers.topic_weight_over_time as topic_weight_over_time
 
 from IPython.display import display
 
@@ -92,42 +93,27 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
 
     p.add_tools(bokeh.models.HoverTool(tooltips=None, callback=widgets_utility.WidgetUtility.glyph_hover_callback(
         source, 'topic_id', titles.index, titles, text_id), renderers=[cr]))
-
     return p
 
-def display_heatmap(document_topic_weights, titles, key='max', flip_axis=False, glyph='Circle', year=None, aggregate=None, output_format=None):
+def display_heatmap(weights, titles, key='max', flip_axis=False, glyph='Circle', aggregate=None, output_format=None):
     try:
 
-        category_column = 'year' if year is None else 'document_id'
 
-        df = document_topic_weights.copy()
+        ''' Display aggregate value grouped by year  '''
+        weights['weight'] = weights[aggregate]
 
-        if year is None:
+        weights['year'] = weights.year.astype(str)
+        weights['topic_id'] = weights.topic_id.astype(str)
 
-            ''' Display aggregate value grouped by year  '''
-            df = df.groupby(['year', 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
-            df.columns = ['year', 'topic_id', 'mean', 'max']
-            df['weight'] = df[aggregate]
-
-        else:
-
-            df = df[(df.year == year)]
-            df = df.groupby([category_column, 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
-            df.columns = [category_column, 'topic_id', 'mean', 'max']
-            df['weight'] = df[aggregate]
-
-        df[category_column] = df[category_column].astype(str)
-        df['topic_id'] = df.topic_id.astype(str)
-
-        if len(df) == 0:
+        if len(weights) == 0:
             print("No data! Please change selection.")
             return
 
         if output_format.lower() == 'heatmap':
 
             p = plot_topic_relevance_by_year(
-                df,
-                xs=category_column,
+                weights,
+                xs='year',
                 ys='topic_id',
                 flip_axis=flip_axis,
                 titles=titles,
@@ -137,7 +123,7 @@ def display_heatmap(document_topic_weights, titles, key='max', flip_axis=False, 
             bokeh.plotting.show(p)
 
         else:
-            display(df)
+            display(weights)
 
     except Exception as ex:
         raise
@@ -145,23 +131,27 @@ def display_heatmap(document_topic_weights, titles, key='max', flip_axis=False, 
 
 def display_gui(state):
 
+    current_weight_over_time = types.SimpleNamespace(
+        publication_id=-1,
+        weights=None
+    )
+
     lw = lambda w: widgets.Layout(width=w)
 
     text_id = 'topic_relevance'
 
     year_min, year_max = state.compiled_data.year_period
-    year_options = [ ('all years', None) ] + [ (x,x) for x in range(year_min, year_max + 1)]
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
     titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
+    weighings = [ (x['description'], x['key']) for x in topic_weight_over_time.METHODS ]
 
     gui = types.SimpleNamespace(
         text_id=text_id,
         text=widgets_helper.text(text_id),
         flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
-        year=widgets.Dropdown(description='Year', options=year_options, value=None, layout=lw("160px")),
         publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
-        aggregate=widgets.Dropdown(description='Aggregate', options=['mean', 'max'], value='max', layout=lw("160px")),
+        aggregate=widgets.Dropdown(description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")),
         output_format=widgets.Dropdown(description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")),
         output=widgets.Output()
     )
@@ -172,29 +162,26 @@ def display_gui(state):
 
         with gui.output:
 
-            document_topic_weights = state.compiled_data.document_topic_weights
-
-            if gui.publication_id.value is not None:
-                document_topic_weights = document_topic_weights[document_topic_weights.publication_id == gui.publication_id.value]
+            weights = topic_weight_over_time.get_weight_over_time(
+                current_weight_over_time,
+                state.compiled_data.document_topic_weights,
+                gui.publication_id.value
+            )
 
             display_heatmap(
-                document_topic_weights,
+                weights,
                 titles,
                 flip_axis=gui.flip_axis.value,
-                year=gui.year.value,
                 aggregate=gui.aggregate.value,
                 output_format=gui.output_format.value
             )
 
-    #gui.year.disabled = True
-
-    gui.year.observe(update_handler, names='value')
     gui.publication_id.observe(update_handler, names='value')
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
     display(widgets.VBox([
-        widgets.HBox([gui.year, gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis ]),
+        widgets.HBox([gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis ]),
         widgets.HBox([gui.output]), gui.text
     ]))
 

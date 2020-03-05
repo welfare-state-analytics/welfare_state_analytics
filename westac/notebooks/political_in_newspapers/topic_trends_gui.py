@@ -127,8 +127,11 @@ def display_gui(state):
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            df = state.compiled_data.document_topic_weights
-            weights = get_weight_over_time(df, gui.publication_id.value)
+            weights = topic_weight_over_time.get_weight_over_time(
+                current_weight_over_time,
+                state.compiled_data.document_topic_weights,
+                gui.publication_id.value
+            )
 
             display_topic_trend(
                 weight_over_time=weights,

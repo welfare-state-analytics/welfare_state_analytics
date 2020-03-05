@@ -61,3 +61,13 @@ def normalize_weights(df):
 # xf = aggregate_weights(df)
 # #plot_topic(xf[['true_mean']], 0)
 # print(xf.head())
+
+def get_weight_over_time(current_weight_over_time, document_topic_weights, publication_id):
+    if current_weight_over_time.publication_id != publication_id:
+        current_weight_over_time.publication_id = publication_id
+        df = document_topic_weights
+        if publication_id is not None:
+            df = df[df.publication_id == publication_id]
+        current_weight_over_time.weights = compute_weight_over_time(df).fillna(0)
+    return current_weight_over_time.weights
+
