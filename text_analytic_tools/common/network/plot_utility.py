@@ -32,7 +32,7 @@ def _layout_args(layout_algorithm, network, scale, weight_name='weight'):
     if layout_algorithm == 'Kamada-Kawai':
         args = dict(dim=2, weight=weight_name, scale=1.0)
 
-    return dict()
+    return args
 
 def _get_layout_algorithm(layout_algorithm):
     if layout_algorithm not in layout_algorithms:
@@ -42,6 +42,14 @@ def _get_layout_algorithm(layout_algorithm):
 def _project_series_to_range(series, low, high):
     norm_series = series / series.max()
     return norm_series.apply(lambda x: low + (high - low) * x)
+
+def project_to_range(value, low, high):
+    """Project a singlevalue to a range (low, high)"""
+    return low + (high - low) * value
+
+def project_values_to_range(values, low, high):
+    w_max = max(values)
+    return [ low + (high - low) * (x / w_max) for x in  values ]
 
 def _plot_network(
     network,
@@ -56,7 +64,9 @@ def _plot_network(
     node_opts=None,
     line_opts=None,
     element_id='nx_id3',
-    figsize=(900,900)
+    figsize=(900,900),
+    node_range=(20, 60),
+    edge_range=(1.0, 5.0)
 ):
     if threshold > 0:
 
@@ -76,7 +86,12 @@ def _plot_network(
     args = PlotNetworkUtility.layout_args(layout_algorithm, sub_network, scale)
     layout = (PlotNetworkUtility.get_layout_algorithm(layout_algorithm))(sub_network, **args)
     lines_source = utility.get_edges_source(
-        sub_network, layout, weight_name=weight_name, scale=weight_scale, normalize=normalize_weights
+        sub_network,
+        layout,
+        weight=weight_name,
+        scale=weight_scale,
+        normalize=normalize_weights,
+        project_range=edge_range
     )
 
     nodes_source     = utility.create_nodes_data_source(sub_network, layout)
@@ -88,17 +103,18 @@ def _plot_network(
 
     nodes_size = 5
     if node_proportions is not None:
-        # NOTE!!! By pd index - not iloc!!
-        nodes_weight = node_proportions.loc[list(sub_network.nodes)]
-        nodes_weight = PlotNetworkUtility.project_series_to_range(nodes_weight, 10, 80)
-        nodes_size = 'size'
-        nodes_source.add(nodes_weight, nodes_size)
+        if isinstance(node_proportions, int):
+            nodes_size = node_proportions
+        else:
+            nodes_size = 'size'
+            nodes_weight = project_values_to_range([ node_proportions[n] for n in sub_network.nodes], *node_range)
+            nodes_source.add(nodes_weight, nodes_size)
 
     node_opts = extend(dict(color='green', alpha=1.0), node_opts or {})
     line_opts = extend(dict(color='black', alpha=0.4), line_opts or {})
 
     p = figure(plot_width=figsize[0], plot_height=figsize[1], x_axis_type=None, y_axis_type=None)
-    #node_size = 'size' if node_proportions is not None else 5
+
     _ = p.multi_line('xs', 'ys', line_width='weights', level='underlay', source=lines_source, **line_opts)
     r_nodes = p.circle('x', 'y', size=nodes_size, source=nodes_source, **node_opts)
 
@@ -106,7 +122,7 @@ def _plot_network(
         glyph_hover_callback2(nodes_source, 'node_id', text_ids=node_description.index, text=node_description, element_id=element_id))
     )
 
-    text_opts = dict(x='x', y='y', text='name', level='overlay', x_offset=0, y_offset=0, text_font_size='20pt')
+    text_opts = dict(x='x', y='y', text='name', level='overlay', x_offset=0, y_offset=0, text_font_size='12pt')
 
     r_nodes.glyph.fill_color = 'lightgreen' # 'community_color'
 
