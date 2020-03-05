@@ -17,6 +17,11 @@ class TopicModelContainer():
         return TopicModelContainer._singleton
 
     def set_data(self, m_data, c_data):
+
+        """ Fix missing document attribute n_terms """
+        if 'n_terms' not in c_data.documents.columns:
+            c_data.documents['n_terms'] = m_data.corpus.sparse.sum(axis=0).A1
+
         self._model_data = m_data
         self._compiled_data= c_data
 

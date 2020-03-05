@@ -4,6 +4,10 @@ import json
 import pandas as pd
 import gensim
 import textacy
+import scipy
+import numpy
+
+from gensim.models import LdaModel
 
 # FIXME: Bug somewhere...
 def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
@@ -29,7 +33,7 @@ def create_dictionary(id2word):
     dictionary.token2id = dict((v, k) for v, k in id2word.items())
     return dictionary
 
-def compute_topic_proportions(document_topic_weights, doc_length_series, n_terms_column='words'):
+def compute_topic_proportions_deprecated(document_topic_weights, doc_length_series, n_terms_column='words'):
 
     '''
     Topic proportions are computed in the same as in LDAvis.
@@ -69,9 +73,23 @@ def compute_topic_proportions(document_topic_weights, doc_length_series, n_terms
 
     return topic_proportion
 
-
-from gensim.models import LdaModel
-import numpy
+def compute_topic_proportions(document_topic_weights, doc_length_series):
+    """Computes topic proportations as LDAvis. Fast version
+    Parameters
+    ----------
+    document_topic_weights : :class:`~pandas.DataFrame`
+        Document Topic Weights
+    doc_length_series : numpy.ndarray
+        Document lengths
+    Returns
+    -------
+    numpy array
+    """
+    theta = scipy.sparse.coo_matrix((document_topic_weights.weight, (document_topic_weights.document_id, document_topic_weights.topic_id)))
+    theta_mult_doc_length = theta.T.multiply(doc_length_series).T
+    topic_frequency = theta_mult_doc_length.sum(axis=0).A1
+    topic_proportion = topic_frequency / topic_frequency.sum()
+    return topic_proportion
 
 def malletmodel2ldamodel(mallet_model, gamma_threshold=0.001, iterations=50):
     """Convert :class:`~gensim.models.wrappers.ldamallet.LdaMallet` to :class:`~gensim.models.ldamodel.LdaModel`.
