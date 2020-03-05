@@ -214,6 +214,11 @@ def compile_data(model, corpus, id2term, documents, doc_topic_matrix=None, n_tok
     Compile metadata associated to given model and corpus
     '''
     try:
+
+        """ Fix missing n_terms """
+        if 'n_terms' not in documents.columns:
+            documents['n_terms'] = corpus.sparse.sum(axis=0).A1
+
         dictionary = id2word2df(id2term)
         topic_token_weights = compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
         alpha = model.alpha if 'alpha' in model.__dict__ else None
