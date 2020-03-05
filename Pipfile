@@ -22,14 +22,11 @@ bokeh = "*"
 chartify = "*"
 click = "*"
 colorcet = "*"
-Cython = {version = "*",sys_platform = "!= 'win32'"}
-Cython_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/Cython-0.29.15-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
-cytoolz = {version = "*",sys_platform = "!= 'win32'"}
-cytoolz_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/cytoolz-0.10.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+Cython = "*"
+cytoolz = "*"
 decorator = "*"
 ftfy = "*"
-gensim = {version = "*",sys_platform = "!= 'win32'"}
-gensim_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/gensim-3.8.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+gensim = "*"
 holoviews = "*"
 humanfriendly = "*"
 ipywidgets = "*"
@@ -41,11 +38,9 @@ matplotlib = "*"
 networkx = "*"
 nltk = "*"
 numba = "*"
-numpy = {version = "*",sys_platform = "!= 'win32'"}
-numpy_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/numpy-1.18.1+mkl-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+numpy = ">=1.18.1"
 openpyxl = "*"
-pandas = {version = "*",sys_platform = "!= 'win32'"}
-pandas_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/pandas-1.0.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+pandas = "*"
 pandas-bokeh = "*"
 py4j = "*"
 pydotplus = "*"
@@ -54,8 +49,7 @@ pywin32 = {version = "*",sys_platform = "== 'win32'"}
 python-louvain = "*"
 scattertext = "*"
 scikit-learn = "*"
-scipy = {version = "*",sys_platform = "!= 'win32'"}
-scipy_win = {file = "https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/scipy-1.4.1-cp37-cp37m-win_amd64.whl",sys_platform = "== 'win32'"}
+scipy = "*"
 Scrapy = "*"
 seaborn = "*"
 spacy = "*"
