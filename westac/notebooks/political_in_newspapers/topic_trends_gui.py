@@ -1,5 +1,6 @@
 import warnings
 import math
+import types
 import numpy as np
 import ipywidgets as widgets
 import bokeh
@@ -9,6 +10,7 @@ import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_c
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import westac.notebooks.political_in_newspapers.topic_weight_over_time as topic_weight_over_time
 
 from IPython.display import display
 
@@ -24,9 +26,9 @@ def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=No
     xs = df[category_column].astype(np.str)
     ys = df[value_column]
 
-    y_max = max(ys.max(),0.3)
+    y_max = ys.max() # max(ys.max(), 0.1)
 
-    figopts = utility.extend(dict(title='', toolbar_location="right",y_range = (0.0, y_max+0.05)), figopts)
+    figopts = utility.extend(dict(title='', toolbar_location="right",y_range = (0.0, y_max)), figopts)
 
     p = bokeh.plotting.figure(**figopts)
 
@@ -43,66 +45,60 @@ def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=No
     return p
 
 def display_topic_trend(
-    document_topic_weights,
+    weight_over_time,
     topic_id,
-    year,
-    year_aggregate,
-    threshold=0.01,
+    year_range,
+    aggregate,
     output_format='Chart',
-    year_column = 'year'
+    normalize=True
 ):
 
     figopts = dict(plot_width=1000, plot_height=400, title='', toolbar_location="right")
 
-    pivot_column = year_column if year is None else None
-    value_column = year_aggregate if year is None else 'weight'
+    df = weight_over_time[(weight_over_time.topic_id == topic_id)]
 
-    df = document_topic_weights[(document_topic_weights.topic_id == topic_id)]
-
-    if year is not None:
-        df = df[(df[year_column] == year)]
-
-    if pivot_column is not None:
-
-        df = df[df['weight'] >= threshold]
-
-        df = df.groupby([pivot_column, 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
-        df.columns = [pivot_column, 'topic_id', 'mean', 'max']
-
-        #df = df[(df[year_aggregate] > threshold)].reset_index()
-
-        category_column = pivot_column
-        min_year = document_topic_weights[year_column].min()
-        max_year = document_topic_weights[year_column].max()
-        figopts['x_range'] = list(map(str, range(min_year, max_year+1)))
-    else:
-        df = df[(df.weight > threshold)].reset_index()
-        category_column = 'treaty'
-        figopts['x_range'] = df['treaty'].unique()
+    min_year, max_year = year_range
+    figopts['x_range'] = list(map(str, range(min_year, max_year+1)))
 
     if len(df) == 0:
         print('No data to display for this topic and theshold')
     elif output_format == 'Table':
         print(df)
     else:
-        p = plot_topic_trend(df, category_column, value_column, **figopts)
+        p = plot_topic_trend(df, 'year', aggregate, **figopts)
         bokeh.plotting.show(p)
+
+current_weight_over_time = types.SimpleNamespace(
+    publication_id=-1,
+    weights=None
+)
+
+def get_weight_over_time(document_topic_weights, publication_id):
+    global current_weight_over_time
+    if current_weight_over_time.publication_id != publication_id:
+        current_weight_over_time.publication_id = publication_id
+        df = document_topic_weights
+        if publication_id is not None:
+            df = df[df.publication_id == publication_id]
+        print('Recomputing..."')
+        current_weight_over_time.weights = topic_weight_over_time.compute_weight_over_time(df).fillna(0)
+
+    return current_weight_over_time.weights
 
 def display_gui(state):
 
-    year_min, year_max = state.compiled_data.year_period
-    year_options = [ ('all years', None) ] + [ (x,x) for x in range(year_min, year_max + 1)]
-
     text_id = 'topic_share_plot'
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
+
+    weighings = [ (x['description'], x['key']) for x in topic_weight_over_time.METHODS ]
+
     gui = widgets_utility.WidgetUtility(
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_helper.text(text_id),
-        year=widgets.Dropdown(description='Year', options=year_options, value=None, layout=widgets.Layout(width="200px")),
         publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
-        year_aggregate=widgets.Dropdown(description='Aggregate', options=['mean', 'max'], value='mean', layout=widgets.Layout(width="200px")),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=0.25, step=0.01, value=0.0, continuous_update=False),
+        aggregate=widgets.Dropdown(description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="200px")),
+        normalize=widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px")),
         topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
         output_format=widgets.Dropdown(description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
@@ -131,27 +127,22 @@ def display_gui(state):
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            document_topic_weights = state.compiled_data.document_topic_weights
-
-            if gui.publication_id.value is not None:
-                document_topic_weights = document_topic_weights[document_topic_weights.publication_id == gui.publication_id.value]
+            df = state.compiled_data.document_topic_weights
+            weights = get_weight_over_time(df, gui.publication_id.value)
 
             display_topic_trend(
-                document_topic_weights=document_topic_weights,
+                weight_over_time=weights,
                 topic_id=gui.topic_id.value,
-                year=gui.year.value,
-                year_aggregate=gui.year_aggregate.value,
-                threshold=gui.threshold.value,
+                year_range=state.compiled_data.year_period,
+                aggregate=gui.aggregate.value,
+                normalize=gui.normalize.value,
                 output_format=gui.output_format.value
             )
 
-    gui.year.disabled = True
-
     gui.topic_id.observe(update_handler, names='value')
-    gui.year.observe(update_handler, names='value')
     gui.publication_id.observe(update_handler, names='value')
-    gui.threshold.observe(update_handler, names='value')
-    gui.year_aggregate.observe(update_handler, names='value')
+    gui.normalize.observe(update_handler, names='value')
+    gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
     display(widgets.VBox([
@@ -160,9 +151,10 @@ def display_gui(state):
                 widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
                 gui.progress,
             ]),
-            widgets.VBox([gui.topic_id, gui.threshold]),
-            widgets.VBox([gui.publication_id, gui.year]),
-            widgets.VBox([gui.year_aggregate, gui.output_format]),
+            widgets.VBox([gui.topic_id]),
+            widgets.VBox([gui.publication_id]),
+            widgets.VBox([gui.aggregate, gui.output_format]),
+            widgets.VBox([gui.normalize]),
         ]),
         gui.text,
         gui.output

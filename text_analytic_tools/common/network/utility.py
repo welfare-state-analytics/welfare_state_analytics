@@ -2,6 +2,7 @@ import community # pip3 install python-louvain packages
 from networkx.algorithms import bipartite
 import networkx as nx
 import bokeh.models as bm
+import numpy as np
 
 if 'extend' not in globals():
     extend = lambda a,b: a.update(b) or a
@@ -59,12 +60,27 @@ def get_edge_layout_data(network, layout, weight='weight'):
 
     return zip(*data)
 
+
 #FIXME Merge these two methods, return dict instead (lose bokeh dependency)
-def get_edges_source(network, layout, scale=1.0, normalize=False, weight='weight'):
+def get_edges_source(network, layout, scale=1.0, normalize=False, weight='weight', project_range=None, discrete_divisor=None):
 
     _, _, weights, xs, ys = get_edge_layout_data(network, layout, weight=weight)
-    norm = max(weights) if normalize else 1.0
-    weights = [ scale * x / norm for x in  weights ]
+    if isinstance(discrete_divisor, int):
+        weights = [ max(1, x // discrete_divisor) for x in  weights ]
+    # elif project_range is not None:
+    #     # same as _project_series_to_range
+    #     w_max = max(weights)
+    #     low, high = project_range
+    #     weights = [ low + (high - low) * (x / w_max) for x in  weights ]
+    elif project_range is not None:
+        # same as _project_series_to_range
+        w_max = max(weights)
+        low, high = project_range
+        weights = [ int(round(max(low, high * (x / w_max)))) for x in  weights ]
+    else:
+        norm = max(weights) if normalize else 1.0
+        weights = [ scale * x / norm for x in  weights ]
+
     lines_source = bm.ColumnDataSource(dict(xs=xs, ys=ys, weights=weights))
     return lines_source
 
@@ -89,7 +105,7 @@ def create_network(df, source_field='source', target_field='target', weight='wei
 
     G = nx.Graph()
     nodes = list(set(list(df[source_field].values) + list(df[target_field].values)))
-    edges = [ (x, y, { weight: z })
+    edges = [ (x, y, { 'weight': z })
              for x, y, z in [ tuple(x) for x in df[[source_field, target_field, weight]].values]]
     G.add_nodes_from(nodes)
     G.add_edges_from(edges)
