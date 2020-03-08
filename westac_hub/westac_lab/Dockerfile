@@ -73,7 +73,7 @@ RUN chmod +x /usr/local/bin/tini
 
 RUN python --version \
     && pip install --upgrade pip \
-    && pip install pipenv \
+    && pip install pipenv notebook==6.0.3 jupyterhub==${JUPYTERHUB_VERSION} \
     && exit 0
 
 COPY *.sh /tmp/
@@ -86,25 +86,10 @@ RUN ls -al /tmp && chmod 0555 /tmp/*.sh \
 COPY Pipfile .
 COPY Pipfile.lock .
 
-RUN sudo chown ${LAB_USER}.users Pipfile*
-
-USER $LAB_UID
-ENV HOME=/home/$LAB_USER
-WORKDIR $HOME
+RUN sudo chown ${LAB_USER}.users Pipfile
 
 # Install system-wide: (add "pipenv run" before beakerx/jupyter if local env)
-RUN pipenv install --ignore-pipfile --deploy # --system
-RUN pipenv install --quiet --yes \
-    'notebook=6.0.3' \
-    'jupyterhub=${JUPYTERHUB_VERSION} ' \
-    'jupyterlab=1.2.6' && \
-    npm cache clean --force && \
-    jupyter notebook --generate-config && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
-
+RUN pipenv install --ignore-pipfile --deploy --system
 RUN beakerx install
 RUN jupyter labextension install \
          @jupyter-widgets/jupyterlab-manager \
@@ -127,13 +112,15 @@ EXPOSE ${LAB_PORT}
 
 ENTRYPOINT ["tini", "-g", "--"]
 
-
+USER $LAB_UID
+ENV HOME=/home/$LAB_USER
+WORKDIR $HOME
 
 RUN mkdir -p $HOME/notebooks \
     && mkdir -p $HOME/bin \
     && mkdir -p $HOME/.jupyter/lab
 
-COPY user-settings  $HOME/.jupyter/lab/
-COPY jupyter_notebook_config.py $HOME/.jupyter/
+#COPY user-settings  $HOME/.jupyter/lab/
+#COPY jupyter_notebook_config.py $HOME/.jupyter/
 
-CMD [ "jupyter", "lab", "--no-browser", "--ip=0.0.0.0" ]
+CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0"]
