@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+
+  jupyterhub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+    image: westac_jupyterhub
+    container_name: westac_hub
+    restart: on-failure
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      - "jupyterhub_data:${DATA_VOLUME_CONTAINER}"
+      - ${HOST_CONFIG_FOLDER}:/etc/jupyterhub
+      - "/etc/shadow:/etc/shadow"
+      - "/etc/passwd:/etc/passwd"
+      - "/etc/pam.d:/etc/pam.d"
+      #- ./cull_idle_servers.py:/srv/jupyterhub/cull_idle_servers.py
+    environment:
+      DOCKER_JUPYTER_CONTAINER: westac_lab
+      HUB_IP: westac_hub
+      # All containers will join this network
+      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      # JupyterHub will spawn this Notebook image for users
+      # DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      # Notebook directory inside user image
+      # DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
+      # Using this run command (optional)
+      # DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      # Postgres db info
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_HOST: hub-db
+    env_file:
+      - ./secrets/.env.oauth2
+      - ./.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:${FRONTEND_HOST}"
+      - "traefik.docker.network=${DOCKER_NETWORK_NAME}"
+    command: >
+        jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+    # networks:
+    #   - ${DOCKER_NETWORK_NAME}
+
+#   jupyterlab:
+#     build: jupyterlab
+#     image: welfare_state_analytics
+#     container_name: welfare_state_analytics-disposable
+#     network_mode: none
+#     command: echo
+
+  reverse-proxy:
+    image: traefik:1.7
+    container_name: reverse-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      #- /etc/letsencrypt/live/westac.humlab.umu.se:/etc/certs:ro
+      - /etc/letsencrypt/live/westac.humlab.umu.se/fullchain.pem:/etc/fullchain.pem
+      - /etc/letsencrypt/live/westac.humlab.umu.se/privkey.pem:/etc/privkey.pem
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: on-failure
+
+volumes:
+    jupyterhub_data:
+        external:
+          name: "${DATA_VOLUME_HOST}"
+
+networks:
+    default:
+      external:
+        name: ${DOCKER_NETWORK_NAME}

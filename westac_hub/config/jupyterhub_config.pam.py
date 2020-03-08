@@ -24,7 +24,7 @@ c.DockerSpawner.image = os.environ['DOCKER_JUPYTER_CONTAINER']
 c.DockerSpawner.network_name = os.environ['DOCKER_NETWORK_NAME'] # See https://github.com/jupyterhub/dockerspawner/blob/master/examples/oauth/jupyterhub_config.py
 c.JupyterHub.hub_ip = os.environ['HUB_IP']
 
-notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan'
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home'
 c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 

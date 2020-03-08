@@ -36,12 +36,12 @@ Other changes you may like to make:
 - Edit [`jupyterlab/Dockerfile`](jupyterlab/Dockerfile) to include the software you like.
 - Change [`jupyterhub/jupyterhub_config.py`](jupyterhub/jupyterhub_config.py) accordingly, in particular the *"user data persistence"* section.
 
-If the `jupyerhub_config.py` is changed, then the `welfare_state_analytics_hub_jupyterhub_data` data volume must be removed in order for the changes to take effect.
+If the `jupyerhub_config.py` is changed, then the `westac_hub_data` data volume must be removed in order for the changes to take effect.
 
 ```bash
 docker-compose down
 # docker rm `docker ps -aq`
-docker volume rm welfare_state_analytics_hub_jupyterhub_data
+docker volume rm westac_hub_data
 ```
 
 ### How to start the server

@@ -6,10 +6,12 @@ LABEL MAINTAINER Roger Mähler <roger dot mahler at umu dot se>
 ARG LAB_USER="humlab"
 ARG LAB_UID="1001"
 ARG LAB_GID="100"
+ARG LAB_PORT=8888
 
 ARG TINI_VERSION=v0.18.0
 ARG JUPYTERHUB_VERSION=1.0.0
-ENV LAB_PORT=8888 \
+ARG JAVA_URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08_openj9-0.18.1/OpenJDK8U-jre_x64_linux_openj9_8u242b08_openj9-0.18.1.tar.gz
+ENV LAB_PORT=${LAB_PORT} \
     \
     LAB_USER=$LAB_USER \
     LAB_UID=$LAB_UID \
@@ -41,9 +43,16 @@ RUN set -ex; \
     && apt-get install -y -qq nodejs \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /usr/lib/jvm \
+    && cd /usr/lib/jvm \
+    && wget $JAVA_URL -O OpenJDK8U-jre_x64_linux.tar.gz \
+    && tar xvf OpenJDK8U-jre_x64_linux.tar.gz \
+    && rm -f OpenJDK8U-jre_x64_linux.tar.gz \
+    && ln -s /usr/lib/jvm/jdk8u242-b08-jre/bin/java /usr/local/bin/java
 
 ENV PATH /usr/local/bin:$PATH
+ENV JAVA_HOME=/usr/lib/jvm/jdk8u242-b08-jre
 
 WORKDIR /tmp
 
@@ -65,7 +74,6 @@ RUN chmod +x /usr/local/bin/tini
 RUN python --version \
     && pip install --upgrade pip \
     && pip install pipenv \
-    && pip install jupyterhub==${JUPYTERHUB_VERSION} \
     && exit 0
 
 COPY *.sh /tmp/
@@ -75,31 +83,36 @@ RUN ls -al /tmp && chmod 0555 /tmp/*.sh \
     # && /tmp/fix-it.sh \
     && cp /tmp/start-notebook.sh /usr/local/bin/
 
-USER $LAB_UID
-
-ENV HOME=/home/$LAB_USER
-
-WORKDIR $HOME
-
-RUN mkdir -p $HOME/bin \
-    mkdir -p $HOME/.jupyter/lab
-
-COPY user-settings  $HOME/.jupyter/lab/
-COPY jupyter_notebook_config.py $HOME/.jupyter/
-
 COPY Pipfile .
 COPY Pipfile.lock .
 
-RUN \
-    pipenv install \
-    && pipenv run jupyter labextension install \
+RUN sudo chown ${LAB_USER}.users Pipfile*
+
+USER $LAB_UID
+ENV HOME=/home/$LAB_USER
+WORKDIR $HOME
+
+# Install system-wide: (add "pipenv run" before beakerx/jupyter if local env)
+RUN pipenv install --ignore-pipfile --deploy # --system
+RUN pipenv install --quiet --yes \
+    'notebook=6.0.3' \
+    'jupyterhub=${JUPYTERHUB_VERSION} ' \
+    'jupyterlab=1.2.6' && \
+    npm cache clean --force && \
+    jupyter notebook --generate-config && \
+    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+RUN beakerx install
+RUN jupyter labextension install \
          @jupyter-widgets/jupyterlab-manager \
          jupyter-matplotlib \
-         jupyterlab_bokeh \
+         @bokeh/jupyter_bokeh \
          @jupyterlab/toc \
-         @jupyterlab/google-drive
-
-    # && cp -f /tmp/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
+         @jupyterlab/google-drive \
+         beakerx-jupyterlab
 
 # RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords punkt sentiwordnet \
 #     \
@@ -108,21 +121,19 @@ RUN \
 #     && python -m spacy download en_core_web_md \
 #     && exit 0
 
-# RUN beakerx install \
-#     && jupyter labextension install \
-#          beakerx-jupyterlab \
-#
-
 ENV NLTK_DATA=/usr/local/share/nltk_data
 
 EXPOSE ${LAB_PORT}
 
-# #  Setting to an empty string disables authentication altogether, which is NOT RECOMMENDED c.NotebookApp.token = ''
-
-RUN mkdir ~/notebooks
-
 ENTRYPOINT ["tini", "-g", "--"]
 
-# CMD ["start-notebook.sh"]
-EXPOSE 8888
-CMD ["jupyter", "lab", "--port=8888", "--no-browser", "--ip=0.0.0.0"]
+
+
+RUN mkdir -p $HOME/notebooks \
+    && mkdir -p $HOME/bin \
+    && mkdir -p $HOME/.jupyter/lab
+
+COPY user-settings  $HOME/.jupyter/lab/
+COPY jupyter_notebook_config.py $HOME/.jupyter/
+
+CMD [ "jupyter", "lab", "--no-browser", "--ip=0.0.0.0" ]
