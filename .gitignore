@@ -39,3 +39,7 @@ tCoIR
 .Rhistory
 lib
 whl
+
+secrets/
+userlist
+.DS_Store
