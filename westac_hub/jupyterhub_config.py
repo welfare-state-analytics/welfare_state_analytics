@@ -55,42 +55,42 @@ def read_userlist():
 c = get_config()
 
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.JupyterHub.admin_access = True
-c.JupyterHub.hub_ip = os.environ['HUB_IP'] # get_ip()
-
+#c.JupyterHub.admin_access = True
+#c.JupyterHub.hub_port = 8000                                        # The public facing port of the proxy
+c.JupyterHub.hub_ip = '0.0.0.0' #os.environ['HUB_IP'] # get_ip()    # The public facing ip of the whole application (the proxy)
+c.JupyterHub.hub_connect_ip = os.environ['HUB_IP']                  # The ip for this process
 
 c.JupyterHub.authenticator_class = oauthenticator.github.GitHubOAuthenticator
 c.JupyterHub.cookie_secret_file = os.path.join(data_dir, 'jupyterhub_cookie_secret')
-c.JupyterHub.services = services
-# c.JupyterHub.hub_port = 8080
-
-c.JupyterHub.debug_proxy = True
 # c.JupyterHub.data_files_path = '/opt/conda/share/jupyterhub'
 
 c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
 c.GitHubOAuthenticator.client_id = os.environ['OAUTH_CLIENT_ID']
 c.GitHubOAuthenticator.client_secret = os.environ['OAUTH_CLIENT_SECRET']
 
-c.PAMAuthenticator.open_sessions = False
+# c.PAMAuthenticator.open_sessions = False
 
 c.Authenticator.whitelist, c.Authenticator.admin_users = read_userlist()
 
 c.DockerSpawner.image = os.environ['DOCKER_JUPYTER_CONTAINER']
-c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
-c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
+# c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
+#c.DockerSpawner.extra_host_config = { 'network_mode': network_name }       # Pass the network name as argument to spawned containers
 c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
-c.DockerSpawner.notebook_dir = notebook_dir
-c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
-c.DockerSpawner.remove_containers = True
-#c.DockerSpawner.host_ip = "0.0.0.0"
+c.DockerSpawner.notebook_dir = '/home/jovyan' # notebook_dir
+# c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+c.DockerSpawner.remove_containers = True                                    # Remove containers once they are stopped
+c.DockerSpawner.host_ip = "0.0.0.0"
 
-# c.Spawner.default_url = '/lab'
-c.Spawner.cpu_limit = 1
-c.Spawner.mem_limit = '3G'
+# c.DockerSpawner.links={network_name: network_name}
+
+c.Spawner.default_url = '/lab'
+# c.Spawner.cpu_limit = 1
+# c.Spawner.mem_limit = '3G'
 c.Spawner.notebook_dir = notebook_dir
 
 # Debug settimgs
+c.JupyterHub.debug_proxy = True
 c.DockerSpawner.debug = True
 c.JupyterHub.log_level = 10
 c.Spawner.cmd = ['jupyterhub-singleuser', '--debug']
