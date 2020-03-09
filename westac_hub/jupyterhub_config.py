@@ -77,8 +77,15 @@ c.DockerSpawner.image = os.environ['DOCKER_JUPYTER_CONTAINER']
 #c.DockerSpawner.extra_host_config = { 'network_mode': network_name }       # Pass the network name as argument to spawned containers
 c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
-c.DockerSpawner.notebook_dir = '/home/jovyan' # notebook_dir
-c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+c.DockerSpawner.notebook_dir = '/home/jovyan/work' # notebook_dir
+#c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+c.DockerSpawner.volumes = {
+    'jupyterhub-user-{username}':'/home/jovyan/work',
+    '/data/westac': {               # path on host
+        "bind": '/data/westac',     # path in docker instance
+        "mode": "ro"
+    }
+}
 c.DockerSpawner.remove_containers = True                                    # Remove containers once they are stopped
 c.DockerSpawner.host_ip = "0.0.0.0"
 
