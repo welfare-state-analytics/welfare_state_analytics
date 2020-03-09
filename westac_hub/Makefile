@@ -56,9 +56,9 @@ bash_lab:
 	@docker exec -it -t `docker ps -f "ancestor=westac_lab" -q --all | head -1` /bin/bash
 
 clear_volumes:
-	@docker volume rm `docker volume ls -q`
+	-docker volume rm `docker volume ls -q` >/dev/null 2>&1
 
-clean: down clear_volumes
+clean: down
 	-docker rm `docker ps -f "ancestor=westac_lab" -q --all` >/dev/null 2>&1
 	-docker rm `docker ps -f "ancestor=westac_jupyterhub" -q --all` >/dev/null 2>&1
 	@docker volume rm `docker volume ls -q`
@@ -81,5 +81,11 @@ nuke:
 	-docker stop `docker ps --all -q`
 	-docker rm -fv `docker ps --all -q`
 	-docker images -q --filter "dangling=true" | xargs docker rmi
+
+# TODO: Fix cd tonproject root, then back again
+requirements.txt: ../../Pipfile.lock
+	@echo "error: requirements.txt, is outdated"
+	@echo "	$(CURDIR)"
+	@echo "  pipenv run pip freeze > requirements.txt"
 
 .PHONY: bash clear_volumes clean down up follow build restart pull nuke network
