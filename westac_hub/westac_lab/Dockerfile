@@ -119,6 +119,11 @@ RUN mkdir -p $HOME/work
 
 WORKDIR $HOME/work
 
+#ADD https://api.github.com/repos/$USER/$REPO/git/refs/heads/$BRANCH version.json
+#RUN git clone -b $BRANCH https://github.com/$USER/$REPO.git $GIT_HOME/
+
+ADD https://api.github.com/repos/humlab/welfare_state_analytics/git/refs/heads/master version.json
+
 RUN git clone https://github.com/humlab/welfare_state_analytics.git \
     && cd welfare_state_analytics \
     && rm -rf .git* .docker* .travis* Pipfile* archive docker install_extensions.sh pytest* run* sparv_pipeline* westac_hub vectorize_runner* \
