@@ -130,7 +130,6 @@ pylint==2.4.3
 pyOpenSSL==19.1.0
 pyparsing==2.4.6
 Pyphen==0.9.5
-pyreadr==0.2.4
 pyrsistent==0.15.7
 pytest==5.3.5
 pytest-cov==2.8.1
@@ -146,7 +145,6 @@ qtconsole==4.6.0
 queuelib==1.5.0
 requests==2.23.0
 rope==0.14.0
-rpy2==3.2.6
 s3transfer==0.3.3
 scattertext==0.0.2.59
 scikit-learn==0.22.1
