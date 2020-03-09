@@ -83,7 +83,7 @@ RUN python --version \
 
 #    && pip install jupyterhub==${JUPYTERHUB_VERSION} \
 
-RUN beakerx install
+# RUN beakerx install
 RUN jupyter labextension install \
          @jupyter-widgets/jupyterlab-manager \
          jupyter-matplotlib \
@@ -121,7 +121,8 @@ WORKDIR $HOME/work
 
 RUN git clone https://github.com/humlab/welfare_state_analytics.git \
     && cd welfare_state_analytics \
-    && rm -rf .git* .docker* .travis* Pipfile* archive docker install_extensions.sh pytest* run* sparv_pipeline* westac_hub vectorize_runner*
+    && rm -rf .git* .docker* .travis* Pipfile* archive docker install_extensions.sh pytest* run* sparv_pipeline* westac_hub vectorize_runner* \
+    && cp westac/notebooks/political_in_newspapers/3_explore_topic_models.ipynb .
 
 #COPY user-settings  $HOME/.jupyter/lab/
 #COPY jupyter_notebook_config.py $HOME/.jupyter/
