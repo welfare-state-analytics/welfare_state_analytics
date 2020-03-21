@@ -5,6 +5,9 @@ sys.path = [ os.path.abspath("../../..") ] + sys.path
 
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
+import westac.corpus.vectorized_corpus as vectorized_corpus
+import westac.corpus.corpus_vectorizer as corpus_vectorizer
+
 import types
 import pickle
 import logging
@@ -54,14 +57,33 @@ def store_model(data, filename):
 @click.option('--workers', default=None, help='Number of workers (if applicable).')
 @click.option('--max-iter', default=None, help='Max number of iterations.')
 @click.option('--prefix', default=None, help='Prefix.')
-def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix):
+@click.option('--corpus-type', default='R', type=click.Choice(['R', 'vectorized'], case_sensitive=False))
+@click.option('--vectorized-corpus-dump-tag', default=None, help="Vectorized corpus dump (prefix) tag")
+def _run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
+     run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
+
+def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
     """ runner """
 
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
         logging.error("Unknown method {}".format(engine))
 
-    dtm, documents, id2token = corpus_data.load_as_dtm2(data_folder, [1, 3])
-    # dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16", "1989-06-16"])
+    if corpus_type == 'vectorized':
+
+        assert vectorized_corpus_dump_tag is not None, "error: dump tag not specified for vectorized corpus"
+        assert vectorized_corpus.VectorizedCorpus.dump_exists(vectorized_corpus_dump_tag, data_folder), "error: no dump for given tag exists"
+
+        v_corpus = vectorized_corpus.VectorizedCorpus\
+            .load(vectorized_corpus_dump_tag, data_folder)
+
+        dtm = v_corpus.data
+        id2token = v_corpus.id2token
+        documents = v_corpus.document_index
+        documents['publication_id'] = 1
+
+    else:
+        dtm, documents, id2token = corpus_data.load_as_dtm2(data_folder, [1, 3])
+        # dtm, documents, id2token = corpus_data.load_dates_subset_as_dtm(data_folder, ["1949-06-16", "1959-06-16", "1969-06-16", "1979-06-16", "1989-06-16"])
 
     kwargs = dict(n_topics=n_topics)
 
@@ -101,5 +123,19 @@ def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_i
 
     c_data.store(data_folder, name)
 
-if __name__ == '__main__':
-    run_model()
+# if __name__ == '__main__':
+#     _run_model()
+
+engine = "gensim_mallet-lda"
+workers = 4
+max_iter = 4000
+passes = 1
+alpha = None
+corpus_type = "vectorized"
+vectorized_corpus_dump_tag = 'tCoIR_en_45-72_renamed_L0_+N_+S'
+data_folder = "/home/roger/source/welfare_state_analytics/data/tCoIR/"
+
+for n_topics in [50, 100, 150, 200, 250, 300, 350, 400]:
+    name = "treaties.{}".format(n_topics)
+    prefix = os.path.join(data_folder, "treaties.{}/".format(n_topics))
+    run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)

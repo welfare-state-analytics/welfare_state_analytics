@@ -10,6 +10,7 @@ import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_c
 import text_analytic_tools.text_analysis.compute_coherence as coherence
 
 from . import engine_options as options
+from pprint import pprint as pp
 
 logger = utility.getLogger("text_analytic_tools")
 

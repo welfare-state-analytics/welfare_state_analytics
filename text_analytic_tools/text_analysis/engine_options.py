@@ -41,7 +41,7 @@ def engine_options(algorithm, corpus, id2word, kwargs):
                 'corpus': corpus,
                 'num_topics':  int(kwargs.get('n_topics', 20)),
                 'id2word':  id2word,
-                'iterations': kwargs.get('max_iter', 50),
+                'iterations': kwargs.get('max_iter', 1000),
                 'passes': int(kwargs.get('passes', 1)),
                 'eval_every': 2,
                 'update_every': 10,                             # Number of documents to be iterated through for each update. Set to 0 for batch learning, > 1 for online iterative learning.
@@ -68,7 +68,7 @@ def engine_options(algorithm, corpus, id2word, kwargs):
                 'corpus': corpus,                               # Sream of document vectors or sparse matrix of shape (num_terms, num_documents).
                 'num_topics':  int(kwargs.get('n_topics', 20)),
                 'id2word':  id2word,                            # id2word ({dict of (int, str), gensim.corpora.dictionary.Dictionary})
-                'iterations': kwargs.get('max_iter', 50),       # Maximum number of iterations through the corpus when inferring the topic distribution of a corpus
+                'iterations': kwargs.get('max_iter', 1000),     # Maximum number of iterations through the corpus when inferring the topic distribution of a corpus
                 'passes': int(kwargs.get('passes', 1)),         # Number of passes through the corpus during training.
                 'workers': kwargs.get('workers', 2),            # set workers directly to the number of your real cores (not hyperthreads) minus one
                 'eta': 'auto',                                  # A-priori belief on word probability
@@ -125,7 +125,7 @@ def engine_options(algorithm, corpus, id2word, kwargs):
 
     if algorithm == 'MALLET-LDA':
         return {
-            # num_topics=100, alpha=50, id2word=None, workers=4, prefix=None, optimize_interval=0, iterations=1000, topic_threshold=0.0, random_seed=0)¶
+            # num_topics=100, alpha=50, id2word=None, workers=4, prefix=None, optimize_interval=0, iterations=2000, topic_threshold=0.0, random_seed=0)¶
             'engine': mallet_topic_model.MalletTopicModel,
             'options': {
                 'corpus': corpus,                                           # Collection of texts in BoW format.
@@ -133,7 +133,7 @@ def engine_options(algorithm, corpus, id2word, kwargs):
                 'default_mallet_home': '/usr/local/share/mallet-2.0.8/',    # MALLET_HOME
 
                 'num_topics':  kwargs.get('n_topics', 100),                 # Number of topics.
-                'iterations': kwargs.get('max_iter', 1000),                 # Number of training iterations.
+                'iterations': kwargs.get('max_iter', 2000),                 # Number of training iterations.
                 #'alpha': int(kwargs.get('passes', 20))                     # Alpha parameter of LDA.
 
                 'prefix': kwargs.get('prefix', TEMP_PATH),

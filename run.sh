@@ -14,9 +14,10 @@ function run_task() {
     gzip $target_folder/*.txt
 }
 
-run_task "gensim_mallet-lda" 50
+# run_task "gensim_mallet-lda" 50
 # run_task "gensim_mallet-lda" 100
 # run_task "gensim_mallet-lda" 200
 # run_task "gensim_mallet-lda" 400
 
+#run_task "gensim_mallet-lda" 210
 

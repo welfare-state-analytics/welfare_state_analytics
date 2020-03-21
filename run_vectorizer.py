@@ -1,4 +1,5 @@
 import os
+import click
 
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
@@ -39,7 +40,10 @@ def generate_corpus(filename, output_folder, **kwargs):
     print('Saving data matrix...')
     v_corpus.dump(tag=dump_tag, folder=output_folder)
 
-if __name__ == "__main__":
+@click.command()
+@click.argument('filename') #, help='Model name.')
+@click.option('--output-folder', default='./output', help='Output folder.')
+def _generate_corpus(filename, output_folder, **kwargs):
 
     kwargs = dict(
         isalnum=True,
@@ -53,10 +57,15 @@ if __name__ == "__main__":
         pattern='*.txt',
         meta_extract = {
             'year': r"(\d{4})\_.*",
-            'serial_no': r"\d{4}\_(\d+).*"
+            'treaty_id': r"\d{4}\_(.{6}).*"
+            # 'year': r"(\d{4})\_.*",
+            # 'serial_no': r"\d{4}\_(\d+).*"
         }
     )
 
-    filename = './data/SOU_1945-1989_NN+VB+JJ_lemma.zip'
 
-    generate_corpus(filename, output_folder='./output', **kwargs)
+    generate_corpus(filename, output_folder=output_folder, **kwargs)
+
+if __name__ == '__main__':
+    # filename = './data/SOU_1945-1989_NN+VB+JJ_lemma.zip'
+    _generate_corpus()
