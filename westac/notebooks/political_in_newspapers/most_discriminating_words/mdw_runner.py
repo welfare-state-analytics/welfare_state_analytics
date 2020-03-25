@@ -6,7 +6,6 @@ sys.path = [ root_folder ] + sys.path
 
 import westac.corpus.vectorized_corpus as vectorized_corpus
 
-from westac.notebooks.most_discriminating_words.most_discriminating_terms_gui import display_gui
 from westac.notebooks.most_discriminating_words.most_discriminating_terms import compute_most_discriminating_terms
 
 v_corpus = vectorized_corpus.VectorizedCorpus\
