@@ -14,16 +14,9 @@ ROOT_FOLDER = get_ancestor_folder("welfare_state_analytics")
 CORPUS_FOLDER = os.path.join(ROOT_FOLDER, "data/textblock_politisk")
 sys.path = [ ROOT_FOLDER ] + sys.path
 
-import westac.corpus.vectorized_corpus as vectorized_corpus
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 from westac.notebooks.political_in_newspapers.notebook_gui import mdw_gui
 from westac.common.textacy_most_discriminating_terms import compute_most_discriminating_terms
-
-def load_vectorized_corpus(corpus_folder, publication_ids):
-    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
-    token2id = { v: k for k,v in id2token.items() }
-    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, document_index)
-    return v_corpus
 
 PUB_IDS = ['AB', 'DN'] # list(corpus_data.ID2PUB.values()) + ['ALL']
 
@@ -61,7 +54,7 @@ def mdw_run(corpus_folder, max_n_terms, min_df, max_df, min_abs_df, max_abs_df, 
 
     logger.info("Reading corpus...")
 
-    v_corpus = load_vectorized_corpus(corpus_folder, pubs2ids(PUB_IDS)) \
+    v_corpus = mdw_gui.load_vectorized_corpus(corpus_folder, pubs2ids(PUB_IDS)) \
         .slice_by_df(max_df=max_df, min_df=min_df, max_n_terms=max_n_terms)
 
     logger.info("Corpus size after DF trim %s x %s.", *v_corpus.data.shape)
@@ -75,7 +68,7 @@ def mdw_run(corpus_folder, max_n_terms, min_df, max_df, min_abs_df, max_abs_df, 
     )
 
     if df is not None:
-        
+
         filename = 'mdw_{}_{}-{}_vs_{}_{}-{}.xlsx'.format(*group[0], *group[1])
         df.to_excel(filename)
 
