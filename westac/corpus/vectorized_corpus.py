@@ -8,14 +8,15 @@ import numpy as np
 import pandas as pd
 import sklearn.preprocessing
 import scipy
+import textacy
 
 from heapq import nlargest
 from sklearn.feature_extraction.text import TfidfTransformer
 
 # logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("westac")
 
 class VectorizedCorpus():
 
@@ -66,6 +67,14 @@ class VectorizedCorpus():
     @property
     def term_bag_matrix(self):
         return self.bag_term_matrix.T
+
+    @property
+    def n_docs(self):
+        return self.bag_term_matrix.shape[1]
+
+    @property
+    def n_terms(self):
+        return self.bag_term_matrix.shape[0]
 
     def todense(self):
 
@@ -140,7 +149,6 @@ class VectorizedCorpus():
 
         return self.bag_term_matrix[:, self.token2id[word]].todense().A1 # x.A1 == np.asarray(x).ravel()
 
-    # FIXME: Moved to service
     def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float):
         """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
 
@@ -286,6 +294,49 @@ class VectorizedCorpus():
             return w in tokens
 
         return self.slice_by(_px)
+
+    # def doc_freqs(self):
+    #     """ Count number of occurrences of each value in array of non-negative ints. """
+    #     return np.bincount(self.doc_term_matrix.indices, minlength=self.n_terms)
+
+    # def slice_by_df(self, min_df, max_df):
+    #     min_doc_count = min_df if isinstance(min_df, int) else int(min_df * self.n_docs)
+    #     dfs = self.doc_freqs()
+    #     mask = np.ones(self.n_terms, dtype=bool)
+    #     if min_doc_count > 1:
+    #         mask &= dfs >= min_doc_count
+    #     # map old term indices to new ones
+    #     new_indices = np.cumsum(mask) - 1
+    #     token2id = {
+    #         term: new_indices[old_index]
+    #         for term, old_index in self.token2id.items()
+    #             if mask[old_index]
+    #     }
+    #     kept_indices = np.where(mask)[0]
+    #     return (self.bag_term_matrix[:, kept_indices], token2id)
+
+    def slice_by_df(self, max_df=1.0, min_df=1, max_n_terms=None):
+        """ Creates a sliced corpus where to common/to rare terms are filtered out using textacy util function,.
+
+        See https://chartbeat-labs.github.io/textacy/build/html/api_reference/vsm_and_tm.html.
+
+        Parameters
+        ----------
+        max_df : float, optional
+            Max number of docs or fraction of total number of docs, by default 1.0
+        min_df : int, optional
+            Max number of docs or fraction of total number of docs, by default 1
+        max_n_terms : [type], optional
+            [description], by default None
+        """
+        sliced_bag_term_matrix, token2id = textacy.vsm.matrix_utils.filter_terms_by_df(
+            self.bag_term_matrix, self.token2id, max_df=max_df, min_df=min_df, max_n_terms=max_n_terms
+            )
+        word_counts = { w: c for w,c in self.word_counts.items() if w in token2id }
+
+        v_corpus = VectorizedCorpus(sliced_bag_term_matrix, token2id, self.document_index, word_counts)
+
+        return v_corpus
 
     #@autojit
     def slice_by(self, px):

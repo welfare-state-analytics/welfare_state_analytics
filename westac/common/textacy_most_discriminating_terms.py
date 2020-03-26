@@ -13,15 +13,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This modified version takes a document-term-matrix and a vocubulary as arguments instead of a terms list
-
 import math
 import operator
-from decimal import Decimal
-
+import pandas as pd
+import logging
 import numpy as np
+
+from decimal import Decimal
 from textacy import vsm
 
+logger = logging.getLogger("westac")
+logger.setLevel(logging.INFO)
+
+def compute_most_discriminating_terms(x_corpus, top_n_terms=25, max_n_terms=1000, group1_indices=None, group2_indices=None):
+
+    if len(group1_indices) == 0 or len(group2_indices) == 0:
+        return None
+
+    if len(set(group1_indices.values).intersection(set(group2_indices.values))) > 0:
+        logger.error("The two groups are overlapping. That is NOT okey!")
+        return None
+
+    indices = group1_indices.append(group2_indices)
+
+    in_group1 = [True] * group1_indices.size + [False] * group2_indices.size
+
+    dtm = x_corpus.data[indices, :]
+
+    logger.info("Corpus size after GROUP filter %s x %s.", *dtm.shape)
+
+    logger.info("Computing MDW (this might take some time)...")
+
+    terms = most_discriminating_terms(dtm, x_corpus.id2token, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
+    min_terms = min(len(terms[0]), len(terms[1]))
+    df = pd.DataFrame({'Group 1': terms[0][:min_terms], 'Group 2': terms[1][:min_terms] })
+
+    return df
+
+# This modified version takes a document-term-matrix and a vocubulary as arguments instead of a terms list
 def most_discriminating_terms(
     dtm,
     id2term,
