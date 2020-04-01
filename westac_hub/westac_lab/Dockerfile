@@ -92,6 +92,8 @@ RUN jupyter labextension install \
          @jupyterlab/google-drive \
          beakerx-jupyterlab
 
+#RUN jupyter labextension install --minimize=False jupyter-cytoscape
+
 # RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords punkt sentiwordnet \
 #     \
 #     && python -m spacy download en_core_web_sm \
