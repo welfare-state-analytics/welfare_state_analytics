@@ -42,4 +42,5 @@ whl
 
 secrets/
 userlist
+ipycytoscape
 .DS_Store
