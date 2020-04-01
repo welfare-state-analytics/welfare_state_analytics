@@ -123,19 +123,19 @@ def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_i
 
     c_data.store(data_folder, name)
 
-# if __name__ == '__main__':
-#     _run_model()
+if __name__ == '__main__':
+    _run_model()
 
-engine = "gensim_mallet-lda"
-workers = 4
-max_iter = 4000
-passes = 1
-alpha = None
-corpus_type = "vectorized"
-vectorized_corpus_dump_tag = 'tCoIR_en_45-72_renamed_L0_+N_+S'
-data_folder = "/home/roger/source/welfare_state_analytics/data/tCoIR/"
+# engine = "gensim_mallet-lda"
+# workers = 4
+# max_iter = 4000
+# passes = 1
+# alpha = None
+# corpus_type = "vectorized"
+# vectorized_corpus_dump_tag = 'tCoIR_en_45-72_renamed_L0_+N_+S'
+# data_folder = "/home/roger/source/welfare_state_analytics/data/tCoIR/"
 
-for n_topics in [50, 100, 150, 200, 250, 300, 350, 400]:
-    name = "treaties.{}".format(n_topics)
-    prefix = os.path.join(data_folder, "treaties.{}/".format(n_topics))
-    run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
+# for n_topics in [50, 100, 150, 200, 250, 300, 350, 400]:
+#     name = "treaties.{}".format(n_topics)
+#     prefix = os.path.join(data_folder, "treaties.{}/".format(n_topics))
+#     run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
