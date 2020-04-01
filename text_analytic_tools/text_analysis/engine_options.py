@@ -141,7 +141,7 @@ def engine_options(algorithm, corpus, id2word, kwargs):
                 'optimize_interval': kwargs.get('optimize_interval', 10),   # Optimize hyperparameters every optimize_interval iterations
 
                 'topic_threshold': kwargs.get('topic_threshold', 0.0),      # Threshold of the probability above which we consider a topic.
-                'random_seed': kwargs.get('random_seed', 42)                #  Random seed to ensure consistent results, if 0 - use system clock.
+                'random_seed': kwargs.get('random_seed', 0)                 #  Random seed to ensure consistent results, if 0 - use system clock.
             }
         }
 
