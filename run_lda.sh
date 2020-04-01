@@ -19,5 +19,5 @@ function run_task() {
 # run_task "gensim_mallet-lda" 200
 # run_task "gensim_mallet-lda" 400
 
-#run_task "gensim_mallet-lda" 210
+run_task "gensim_mallet-lda" 200
 
