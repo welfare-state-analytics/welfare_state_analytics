@@ -16,7 +16,8 @@ sys.path = [ ROOT_FOLDER ] + sys.path
 
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 from westac.notebooks.political_in_newspapers.notebook_gui import mdw_gui
-from westac.common.textacy_most_discriminating_terms import compute_most_discriminating_terms
+#from westac.common.textacy_most_discriminating_terms import compute_most_discriminating_terms
+from westac.common.textacy_mdw_modified import compute_most_discriminating_terms
 
 PUB_IDS = ['AB', 'DN'] # list(corpus_data.ID2PUB.values()) + ['ALL']
 
