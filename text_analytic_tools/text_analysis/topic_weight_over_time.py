@@ -29,12 +29,12 @@ def compute_weight_over_time(df):
     dfs = pd.DataFrame(list(cross_iter), columns=['year', 'topic_id']).set_index(['year', 'topic_id'])
 
     """ Add the most basic stats """
-    dfs = dfs.join(df.groupby(['year', 'topic_id'])['weight'].agg([np.max, np.sum, np.mean, len]), how='left')
+    dfs = dfs.join(df.groupby(['year', 'topic_id'])['weight'].agg([np.max, np.sum, np.mean, len]), how='left').fillna(0)
     dfs.columns = ['max_weight', 'sum_weight', 'false_mean', 'n_topic_docs']
     dfs['n_topic_docs'] = dfs.n_topic_docs.astype(np.uint32)
 
     doc_counts = df.groupby('year').document_id.nunique().rename('n_total_docs')
-    dfs = dfs.join(doc_counts, how='left')
+    dfs = dfs.join(doc_counts, how='left').fillna(0)
     dfs['n_total_docs'] = dfs.n_total_docs.astype(np.uint32)
     dfs['true_mean'] = dfs.apply(lambda x: x['sum_weight'] / x['n_total_docs'], axis=1)
 
