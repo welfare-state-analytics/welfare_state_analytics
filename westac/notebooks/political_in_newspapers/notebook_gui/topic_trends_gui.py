@@ -1,6 +1,7 @@
 import warnings
 import math
 import types
+import numpy as np
 import ipywidgets as widgets
 import bokeh
 import bokeh.plotting
@@ -22,7 +23,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=None, **figopts):
 
-    #xs = df[category_column].astype(np.str)
+    xs = df[category_column].astype(np.str)
     ys = df[value_column]
 
     y_max = ys.max() # max(ys.max(), 0.1)
@@ -30,6 +31,8 @@ def plot_topic_trend(df, category_column, value_column, x_label=None, y_label=No
     figopts = utility.extend(dict(title='', toolbar_location="right",y_range = (0.0, y_max)), figopts)
 
     p = bokeh.plotting.figure(**figopts)
+
+    glyph = p.vbar(x=xs, top=ys, width=0.5, fill_color="#b3de69")
 
     p.xaxis.major_label_orientation = math.pi/4
     p.xgrid.grid_line_color = None
