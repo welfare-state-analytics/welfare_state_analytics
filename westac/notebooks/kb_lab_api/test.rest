@@ -1,0 +1,10 @@
+### Type:   
+POST {{protocol}}://{{host}}:{{port}}
+Authorization: Basic {{user}}:{{password}}
+content-type: application/json
+mode: cors
+accept: application/json
+
+{
+
+}
