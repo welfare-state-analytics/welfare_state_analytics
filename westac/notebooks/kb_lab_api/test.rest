@@ -1,10 +1,12 @@
-### Type:   
-POST {{protocol}}://{{host}}:{{port}}
+### Type:
+GET {{protocol}}://{{host}}/dark-29967/
 Authorization: Basic {{user}}:{{password}}
 content-type: application/json
 mode: cors
-accept: application/json
 
-{
 
-}
+### Type:
+GET {{protocol}}://{{host}}/dark-29967/
+Authorization: Basic {{user}}:{{password}}
+content-type: application/json
+mode: cors
