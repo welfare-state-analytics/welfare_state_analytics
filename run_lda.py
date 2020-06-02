@@ -54,15 +54,16 @@ def store_model(data, filename):
 @click.option('--engine', default="gensim_lda-multicore", help='LDA implementation')
 @click.option('--passes', default=None, help='Number of passes.')
 @click.option('--alpha', default='symmetric', help='Prior belief of topic probability.')
+@click.option('--random-seed', default=None, help="Random seed value")
 @click.option('--workers', default=None, help='Number of workers (if applicable).')
 @click.option('--max-iter', default=None, help='Max number of iterations.')
 @click.option('--prefix', default=None, help='Prefix.')
 @click.option('--corpus-type', default='R', type=click.Choice(['R', 'vectorized'], case_sensitive=False))
 @click.option('--vectorized-corpus-dump-tag', default=None, help="Vectorized corpus dump (prefix) tag")
-def _run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
-     run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
+def _run_model(name, n_topics, data_folder, engine, passes, random_seed, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
+    run_model(name, n_topics, data_folder, engine, passes, random_seed, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
 
-def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
+def run_model(name, n_topics, data_folder, engine, passes, random_seed, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag):
     """ runner """
 
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
@@ -99,6 +100,9 @@ def run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_i
     if prefix is not None:
         kwargs.update(dict(prefix=prefix))
 
+    if random_seed is not None:
+        kwargs.update(dict(random_seed=random_seed))
+
     target_folder = os.path.join(data_folder, name)
     if not os.path.isdir(target_folder):
         os.mkdir(target_folder)
@@ -130,6 +134,7 @@ if __name__ == '__main__':
 # workers = 4
 # max_iter = 4000
 # passes = 1
+# random_seed = None
 # alpha = None
 # corpus_type = "vectorized"
 # vectorized_corpus_dump_tag = 'tCoIR_en_45-72_renamed_L0_+N_+S'
@@ -138,4 +143,4 @@ if __name__ == '__main__':
 # for n_topics in [50, 100, 150, 200, 250, 300, 350, 400]:
 #     name = "treaties.{}".format(n_topics)
 #     prefix = os.path.join(data_folder, "treaties.{}/".format(n_topics))
-#     run_model(name, n_topics, data_folder, engine, passes, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
+#     run_model(name, n_topics, data_folder, engine, passes, random_seed, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
