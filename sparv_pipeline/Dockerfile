@@ -131,16 +131,35 @@ RUN wget -q http://maltparser.org/dist/${MALT_PARSER}.tar.gz \
     && wget -q http://www.maltparser.org/mco/swedish_parser/${MALT_PARSER_MODEL} -o ${SPARV_MODELS}/${MALT_PARSER_MODEL}
 
 ##############################################################################
-# MAKE MODELS
+# Make models
+#  If models_data.zip exists then the content is unzipped in models folder.
+#  The file contains cached copies of large data files that is downloaded by
+#  by the build process.
 ##############################################################################
 
 WORKDIR ${SPARV_PIPELINE_PATH}
 
+# # Alternative #1: Download and compile
+# RUN    make -C models/ all \
+#     && make -C models/ space
+
+# # Alternative #2: Copy in a cached version of the downloaded files
+# RUN if [ -f models_data.zip ]; then                         \
+#        mv models_data.zip ${SPARV_PIPELINE_PATH}/models/    \
+#        cd ${SPARV_PIPELINE_PATH}/models/                    \
+#        unzip models_data.zip                                \
+#        rm models_data.zip                                   \
+#        cd ${SPARV_PIPELINE_PATH}                            \
+#     fi                                                      \
+#     && make -C models/ all \
+#     && make -C models/ space
+
+# # Alternative #3: Copy in a pre-compiled models folder (remove git cloned files first)
+# RUN rm -rf ${SPARV_PIPELINE_PATH}/models
+# COPY models models
+
+# Alternative #4: Empty folder and mount the models folder instead
 RUN rm -rf ${SPARV_PIPELINE_PATH}/models
-
-COPY models models
-
-RUN    make -C models/ all && make -C models/ space
 
 ##############################################################################
 # ENTRYPOINT

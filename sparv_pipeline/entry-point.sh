@@ -11,27 +11,19 @@ if [ ! -f "/data/Makefile" ]; then
     exit 64
 fi
 
-if [ "$1" == "rebuild-model" ]; then
+export PYTHONPATH=/source/sparv-pipeline
 
-    if [ ! -f /source/sparv-pipeline/models ]; fi
-
-        export PYTHONPATH=/source/sparv-pipeline
-
-        rm -rf /data/models
-        cp -r /source/sparv-pipeline/models /data/models
-
-        ln -s /models /source/sparv-pipeline/models
-
-    fi
-
-    exit 0
-
-fi
+# if [ "$1" == "rebuild-model" ]; then
+#     if [ ! -f /source/sparv-pipeline/models ]; then
+#         rm -rf /data/models
+#         cp -r /source/sparv-pipeline/models /data/models
+#         ln -s /models /source/sparv-pipeline/models
+#     fi
+#     exit 0
+# fi
 
 if [ -d /data/models ]; then
-
     export SPARV_MODELS=/data/models
-
 fi
 
 make $@

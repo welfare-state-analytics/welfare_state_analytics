@@ -1,29 +1,40 @@
 
-### Build
-
-```bash
-docker build -t sparv-pipeline:latest .
-```
 
 ### Annotate
 
 See [Preparing Corpus](https://spraakbanken.gu.se/en/tools/sparv/pipeline/installation).
 
-1. Create a new project folder for your
-1. Copy template Makefile to project folder
-   - Name corpus (default `corpusname`)
-   - Name document sub-folder (default `original`)
-   - Specify the annotations types you want
-   - Specify xml (root) tag
-1. Prepare and store the corpus in a sub-folder
-   - Sub-folder must be named `original` or as specified in Makefile
-   - Each document must be a separate XML file
-   - Each document must have a root-tag()).
-1. Run sparvit.sh from witihn the sub-folder
+Note that the source corpus files _must_ be XML files. At the very minimum, if the files are plain text files, you need to open each file and add a root tag that encloses the text content.
+
+#### Configure project
+
+Create a new project folder for your annotation project. Copy the template `Makefile` and set project specific configuration elements. Specify name of corpus (default `corpusname`), name of corpus source folder (default `original`), the XML root tag (default `<text>`) and the kind of annotations to run.
+
+```bash
+% mkdir riksdagens_protokoll
+% cd riksdagens_protokoll
+% cp "path-to-makefile"/Makefile .
+```
+
+#### Prepare corpus
+
+The corpus files must be stored as individual XML files in a separate sub-folder named  as specified in the Makefile (default `original`).
+
+Script `prepare_corpus.sh` that adds root tag `<text>` to all files in an archive.
+
+```bash
+% mkdir original
+% cd original
+% prepare_corpus.sh --file=xyz.zip
+```
+
+#### Run annotation
+
+Run `sparvit.sh export` to convert at plain text corpus to XML files.
 
 ### Example Makefile (minimal)
 
-```txt
+```Makefile
 include $(SPARV_MAKEFILES)/Makefile.config
 
 corpus = corpusname
@@ -59,13 +70,27 @@ include $(SPARV_MAKEFILES)/Makefile.rules
 [Sparv, v3](https://ws.spraakbanken.gu.se/docs/sparv)
 
 
-### Build Språkbanken's Sparv Pipeline
+### How to build Språkbanken's Sparv Pipeline
 
 See [README](https://github.com/spraakbanken/sparv-pipeline) and [Install Instructions](https://spraakbanken.gu.se/en/tools/sparv/pipeline/installation)
 
-Note: Set the following enviroment variables
+Note: Set the following enviroment variables must be set
 
 ```bash
 export SPARV_MAKEFILES=`pwd`/makefiles
 export SPARV_PIPELINE_PATH=`pwd`
 ```
+
+### Build Docker Image
+
+```bash
+export SPARV_MAKEFILES=`pwd`/makefiles
+export SPARV_PIPELINE_PATH=`pwd`
+```
+
+```bash
+docker build -t sparv-pipeline:latest .
+```
+
+The `Dockerfile` downloads all necessary files. Note that the `models` directory, containing models and downloaded files, is rather large and it might be a good idea to pre-compile the models and copy the `models` folder into the Docker image. An alternative way is to mount a host folder that contains the ready-to-use `models` folder.
+
