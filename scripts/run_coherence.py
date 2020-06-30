@@ -1,7 +1,8 @@
 import os, sys
 import click
 
-sys.path = [ os.path.abspath("../../..") ] + sys.path
+root_folder = os.path.abspath("..")
+sys.path = list(set(sys.path + [ root_folder ]))
 
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model

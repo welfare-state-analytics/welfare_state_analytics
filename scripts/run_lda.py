@@ -1,7 +1,7 @@
 import os, sys
 import click
 
-sys.path = [ os.path.abspath("../../..") ] + sys.path
+sys.path = [ os.path.abspath("..") ] + sys.path
 
 import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model

@@ -1,5 +1,8 @@
 import os
-import click
+import sys
+
+root_folder = os.path.abspath("..")
+sys.path = list(set(sys.path + [ root_folder ]))
 
 from westac.kblab import kblab_download
 

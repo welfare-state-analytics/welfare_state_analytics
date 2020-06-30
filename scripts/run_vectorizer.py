@@ -1,4 +1,9 @@
 import os
+import sys
+
+root_folder = os.path.abspath("..")
+sys.path = list(set(sys.path + [ root_folder ]))
+
 import click
 
 from westac.corpus import corpus_vectorizer
