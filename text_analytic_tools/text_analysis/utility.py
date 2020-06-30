@@ -5,9 +5,24 @@ import pandas as pd
 import gensim
 import textacy
 import scipy
-import numpy
+import numpy as np
 
 from gensim.models import LdaModel
+
+#from sklearn.preprocessing import normalize
+
+def normalize_array(x: np.ndarray, ord: int=1):
+    """
+    function that normalizes an ndarray of dim 1d
+
+    Args:
+     ``x``: A numpy array
+
+    Returns:
+     ``x``: The normalize darray.
+    """
+    norm = np.linalg.norm(x, ord=ord)
+    return x / (norm if norm != 0 else 1.0)
 
 # FIXME: Bug somewhere...
 def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
@@ -112,7 +127,7 @@ def malletmodel2ldamodel(mallet_model, gamma_threshold=0.001, iterations=50):
         alpha=mallet_model.alpha, eta=0,
         iterations=iterations,
         gamma_threshold=gamma_threshold,
-        dtype=numpy.float64  # don't loose precision when converting from MALLET
+        dtype=np.float64  # don't loose precision when converting from MALLET
     )
     model_gensim.state.sstats[...] = mallet_model.wordtopics
     model_gensim.sync_state()
