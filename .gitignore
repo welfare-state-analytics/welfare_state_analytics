@@ -12,6 +12,7 @@
 *.zip
 userlist
 .env*
+.env
 .venv/
 tmp/
 __pycache__/

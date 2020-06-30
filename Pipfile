@@ -63,6 +63,7 @@ memoization = "*"
 ipycytoscape = "*"
 bs4 = "*"
 holoviews = "*"
+xmltodict = "*"
 
 [requires]
 python_version = "3.7"
