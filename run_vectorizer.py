@@ -14,7 +14,7 @@ def generate_corpus(filename, output_folder, **kwargs):
 
     dump_tag = '{}_{}_{}_{}'.format(
         os.path.basename(filename).split('.')[0],
-        'L{}'.format(kwargs.get('minlen', 0)),
+        'L{}'.format(kwargs.get('min_len', 0)),
         '-N' if kwargs.get('numerals', False) else '+N',
         '-S' if kwargs.get('symbols', False) else '+S',
     )
