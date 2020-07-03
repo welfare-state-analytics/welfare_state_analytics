@@ -10,6 +10,8 @@ import sklearn.preprocessing
 import scipy
 import textacy
 
+from typing import List, Tuple, Set, Iterable, Optional, Callable, Union
+
 from heapq import nlargest
 from sklearn.feature_extraction.text import TfidfTransformer
 
@@ -21,7 +23,21 @@ logger = logging.getLogger("westac")
 class VectorizedCorpus():
 
     def __init__(self, bag_term_matrix, token2id, document_index, word_counts=None):
+        """Class that encapsulates a bag-of-word matrix.
 
+        Parameters
+        ----------
+        bag_term_matrix : scipy.sparse.csr_matrix
+            The bag-of-word matrix
+        token2id : dict(str, int)
+            Token to token id translation i.e. translates token to column index
+        document_index : pd.DataFrame
+            Documents in corpus (bag-of-word row index meta-data)
+        word_counts : dict(str,int), optional
+            Total corpus word counts, by default None, computed if None
+        """
+
+        # Ensure that we have a sparse matrix (CSR)
         if not scipy.sparse.issparse(bag_term_matrix):
             bag_term_matrix = scipy.sparse.csr_matrix(bag_term_matrix)
         elif not scipy.sparse.isspmatrix_csr(bag_term_matrix):
@@ -38,6 +54,7 @@ class VectorizedCorpus():
 
         if self.word_counts is None:
 
+            # Compute word counts
             Xsum = self.bag_term_matrix.sum(axis=0)
             Xsum = np.ravel(Xsum)
 
@@ -58,26 +75,31 @@ class VectorizedCorpus():
 
     @property
     def T(self):
+        """Returns transpose of BoW matrix """
         return self.bag_term_matrix.T
 
     @property
     def data(self):
+        """Returns BoW matrix """
         return self.bag_term_matrix
 
     @property
     def term_bag_matrix(self):
+        """Returns transpose of BoW matrix """
         return self.bag_term_matrix.T
 
     @property
-    def n_docs(self):
+    def n_docs(self) -> int:
+        """Returns number of documents """
         return self.bag_term_matrix.shape[1]
 
     @property
-    def n_terms(self):
+    def n_terms(self) -> int:
+        """Returns number of types (unique words) """
         return self.bag_term_matrix.shape[0]
 
-    def todense(self):
-
+    def todense(self) -> VectorizedCorpus:
+        """Returns dense BoW matrix"""
         dtm = self.data
 
         if scipy.sparse.issparse(dtm):
@@ -90,8 +112,22 @@ class VectorizedCorpus():
 
         return self
 
-    def dump(self, tag=None, folder='./output', compressed=True):
+    def dump(self, tag: str=None, folder: str='./output', compressed: bool=True) -> VectorizedCorpus:
+        """Store corpus on disk.
 
+        The file is stored as two files: one that contains the BoW matrix (.npy or .npz)
+        and a pickled file that contains dictionary, word counts and the document index
+
+        Parameters
+        ----------
+        tag : str, optional
+            String to be prepended to file name, set to timestamp if None
+        folder : str, optional
+            Target folder, by default './output'
+        compressed : bool, optional
+            Specifies if matrix is store as .npz or .npy, by default .npz
+
+        """
         tag = tag or time.strftime("%Y%m%d_%H%M%S")
 
         data = {
@@ -115,12 +151,35 @@ class VectorizedCorpus():
         return self
 
     @staticmethod
-    def dump_exists(tag, folder='./output'):
+    def dump_exists(tag, folder='./output') -> bool:
+        """Checks if corpus with tag `tag` exists in folder `folder`
+
+        Parameters
+        ----------
+        tag : str
+            Corpus prefix tag
+        folder : str, optional
+            Corpus folder to look in, by default './output'
+        """
         return os.path.isfile(VectorizedCorpus._data_filename(tag, folder))
 
     @staticmethod
-    def load(tag, folder='./output'):
+    def load(tag, folder='./output') -> VectorizedCorpus:
+        """Loads corpus with tag `tag` in folder `folder`
+        Raises FileNotFoundError if files doesn't exist.
 
+        Parameters
+        ----------
+        tag : str
+            Corpus prefix tag
+        folder : str, optional
+            Corpus folder to look in, by default './output'
+
+        Returns
+        -------
+        VectorizedCorpus
+            Loaded corpus
+        """
         data_filename = VectorizedCorpus._data_filename(tag, folder)
         with open(data_filename, 'rb') as f:
             data = pickle.load(f)
@@ -139,17 +198,29 @@ class VectorizedCorpus():
 
     @staticmethod
     def _data_filename(tag, folder):
+        """Returns pickled basename for given tag and folder"""
         return os.path.join(folder, "{}_vectorizer_data.pickle".format(tag))
 
     @staticmethod
     def _matrix_filename(tag, folder):
+        """Returns BoW matrix basename for given tag and folder"""
         return os.path.join(folder, "{}_vector_data".format(tag))
 
     def get_word_vector(self, word):
+        """Extracts vector (i.e. BoW matrix column for word's id) for word `word`
 
+        Parameters
+        ----------
+        word : str
+
+        Returns
+        -------
+        np.array
+            BoW matrix column values found in column `token2id[word]`
+        """
         return self.bag_term_matrix[:, self.token2id[word]].todense().A1 # x.A1 == np.asarray(x).ravel()
 
-    def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float):
+    def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float) -> VectorizedCorpus:
         """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
 
         Parameters
@@ -168,7 +239,7 @@ class VectorizedCorpus():
 
         Returns
         -------
-        tuple: np.ndarray(K, M), list
+        tuple: np.ndarray(K, M), List[Any]
             A matrix of size K wherw K is the number of unique categorical values in `df[column]`
             A list of length K of category values, where i:th value is category of i:th row in returned matrix
         """
@@ -195,7 +266,9 @@ class VectorizedCorpus():
         return Y, categories
 
     #@jit
-    def group_by_year(self):
+    # FIXME: Refactor away function (make use of `collapse_by_category`)
+    def group_by_year(self) -> VectorizedCorpus:
+        """Returns a new corpus where documents have been grouped and summed up by year."""
 
         X = self.bag_term_matrix # if X is None else X
         df = self.document_index # if df is None else df
@@ -221,12 +294,9 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    # _group_aggregate_functions = {
-    #     'sum': scipy.sparse.nansum,
-    #     'mean': scipy.sparse.nanmean
-    # }
-
-    def group_by_year2(self, aggregate_function='sum', dtype=None):
+    # FIXME: Refactor away function (make use of `collapse_by_category`)
+    def group_by_year2(self, aggregate_function='sum', dtype=None) -> VectorizedCorpus:
+        """Variant of `group_by_year` where aggregate function can be specified."""
 
         assert aggregate_function in { 'sum', 'mean' }
 
@@ -261,8 +331,25 @@ class VectorizedCorpus():
         return v_corpus
 
     #@jit
-    def normalize(self, axis=1, norm='l1', keep_magnitude=False):
+    def normalize(self, axis: int=1, norm: str='l1', keep_magnitude: bool=False) -> VectorizedCorpus:
+        """Scale BoW matrix's rows or columns individually to unit norm:
 
+            sklearn.preprocessing.normalize(self.bag_term_matrix, axis=axis, norm=norm)
+
+        Parameters
+        ----------
+        axis : int, optional
+            Axis used to normalize the data along. 1 normalizes each row (bag/document), 0 normalizes each column (word).
+        norm : str, optional
+            Norm to use 'l1', 'l2', or 'max' , by default 'l1'
+        keep_magnitude : bool, optional
+            Scales result matrix so that sum equals input matrix sum, by default False
+
+        Returns
+        -------
+        VectorizedCorpus
+            New corpus normalized in given `axis`
+        """
         normalized_bag_term_matrix = sklearn.preprocessing.normalize(self.bag_term_matrix, axis=axis, norm=norm)
 
         if keep_magnitude is True:
@@ -273,12 +360,37 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    def n_top_tokens(self, n_top):
+    def n_top_tokens(self, n_top) -> Dict[str,int]:
+        """Returns `n_top` most frequent words.
+
+        Parameters
+        ----------
+        n_top : int
+            Number of words to return
+
+        Returns
+        -------
+        Dict[str, int]
+            Most frequent words and their counts, subset of dict `word_counts`
+
+        """
         tokens = { w: self.word_counts[w] for w in nlargest(n_top, self.word_counts, key = self.word_counts.get) }
         return tokens
 
     # @autojit
-    def slice_by_n_count(self, n_count):
+    def slice_by_n_count(self, n_count: int) -> VectorizedCorpus:
+        """Create a subset corpus where words having a count less than 'n_count' are removed
+
+        Parameters
+        ----------
+        n_count : int
+            Specifies min word count to keep.
+
+        Returns
+        -------
+        VectorizedCorpus
+            Subset of self where words having a count less than 'n_count' are removed
+        """
 
         tokens = set(w for w,c in self.word_counts.items() if c >= n_count)
         def _px(w):
@@ -286,8 +398,19 @@ class VectorizedCorpus():
 
         return self.slice_by(_px)
 
-    def slice_by_n_top(self, n_top):
+    def slice_by_n_top(self, n_top) -> VectorizedCorpus:
+        """Create a subset corpus that only contains most frequent `n_top` words
 
+        Parameters
+        ----------
+        n_top : int
+            Specifies specifies number of top words to keep.
+
+        Returns
+        -------
+        VectorizedCorpus
+            Subset of self where words having a count less than 'n_count' are removed
+        """
         tokens = set(nlargest(n_top, self.word_counts, key = self.word_counts.get))
 
         def _px(w):
@@ -299,7 +422,7 @@ class VectorizedCorpus():
     #     """ Count number of occurrences of each value in array of non-negative ints. """
     #     return np.bincount(self.doc_term_matrix.indices, minlength=self.n_terms)
 
-    # def slice_by_df(self, min_df, max_df):
+    # def slice_by_document_frequency(self, min_df, max_df):
     #     min_doc_count = min_df if isinstance(min_df, int) else int(min_df * self.n_docs)
     #     dfs = self.doc_freqs()
     #     mask = np.ones(self.n_terms, dtype=bool)
@@ -315,8 +438,10 @@ class VectorizedCorpus():
     #     kept_indices = np.where(mask)[0]
     #     return (self.bag_term_matrix[:, kept_indices], token2id)
 
-    def slice_by_df(self, max_df=1.0, min_df=1, max_n_terms=None):
-        """ Creates a sliced corpus where to common/to rare terms are filtered out using textacy util function,.
+    def slice_by_document_frequency(self, max_df=1.0, min_df=1, max_n_terms=None) -> VectorizedCorpus:
+        """ Creates a subset corpus where common/rare terms are filtered out.
+
+        Textacy util function filter_terms_by_df is used for the filtering.
 
         See https://chartbeat-labs.github.io/textacy/build/html/api_reference/vsm_and_tm.html.
 
@@ -326,7 +451,7 @@ class VectorizedCorpus():
             Max number of docs or fraction of total number of docs, by default 1.0
         min_df : int, optional
             Max number of docs or fraction of total number of docs, by default 1
-        max_n_terms : [type], optional
+        max_n_terms : in optional
             [description], by default None
         """
         sliced_bag_term_matrix, token2id = textacy.vsm.matrix_utils.filter_terms_by_df(
@@ -339,8 +464,19 @@ class VectorizedCorpus():
         return v_corpus
 
     #@autojit
-    def slice_by(self, px):
+    def slice_by(self, px) -> VectorizedCorpus:
+        """Create a subset corpus based on predicate `px`
 
+        Parameters
+        ----------
+        px : str -> bool
+            Predicate that tests if a word should be kept.
+
+        Returns
+        -------
+        VectorizedCorpus
+            Subset containing words for which `px` evaluates to true.
+        """
         indices = [ self.token2id[w] for w in self.token2id.keys() if px(w) ]
 
         indices.sort()
@@ -354,6 +490,12 @@ class VectorizedCorpus():
         return v_corpus
 
     def stats(self):
+        """Returns (and prints) some corpus status
+        Returns
+        -------
+        dict
+            Corpus stats
+        """
         stats_data = {
             'bags': self.bag_term_matrix.shape[0],
             'vocabulay_size': self.bag_term_matrix.shape[1],
@@ -364,28 +506,83 @@ class VectorizedCorpus():
             logger.info('   {}: {}'.format(key, stats_data[key]))
         return stats_data
 
-    def to_n_top_dataframe(self, n_top):
+    def to_n_top_dataframe(self, n_top: int):
+        """Returns BoW as a Pandas dataframe with the `n_top` most common words.
+
+        Parameters
+        ----------
+        n_top : int
+            Number of top words to return.
+
+        Returns
+        -------
+        DataFrame
+            BoW for top `n_top` words
+        """
         v_n_corpus = self.slice_by_n_top(n_top)
         data = v_n_corpus.bag_term_matrix.T
-        df = pd.DataFrame(data=data, index=[v_n_corpus.id2token[i] for i in range(0,n_top)], columns=list(range(1945, 1990)))
+        columns = list(v_n_corpus.bag_term_matrix.index)
+        df = pd.DataFrame(data=data, index=[v_n_corpus.id2token[i] for i in range(0,n_top)], columns=columns)
         return df
 
-    def year_range(self):
+    def year_range(self) -> Tuple[Optional[int],Optional[int]]:
+        """Returns document's year range
+
+        Returns
+        -------
+        Tuple[Optional[int],Optional[int]]
+            Min/max document year
+        """
         if 'year' in self.document_index.columns:
             return (self.document_index.year.min(), self.document_index.year.max())
         return (None, None)
 
-    def xs_years(self):
+    def xs_years(self) -> Tuple[int,int]:
+        """Returns an array that contains a no-gap year sequence from min year to max year
+
+        Returns
+        -------
+        numpy.array
+            Sequence from min year to max year
+        """
         (low, high) = self.year_range()
         xs = np.arange(low, high + 1, 1)
         return xs
 
-    def token_indices(self, tokens):
+    def token_indices(self, tokens: Iterable[str]):
+        """Returns token (column) indices for words `tokens`
 
+        Parameters
+        ----------
+        tokens : list(str)
+            Input words
+
+        Returns
+        -------
+        Iterable[str]
+            Input words' column indices in the BoW matrix
+        """
         return [ self.token2id[token] for token in tokens ]
 
-    def tf_idf(self, norm='l2', use_idf=True, smooth_idf=True):
+    def tf_idf(self, norm: str='l2', use_idf: bool=True, smooth_idf: bool=True) -> VectorizedCorpus:
+        """Returns a (nomalized) TF-IDF transformed version of the corpus
 
+        Calls sklearn's TfidfTransformer
+
+        Parameters
+        ----------
+        norm : str, optional
+            Specifies row unit norm, `l1` or `l2`, default 'l2'
+        use_idf : bool, default True
+            Indicates if an IDF reweighting should be done
+        smooth_idf : bool, optional
+            Adds 1 to document frequencies to smooth the IDF weights, by default True
+
+        Returns
+        -------
+        VectorizedCorpus
+            The TF-IDF transformed corpus
+        """
         transformer = TfidfTransformer(norm=norm, use_idf=use_idf, smooth_idf=smooth_idf)
 
         tfidf_bag_term_matrix = transformer.fit_transform(self.bag_term_matrix)
@@ -394,7 +591,21 @@ class VectorizedCorpus():
 
         return n_corpus
 
-    def to_bag_of_terms(self, indicies=None):
+    def to_bag_of_terms(self, indicies: Optional[Iterable[int]]=None) -> Iterable[Iterable[str]]:
+        """Returns a document token stream that corresponds to the BoW.
+        Tokens are repeated according to BoW token counts.
+        Note: Will not work on a normalized corpus!
+
+        Parameters
+        ----------
+        indicies : Optional[Iterable[int]], optional
+            Specifies word subset, by default None
+
+        Returns
+        -------
+        Iterable[Iterable[str]]
+            Documenttoken stream.
+        """
         dtm = self.bag_term_matrix
         indicies = indicies or range(0, dtm.shape[0])
         id2token = self.id2token
@@ -406,6 +617,18 @@ class VectorizedCorpus():
         )
 
     def get_top_n_words(self, n=1000, indices=None):
+        """Returns a document token stream that
+
+        Parameters
+        ----------
+        indicies : Iterable[int], optional
+            [description], by default None
+
+        Returns
+        -------
+        Iterable[Iterable[str]]
+            [description]
+        """
         """
         List the top n words in a subset of the corpus sorted according to occurrence.
 
@@ -423,8 +646,29 @@ class VectorizedCorpus():
 
         return words_freq[:n]
 
-def load_corpus(tag, folder, n_count=10000, n_top=100000, axis=1, keep_magnitude=True):
+def load_corpus(tag: str, folder: str, n_count: int=10000, n_top: int=100000, axis: Optional[int]=1, keep_magnitude: bool=True) -> VectorizedCorpus:
+    """Loads a previously saved vectorized corpus from disk. Easaly the best loader ever.
 
+    Parameters
+    ----------
+    tag : str
+        Corpus filename prefix
+    folder : str
+        Source folder where corpus reside
+    n_count : int, optional
+        Words having a (global) count below this limit are discarded, by default 10000
+    n_top : int, optional
+        Only the 'n_top' words sorted by word counts should be loaded, by default 100000
+    axis : int, optional
+        Axis used to normalize the data along. 1 normalizes each row (bag/document), 0 normalizes each column (word).
+    keep_magnitude : bool, optional
+        Scales result matrix so that sum equals input matrix sum, by default True
+
+    Returns
+    -------
+    VectorizedCorpus
+        The loaded corpus
+    """
     v_corpus = VectorizedCorpus\
         .load(tag, folder=folder)\
         .group_by_year()
