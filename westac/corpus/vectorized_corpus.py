@@ -1,14 +1,15 @@
+from __future__ import annotations
 
 import os
 import pickle
 import time
 import logging
-
 import numpy as np
 import pandas as pd
 import sklearn.preprocessing
 import scipy
 import textacy
+
 
 from typing import List, Tuple, Set, Iterable, Optional, Callable, Union
 
