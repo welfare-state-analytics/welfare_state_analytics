@@ -64,6 +64,7 @@ ipycytoscape = "*"
 bs4 = "*"
 holoviews = "*"
 xmltodict = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
