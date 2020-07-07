@@ -66,7 +66,7 @@ class VectorizedCorpus():
         n_vocabulary = self.bag_term_matrix.shape[1]
         n_tokens = sum(self.word_counts.values())
 
-        logger.info('Corpus size: #bags: {}, #vocabulary: {}, #tokens: {}'.format(n_bags, n_vocabulary, n_tokens))
+        logger.info('#bags: {}, #vocab: {}, #tokens: {}'.format(n_bags, n_vocabulary, n_tokens))
 
     @property
     def id2token(self):
