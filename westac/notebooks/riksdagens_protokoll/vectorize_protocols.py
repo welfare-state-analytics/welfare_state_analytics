@@ -1,9 +1,9 @@
 import os
 import sys
 
-# root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
+root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 
-root_folder = os.path.abspath("..")
+#root_folder = os.path.abspath("..")
 sys.path = list(set(sys.path + [ root_folder ]))
 
 import westac.corpus.corpus_vectorizer as corpus_vectorizer
