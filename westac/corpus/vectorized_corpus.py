@@ -221,13 +221,13 @@ class VectorizedCorpus():
         """
         return self.bag_term_matrix[:, self.token2id[word]].todense().A1 # x.A1 == np.asarray(x).ravel()
 
-    def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float) -> VectorizedCorpus:
+    def collapse_by_category(self, column, X=None, df=None, aggregate_function='sum', dtype=np.float): # -> VectorizedCorpus:
         """Sums ups all rows in based on each row's index having same value in column `column`in data frame `df`
 
         Parameters
         ----------
         column : str
-            The categorical column kn `df`that groups the rows in `X`
+            The categorical column in `df` to be used in the grouping of rows in `X`
 
         X : np.ndarray(N, M), optional
             Matrix of shape (N, M), by default None
@@ -328,6 +328,33 @@ class VectorizedCorpus():
         })
 
         v_corpus = VectorizedCorpus(Y, self.token2id, document_index, self.word_counts)
+
+        return v_corpus
+
+    def filter(self, px) -> VectorizedCorpus:
+        """Returns a new corpus that only contains docs for which `px` is true.
+
+        Parameters
+        ----------
+        px : Callable[Dict[str, Any], Boolean]
+            The predicate that determines if document should be kept.
+
+        Returns
+        -------
+        VectorizedCorpus
+            Filtered corpus.
+        """
+
+        meta_documents = self.document_index[self.document_index.apply(px, axis=1)]
+
+        indices = list(meta_documents.index)
+
+        v_corpus = VectorizedCorpus(
+            self.bag_term_matrix[indices, :],
+            self.token2id,
+            meta_documents,
+            None
+        )
 
         return v_corpus
 
