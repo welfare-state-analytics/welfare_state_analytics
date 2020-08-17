@@ -9,6 +9,7 @@
 input_archive=""
 output_folder=""
 output_archive=""
+root_tag="text"
 
 for i in "$@"; do
     case $i in
@@ -39,7 +40,7 @@ for file in $archive_files; do
 
     xmlfile="${file%%.*}".xml
 
-    (echo "<text>" && unzip -p -qq $input_archive "$file" && echo "</text>")  | \
+    (echo "<${root_tag}>" && unzip -p -qq $input_archive "$file" && echo "</${root_tag}>")  | \
         sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' > "$xmlfile"
 
     if [ "$output_archive" != "" ]; then
