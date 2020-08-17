@@ -1,44 +1,50 @@
-FROM python:3.7-slim
+#-------------------------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+#-------------------------------------------------------------------------------------------------------------
+
+ARG VARIANT=3.7-slim
+
+FROM python:$VARIANT
 
 # Notice: part of this code is from jupyter project
+
 LABEL MAINTAINER Roger Mähler <roger dot mahler at umu dot se>
 
-ARG NB_USER="jovyan"
-ARG NB_UID="1000"
-ARG NB_GID="100"
-ARG NB_PORT=8888
+# This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
+# property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
+# will be updated to match your local UID/GID (when using the dockerFile property).
+# See https://aka.ms/vscode-remote/containers/non-root-user for details.ARG USERNAME="vscode"
+ARG USERNAME=vscode
+ARG USER_UID="1000"
+ARG USER_GID="100"
 
-ARG TINI_VERSION=v0.18.0
-ARG JUPYTERHUB_VERSION=1.0.0
+# Uncomment the following COPY line and the corresponding lines in the `RUN` command if you wish to
+# include your requirements in the image itself. Only do this if your requirements rarely change.
+# COPY requirements.txt /tmp/pip-tmp/
+
+# Set to false to skip installing zsh and Oh My ZSH!
+ARG INSTALL_ZSH="true"
+
 ARG JAVA_URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08_openj9-0.18.1/OpenJDK8U-jre_x64_linux_openj9_8u242b08_openj9-0.18.1.tar.gz
-ENV NB_PORT=${NB_PORT} \
+
+ENV USERNAME=$USERNAME \
+    USER_UID=$USER_UID \
+    USER_GID=$USER_GID \
     \
-    NB_USER=$NB_USER \
-    NB_UID=$NB_UID \
-    NB_GID=$NB_GID \
-    \
-    SHELL=/bin/bash \
     DEBIAN_FRONTEND=noninteractive
 
 USER root
 
+COPY update-debian.sh .
+
 RUN set -ex; \
     \
-    apt-get update -qq && apt-get -y -qq dist-upgrade \
+    && chmmod +x update-debian.sh \
     \
-    && mkdir -p /usr/share/man/man1 \
-    && apt-get install -y -qq --no-install-recommends \
-        locales \
-        build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev  \
-        software-properties-common \
-        wget curl zip unzip bzip2 llvm libncurses5-dev \
-        git vim \
-        ca-certificates \
-        netbase netcat \
-        sudo \
-        fonts-liberation \
-        \
-        r-base r-base-dev libopenblas-base \
+    && apt-get update -qq && apt-get -y -qq dist-upgrade \
+    \
+    && /bin/bash /tmp/common-setup.sh "$INSTALL_ZSH" "$USERNAME" "$USER_UID" "$USER_GID" \
     \
     && curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash \
     && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
@@ -93,49 +99,24 @@ RUN jupyter labextension install \
          @jupyterlab/toc \
          @jupyterlab/google-drive \
          beakerx-jupyterlab \
-         jupyter-cytoscape \
-         qgrid2
+         jupyter-cytoscape
 
 # Install R https://cran.r-project.org/bin/linux/debian/
 
 #RUN jupyter labextension install --minimize=False jupyter-cytoscape
 
-# RUN python -m nltk.downloader -d /usr/local/share/nltk_data stopwords punkt sentiwordnet \
-#     \
-#     && python -m spacy download en_core_web_sm \
-#     && python -m spacy download fr_core_news_sm \
-#     && python -m spacy download en_core_web_md \
-#     && exit 0
-
-ENV NLTK_DATA=/usr/local/share/nltk_data
-
-# EXPOSE ${NB_PORT}
-
 ENTRYPOINT ["tini", "-g", "--"]
 
-RUN adduser $NB_USER --uid $NB_UID --gid $NB_GID --disabled-password --gecos '' --shell /bin/bash \
-    && adduser $NB_USER sudo \
+RUN adduser $USERNAME --uid $USER_UID --gid $USER_GID --disabled-password --gecos '' --shell /bin/bash \
+    && adduser $USERNAME sudo \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-# RUN useradd -m $NB_USER
+# RUN useradd -m $USERNAME
 
-ENV HOME=/home/$NB_USER
-USER $NB_USER
+ENV HOME=/home/$USERNAME
+USER $USERNAME
 WORKDIR $HOME
 
 RUN mkdir -p $HOME/work
 # $HOME/bin $HOME/.jupyter/lab
 
 WORKDIR $HOME/work
-
-ADD https://api.github.com/repos/humlab/welfare_state_analytics/git/refs/heads/master version.json
-
-RUN git clone https://github.com/humlab/welfare_state_analytics.git \
-    && cd welfare_state_analytics \
-    && rm -rf .git* .docker* .travis* Pipfile* archive docker install_extensions.sh pytest* run* sparv_pipeline* westac_hub vectorize_runner* \
-    && cp westac/notebooks/political_in_newspapers/3_explore_topic_models.ipynb .
-
-#COPY user-settings  $HOME/.jupyter/lab/
-#COPY jupyter_notebook_config.py $HOME/.jupyter/
-
-CMD ["jupyterhub-singleuser"]
-

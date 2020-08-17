@@ -1,3 +1,4 @@
+-i https://pypi.org/simple
 appnope==0.1.0; sys_platform == 'darwin'
 argon2-cffi==20.1.0
 attrs==19.3.0

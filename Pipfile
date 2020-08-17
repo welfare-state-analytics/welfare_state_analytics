@@ -66,6 +66,7 @@ mypy = "*"
 jupyter-bokeh = "*"
 jupyterlab = "*"
 more-itertools = "*"
+qgrid = "*"
 
 [requires]
 python_version = "3.7"
