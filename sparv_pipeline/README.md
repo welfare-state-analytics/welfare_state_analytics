@@ -18,14 +18,14 @@ Create a new project folder for your annotation project. Copy the template `Make
 
 #### Prepare corpus
 
-The corpus files must be stored as individual XML files in a separate sub-folder named  as specified in the Makefile (default `original`).
+The corpus files must be stored as individual XML files in a separate sub-folder. The default name of the folder is `original`but this can be changes in the Makefile.
 
-Script `prepare_corpus.sh` that adds root tag `<text>` to all files in an archive.
+Script `sparvit-to-xml.sh` adds a root tag `<text>` to all files in an archive. The name of the root tag can also be specified in the Makefile.
 
 ```bash
 % mkdir original
 % cd original
-% prepare_corpus.sh --file=xyz.zip
+% sparvit-to-xml.sh --file=xyz.zip
 ```
 
 #### Run annotation
@@ -74,9 +74,10 @@ include $(SPARV_MAKEFILES)/Makefile.rules
 
 See [README](https://github.com/spraakbanken/sparv-pipeline) and [Install Instructions](https://spraakbanken.gu.se/en/tools/sparv/pipeline/installation)
 
-Note: Set the following enviroment variables must be set
+Note: The following enviroment variables must be set!
 
 ```bash
+cd "sparv-root-folder"
 export SPARV_MAKEFILES=`pwd`/makefiles
 export SPARV_PIPELINE_PATH=`pwd`
 ```
