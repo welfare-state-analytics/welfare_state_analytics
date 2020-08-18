@@ -78,7 +78,7 @@ COPY requirements.txt .
 RUN python --version \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install --upgrade jupyterhub==1.0.0 \
+    && pip install --upgrade jupyterhub==1.1.0 \
     && exit 0
     #    jupyterlab==1.2.6 \
     #    'notebook>=5.0,<=6.0' \

@@ -1,7 +1,6 @@
 # JupyterHub deployment of WeStAc related projects
 
-This JupyterHub setup is based on this [blog
-post](https://opendreamkit.org/2018/10/17/jupyterhub-docker/) and the [The Littlest JupyterHub](https://the-littlest-jupyterhub.readthedocs.io/en/latest/).
+This JupyterHub setup is based on this [blog post](https://opendreamkit.org/2018/10/17/jupyterhub-docker/) and the [The Littlest JupyterHub](https://the-littlest-jupyterhub.readthedocs.io/en/latest/).
 
 ## Features
 
