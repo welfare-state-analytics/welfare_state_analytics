@@ -87,14 +87,15 @@ RUN python --version \
 
 # RUN beakerx install
 RUN jupyter labextension install \
-         @jupyter-widgets/jupyterlab-manager \
-         jupyter-matplotlib@0.7.2 \
-         @bokeh/jupyter_bokeh@2.0.2 \
-         @jupyterlab/toc \
-         @jupyterlab/google-drive \
-         beakerx-jupyterlab \
-         jupyter-cytoscape \
-         qgrid2
+         @jupyter-widgets/jupyterlab-manager@2.0.0 \
+         jupyter-matplotlib@0.7.3 \
+         @bokeh/jupyter_bokeh@2.0.3
+
+        #  @jupyterlab/toc \
+        #  beakerx-jupyterlab \
+        #  jupyter-cytoscape@1.0.3 \
+        #  qgrid2
+
 
 # Install R https://cran.r-project.org/bin/linux/debian/
 
