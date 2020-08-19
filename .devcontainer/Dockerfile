@@ -36,11 +36,11 @@ ENV USERNAME=$USERNAME \
 
 USER root
 
-COPY update-debian.sh .
+COPY debian-base.sh .
 
 RUN set -ex; \
     \
-    && chmmod +x update-debian.sh \
+    && chmod +x debian-base.sh \
     \
     && apt-get update -qq && apt-get -y -qq dist-upgrade \
     \

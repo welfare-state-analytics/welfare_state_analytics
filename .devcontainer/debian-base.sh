@@ -20,6 +20,7 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
+apt-get -y update
 apt-get -y upgrade
 
 mkdir -p /usr/share/man/man1
@@ -34,8 +35,10 @@ apt-get -y install --no-install-recommends \
     r-base r-base-dev libopenblas-base procps \
     lsb-release libc6 libgcc1 libgssapi-krb5-2 libicu[0-9][0-9] liblttng-ust0 libstdc++6 zlib1g
 
+# install pyenv
 curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
 
+# install node
 curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y -qq nodejs \
     && rm -rf /var/lib/apt/lists/*
