@@ -3,7 +3,7 @@ import click
 
 sys.path = [ os.path.abspath("..") ] + sys.path
 
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import westac.corpus.vectorized_corpus as vectorized_corpus
 import westac.corpus.corpus_vectorizer as corpus_vectorizer

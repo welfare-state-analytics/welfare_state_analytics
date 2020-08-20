@@ -1,12 +1,17 @@
 import os
 import sys
+import dotenv
 
-root_folder = os.path.abspath("../..")
+root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
+
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import download
+import westac.kblab.download as download
 
 def download_protocol_content_json():
+
+    dotenv.load_dotenv(dotenv_path=os.path.join(os.environ['HOME'], '.vault/.kblab.env'))
+
     target_filename = "/home/roger/tmp/riksdagens_protokoll_content.zip"
     query = { "tags": "protokoll" }
     max_count = None
