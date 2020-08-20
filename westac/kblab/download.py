@@ -75,7 +75,7 @@ def download_package_items(package, includes=None, excludes=None):
 
             yield filename, content
 
-def download_query_to_zip(query, max_count, target_filename, includes=None, excludes=None):
+def download_query_to_zip(query, max_count, target_filename, includes=None, excludes=None, append=False):
     """Downloads file contents matching query and stores result in a Zip archive.
 
     Parameters
@@ -93,12 +93,20 @@ def download_query_to_zip(query, max_count, target_filename, includes=None, excl
     """
     archive = connect()
 
-    with zipfile.ZipFile(target_filename, "w") as target_archive:
+    mode = "a" if append else "w"
+
+    with zipfile.ZipFile(target_filename, mode) as target_archive:
+
+        existing_files = { x for x in target_archive.namelist() }
 
         for package_id, package in find_packages(archive, query, max_count):
+
+            if os.path.join(package_id, "content.json") in existing_files:
+                logger.info("Skipped (exists): %s" % package_id)
+                continue
 
             for filename, content in download_package_items(package, includes=includes, excludes=excludes):
 
                 target_archive.writestr(os.path.join(package_id, filename), content, zipfile.ZIP_DEFLATED)
 
-            logger.info("Package %s added..." % package_id)
+            logger.info("Added: %s" % package_id)

@@ -68,6 +68,7 @@ jupyterlab = "*"
 more-itertools = "*"
 qgrid = "*"
 ipympl = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
