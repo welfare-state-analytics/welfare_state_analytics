@@ -23,7 +23,7 @@ def download_tag_content_json(tag, target_filename):
     excludes = [ "*.jpg", "*.jb2e", "*.xml", "coverage.*", "structure.json" ]
     includes = [ "content.json", "meta.json" ]
 
-    download.download_query_to_zip(query, max_count, target_filename, includes=includes, excludes=excludes)
+    download.download_query_to_zip(query, max_count, target_filename, includes=includes, excludes=excludes, append=True)
 
 if __name__ == "__main__":
 
