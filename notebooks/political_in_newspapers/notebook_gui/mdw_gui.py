@@ -1,7 +1,7 @@
 import types
 import logging
 import ipywidgets
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 import westac.corpus.vectorized_corpus as vectorized_corpus
 
 from westac.common.textacy_mdw_modified  import compute_most_discriminating_terms

@@ -14,8 +14,8 @@ ROOT_FOLDER = get_ancestor_folder("welfare_state_analytics")
 CORPUS_FOLDER = os.path.join(ROOT_FOLDER, "data/textblock_politisk")
 sys.path = [ ROOT_FOLDER ] + sys.path
 
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
-from westac.notebooks.political_in_newspapers.notebook_gui import mdw_gui
+import notebooks.political_in_newspapers.corpus_data as corpus_data
+from notebooks.political_in_newspapers.notebook_gui import mdw_gui
 #from westac.common.textacy_most_discriminating_terms import compute_most_discriminating_terms
 from westac.common.textacy_mdw_modified import compute_most_discriminating_terms
 

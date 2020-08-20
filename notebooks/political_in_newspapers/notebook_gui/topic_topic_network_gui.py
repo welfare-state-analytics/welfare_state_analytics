@@ -11,7 +11,7 @@ import text_analytic_tools.text_analysis.utility as tmutility
 import text_analytic_tools.common.network.utility as network_utility
 import text_analytic_tools.common.network.plot_utility as plot_utility
 import westac.common.utility as utility
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 from IPython.display import display
 

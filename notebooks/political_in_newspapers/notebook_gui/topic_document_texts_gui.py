@@ -4,7 +4,7 @@ import text_analytic_tools.utility.widgets_utility as widgets_utility
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 from IPython.display import display
 

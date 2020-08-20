@@ -8,7 +8,7 @@ import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_c
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.common.network.utility as network_utility
 import westac.common.utility as utility
-import westac.notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 from text_analytic_tools.common.network.plot_utility import layout_algorithms, PlotNetworkUtility
 from IPython.display import display
