@@ -60,11 +60,14 @@ services:
       - "443:443"
       - "8080:8080"
     volumes:
+      - ./acme.json:/acme.json
       - ./traefik.toml:/etc/traefik/traefik.toml
       #- /etc/letsencrypt/live/westac.humlab.umu.se:/etc/certs:ro
-      - /etc/letsencrypt/live/westac.humlab.umu.se/fullchain.pem:/etc/fullchain.pem
-      - /etc/letsencrypt/live/westac.humlab.umu.se/privkey.pem:/etc/privkey.pem
+      #- /etc/letsencrypt/live/westac.humlab.umu.se/fullchain.pem:/etc/fullchain.pem
+      #- /etc/letsencrypt/live/westac.humlab.umu.se/privkey.pem:/etc/privkey.pem
       - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - --acme.storage=/acme.json
     restart: on-failure
 
 volumes:
