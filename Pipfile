@@ -69,6 +69,7 @@ more-itertools = "*"
 qgrid = "*"
 ipympl = "*"
 python-dotenv = "*"
+ipyaggrid = "*"
 
 [requires]
 python_version = "3.7"
