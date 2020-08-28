@@ -2,14 +2,14 @@ import ipywidgets as widgets
 from IPython.display import display
 import bokeh.plotting
 import bokeh.io
-import westac.notebooks_gui.distributions_plot as plotter
+import notebooks.common.distributions_plot as plotter
 import numpy as np
 import bokeh
 import westac.common.curve_fit as cf
 import math
 import itertools
 import pandas as pd
-import qgrid
+#import qgrid
 
 from pprint import pprint as pp
 
@@ -93,7 +93,7 @@ def display_bar_plot(data, **kwargs):
     p = bokeh.plotting.figure(x_range=years, y_range=(0, max_value), plot_height=400, plot_width=1000, title="Word frequecy by year")
 
     colors = itertools.islice(itertools.cycle(bokeh.palettes.d3['Category20b'][20]), len(tokens))
-    
+
     offset = -0.25
     v = []
     for token in tokens:
@@ -118,11 +118,11 @@ def display_as_table(data, **kwargs):
     df = pd.DataFrame(data=data).set_index('year')
     display(df)
 
-def display_as_qgrid(data, **kwargs):
-    df = pd.DataFrame(data=data).set_index('year')
-    qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
-    display(qgrid_widget)
-    
+# def display_as_qgrid(data, **kwargs):
+#     df = pd.DataFrame(data=data).set_index('year')
+#     qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
+#     display(qgrid_widget)
+
 def display_multiline_plot(data, **kwargs):
     container = kwargs['container']
     container.data_source.data.update(data)
@@ -131,8 +131,6 @@ def display_multiline_plot(data, **kwargs):
 def take(n, iterable):
     "Return first n items of the iterable as a list"
     return list(itertools.islice(iterable, n))
-
-X = None
 
 def display_gui(container):
 
@@ -143,7 +141,7 @@ def display_gui(container):
 
     tab_plot_types      = [ "Table", "Line", "Bar" ]
     data_compilers      = [ compile_year_token_vector_data, compile_multiline_data, compile_year_token_vector_data ]
-    data_displayers     = [ display_as_qgrid, display_multiline_plot, display_bar_plot ]
+    data_displayers     = [ display_as_table, display_multiline_plot, display_bar_plot ]
     clear_output        = [ True, False, True ]
     _                   = [ tab_widget.set_title(i, x) for i,x in enumerate(tab_plot_types) ]
 
@@ -161,10 +159,10 @@ def display_gui(container):
         nonlocal z_corpus, x_corpus
 
         if container.corpus is None:
-            
+
             with output_widget:
                 print("Please load a corpus!")
-                
+
             return
 
         if z_corpus is None or not z_corpus is container.corpus:
