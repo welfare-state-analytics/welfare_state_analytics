@@ -125,16 +125,39 @@ def compress_whitespaces(text):
     return result
 
 def extract_metadata(filename, **kwargs):
+    """Extracts metadata from filename
+
+    Parameters
+    ----------
+    filename : str
+        Filename (basename)
+    kwargs: key=extractor list
+
+    Returns
+    -------
+    SimpleNamespace
+        Each key in kwargs is set as a property in the returned instance.
+        The extractor must be either a regular expression that extracts the single value
+        or a callable function that given the filename return corresponding value.
+
+    """
     params = { x: None for x in kwargs.keys()}
     meta =  types.SimpleNamespace(filename=filename, **params)
     for k,r in kwargs.items():
+
         if r is None:
             continue
+
+        if callable(r):
+            v = r(filename)
+            meta.__setattr__(k, int(v) if v.isnumeric() else v)
+
         if isinstance(r, str): # typing.re.Pattern):
             m = re.match(r, filename)
             if m is not None:
                 v = m.groups()[0]
                 meta.__setattr__(k, int(v) if v.isnumeric() else v)
+
     return meta
 
 def read_file(path, filename):
