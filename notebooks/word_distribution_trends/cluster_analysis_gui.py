@@ -10,8 +10,8 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 
 import westac.common.cluster_analysis as cluster_analysis
 import westac.common.goodness_of_fit as gof
-import westac.notebooks_gui.distributions_plot_gui as pdg
-import westac.notebooks_gui.cluster_plot as cluster_plot
+import distributions_plot_gui as pdg
+import cluster_plot as cluster_plot
 import warnings
 import westac.common.curve_fit as cf
 import itertools

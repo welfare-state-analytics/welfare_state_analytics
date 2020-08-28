@@ -1,7 +1,7 @@
 import ipywidgets
 from IPython.display import display
 from bokeh.plotting import show
-import westac.notebooks_gui.distributions_plot as plotter
+import notebooks.common.distributions_plot as plotter
 
 def display_gui(x_corpus, tokens, n_columns=3):
 
