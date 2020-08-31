@@ -64,5 +64,42 @@ z = {**x, **y}
 ```python
 ```
 
-```python
+#### Install Git-LFS on Debian / Ubuntu
+
+```bash
+% sudo apt-get update
+% sudo apt-get upgrade
+% curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+% git lfs install
+```
+
+#### Pre-commit Hook that clears Notebook Outputs
+
+Source: https://zhauniarovich.com/post/2020/2020-06-clearing-jupyter-output/
+
+Install `pre-commit`:
+
+```bash
+% pipenv install pre-commit --dev
+```
+
+Create a new file names `.pre-commit-config.yml` and with the following text:
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: jupyter-nb-clear-output
+        name: jupyter-nb-clear-output
+        files: \.ipynb$
+        stages: [commit]
+        language: system
+        entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
+```
+
+Install the hook:
+
+```bash
+% pipenv shell
+% pre-commit install
 ```
