@@ -12,6 +12,7 @@ rope = "*"
 invoke = "*"
 nbstripout = "*"
 pytest = "*"
+pre-commit = "*"
 
 [packages]
 appnope = {version = "*",sys_platform = "== 'darwin'"}
