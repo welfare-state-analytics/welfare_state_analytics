@@ -71,6 +71,7 @@ qgrid = "*"
 ipympl = "*"
 python-dotenv = "*"
 ipyaggrid = "*"
+kblab-client = "*"
 
 [requires]
 python_version = "3.7"

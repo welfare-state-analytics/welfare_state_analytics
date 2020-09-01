@@ -2,6 +2,7 @@ import os
 import sys
 import dotenv
 import click
+from traitlets.traitlets import default
 
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 
@@ -12,7 +13,8 @@ import westac.kblab.download as download
 @click.command()
 @click.argument('tag', )
 @click.argument('target_filename', )
-def download_tag_content_json(tag, target_filename):
+@click.option('--year', default=None, type=click.INT)
+def download_tag_content_json(tag, target_filename, year=None):
 
     dotenv.load_dotenv(dotenv_path=os.path.join(os.environ['HOME'], '.vault/.kblab.env'))
 
@@ -23,7 +25,17 @@ def download_tag_content_json(tag, target_filename):
     excludes = [ "*.jpg", "*.jb2e", "*.xml", "coverage.*", "structure.json" ]
     includes = [ "content.json", "meta.json" ]
 
-    download.download_query_to_zip(query, max_count, target_filename, includes=includes, excludes=excludes, append=True)
+    if year is not None:
+
+        #for year in range(year_range[0], year_range[1] + 1):
+
+        query["meta.created"] = str(year)
+
+        download.download_query_to_zip(query, max_count, target_filename, includes=includes, excludes=excludes, append=True)
+
+    else:
+
+        download.download_query_to_zip(query, max_count, target_filename, includes=includes, excludes=excludes, append=True)
 
 if __name__ == "__main__":
 
