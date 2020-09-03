@@ -46,8 +46,8 @@ def compile_year_token_vector_data(x_corpus, indices, *args):
         x_corpus.id2token[token_id]: x_corpus.bag_term_matrix[:, token_id]
             for token_id in indices
     }
-
     data['year'] = xs
+
     return data
 
 def setup_plot(container, x_ticks=None, plot_width=1000, plot_height=800, **kwargs):
@@ -115,7 +115,9 @@ def display_bar_plot(data, **kwargs):
     bokeh.io.show(p)
 
 def display_as_table(data, **kwargs):
-    df = pd.DataFrame(data=data).set_index('year')
+    df = pd.DataFrame(data=data)
+    df = df[['year']+[x for x in df.columns if x!= 'year']].set_index('year')
+    
     display(df)
 
 # def display_as_qgrid(data, **kwargs):
