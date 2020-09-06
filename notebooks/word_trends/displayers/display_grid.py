@@ -1,7 +1,15 @@
 import pandas as pd
-
-from ipyaggrid import Grid
 from IPython.display import display
+from ipyaggrid import Grid
+
+import notebooks.word_trends.displayers.data_compilers as data_compilers
+
+NAME = "Grid"
+
+compile = data_compilers.compile_year_token_vector_data
+
+def setup(container, **kwargs):
+    pass
 
 def default_column_defs(df):
     column_defs = [
@@ -17,10 +25,9 @@ def default_column_defs(df):
     ]
     return column_defs
 
-def display_grid(data, **kwargs):
+def plot(data, **kwargs):
 
     df = pd.DataFrame(data=data).set_index('year')
-    display(df)
     column_defs = default_column_defs(df)
     grid_options = {
         'columnDefs' : column_defs,
