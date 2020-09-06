@@ -1,0 +1,7 @@
+torch>=1.2.0
+pytorch_transformers>=1.2
+sklearn
+pandas>=0.25
+fastai>=1.0.57
+#libsixel-python>=0.4.0
+jupyter
