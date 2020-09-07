@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-ARG VARIANT=3.7-slim
+ARG VARIANT=3.8-slim
 
 FROM python:$VARIANT
 
