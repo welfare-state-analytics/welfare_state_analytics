@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.8-slim
 
 # Notice: part of this code is from jupyter project
 LABEL MAINTAINER Roger Mähler <roger dot mahler at umu dot se>

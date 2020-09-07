@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.8-slim
 
 # Notice: part of this code is from jupyter project:
 # Copyright (c) Jupyter Development Team.
@@ -132,7 +132,7 @@ RUN git clone https://github.com/humlab/welfare_state_analytics.git \
 
 CMD ["jupyterhub-singleuser"]
 
-# # # # FROM python:3.7
+# # # # FROM python:3.8
 # # # # RUN pip3 install \
 # # # #     jupyterhub==1.0.0 \
 # # # #     jupyterlab==1.2.6 \
