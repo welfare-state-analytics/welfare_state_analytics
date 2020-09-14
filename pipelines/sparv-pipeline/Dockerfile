@@ -131,6 +131,12 @@ RUN wget -q http://maltparser.org/dist/${MALT_PARSER}.tar.gz \
     && wget -q http://www.maltparser.org/mco/swedish_parser/${MALT_PARSER_MODEL} -o ${SPARV_MODELS}/${MALT_PARSER_MODEL}
 
 ##############################################################################
+# Swedish Word-sense disambiguation tool based on SALDO.
+##############################################################################
+
+RUN wget https://github.com/spraakbanken/sparv-wsd/raw/master/bin/saldowsd.jar -P /source/sparv-pipeline/bin/wsd/
+
+##############################################################################
 # Make models
 #  If models_data.zip exists then the content is unzipped in models folder.
 #  The file contains cached copies of large data files that is downloaded by
@@ -163,6 +169,7 @@ RUN rm -rf ${SPARV_PIPELINE_PATH}/models
 ##############################################################################
 # ENTRYPOINT
 ##############################################################################
+
 
 COPY ./entry-point.sh /source/sparv-pipeline/bin/entry-point.sh
 

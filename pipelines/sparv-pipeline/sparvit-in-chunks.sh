@@ -1,26 +1,35 @@
 
-corpus_file=xyz.zip
+corpus_file="SOU-KBLAB-corpus-1945-1989.xml.zip"
+chunk_pattern="sou_CHUNK_"
 
-for chunk in chunks:
+chunks=$(seq 1945 1989)
+
+for chunk in ${chunks[@]}; do
+
+    xml_files=$(unzip -Z1 ${corpus_file})
+
+    chunk_filenames=$(IFS=$'\n' && echo "${xml_files[*]}" | grep "${chunk_pattern/CHUNK/$chunk}" )
 
     mkdir -p ${chunk} ${chunk}/original
+
+    for f in ${chunk_filenames}; do
+        unzip ${corpus_file} ${f} -d ${chunk}/original
+    done
 
     cp Makefile ${chunk}/
 
     cd ${chunk}
 
-    sparvit-to-xml.sh -i $corpus_file --filter ${chunk} -o corpus.xml.zip
+    sparvit export
 
-    cd ./original && unzip ../corpus.xml.zip && cd ..
-
-    sparvit.sh export
-
-    zip -f original.export.zip original.export
-
-    mv original.export.zip ../${chunk}-original.export.zip
     cd ..
+
+    zip -rjD ${chunk}.xml.zip ${chunk}/export.original/*.xml
+
+    cp ${chunk}/warnings.log ./${chunk}.warnings.log
+    gzip ${chunk}.warnings.log
 
     rm -rf ${chunk}
 
-
+done
 
