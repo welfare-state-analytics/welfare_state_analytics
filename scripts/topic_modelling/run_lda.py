@@ -1,7 +1,9 @@
 import os, sys
 import click
 
-sys.path = [ os.path.abspath("..") ] + sys.path
+root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
+
+sys.path = list(set(sys.path + [ root_folder ]))
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
@@ -12,7 +14,7 @@ import types
 import pickle
 import logging
 
-CORPUS_FOLDER = "/home/roger/source/welfare_state_analytics/data/textblock_politisk"
+CORPUS_FOLDER = os.path.join(root_folder, "data")
 
 ENGINE_OPTIONS = [
     ('MALLET LDA', 'gensim_mallet-lda'),

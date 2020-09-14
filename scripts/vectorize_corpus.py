@@ -49,6 +49,7 @@ def parser_meta_fields(meta_field):
 @click.option('--remove-accents/--no-remove-accents', '-d', default=False, is_flag=True, help='Remove accents to lower case.')
 @click.option('--min-length', default=2, help='Minimum length of words to keep', type=click.INT)
 @click.option('--max-length', default=None, help='Maximum length of words to keep', type=click.INT)
+@click.option('--doc-chunk-size', default=None, help='Split document in chunks of chunk-size words.', type=click.INT)
 @click.option('--keep-numerals/--no-keep-numerals', default=True, is_flag=True, help='')
 @click.option('--keep-symbols/--no-keep-symbols', default=False, is_flag=True, help='')
 @click.option('--only-alphanumeric', default=False, is_flag=True, help='TBD.')
@@ -62,6 +63,7 @@ def vectorize_text_corpus(
     remove_accents=False,
     min_length=2,
     max_length=None,
+    doc_chunk_size=None,
     keep_numerals=False,
     keep_symbols=False,
     only_alphanumeric=True,
@@ -76,6 +78,7 @@ def vectorize_text_corpus(
         deacc=remove_accents,
         min_len=min_length,
         max_len=max_length,
+        doc_chunk_size=doc_chunk_size,
         numerals=keep_numerals,
         symbols=keep_symbols,
         only_alphabetic=only_alphabetic,
