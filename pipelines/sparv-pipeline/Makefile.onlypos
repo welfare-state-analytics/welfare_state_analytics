@@ -22,4 +22,6 @@ sentence_segmenter = punkt_sentence
 paragraph_chunk = text
 paragraph_segmenter = blanklines
 
+ignore_missing_parents = true
+
 include $(SPARV_MAKEFILES)/Makefile.rules

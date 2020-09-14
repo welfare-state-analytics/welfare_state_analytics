@@ -139,9 +139,8 @@ RUN wget -q http://maltparser.org/dist/${MALT_PARSER}.tar.gz \
 
 WORKDIR ${SPARV_PIPELINE_PATH}
 
-# # Alternative #1: Download and compile
-# RUN    make -C models/ all \
-#     && make -C models/ space
+# Alternative #1: Download and compile
+RUN make -C models/ all && make -C models/ space
 
 # # Alternative #2: Copy in a cached version of the downloaded files
 # RUN if [ -f models_data.zip ]; then                         \
