@@ -1,11 +1,9 @@
+import os
 import unittest
 import pandas as pd
 import numpy as np
 import scipy
-import sklearn
 from sklearn.feature_extraction.text import CountVectorizer
-import scipy.sparse as sparse
-from pprint import pprint as print
 
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
@@ -15,9 +13,12 @@ from westac.tests.utils  import create_text_files_reader
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
+TEMP_OUTPUT_FOLDER = "./westac/tests/output"
+
 class Test_VectorizedCorpus(unittest.TestCase):
 
     def setUp(self):
+        os.makedirs(TEMP_OUTPUT_FOLDER,exist_ok=True)
         pass
 
     def create_reader(self):
@@ -73,10 +74,10 @@ class Test_VectorizedCorpus(unittest.TestCase):
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         dumped_v_corpus = vectorizer.fit_transform(corpus)
 
-        dumped_v_corpus.dump('dump_test', folder='./westac/tests/output', compressed=False)
+        dumped_v_corpus.dump('dump_test', folder=TEMP_OUTPUT_FOLDER, compressed=False)
 
         # Act
-        loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder='./westac/tests/output')
+        loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder=TEMP_OUTPUT_FOLDER)
 
         # Assert
         self.assertEqual(dumped_v_corpus.word_counts, loaded_v_corpus.word_counts)
@@ -91,10 +92,10 @@ class Test_VectorizedCorpus(unittest.TestCase):
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         dumped_v_corpus = vectorizer.fit_transform(corpus)
 
-        dumped_v_corpus.dump('dump_test', folder='./westac/tests/output', compressed=True)
+        dumped_v_corpus.dump('dump_test', folder=TEMP_OUTPUT_FOLDER, compressed=True)
 
         # Act
-        loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder='./westac/tests/output')
+        loaded_v_corpus = vectorized_corpus.VectorizedCorpus.load('dump_test', folder=TEMP_OUTPUT_FOLDER)
 
         # Assert
         self.assertEqual(dumped_v_corpus.word_counts, loaded_v_corpus.word_counts)

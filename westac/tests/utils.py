@@ -14,15 +14,16 @@ def create_text_files_reader(
     itemfilter=None,
     compress_whitespaces=False,
     dehyphen=True,
-    meta_extract=None
+    meta_extract=None,
+    doc_chunk_size=None
 ):
     kwargs = dict(
         pattern=pattern,
         itemfilter=itemfilter,
         compress_whitespaces=compress_whitespaces,
         dehyphen=dehyphen,
-        meta_extract=meta_extract
+        meta_extract=meta_extract,
+        doc_chunk_size=doc_chunk_size
     )
     reader = file_text_reader.FileTextReader(filename, **kwargs)
     return reader
-
