@@ -72,7 +72,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     [DataFrane]
         Upper diagonal of term-term frequency matrix (TTM). Note that diagonal (wi, wi) is not returned
     """
-    corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
+    corpus = text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     v_corpus = vectorizer.fit_transform(corpus)
 

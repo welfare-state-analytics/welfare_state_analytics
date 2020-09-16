@@ -44,7 +44,7 @@ class Test_ChiSquare(unittest.TestCase):
     def create_corpus(self):
         reader = self.create_reader()
         kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 
     def skip_test_chisquare(self):

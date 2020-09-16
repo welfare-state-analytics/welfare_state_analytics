@@ -46,7 +46,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 
     def test_corpus_text_stream(self):
@@ -69,7 +69,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
         kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=0, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
         self.assertEqual(expected, result)
@@ -81,7 +81,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         ]
         df = pd.DataFrame(data, columns=['year', 'txt'])
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 
     def test_tokenized_document_where_symbols_are_filtered_out(self):
@@ -124,7 +124,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def test_fit_transform_gives_document_term_matrix(self):
         reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
         v_corpus = vectorizer.fit_transform(corpus)
         expected = np.asarray([
@@ -145,7 +145,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         # Arrange
         reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, deacc=False, min_len=1, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
+        corpus = text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
         v_corpus = vectorizer.fit_transform(corpus)
 

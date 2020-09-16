@@ -73,7 +73,7 @@ def generate_corpus(filename, output_folder, **kwargs):
         dehyphen=True,
         pattern=kwargs.get("pattern", "*.txt")
     )
-    corpus = text_corpus.ProcessedCorpus(reader, **kwargs)
+    corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
 
     logger.info('Creating document-term matrix...')
     vectorizer = CorpusVectorizer()

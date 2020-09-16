@@ -45,7 +45,7 @@ class CorpusTokenStream(CorpusTextStream):
             self.n_tokens[filename] = len(tokens)
             yield meta, tokens
 
-class ProcessedCorpus(CorpusTokenStream):
+class ProcessedTextCorpus(CorpusTokenStream):
 
     def __init__(self, reader, **kwargs):
 
