@@ -22,10 +22,9 @@ import numpy as np
 import pandas as pd
 import scipy
 
-import westac.corpus.text_corpus as text_corpus
 from westac.common import corpus_vectorizer
 from westac.corpus import dataframe_text_reader
-from westac.corpus import text_corpus as text_corpus
+from westac.corpus import processed_text_corpus
 from westac.corpus.iterators import dataframe_text_reader
 
 
@@ -76,7 +75,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     [DataFrane]
         Upper diagonal of term-term frequency matrix (TTM). Note that diagonal (wi, wi) is not returned
     """
-    corpus = text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
+    corpus = processed_text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     v_corpus = vectorizer.fit_transform(corpus)
 

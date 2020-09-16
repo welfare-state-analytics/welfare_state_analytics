@@ -3,7 +3,7 @@ import textacy
 
 import text_analytic_tools.utility as utility
 import text_analytic_tools.common.textacy_utility as textacy_utility
-import text_analytic_tools.common.text_corpus as text_corpus
+import text_analytic_tools.common.gensim_utility as gensim_utility
 
 logger = utility.getLogger('corpus_text_analysis')
 
@@ -53,7 +53,7 @@ def load_or_create(
 
         logger.info('Computing new corpus ' + container.textacy_corpus_path + '...')
 
-        reader = text_corpus.CompressedFileReader(container.prepped_source_path)
+        reader = gensim_utility.CompressedFileReader(container.prepped_source_path)
         stream = domain.get_document_stream(reader, container.language, document_index=document_index)
 
         logger.info('Stream created...')

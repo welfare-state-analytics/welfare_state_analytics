@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import text_analytic_tools.utility as utility
-import text_analytic_tools.common.text_corpus as text_corpus
+import text_analytic_tools.common.gensim_utility as gensim_utility
 import text_analytic_tools.text_analysis.co_occurrence.vectorizer_glove as vectorizer_glove
 import text_analytic_tools.text_analysis.co_occurrence.vectorizer_hal as vectorizer_hal
 
@@ -20,7 +20,7 @@ def compute(
 
     doc_terms = [ [ t.lower().strip('_') for t in terms if len(t) > 2] for terms in corpus.get_texts() ]
 
-    common_token2id = text_corpus.build_vocab(doc_terms)
+    common_token2id = gensim_utility.build_vocab(doc_terms)
 
     dfs = []
     min_year, max_year = document_index.year.min(),  document_index.year.max()

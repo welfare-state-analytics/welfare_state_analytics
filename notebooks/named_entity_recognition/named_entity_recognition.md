@@ -24,7 +24,7 @@ import os, sys
 sys.path = list(set(sys.path + [ '../common' ]))
 
 import utility
-import text_corpus
+import processed_text_corpus as processed_text_corpus
 import corpus_vectorizer
 import types
 
@@ -72,7 +72,7 @@ import numpy as np
 
 def compute_coocurrence_matrix(reader, **kwargs):
 
-    corpus = text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
+    corpus = processed_text_corpus.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     vectorizer.fit_transform(corpus)
 

@@ -2,7 +2,7 @@ import unittest
 import types
 
 from westac.corpus import corpus_vectorizer
-from westac.corpus import text_corpus
+import westac.corpus.processed_text_corpus as corpora
 
 from westac.tests.utils  import create_simple_text_reader
 
@@ -62,7 +62,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
     def create_corpus(self):
         reader = self.create_reader()
         kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
-        corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
+        corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 
     def mock_vectorizer(self):

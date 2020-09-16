@@ -1,11 +1,8 @@
 import unittest
 import pandas as pd
-import numpy as np
-import scipy
 import types
 
 from westac.corpus import corpus_vectorizer
-from westac.corpus import text_corpus
 from westac.corpus.iterators import dataframe_text_reader
 
 class Test_DataFrameTextReader(unittest.TestCase):

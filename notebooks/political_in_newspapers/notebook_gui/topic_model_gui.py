@@ -6,7 +6,7 @@ import logging
 import text_analytic_tools.utility as utility
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_model as topic_model
-import text_analytic_tools.common.text_corpus as text_corpus
+import text_analytic_tools.common.gensim_utility as gensim_utility
 import text_analytic_tools.common.textacy_utility as textacy_utility
 #from . topic_model_compute import compute_topic_model
 
@@ -295,7 +295,7 @@ class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
 
     def get_corpus_terms(self, corpus):
         filepath = self.corpus_widgets.filepath.value
-        self.corpus = text_corpus.SimplePreparedTextCorpus(filepath)
+        self.corpus = gensim_utility.SimplePreparedTextCorpus(filepath)
         doc_terms = [ list(terms) for terms in self.corpus.get_texts() ]
         self.document_index = self.fn_doc_index(self.corpus)
         return doc_terms

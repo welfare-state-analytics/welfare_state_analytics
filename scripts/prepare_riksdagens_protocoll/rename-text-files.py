@@ -7,7 +7,7 @@ root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'wel
 
 sys.path = list(set(sys.path + [ root_folder ]))
 
-from text_analytic_tools.common.text_corpus import CompressedFileReader
+from text_analytic_tools.common.gensim_utility import CompressedFileReader
 
 def load_index(filename):
     """Loads document index as a Pandas dataframe.

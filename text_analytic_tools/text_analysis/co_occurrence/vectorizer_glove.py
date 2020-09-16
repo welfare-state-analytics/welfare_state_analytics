@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import text_analytic_tools.utility as utility
-import text_analytic_tools.common.text_corpus as text_corpus
+import text_analytic_tools.common.gensim_utility as gensim_utility
 import glove
 
 logger = utility.getLogger('corpus_text_analysis')
@@ -27,7 +27,7 @@ class GloveVectorizer():
         self.term_count = sum(map(len, value or []))
 
         if self.token2id is None and value is not None:
-            self.token2id = text_corpus.build_vocab(value)
+            self.token2id = gensim_utility.build_vocab(value)
             self._id2token = None
 
     @property

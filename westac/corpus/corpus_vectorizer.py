@@ -3,7 +3,7 @@ import pandas as pd
 
 from sklearn.feature_extraction.text import CountVectorizer
 
-from westac.corpus import text_corpus
+from westac.corpus import processed_text_corpus
 from westac.corpus import vectorized_corpus
 import text_analytic_tools.common as common
 
@@ -73,7 +73,7 @@ def generate_corpus(filename, output_folder, **kwargs):
         dehyphen=True,
         pattern=kwargs.get("pattern", "*.txt")
     )
-    corpus = text_corpus.ProcessedTextCorpus(reader, **kwargs)
+    corpus = processed_text_corpus.ProcessedTextCorpus(reader, **kwargs)
 
     logger.info('Creating document-term matrix...')
     vectorizer = CorpusVectorizer()
