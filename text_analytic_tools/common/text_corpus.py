@@ -69,14 +69,14 @@ class CompressedFileReader:
             yield  os.path.basename(filename), None
 
         with zipfile.ZipFile(self.path) as zip_file:
-            yield os.path.basename(filename), self._read_content(zip_file, filename)
+            yield os.path.basename(filename), self.read_content(zip_file, filename)
 
     def get_iterator(self):
         with zipfile.ZipFile(self.path) as zip_file:
             for filename in self.filenames:
-                yield os.path.basename(filename), self._read_content(zip_file, filename)
+                yield os.path.basename(filename), self.read_content(zip_file, filename)
 
-    def _read_content(self, zip_file, filename):
+    def read_content(self, zip_file, filename):
         with zip_file.open(filename, 'r') as text_file:
             content = text_file.read()
             content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
