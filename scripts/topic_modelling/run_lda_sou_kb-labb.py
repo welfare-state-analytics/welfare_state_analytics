@@ -54,8 +54,7 @@ def store_model(data, filename):
 @click.argument('name') #, help='Model name.')
 @click.option('--n-topics', default=50, help='Number of topics.')
 @click.option('--data-folder', default=CORPUS_FOLDER, help='Corpus folder.')
-@click.option('--corpus-type', default='R', type=click.Choice(['R', 'vectorized', 'sparv-xml'], case_sensitive=False))
-@click.option('--corpus-name', default=CORPUS_FOLDER, help='Corpus filename (if text corpus or Sparv XML). Corpus tag if vectorized corpus.')
+@click.option('--corpus-filename', default=CORPUS_FOLDER, help='Corpus filename (if text corpus or Sparv XML). Corpus tag if vectorized corpus.')
 @click.option('--engine', default="gensim_lda-multicore", help='LDA implementation')
 @click.option('--passes', default=None, help='Number of passes.')
 @click.option('--alpha', default='symmetric', help='Prior belief of topic probability.')
@@ -63,42 +62,18 @@ def store_model(data, filename):
 @click.option('--workers', default=None, help='Number of workers (if applicable).')
 @click.option('--max-iter', default=None, help='Max number of iterations.')
 @click.option('--prefix', default=None, help='Prefix.')
-def _run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, passes, random_seed, alpha, workers, max_iter, prefix):
-    run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, passes, random_seed, alpha, workers, max_iter, prefix)
+def _run_model(name, n_topics, data_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix):
+    run_model(name, n_topics, data_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix)
 
-def run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, passes, random_seed, alpha, workers, max_iter, prefix):
+def run_model(name, n_topics, data_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix):
     """ runner """
 
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
         logging.error("Unknown method {}".format(engine))
 
-    if corpus_type == 'vectorized':
+    opts = dict(postags='|NN|', lemmatize=True, chunk_size=None)
 
-        assert corpus_name is not None, "error: Corpus dump name-tag not specified for vectorized corpus"
-        assert vectorized_corpus.VectorizedCorpus.dump_exists(corpus_name, data_folder), "error: no dump for given tag exists"
-
-        v_corpus = vectorized_corpus.VectorizedCorpus\
-            .load(corpus_name, data_folder)
-
-        dtm = v_corpus.data
-        id2token = v_corpus.id2token
-        documents = v_corpus.document_index
-        documents['publication_id'] = 1
-
-    # elif corpus_type == "text":
-
-    #     opts = dict(postags='|NN|', lemmatize=True, chunk_size=None)
-
-
-    #     for i, (document_name, tokens) in enumerate(reader):
-
-    # elif corpus_type == "sparv-xml":
-
-    #     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_name, **opts)
-
-    else:
-
-        dtm, documents, id2token = corpus_data.load_as_dtm2(data_folder, [1, 3])
+    reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_filename, **opts)
 
     kwargs = dict(n_topics=n_topics)
 
@@ -144,18 +119,3 @@ def run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, pas
 
 if __name__ == '__main__':
     _run_model()
-
-# engine = "gensim_mallet-lda"
-# workers = 4
-# max_iter = 4000
-# passes = 1
-# random_seed = None
-# alpha = None
-# corpus_type = "vectorized"
-# vectorized_corpus_dump_tag = 'tCoIR_en_45-72_renamed_L0_+N_+S'
-# data_folder = "/home/roger/source/welfare_state_analytics/data/tCoIR/"
-
-# for n_topics in [50, 100, 150, 200, 250, 300, 350, 400]:
-#     name = "treaties.{}".format(n_topics)
-#     prefix = os.path.join(data_folder, "treaties.{}/".format(n_topics))
-#     run_model(name, n_topics, data_folder, engine, passes, random_seed, alpha, workers, max_iter, prefix, corpus_type, vectorized_corpus_dump_tag)
