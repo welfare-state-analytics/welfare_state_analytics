@@ -13,16 +13,21 @@
 #     name: python3
 # ---
 
+import os
+
+import numpy as np
 # +
 # %load_ext autoreload
 # %autoreload 2
 import pandas as pd
-import numpy as np
 import scipy
-import os
 
+import westac.corpus.text_corpus as text_corpus
 from westac.common import corpus_vectorizer
-from westac.common import text_corpus, dataframe_text_reader
+from westac.corpus import dataframe_text_reader
+from westac.corpus import text_corpus as text_corpus
+from westac.corpus.iterators import dataframe_text_reader
+
 
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
@@ -138,6 +143,3 @@ def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, targe
         df_r.to_csv(target_filename, sep='\t', compression=extension, index=False, header=True)
     else:
         df_r.to_csv(target_filename, sep='\t', index=False, header=True)
-
-
-
