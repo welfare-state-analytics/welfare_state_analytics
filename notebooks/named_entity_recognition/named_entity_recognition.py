@@ -22,7 +22,8 @@ import scipy
 import os
 
 from westac.common import corpus_vectorizer
-from westac.common import text_corpus, dataframe_text_reader
+from westac.corpus import text_corpus
+from westac.corpus.iterators import dataframe_text_reader
 
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
