@@ -1,15 +1,15 @@
-import gensim
-import zipfile
+import datetime
 import fnmatch
+import itertools
+import logging
+import os
 import re
+import time
 import types
 import typing
-import os
-import logging
-import time
-import datetime
-import numpy as np
-import itertools
+import zipfile
+
+import gensim
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
@@ -170,6 +170,18 @@ def read_file(path, filename):
                 content = file.read()
     content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
     return content
+
+def read_textfile(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        try:
+            data = f.read()
+            content = data #.decode('utf-8')
+        except UnicodeDecodeError as _:
+            print('UnicodeDecodeError: {}'.format(filename))
+            #content = data.decode('cp1252')
+            raise
+        yield (filename, content)
+
 class IntStepper():
 
     def __init__(self, min_value, max_value, step=1, callback=None, value=None, data=None):
