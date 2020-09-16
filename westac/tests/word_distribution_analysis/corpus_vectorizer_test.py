@@ -4,7 +4,7 @@ import types
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
 
-from westac.tests.utils  import create_text_files_reader
+from westac.tests.utils  import create_simple_text_reader
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
@@ -56,7 +56,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
 
     def create_reader(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         return reader
 
     def create_corpus(self):

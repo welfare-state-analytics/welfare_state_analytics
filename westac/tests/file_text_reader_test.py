@@ -1,26 +1,26 @@
 import types
 import unittest
 
-from westac.tests.utils import create_text_files_reader
+from westac.tests.utils import create_simple_text_reader
 
-class test_FileTextReader(unittest.TestCase):
+class test_SimpleTextReader(unittest.TestCase):
 
     def test_archive_filenames_when_filter_txt_returns_txt_files(self):
-        reader = create_text_files_reader(pattern='*.txt')
+        reader = create_simple_text_reader(pattern='*.txt')
         self.assertEqual(5, len(reader.archive_filenames))
 
     def test_archive_filenames_when_filter_md_returns_md_files(self):
-        reader = create_text_files_reader(pattern='*.md')
+        reader = create_simple_text_reader(pattern='*.md')
         self.assertEqual(1, len(reader.archive_filenames))
 
     def test_archive_filenames_when_filter_function_txt_returns_txt_files(self):
         itemfilter = lambda _, x: x.endswith('txt')
-        reader = create_text_files_reader(itemfilter=itemfilter)
+        reader = create_simple_text_reader(itemfilter=itemfilter)
         self.assertEqual(5, len(reader.archive_filenames))
 
     def test_get_file_when_default_returns_unmodified_content(self):
         document_name = 'dikt_2019_01_test.txt'
-        reader = create_text_files_reader(compress_whitespaces=False, dehyphen=True)
+        reader = create_simple_text_reader(compress_whitespaces=False, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Tre svarta ekar ur snön.\r\n" + \
                    "Så grova, men fingerfärdiga.\r\n" + \
@@ -31,7 +31,7 @@ class test_FileTextReader(unittest.TestCase):
 
     def test_can_get_file_when_compress_whitespace_is_true_strips_whitespaces(self):
         document_name = 'dikt_2019_01_test.txt'
-        reader = create_text_files_reader(compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Tre svarta ekar ur snön. " + \
                    "Så grova, men fingerfärdiga. " + \
@@ -42,7 +42,7 @@ class test_FileTextReader(unittest.TestCase):
 
     def test_get_file_when_dehyphen_is_trye_removes_hyphens(self):
         document_name = 'dikt_2019_03_test.txt'
-        reader = create_text_files_reader(compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Nordlig storm. Det är den i den tid när rönnbärsklasar mognar. Vaken i mörkret hör man " + \
                    "stjärnbilderna stampa i sina spiltor " + \
@@ -53,7 +53,7 @@ class test_FileTextReader(unittest.TestCase):
     def test_get_file_when_file_exists_and_extractor_specified_returns_content_and_metadat(self):
         document_name = 'dikt_2019_03_test.txt'
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         result = next(reader.get_file(document_name))
         expected = "Nordlig storm. Det är den i den tid när rönnbärsklasar mognar. Vaken i mörkret hör man " + \
                    "stjärnbilderna stampa i sina spiltor " + \
@@ -65,7 +65,7 @@ class test_FileTextReader(unittest.TestCase):
 
     def test_get_index_when_extractor_passed_returns_metadata(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         result = reader.metadata
         expected = [
             types.SimpleNamespace(filename='dikt_2019_01_test.txt', serial_no=1, year=2019),

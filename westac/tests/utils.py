@@ -1,5 +1,5 @@
 import os
-from westac.corpus import file_text_reader
+import text_analytic_tools.common.simple_text_reader as simple_text_reader
 
 TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'
 
@@ -8,22 +8,20 @@ if __file__ in globals():
     this_path = os.path.abspath(this_file)
     TEST_CORPUS_FILENAME = os.path.join(this_path, TEST_CORPUS_FILENAME)
 
-def create_text_files_reader(
+def create_simple_text_reader(
     filename=TEST_CORPUS_FILENAME,
     pattern="*.txt",
     itemfilter=None,
     compress_whitespaces=False,
     dehyphen=True,
-    meta_extract=None,
-    doc_chunk_size=None
+    meta_extract=None
 ):
     kwargs = dict(
         pattern=pattern,
         itemfilter=itemfilter,
         compress_whitespaces=compress_whitespaces,
         dehyphen=dehyphen,
-        meta_extract=meta_extract,
-        doc_chunk_size=doc_chunk_size
+        meta_extract=meta_extract
     )
-    reader = file_text_reader.FileTextReader(filename, **kwargs)
+    reader = simple_text_reader.SimpleTextReader(filename, **kwargs)
     return reader

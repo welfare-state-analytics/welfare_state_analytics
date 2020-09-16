@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 from westac.corpus import text_corpus
 from westac.corpus import vectorized_corpus
-from westac.corpus import file_text_reader
+import text_analytic_tools.common as common
 
 import logging
 
@@ -67,7 +67,7 @@ def generate_corpus(filename, output_folder, **kwargs):
         os.remove(os.path.join(output_folder, '{}_vectorizer_data.pickle'.format(dump_tag)))
 
     logger.info('Creating new corpus...')
-    reader = file_text_reader.FileTextReader(
+    reader = common.SimpleTextReader(
         filename, meta_extract=kwargs.get("meta_extract"),
         compress_whitespaces=True,
         dehyphen=True,

@@ -2,7 +2,7 @@
 import unittest
 
 import westac.corpus.text_corpus as text_corpus
-from westac.tests.utils import create_text_files_reader
+from westac.tests.utils import create_simple_text_reader
 
 class Test_ProcessedCorpus(unittest.TestCase):
 
@@ -11,7 +11,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def create_reader(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_text_files_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        reader = create_simple_text_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
         return reader
 
     def test_next_document_when_isalnum_is_true_returns_all_tokens(self):

@@ -1,9 +1,15 @@
 import types
 
 class DataFrameTextReader:
-
+    """Text iterator that returns row-wise text documents from a Pandas DataFrame
+    """
     def __init__(self, df, **column_filters):
-
+        """
+        Parameters
+        ----------
+        df : DataFrame
+            Data frame having one document per row. Text must be in column 'txt' and filename/id in `filename`
+        """
         assert 'txt' in df.columns
 
         self.df = df
@@ -46,9 +52,18 @@ class DataFrameTextReader:
         return ((row['filename'], row['txt']) for _, row in self.df.iterrows())
 
     def compile_metadata(self):
+        """Returns document metadata as a list of dicts
+
+        Returns
+        -------
+        List[types.SimpleNamespace]
+            File meta data extracted from dataframe
+        """
         assert 'filename' in self.df.columns
+
         df_m = self.df[[ x for x in list(self.df.columns) if x != 'txt' ]]
         metadata = [
             types.SimpleNamespace(**meta) for meta in df_m.to_dict(orient='records')
         ]
+
         return metadata

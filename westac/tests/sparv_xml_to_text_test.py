@@ -1,11 +1,9 @@
 import pytest
 import lxml
 
-from westac import sparv
+import westac.corpus.sparv.sparv_xml_to_text as sparv
 
-import westac.sparv.sparv_xml_to_text as sparv
-
-SPARV_XML_EXPORT_FILENAME = './westac/tests/test_data/sparv_sml_export.xml'
+SPARV_XML_EXPORT_FILENAME = './westac/tests/test_data/sparv_xml_export_small.xml'
 
 def sparv_xml_test_file():
     with open(SPARV_XML_EXPORT_FILENAME, "rb") as fp:
@@ -68,3 +66,5 @@ def test_extract_when_lemmatized_and_filter_nouns_returns_nouns_in_baseform_with
     result = parser.transform(content)
 
     assert result == expected
+
+

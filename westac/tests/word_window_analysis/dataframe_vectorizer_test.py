@@ -22,7 +22,7 @@ import types
 
 from westac.corpus import corpus_vectorizer
 from westac.corpus import text_corpus
-from westac.corpus import dataframe_text_reader
+from westac.corpus.iterators import dataframe_text_reader
 
 
 class Test_DataFrameVectorize(unittest.TestCase):
