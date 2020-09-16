@@ -9,7 +9,7 @@ import text_analytic_tools.utility as utility
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.compute_coherence as coherence
 
-from . import engine_options as options
+import text_analytic_tools.text_analysis.engine_options as options
 from pprint import pprint as pp
 
 logger = utility.getLogger("text_analytic_tools")
@@ -36,9 +36,11 @@ def compute(
     coherence_score = 0
     doc_topic_matrix = None
     #doc_term_matrix = None
+    engine_options = None
+    model = None
+    corpus = None
 
-    if not os.path.exists(TEMP_PATH):
-        os.makedirs(TEMP_PATH)
+    os.makedirs(TEMP_PATH, exist_ok=True)
 
     if method.startswith('sklearn'):
 
@@ -69,6 +71,7 @@ def compute(
             assert id2word is not None
             corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
             # assert corpus.sparse.shape[0] == doc_term_matrix.shape[0]
+
         if args.get('tfidf_weiging', False):
             # assert algorithm_name != 'MALLETLDA', 'MALLET training model cannot (currently) use TFIDF weighed corpus'
             tfidf_model = gensim.models.tfidfmodel.TfidfModel(corpus)
