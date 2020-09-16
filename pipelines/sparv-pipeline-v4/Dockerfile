@@ -38,6 +38,8 @@ RUN echo "installing 3rd-party software" \
     # && /tmp/install-cwb.sh
 
 WORKDIR /home
+# FROM python:3.8-slim-buster as prod-build
+# COPY --from=sparv-build 
 
 COPY entry-point.sh scripts/install-sparv.sh /sparv/bin/
 RUN chmod +x /sparv/bin/entry-point.sh /sparv/bin/install-sparv.sh
