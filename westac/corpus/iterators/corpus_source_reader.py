@@ -65,6 +65,13 @@ class CorpusSourceReader():
         self.tokenize = tokenize or gensim.utils.tokenize
         self.transforms = [ utility.remove_empty_filter() ] + (transforms or [])
 
+    def get_iterator(self):
+        return (
+            (document_name, tokens)
+                for (filename, content) in self.source
+                    for document_name, tokens in self.process_document(filename, content)
+        )
+
     def apply_transforms(self, tokens):
         for ft in self.transforms:
             tokens = ft(tokens)
