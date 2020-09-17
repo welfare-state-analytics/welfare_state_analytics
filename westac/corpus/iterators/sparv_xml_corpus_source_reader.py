@@ -3,7 +3,7 @@ import logging
 
 import westac.common.zip_utility as zip_utility
 
-from westac.corpus.sparv.sparv_xml_to_text import SparvXml2Text
+from westac.corpus.sparv.sparv_xml_to_text import SparvXml2Text, XSLT_FILENAME_V3
 
 from .corpus_source_reader import CorpusSourceReader
 
@@ -27,6 +27,23 @@ class SparvXmlCorpusSourceReader(CorpusSourceReader):
     def preprocess(self, content):
 
         return self.parser.transform(content)
+
+class Sparv3XmlCorpusSourceReader(SparvXmlCorpusSourceReader):
+
+    def __init__(self, source, transforms=None, postags=None, lemmatize=True, chunk_size=None, deliminator="|", append_pos="", ignores="|MAD|MID|PAD|"):
+
+        super(Sparv3XmlCorpusSourceReader, self).__init__(
+            source,
+            transforms=transforms,
+            postags=postags,
+            lemmatize=lemmatize,
+            chunk_size=chunk_size,
+            xslt_filename=XSLT_FILENAME_V3,
+            deliminator=deliminator,
+            append_pos=append_pos,
+            ignores=ignores
+        )
+
 
 def sparv_extract_and_store(source, target, **opts):
 

@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 script_path = os.path.dirname(os.path.abspath( __file__ ))
 XSLT_FILENAME = os.path.join(script_path, 'sparv_xml_extract.xslt')
+XSLT_FILENAME_V3 = os.path.join(script_path, 'sparv_xml_extract.v3.xslt')
 
 class SparvXml2Text():
 

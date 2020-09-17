@@ -124,12 +124,10 @@ def test_reader_store_result():
 def test_reader_when_source_is_sparv3_succeeds():
 
     sparv_zipped_xml_export_v3_filename = './westac/tests/test_data/sou_test_sparv3_xml.zip'
-    # xslt_filename='westac/corpus/sparv/sparv_xml_extract.v3.xslt'
-    xslt_filename='westac/corpus/sparv/alto_xml_extract.xslt'
 
-    opts = dict(postags='|NN|', lemmatize=True, chunk_size=None, xslt_filename=xslt_filename)
+    opts = dict(postags='|NN|', lemmatize=True, chunk_size=None) #, xslt_filename=xslt_filename)
 
-    reader = sparv_reader.SparvXmlCorpusSourceReader(sparv_zipped_xml_export_v3_filename, **opts)
+    reader = sparv_reader.Sparv3XmlCorpusSourceReader(sparv_zipped_xml_export_v3_filename, **opts)
 
     for i, (document_name, tokens) in enumerate(reader):
 
