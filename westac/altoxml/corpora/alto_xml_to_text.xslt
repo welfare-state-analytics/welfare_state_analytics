@@ -6,7 +6,7 @@
 <xsl:strip-space elements="*" />
 
 <xsl:param name="postags"/>
-<xsl:param name="deliminator"/>
+<xsl:param name="delimiter"/>
 <xsl:param name="target"/>
 <xsl:param name="ignores" select="'|MAD|MID|PAD|'"/>
 
@@ -15,7 +15,7 @@
   <xsl:if test="@pos!='MAD' and @pos!='MID' and @pos!='PAD'">
     <xsl:text> </xsl:text>
   </xsl:if>
-  
+
   <xsl:value-of select="text()"/>
 
 </xsl:template>

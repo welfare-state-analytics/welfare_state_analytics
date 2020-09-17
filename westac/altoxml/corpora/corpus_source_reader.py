@@ -101,9 +101,9 @@ class CorpusSourceReader():
 
 class SparvCorpusSourceReader(CorpusSourceReader):
 
-    def __init__(self, source, transforms=None, postags=None, lemmatize=True, chunk_size=None, xslt_filename=None, deliminator="|", append_pos="", ignores="|MAD|MID|PAD|"):
+    def __init__(self, source, transforms=None, postags=None, lemmatize=True, chunk_size=None, xslt_filename=None, delimiter="|", append_pos="", ignores="|MAD|MID|PAD|"):
 
-        tokenize = lambda x: str(x).split(deliminator)
+        tokenize = lambda x: str(x).split(delimiter)
 
         super(SparvCorpusSourceReader, self).__init__(source, transforms, chunk_size, pattern='*.xml', tokenize=tokenize)
 

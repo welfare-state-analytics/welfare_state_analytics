@@ -5,7 +5,7 @@
 
 <xsl:strip-space elements="*" />
 
-<xsl:param name="deliminator"/>
+<xsl:param name="delimiter"/>
 <xsl:param name="target"/>
 
 <xsl:template match="w">

@@ -16,7 +16,7 @@ DEFAULT_OPTS = dict(
     lemmatize=True,
     chunk_size=None,
     xslt_filename=None,
-    deliminator="|",
+    delimiter="|",
     append_pos="",
     ignores="|MAD|MID|PAD|"
 )

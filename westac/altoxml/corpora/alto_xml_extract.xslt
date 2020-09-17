@@ -6,7 +6,7 @@
 <xsl:strip-space elements="*" />
 
 <xsl:param name="postags"/>
-<xsl:param name="deliminator"/>
+<xsl:param name="delimiter"/>
 <xsl:param name="target"/>
 <xsl:param name="ignores" select="'|MAD|MID|PAD|'"/>
 <xsl:param name="append_pos" select="''"/>
@@ -36,7 +36,7 @@
                     <xsl:value-of select="$append_pos" disable-output-escaping="yes"/><xsl:value-of select="@pos"/>
                 </xsl:if>
 
-                <xsl:value-of select="$deliminator" disable-output-escaping="yes"/>
+                <xsl:value-of select="$delimiter" disable-output-escaping="yes"/>
 
             </xsl:otherwise>
 

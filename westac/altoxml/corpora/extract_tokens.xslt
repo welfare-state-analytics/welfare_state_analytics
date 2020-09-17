@@ -6,7 +6,7 @@
 <xsl:strip-space elements="*" />
 
 <xsl:param name="postags"/>
-<xsl:param name="deliminator"/>
+<xsl:param name="delimiter"/>
 <xsl:param name="target"/>
 
 <xsl:variable name="ignores" select="'|MAD|MID|PAD|'"/>
@@ -23,7 +23,7 @@
         <xsl:when test="$target='lemma' and $lemma_token!=''"><xsl:value-of select="$lemma_token"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="$content_token"/></xsl:otherwise>
     </xsl:choose>
-    <xsl:value-of select="$deliminator" disable-output-escaping="yes"/>
+    <xsl:value-of select="$delimiter" disable-output-escaping="yes"/>
   </xsl:if>
 
 </xsl:template>
