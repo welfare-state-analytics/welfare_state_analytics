@@ -35,7 +35,6 @@ def compute(
     perplexity_score = None
     coherence_score = 0
     doc_topic_matrix = None
-    #doc_term_matrix = None
     engine_options = None
     model = None
     corpus = None
