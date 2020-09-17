@@ -1,6 +1,7 @@
 import logging
 
-from text_analytic_tools.common.gensim_utility import GenericTextCorpus, CompressedFileReader
+from .compressed_file_reader import CompressedFileReader
+from .generic_text_corpus import GenericTextCorpus
 
 logger = logging.getLogger(__name__)
 

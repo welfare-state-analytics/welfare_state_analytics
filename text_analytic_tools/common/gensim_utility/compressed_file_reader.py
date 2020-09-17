@@ -1,8 +1,9 @@
-import os
-import zipfile
-import re
 import fnmatch
+import os
+import re
 import typing
+import zipfile
+
 import gensim
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)

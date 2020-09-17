@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
 
-class CorpusTextStream():
+class BaseCorpus():
 
     def __init__(self, reader, use_tqdm=True):
         self.reader = reader
@@ -25,7 +25,7 @@ class CorpusTextStream():
         for meta, content in docs:
             yield meta, content
 
-class CorpusTokenStream(CorpusTextStream):
+class TokenizedCorpus(BaseCorpus):
 
     def __init__(self, reader, tokenizer=None, isalnum=True, use_tqdm=True):
         super().__init__(reader, use_tqdm=use_tqdm)
@@ -45,7 +45,7 @@ class CorpusTokenStream(CorpusTextStream):
             self.n_tokens[filename] = len(tokens)
             yield meta, tokens
 
-class ProcessedTextCorpus(CorpusTokenStream):
+class ProcessedTextCorpus(TokenizedCorpus):
 
     def __init__(self, reader, **kwargs):
 

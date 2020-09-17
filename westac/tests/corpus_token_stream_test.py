@@ -12,7 +12,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
 
     def test_next_document_when_token_corpus_returns_tokenized_document(self):
         reader = create_simple_text_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
-        corpus = corpora.CorpusTokenStream(reader, isalnum=False)
+        corpus = corpora.TokenizedCorpus(reader, isalnum=False)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön", ".",
                     "Så", "grova", ",", "men", "fingerfärdiga", ".",
@@ -22,7 +22,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
 
     def test_next_document_when_isalnum_true_skips_deliminators(self):
         reader = create_simple_text_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
-        corpus = corpora.CorpusTokenStream(reader, isalnum=True)
+        corpus = corpora.TokenizedCorpus(reader, isalnum=True)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön",
                     "Så", "grova", "men", "fingerfärdiga",
@@ -32,13 +32,13 @@ class Test_CorpusTokenStream(unittest.TestCase):
 
     def test_get_index_when_extract_passed_returns_expected_count(self):
         reader = self.create_reader()
-        corpus = corpora.CorpusTokenStream(reader)
+        corpus = corpora.TokenizedCorpus(reader)
         result = corpus.get_metadata()
         self.assertEqual(5, len(result))
 
     def test_n_tokens_when_exhausted_iterater_returns_expected_count(self):
         reader = self.create_reader()
-        corpus = corpora.CorpusTokenStream(reader, isalnum=False)
+        corpus = corpora.TokenizedCorpus(reader, isalnum=False)
         r_n_tokens = {}
         for filename, tokens in corpus.documents():
             r_n_tokens[filename] = len(tokens)
@@ -55,7 +55,7 @@ class Test_CorpusTokenStream(unittest.TestCase):
 
     def test_n_tokens_when_exhausted_and_isalnum_is_true_returns_expected_count(self):
         reader = create_simple_text_reader(meta_extract=None, compress_whitespaces=True, dehyphen=True)
-        corpus = corpora.CorpusTokenStream(reader, isalnum=True)
+        corpus = corpora.TokenizedCorpus(reader, isalnum=True)
         r_n_tokens = {}
         for filename, tokens in corpus.documents():
             r_n_tokens[filename] = len(tokens)

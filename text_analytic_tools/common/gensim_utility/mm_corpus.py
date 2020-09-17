@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
-import nltk
-import gensim
 import logging
+
+import gensim
+import nltk
+import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 

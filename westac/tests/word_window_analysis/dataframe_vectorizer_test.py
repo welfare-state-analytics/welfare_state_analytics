@@ -52,7 +52,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def test_corpus_text_stream(self):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        corpus = corpora.CorpusTextStream(reader)
+        corpus = corpora.BaseCorpus(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
         self.assertEqual(expected, result)
@@ -60,7 +60,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def test_corpus_token_stream(self):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        corpus = corpora.CorpusTokenStream(reader)
+        corpus = corpora.TokenizedCorpus(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
         self.assertEqual(expected, result)

@@ -1,7 +1,6 @@
-import pandas as pd
 import logging
-import collections
 
+import pandas as pd
 from gensim.corpora.textcorpus import TextCorpus
 
 logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ import pandas as pd
 import gensim
 import logging
 
-from text_analytic_tools.common.gensim_utility import ExtMmCorpus
+from .mm_corpus import ExtMmCorpus
 
 logger = logging.getLogger(__name__)
 
