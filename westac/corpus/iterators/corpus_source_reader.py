@@ -108,6 +108,8 @@ class CorpusSourceReader():
 
         else:
 
+            tokens = list(tokens)
+
             for n_chunk, i in enumerate(range(0, len(tokens), self.chunk_size)):
 
                 stored_name = '{}_{}.txt'.format(strip_path_and_extension(filename), str(n_chunk+1).zfill(3))
