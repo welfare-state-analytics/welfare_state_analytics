@@ -12,30 +12,31 @@ XSLT_FILENAME_V3 = os.path.join(script_path, 'sparv_xml_extract.v3.xslt')
 
 class SparvXml2Text():
 
-    def __init__(self, xslt_filename=None, postags=None, lemmatize=True, delimiter="|", append_pos="", ignores="|MAD|MID|PAD|"):
+    def __init__(self, xslt_filename=None, pos_includes=None, lemmatize=True, delimiter=" ", append_pos="", pos_excludes="|MAD|MID|PAD|"):
 
         self.xslt_filename = xslt_filename or XSLT_FILENAME
-        self.postags = self.snuttify(postags) if postags is not None else ''
+        self.pos_includes = self.snuttify(pos_includes) if pos_includes is not None else ''
         self.xslt = etree.parse(self.xslt_filename)  # pylint: disable=I1101
         self.xslt_transformer = etree.XSLT(self.xslt)  # pylint: disable=I1101
         self.delimiter = self.snuttify(delimiter)
         self.lemmatize = lemmatize
-        self.ignores = self.snuttify(ignores)
+        self.pos_excludes = self.snuttify(pos_excludes)
         self.append_pos = self.snuttify(append_pos)
+        self.target = "'lemma'" if self.lemmatize is True else "'content'"
 
     def transform(self, content):
         xml = etree.XML(content)  # pylint: disable=I1101
-        target = "'lemma'" if self.lemmatize is True else "'content'"
-        text = self.xslt_transformer(xml, postags=self.postags, delimiter=self.delimiter, target=target, append_pos=self.append_pos, ignores=self.ignores)
-        return str(text)
+        return self._transform(xml)
 
     def read_transform(self, filename):
         xml = etree.parse(filename)  # pylint: disable=I1101
-        target = "'lemma'" if self.lemmatize is True else "'content'"
-        text = self.xslt_transformer(xml, postags=self.postags, delimiter=self.delimiter, target=target, append_pos=self.append_pos, ignores=self.ignores)
-        return str(text)
+        return self._transform(xml)
 
     def snuttify(self, token):
         if token.startswith("'") and token.endswith("'"):
             return token
         return "'{}'".format(token)
+
+    def _transform(self, xml):
+        text = self.xslt_transformer(xml, pos_includes=self.pos_includes, delimiter=self.delimiter, target=self.target, append_pos=self.append_pos, pos_excludes=self.pos_excludes)
+        return str(text)

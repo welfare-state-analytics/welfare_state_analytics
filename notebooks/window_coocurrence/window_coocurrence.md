@@ -99,7 +99,7 @@ def compute_co_ocurrence_for_year(source_filename, year, result_filename):
 
     reader = DataFrameTextReader(df, year)
 
-    kwargs = dict(to_lower=True, deacc=False, min_len=1, max_len=None, numerals=False)
+    kwargs = dict(to_lower=True, remove_accents=False, min_len=1, max_len=None, keep_numerals=False)
 
     coo_df = compute_coocurrence_matrix(reader, **kwargs)
     coo_df.to_excel(result_filename)

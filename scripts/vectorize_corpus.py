@@ -75,12 +75,12 @@ def vectorize_text_corpus(
     kwargs = dict(
         isalnum=only_alphanumeric,
         to_lower=to_lower,
-        deacc=remove_accents,
+        remove_accents=remove_accents,
         min_len=min_length,
         max_len=max_length,
         doc_chunk_size=doc_chunk_size,
-        numerals=keep_numerals,
-        symbols=keep_symbols,
+        keep_numerals=keep_numerals,
+        keep_symbols=keep_symbols,
         only_alphabetic=only_alphabetic,
         pattern=file_pattern,
         meta_extract=parser_meta_fields(meta_field)

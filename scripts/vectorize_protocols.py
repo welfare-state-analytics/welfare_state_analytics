@@ -11,11 +11,11 @@ import westac.corpus.corpus_vectorizer as corpus_vectorizer
 kwargs = dict(
     isalnum=True,
     to_lower=True,
-    deacc=False,
+    remove_accents=False,
     min_len=2,
     max_len=None,
-    numerals=False,
-    symbols=False,
+    keep_numerals=False,
+    keep_symbols=False,
     only_alphabetic=True,
     pattern='*.txt',
     meta_extract = {

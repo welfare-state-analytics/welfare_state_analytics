@@ -14,7 +14,7 @@ periods    = [ (1945, 1954), (1955, 1964), (1965, 1974), (1975, 1984) ]
 newspapers = [ 'AFTONBLADET', 'EXPRESSEN', 'DAGENS NYHETER', 'SVENSKA DAGBLADET' ]
 min_count  = 0
 
-options   = dict(to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False, symbols=False, filter_stopwords=False, stopwords=stopwords)
+options   = dict(to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False, keep_symbols=False, filter_stopwords=False, stopwords=stopwords)
 source_filename = './data/year+newspaper+text_2019-10-16.txt'
 target_filename = './output/political_co_occurrence_{}.csv'.format(time.strftime("%Y%m%d_%H%M%S"))
 
