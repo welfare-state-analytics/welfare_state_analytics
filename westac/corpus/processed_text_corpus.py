@@ -1,34 +1,43 @@
-import nltk.tokenize
-import string
-from tqdm import tqdm
+from __future__ import annotations
 
-ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
+from typing import Any, Callable
+import nltk.tokenize
+from westac.corpus import utility
+
+from . tokens_transformer import TokensTransformer, DEFAULT_PROCESS_OPTS
+
 
 class BaseCorpus():
 
-    def __init__(self, reader, use_tqdm=True):
+    def __init__(self, reader):
         self.reader = reader
-        self.use_tqdm = use_tqdm
+        self.iterator = None
 
     def get_metadata(self):
 
         return self.reader.metadata
 
-    def texts(self):
+    def documents(self):
 
         for meta, content in self.reader.get_iterator():
             yield meta, content
 
-    def documents(self):
+    def __iter__(self):
 
-        docs = tqdm(self.texts()) if self.use_tqdm else self.texts()
-        for meta, content in docs:
-            yield meta, content
+        self.iterator = None
+        return self
+
+    def __next__(self):
+
+        if self.iterator is None:
+            self.iterator = self.documents()
+
+        return next(self.iterator)
 
 class TokenizedCorpus(BaseCorpus):
 
-    def __init__(self, reader, tokenizer=None, isalnum=True, use_tqdm=True):
-        super().__init__(reader, use_tqdm=use_tqdm)
+    def __init__(self, reader: Any, tokenizer: Callable=None, isalnum: bool=True):
+        super().__init__(reader)
         self.tokenizer = tokenizer or (lambda text: nltk.tokenize.word_tokenize(text, language='swedish'))
         self.n_raw_tokens =  { }
         self.n_tokens =  { }
@@ -52,51 +61,20 @@ class ProcessedTextCorpus(TokenizedCorpus):
         super().__init__(
             reader,
             tokenizer=kwargs.get('tokenizer', None),
-            isalnum=kwargs.get('isalnum', True),
-            use_tqdm=kwargs.get('use_tqdm', True)
+            isalnum=kwargs.get('isalnum', True)
         )
 
-        self.only_alphabetic = kwargs.get('only_alphabetic', True)
-        self.to_lower = kwargs.get('to_lower', False)
-        self.deacc = kwargs.get('deacc', False)
-        self.min_len = kwargs.get('min_len', 2)
-        self.max_len = kwargs.get('max_len', None)
-        self.numerals = kwargs.get('numerals', True)
-        self.stopwords = kwargs.get('stopwords', None)
-        self.symbols = kwargs.get('symbols', True)
-        self.alphabetic_chars = set(ALPHABETIC_LOWER_CHARS + ALPHABETIC_LOWER_CHARS.upper())
-        self.symbols_chars = set("'\\¢£¥§©®°±øæç•›€™")\
-            .union(set('!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~'))
-        self.symbols_translation = dict.fromkeys(map(ord, self.symbols_chars), None)
+        opts = DEFAULT_PROCESS_OPTS
+        opts = { **opts, **{ k:v for k,v in kwargs.items() if k in opts }}
+
+        self.transformer = TokensTransformer(**opts)
 
     def documents(self):
 
         for meta, tokens in super().documents():
 
-            if self.to_lower:
-                tokens = (x.lower() for x in tokens)
+            tokens = list(self.transformer.transform(tokens))
 
-            if self.min_len > 1:
-                tokens = (x for x in tokens if len(x) >= self.min_len)
-
-            if self.max_len is not None:
-                tokens = (x for x in tokens if len(x) <= self.max_len)
-
-            if self.symbols is False:
-                # tokens = (x for x in tokens if not all([ c in string.punctuation for c in x ]))
-                tokens = (x.translate(self.symbols_translation) for x in tokens)
-                tokens = (x for x in tokens if len(x) >= self.min_len)
-
-            if self.only_alphabetic:
-                tokens = (x for x in tokens if any(c in x for c in self.alphabetic_chars))
-
-            if self.numerals is False:
-                tokens = (x for x in tokens if not x.isnumeric())
-
-            if self.stopwords is not None:
-                tokens = (x for x in tokens if not x in self.stopwords)
-
-            tokens = list(tokens)
             filename = meta if isinstance(meta, str) else meta.filename
             self.n_tokens[filename] = len(tokens)
 
