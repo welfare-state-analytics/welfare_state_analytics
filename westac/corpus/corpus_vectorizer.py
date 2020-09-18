@@ -18,16 +18,9 @@ class CorpusVectorizer():
         self.kwargs = kwargs
         self.tokenizer = lambda x: x.split()
 
-    def fit_transform(self, corpus):
+    def fit_transform(self, corpus: processed_text_corpus.ProcessedTextCorpus):
 
-        def text_iterator(x):
-            n_documents = 0
-            for meta, tokens in x.documents():
-                n_documents += 1
-                yield ' '.join(tokens)
-
-        #texts = (' '.join(tokens) for _, tokens in corpus.documents())
-        texts = text_iterator(corpus)
+        texts = (' '.join(tokens) for _, tokens in corpus)
 
         #https://github.com/scikit-learn/scikit-learn/blob/1495f6924/sklearn/feature_extraction/text.py#L1147
         self.vectorizer = CountVectorizer(tokenizer=self.tokenizer, **self.kwargs)
@@ -57,8 +50,8 @@ def generate_corpus(filename, output_folder, **kwargs):
     dump_tag = '{}_{}_{}_{}'.format(
         os.path.basename(filename).split('.')[0],
         'L{}'.format(kwargs.get('min_len', 0)),
-        '-N' if kwargs.get('numerals', False) else '+N',
-        '-S' if kwargs.get('symbols', False) else '+S',
+        '-N' if kwargs.get('keep_numerals', False) else '+N',
+        '-S' if kwargs.get('keep_symbols', False) else '+S',
     )
 
     if vectorized_corpus.VectorizedCorpus.dump_exists(dump_tag):
