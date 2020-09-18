@@ -43,7 +43,7 @@ class Test_ChiSquare(unittest.TestCase):
 
     def create_corpus(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=False)
+        kwargs = dict(isalnum=True, to_lower=True, =False, min_len=2, max_len=None, keep_numerals=False)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 

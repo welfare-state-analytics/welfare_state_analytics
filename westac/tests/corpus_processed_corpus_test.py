@@ -4,6 +4,7 @@ import unittest
 import westac.corpus.processed_text_corpus as corpora
 from westac.tests.utils import create_simple_text_reader
 
+
 class Test_ProcessedCorpus(unittest.TestCase):
 
     def setUp(self):
@@ -16,7 +17,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_isalnum_is_true_returns_all_tokens(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=1, max_len=None, numerals=True, only_alphabetic=False)
+        kwargs = dict(isalnum=False, to_lower=False, remove_accents=False, min_len=1, max_len=None, keep_numerals=True, only_alphabetic=False)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön", ".",
@@ -27,7 +28,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_isalnum_true_skips_deliminators(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=False, deacc=False, min_len=1, max_len=None, numerals=True)
+        kwargs = dict(isalnum=True, to_lower=False, remove_accents=False, min_len=1, max_len=None, keep_numerals=True)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["Tre", "svarta", "ekar", "ur", "snön",
@@ -38,7 +39,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_to_lower_is_true_returns_all_lowercase(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=1, max_len=None, numerals=True)
+        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=1, max_len=None, keep_numerals=True)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["tre", "svarta", "ekar", "ur", "snön",
@@ -49,7 +50,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_min_len_is_two_returns_single_char_words_filtered_out(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=None, numerals=True)
+        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=True)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["tre", "svarta", "ekar", "ur", "snön",
@@ -60,7 +61,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_next_document_when_max_len_is_six_returns_filter_out_longer_words(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, deacc=False, min_len=2, max_len=6, numerals=True)
+        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=6, keep_numerals=True)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         _, tokens = next(corpus.documents())
         expected = ["tre", "svarta", "ekar", "ur", "snön",
@@ -71,7 +72,7 @@ class Test_ProcessedCorpus(unittest.TestCase):
 
     def test_get_index_when_extract_passed_returns_expected_count(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=False, to_lower=False, deacc=False, min_len=2, max_len=None, numerals=True)
+        kwargs = dict(isalnum=False, to_lower=False, remove_accents=False, min_len=2, max_len=None, keep_numerals=True)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         result = corpus.get_metadata()
         self.assertEqual(5, len(result))
