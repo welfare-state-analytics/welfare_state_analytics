@@ -71,7 +71,7 @@ def run_model(name, n_topics, data_folder, corpus_filename, engine, passes, rand
     if engine not in [ y for x, y in ENGINE_OPTIONS ]:
         logging.error("Unknown method {}".format(engine))
 
-    opts = dict(postags='|NN|', lemmatize=True, chunk_size=None)
+    opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
 
     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_filename, **opts)
 
