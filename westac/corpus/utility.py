@@ -6,8 +6,14 @@ import logging
 import fnmatch
 import re
 import nltk
+import string
 
 logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
+
+ALPHABETIC_LOWER_CHARS = string.ascii_lowercase + "åäöéàáâãäåæèéêëîïñôöùûÿ"
+ALPHABETIC_CHARS = set(ALPHABETIC_LOWER_CHARS + ALPHABETIC_LOWER_CHARS.upper())
+SYMBOLS_CHARS = set("'\\¢£¥§©®°±øæç•›€™").union(set('!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~'))
+SYMBOLS_TRANSLATION = dict.fromkeys(map(ord, SYMBOLS_CHARS), None)
 
 def read_textfile(filename):
     with open(filename, 'rb') as f:
@@ -24,7 +30,7 @@ def basename(path):
     return os.path.splitext(os.path.basename(path))[0]
 
 def remove_empty_filter():
-    return lambda t: [ x for x in t if x != '' ]
+    return lambda t: ( x for x in t if x != '' )
 
 hyphen_regexp = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
@@ -33,17 +39,39 @@ def remove_hyphens(text):
     return result
 
 def has_alpha_filter():
-    return lambda tokens: [ x for x in tokens if any(map(lambda x: x.isalpha(), x)) ]
+    return lambda tokens: ( x for x in tokens if any(map(lambda x: x.isalpha(), x)) )
 
-def stopwords_filter(language):
-    stopwords = nltk.corpus.stopwords.words(language)
-    return  lambda tokens: [ x for x in tokens if x not in stopwords ]
+def only_alphabetic_filter():
+    return lambda tokens: (x for x in tokens if any(c in x for c in ALPHABETIC_CHARS))
 
-def min_token_size_filter(min_token_size=3):
-    return lambda tokens: [ x for x in tokens if len(x) >= min_token_size ]
+def remove_stopwords(language_or_stopwords='swedish', extra_stopwords=None):
+    if isinstance(language_or_stopwords, str):
+        stopwords = set(nltk.corpus.stopwords.words(language_or_stopwords))
+    else:
+        stopwords = set(language_or_stopwords or {})
+    stopwords = stopwords.union(set(extra_stopwords or {}))
+    return lambda tokens: (x for x in tokens if x not in stopwords) # pylint: disable=W0601,E0602
 
-def lower_case_transform():
-    return lambda _tokens: list(map(lambda y: y.lower(), _tokens))
+def min_chars_filter(n_chars=3):
+    return lambda tokens: (x for x in tokens if len(x) >= n_chars)
+
+def max_chars_filter(n_chars=3):
+    return lambda tokens: (x for x in tokens if len(x) <= n_chars)
+
+def lower_transform():
+    return lambda tokens: map(lambda y: y.lower(), tokens)
+
+def upper_transform():
+    return lambda tokens: map(lambda y: y.upper(), tokens)
+
+def remove_numerals():
+    return lambda tokens: (x for x in tokens if not x.isnumeric())
+
+def remove_symbols():
+    return lambda tokens: (x.translate(SYMBOLS_TRANSLATION) for x in tokens)
+
+def remove_accents():
+    return lambda tokens: (x.translate(SYMBOLS_TRANSLATION) for x in tokens)
 
 class ZipFileIterator(object):
 
@@ -63,13 +91,13 @@ class ZipFileIterator(object):
 
 class ZipReader(object):
 
-    def __init__(self, zip_path, pattern, filenames=None):
-        self.zip_path = zip_path
-        self.pattern = pattern
+    def __init__(self, zip_path: str, pattern: str, filenames=None):
+        self.zip_path: str = zip_path
+        self.pattern: str = pattern
         self.archive_filenames = self.get_archive_filenames(pattern)
         self.filenames = filenames or self.archive_filenames
 
-    def get_archive_filenames(self, pattern):
+    def get_archive_filenames(self, pattern: str):
         with zipfile.ZipFile(self.zip_path) as zf:
             filenames = zf.namelist()
         return [ name for name in filenames if fnmatch.fnmatch(name, pattern) ]
