@@ -1,6 +1,6 @@
 import os
 import zipfile
-import utility
+from . import utility
 import logging
 import json
 import click
