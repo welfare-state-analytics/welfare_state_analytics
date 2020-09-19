@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from typing import Any, Callable
-import nltk.tokenize
-from westac.corpus import utility
 
-from . tokens_transformer import TokensTransformer, DEFAULT_PROCESS_OPTS
+import nltk.tokenize
+
+from .tokens_transformer import DEFAULT_PROCESS_OPTS, TokensTransformer
 
 
 class BaseCorpus():

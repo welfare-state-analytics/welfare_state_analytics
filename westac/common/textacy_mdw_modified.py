@@ -13,14 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import operator
-import pandas as pd
 import logging
+import operator
+
 import numpy as np
-
-from textacy import vsm
-
+import pandas as pd
 from memoization import cached
+from textacy import vsm
 
 logger = logging.getLogger("westac")
 logger.setLevel(logging.INFO)

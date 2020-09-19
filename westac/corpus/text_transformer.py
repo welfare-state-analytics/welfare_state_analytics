@@ -1,28 +1,28 @@
 from __future__ import annotations
 
-from typing import List, Callable
+import types
+
+from typing import Callable, List
 
 import textacy.preprocessing.normalize as normalize
 
-from westac.corpus import utility
+TRANSFORMS = types.SimpleNamespace(
+    fix_hyphenation=normalize.normalize_hyphenated_words,
+    fix_unicode=normalize.normalize_unicode,
+    fix_whitespaces=normalize.normalize_whitespace
+)
 
 class TextTransformer():
     """Transforms applied on non-tokenized text
     """
     def __init__(self,
-        fix_hyphenation: bool = False,
-        fix_unicode: bool = False
+        transforms: List[Callable] = None
     ):
-        self.transforms: List[Callable] = []
+        self.transforms: List[Callable] = transforms
 
-        if fix_hyphenation:
-            self.fix_hyphenation()
-
-        if fix_unicode:
-            self.fix_unicode()
-
-    def add(self, transform) -> TextTransformer:
-        self.transforms.append(transform)
+    def add(self, transform, condition=True) -> TextTransformer:
+        if condition:
+            self.transforms.append(transform)
         return self
 
     def transform(self, text: str) -> str:
@@ -33,12 +33,11 @@ class TextTransformer():
         return text
 
     def fix_hyphenation(self) -> TextTransformer:
-        return self.add(normalize.normalize_hyphenated_words)
+        return self.add(TRANSFORMS.fix_hyphenation)
 
     def fix_unicode(self) -> TextTransformer:
-        return self.add(normalize.normalize_unicode)
+        return self.add(TRANSFORMS.fix_unicode)
 
     def fix_whitespaces(self) -> TextTransformer:
-        return self.add(normalize.normalize_whitespace)
+        return self.add(TRANSFORMS.fix_whitespace)
 
-        

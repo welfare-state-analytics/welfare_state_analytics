@@ -1,4 +1,5 @@
 import os
+
 import text_analytic_tools.common.simple_text_reader as simple_text_reader
 
 TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'

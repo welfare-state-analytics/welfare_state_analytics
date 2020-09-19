@@ -1,6 +1,8 @@
-from textacy import ke
 import unittest
+
 from sklearn.feature_extraction.text import CountVectorizer
+from textacy import ke
+
 import westac.common.textacy_most_discriminating_terms as mdw
 
 flatten = lambda l: [ x for ws in l for x in ws]
@@ -43,5 +45,3 @@ class Test_MostDiscriminatinWords(unittest.TestCase):
         id2token = {v: k for k, v in token2id.items()}
         mdw.most_discriminating_terms(bag_term_matrix, id2token, [True] * len(doc1) + [False] * len(doc2), top_n_terms=2)
         assert expected == observed
-
-

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import gzip
-import shutil
-from nltk.tokenize import sent_tokenize, word_tokenize
 import logging
+import shutil
+
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 

@@ -1,5 +1,3 @@
-import os
-
 def test_read_userlist_test():
     with open("userlist", "w") as fo:
 
@@ -13,3 +11,4 @@ def test_read_userlist_test():
     admins = [ x[0] for x in lines if len(x) > 1 and x[1] == "admin" ]
 
     print(users, admins)
+    

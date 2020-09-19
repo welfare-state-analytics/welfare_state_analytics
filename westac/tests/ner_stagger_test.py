@@ -1,5 +1,5 @@
 import os
-import pytest
+import pytest # pylint: disable=unused-import
 
 import westac.common.stagger_wrapper as stagger
 

@@ -1,10 +1,10 @@
 import unittest
 
-from westac.common import utility
-import westac.common.goodness_of_fit as gof
-
 import numpy as np
 import statsmodels.api as sm
+
+import westac.common.goodness_of_fit as gof
+from westac.common import utility
 
 logger = utility.setup_logger()
 
@@ -18,18 +18,18 @@ class test_goodness_of_fit(unittest.TestCase):
         # Add intercept (i.e. constant k when x = 0)
         xs =  sm.add_constant([1,2,3,4])
         ys = [1,2,3,4]
-        m, k, p, _, _ = gof.fit_ordinary_least_square(ys, xs)
-        self.assertAlmostEquals(0.0, m)
-        self.assertAlmostEquals(1.0, k)
+        m, k, _, _, _ = gof.fit_ordinary_least_square(ys, xs)
+        self.assertAlmostEqual(0.0, m)
+        self.assertAlmostEqual(1.0, k)
 
     def test_ols_when_x_equals_y_k_equals_expected(self):
         # y = 3 * x + 4
         #
         xs = sm.add_constant(np.array([1,2,3,4]))
         ys = [7,10,13,16]
-        m, k, p, (x1, x2), (y1, y2) = gof.fit_ordinary_least_square(ys, xs)
-        self.assertAlmostEquals(4.0, m)
-        self.assertAlmostEquals(3.0, k)
+        m, k, _, (_, _), (_, _) = gof.fit_ordinary_least_square(ys, xs)
+        self.assertAlmostEqual(4.0, m)
+        self.assertAlmostEqual(3.0, k)
 
     def test_gof_by_l2_norm(self):
 
@@ -52,14 +52,14 @@ class test_goodness_of_fit(unittest.TestCase):
     def test_fit_ordinary_least_square(self):
         Y = [1,3,4,5,2,3,4]
         X = sm.add_constant(range(1,8))
-        m, k, p, (x1, x2), (y1, y2) = gof.fit_ordinary_least_square(Y, X)
+        m, k, _, (_, _), (_, _) = gof.fit_ordinary_least_square(Y, X)
         assert round(k,6) == round(0.25, 6)
         assert round(m,6) == round(2.14285714, 6)
 
     def test_fit_ordinary_least_square_to_horizontal_line(self):
         Y = [2.0,2.0,2.0,2.0,2.0,2.0,2.0]
         X = sm.add_constant(range(1,8))
-        m, k, p, (x1, x2), (y1, y2) = gof.fit_ordinary_least_square(Y, X)
+        m, k, _, (_, _), (_, _) = gof.fit_ordinary_least_square(Y, X)
         assert round(k,6) == round(0.0, 6)
         assert round(m,6) == round(2.0, 6)
 
@@ -71,7 +71,7 @@ class test_goodness_of_fit(unittest.TestCase):
         X = sm.add_constant(range(1,8))
         Y = [ kp * x + mp for x in range(1,8) ]
 
-        m, k, p, (x1, x2), (y1, y2) = gof.fit_ordinary_least_square(Y, X)
+        m, k, _, (_, _), (_, _) = gof.fit_ordinary_least_square(Y, X)
 
         assert round(kp,6) == round(k, 6)
         assert round(mp,6) == round(m, 6)

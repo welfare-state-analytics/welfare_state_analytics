@@ -19,17 +19,19 @@
 # %autoreload 2
 
 import unittest
-import pandas as pd
 
-from westac.corpus import corpus_vectorizer
+import pandas as pd
+import scipy
+from matplotlib import pyplot as plt  # pylint: disable=unused-import
+from scipy.cluster.hierarchy import (  # pylint: disable=unused-import
+    linkage)
+
 import westac.corpus.processed_text_corpus as corpora
-from westac.tests.utils  import create_simple_text_reader
+from westac.corpus import corpus_vectorizer
+from westac.tests.utils import create_simple_text_reader
 
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
-import scipy
-from scipy.cluster.hierarchy import dendrogram, linkage # pylint: disable=unused-import
-from matplotlib import pyplot as plt # pylint: disable=unused-import
 
 class Test_ChiSquare(unittest.TestCase):
 
@@ -43,7 +45,7 @@ class Test_ChiSquare(unittest.TestCase):
 
     def create_corpus(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, =False, min_len=2, max_len=None, keep_numerals=False)
+        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 
@@ -55,7 +57,7 @@ class Test_ChiSquare(unittest.TestCase):
             .group_by_year()\
             .slice_by_n_count(0)
         X2 = scipy.stats.chisquare(v_corpus.term_bag_matrix.todense(), f_exp=None, ddof=0, axis=0) # pylint: disable=unused-variable
-        linked = linkage(v_corpus.term_bag_matrix, 'ward') # pylint: disable=unused-variable
+        _ = linkage(v_corpus.term_bag_matrix, 'ward') # pylint: disable=unused-variable
         results = None
         expected = None
         self.assertEqual(expected, results)

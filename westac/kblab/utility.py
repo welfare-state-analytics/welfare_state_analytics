@@ -1,6 +1,7 @@
-import os
 import fnmatch
+import os
 import zipfile
+
 
 def get_unique_folder_names(filenames):
     """Returns unique folder names in archive

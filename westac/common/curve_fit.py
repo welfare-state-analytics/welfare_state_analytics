@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-import math
 import scipy
 import scipy.optimize
 from numpy.polynomial.polynomial import polyval
+
 
 def gaussian(x, mean, amplitude, standard_deviation):
     return amplitude * np.exp( - ((x - mean) / standard_deviation) ** 2)
@@ -21,8 +21,8 @@ def polynomial4(x, a, b, c, d, e):
     return polyval(x, [a, b, c, d, e])
 
 def sigmoid(x, x0, k):
-     y = 1 / (1 + np.exp(-k*(x-x0)))
-     return y
+    y = 1 / (1 + np.exp(-k*(x-x0)))
+    return y
 
 def quadratic(x, a, b, c):
     return a * x**2 + b*x + c
@@ -62,7 +62,7 @@ def fit_curve_ravel(fx,xs, Y, step=0.1):
     xsr = np.repeat(xs, Y.shape[1])
     ysr = Y.ravel()
 
-    return fit_curve(fx, xsr, ysr, step=0.1)
+    return fit_curve(fx, xsr, ysr, step=step)
 
 rolling_average_methods = {
     'pandas':       lambda xs, ys, n: (xs, pd.Series(ys).rolling(window=n).mean().iloc[n-1:].values),
@@ -97,7 +97,5 @@ def boxplot_statistics(values):
     lower_whisker = values[values >= q1 - 1.5 * iqr].min()
 
     outliers = values[(values > upper_whisker) | (values < lower_whisker)]
-
-    m = values.mean()
 
     return (q1, q2, q3), iqr, (upper_whisker, lower_whisker), outliers

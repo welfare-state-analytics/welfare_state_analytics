@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import os
-import zipfile
+import fnmatch
 import glob
 import logging
-import fnmatch
+import os
+import zipfile
 
 logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 
-class ZipFileIterator(object):
+class ZipFileIterator():
 
     def __init__(self, pattern, extensions):
         self.pattern = pattern
@@ -23,7 +23,7 @@ class ZipFileIterator(object):
                         content = text_file.read().decode('utf8') # .replace('-\r\n', '').replace('-\n', '')
                         yield os.path.basename(filename), content
 
-class ZipReader(object):
+class ZipReader():
     """Iterator that returns filename and content for each matching file in archive.
     """
     def __init__(self, zip_path, pattern, filenames=None, as_binary=False):

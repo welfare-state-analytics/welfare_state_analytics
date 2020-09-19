@@ -77,4 +77,3 @@ class test_SimpleTextReader(unittest.TestCase):
         self.assertEqual(len(expected), len(result))
         for i in range(0,len(expected)):
             self.assertEqual(expected[i], result[i])
-

@@ -67,3 +67,4 @@ class DataFrameTextReader:
         ]
 
         return metadata
+        

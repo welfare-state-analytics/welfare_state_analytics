@@ -1,13 +1,11 @@
+import logging
 import os
-import pandas as pd
 
+import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
-from westac.corpus import processed_text_corpus
-from westac.corpus import vectorized_corpus
 import text_analytic_tools.common as common
-
-import logging
+from westac.corpus import processed_text_corpus, vectorized_corpus
 
 logger = logging.getLogger("corpus_vectorizer")
 
@@ -60,8 +58,10 @@ def generate_corpus(filename, output_folder, **kwargs):
         os.remove(os.path.join(output_folder, '{}_vectorizer_data.pickle'.format(dump_tag)))
 
     logger.info('Creating new corpus...')
+    # FIXME: BName change?
     reader = common.SimpleTextReader(
-        filename, meta_extract=kwargs.get("meta_extract"),
+        filename,
+        meta_extract=kwargs.get("meta_extract"),
         compress_whitespaces=True,
         dehyphen=True,
         pattern=kwargs.get("pattern", "*.txt")

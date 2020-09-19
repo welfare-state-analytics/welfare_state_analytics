@@ -4,6 +4,7 @@ import unittest
 import westac.corpus.processed_text_corpus as corpora
 from westac.tests.utils import create_simple_text_reader
 
+
 class Test_CorpusTextStream(unittest.TestCase):
 
     def test_next_document_when_new_corpus_returns_document(self):

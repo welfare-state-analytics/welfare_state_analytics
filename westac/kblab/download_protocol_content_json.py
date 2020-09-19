@@ -1,12 +1,14 @@
 import os
 import sys
+
 import dotenv
+
+import westac.kblab.download as download
 
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import westac.kblab.download as download
 
 def download_protocol_content_json():
 

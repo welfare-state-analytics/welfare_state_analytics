@@ -13,7 +13,8 @@ import gensim
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
-def noop(x=None): pass
+def noop(_=None):
+    pass
 
 def setup_logger(logger=None, to_file=False, filename=None, level=logging.DEBUG):
     '''
@@ -57,7 +58,7 @@ def isint(s):
     try:
         int(s)
         return True
-    except:
+    except (TypeError, ValueError) as _:
         return False
 
 def project_series_to_range(series, low, high):
@@ -124,6 +125,7 @@ def compress_whitespaces(text):
     result = re.sub(r'\s+', ' ', text).strip()
     return result
 
+# FIXME: Add indexed retrieve feature (as in inidun)
 def extract_metadata(filename, **kwargs):
     """Extracts metadata from filename
 
@@ -141,7 +143,7 @@ def extract_metadata(filename, **kwargs):
         or a callable function that given the filename return corresponding value.
 
     """
-    params = { x: None for x in kwargs.keys()}
+    params = { x: None for x in kwargs }
     meta =  types.SimpleNamespace(filename=filename, **params)
     for k,r in kwargs.items():
 

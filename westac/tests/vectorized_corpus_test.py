@@ -1,25 +1,25 @@
 import os
 import unittest
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 import scipy
 from sklearn.feature_extraction.text import CountVectorizer
 
-from westac.corpus import corpus_vectorizer
 import westac.corpus.processed_text_corpus as corpora
-from westac.corpus import vectorized_corpus
-
-from westac.tests.utils  import create_simple_text_reader
+from westac.corpus import corpus_vectorizer, vectorized_corpus
+from westac.tests.utils import create_simple_text_reader
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
 TEMP_OUTPUT_FOLDER = "./westac/tests/output"
 
+# pylint: disable=too-many-public-methods
+
 class Test_VectorizedCorpus(unittest.TestCase):
 
     def setUp(self):
         os.makedirs(TEMP_OUTPUT_FOLDER,exist_ok=True)
-        pass
 
     def create_reader(self):
         meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")

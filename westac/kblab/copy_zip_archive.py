@@ -1,6 +1,9 @@
 import os
 import zipfile
+
 import click
+
+# pylint: disable=no-value-for-parameter, chained-comparison
 
 @click.command()
 @click.argument('source', )

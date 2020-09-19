@@ -1,16 +1,14 @@
 
-import scipy
-import numpy as np
-import math
-import warnings
-import statsmodels.api as sm
-import itertools
 import collections
+import math
+
+import bokeh
 import numpy as np
 import pandas as pd
-import bokeh
-
+import scipy
+import statsmodels.api as sm
 from numpy.polynomial.polynomial import Polynomial as polyfit
+
 
 def gof_by_l2_norm(matrix, axis=1, scale=True):
 

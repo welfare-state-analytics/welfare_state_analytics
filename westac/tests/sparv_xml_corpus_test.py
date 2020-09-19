@@ -1,4 +1,4 @@
-import pytest
+import pytest # pylint: disable=unused-import
 
 import westac.corpus.iterators.sparv_xml_corpus_source_reader as sparv_reader
 
@@ -21,7 +21,7 @@ def preprocess_sparv_corpus(corpus_name, opts):
 
     reader = sparv_reader.Sparv3XmlCorpusSourceReader(corpus_name, **opts)
 
-    for i, (document_name, tokens) in enumerate(reader.get_iterator()):
+    for _, (_, tokens) in enumerate(reader.get_iterator()):
 
         assert len(list(tokens)) > 0
 
@@ -34,10 +34,9 @@ def test_corpus_when_source_is_sparv3_succeeds():
 
     reader = sparv_reader.Sparv3XmlCorpusSourceReader(SPARV_ZIPPED_XML_EXPORT_V3_FILENAME, **opts)
 
-    for i, (document_name, tokens) in enumerate(reader.get_iterator()):
+    for _, (_, tokens) in enumerate(reader.get_iterator()):
 
         assert len(list(tokens)) > 0
 
     # id2word = gensim.corpora.Dictionary(terms)
     # corpus = [ id2word.doc2bow(tokens) for tokens in terms ]
-

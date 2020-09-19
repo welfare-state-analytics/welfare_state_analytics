@@ -5,9 +5,11 @@ import westac.common.zip_utility as zip_utility
 
 from westac.corpus.sparv.sparv_xml_to_text import SparvXml2Text, XSLT_FILENAME_V3
 
-from .corpus_source_reader import CorpusSourceReader
+from .corpus_source_reader import BasicTextReader
 
 logger = logging.getLogger(__name__)
+
+# pylint: disable=too-many-arguments, super-with-arguments
 
 DEFAULT_OPTS = dict(
     pos_includes='',
@@ -19,7 +21,7 @@ DEFAULT_OPTS = dict(
     pos_excludes="|MAD|MID|PAD|"
 )
 
-class SparvXmlCorpusSourceReader(CorpusSourceReader):
+class SparvXmlCorpusSourceReader(BasicTextReader):
 
     def __init__(self,
         source, transforms=None, pos_includes=None, lemmatize=True, chunk_size=None, xslt_filename=None,

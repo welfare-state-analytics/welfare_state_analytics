@@ -1,14 +1,15 @@
+import json
+import logging
 import os
 import zipfile
-from . import utility
-import logging
-import json
+
 import click
+
+from . import utility
 
 logger = logging.getLogger()
 
-def read_json(zf, filename):
-    pass
+# pylint: disable=no-value-for-parameter
 
 def extract_contents(source_filename):
     """Returns a stream of text extracted from downloaded content.json package file.

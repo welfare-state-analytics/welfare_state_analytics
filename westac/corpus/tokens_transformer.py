@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import types
 from typing import Any, List
 
-from textacy.preprocessing.remove import remove_accents, remove_punctuation
+import textacy.preprocessing.remove as textacy_remove
 
 from westac.corpus import utility
+
+# pylint: disable=too-many-arguments
 
 DEFAULT_PROCESS_OPTS = dict(
     only_alphabetic = True,
@@ -60,7 +61,7 @@ class TokensTransformer():
             self.min_chars_filter(min_len)
 
         if only_alphabetic:
-            self.only_alphabetic_filter()
+            self.only_alphabetic()
 
         if keep_numerals is False:
             self.remove_numerals()
@@ -110,4 +111,4 @@ class TokensTransformer():
         return self.add(utility.remove_stopwords(language_or_stopwords, extra_stopwords))
 
     def remove_accents(self) -> TokensTransformer:
-        return self.add(utility.remove_accents())
+        return self.add(textacy_remove.remove_accents)

@@ -1,9 +1,11 @@
-import os
 import zipfile
+
 import click
 
 from . import utility
-from . altoxml_parser import AltoXmlParser
+from .altoxml_parser import AltoXmlParser
+
+# pylint: disable=no-value-for-parameter
 
 def extract_documents(source_filename, pattern, line_break='\n', page_break='\n'):
     """Returns a stream of filename & text tuples
@@ -36,7 +38,7 @@ def extract_documents(source_filename, pattern, line_break='\n', page_break='\n'
 
             document_tokens = parser.document(xml_contents)
 
-            document = ' '.join([ x for x in document_tokens ])
+            document = ' '.join(list(document_tokens))
 
             yield package_id, document
 
@@ -71,10 +73,12 @@ def extract_corpus(source_filename, target_filename, pattern, line_break='\n', p
 
 if __name__ == "__main__":
 
-    source_filename = "/home/roger/tmp/riksdagens_protokoll.zip"
-    target_filename = "/home/roger/tmp/riksdagens_protokoll_corpus.zip"
-    pattern =  "prot_*.xml"
-    line_break='\n'
-    page_break='\n#########\n'
+    # source_filename = "/home/roger/tmp/riksdagens_protokoll.zip"
+    # target_filename = "/home/roger/tmp/riksdagens_protokoll_corpus.zip"
+    # pattern =  "prot_*.xml"
+    # line_break='\n'
+    # page_break='\n#########\n'
 
-    extract_corpus(source_filename, target_filename, pattern, line_break=line_break, page_break=page_break)
+    #extract_corpus(source_filename, target_filename, pattern, line_break=line_break, page_break=page_break)
+
+    extract_corpus()

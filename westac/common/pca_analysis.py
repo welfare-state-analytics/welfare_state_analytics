@@ -1,7 +1,7 @@
 
 import itertools
-import bokeh
 
+import bokeh
 from sklearn.decomposition import PCA
 
 def compute(data, n_components=2):
@@ -42,4 +42,3 @@ def plot(X_pca, clusters=None):
 
 #     x_PCA   = compute(data)
 #     p       = plot(x_PCA, clusters=df_clusters_at.label.values)
-

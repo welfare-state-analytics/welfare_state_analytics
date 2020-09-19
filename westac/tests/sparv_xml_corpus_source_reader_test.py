@@ -1,9 +1,9 @@
 import os
-import pytest
-from westac.corpus import utility
 
-import westac.corpus.iterators.sparv_xml_corpus_source_reader as sparv_reader
+import pytest  # pylint: disable=unused-import
+
 import westac.common.zip_utility as zip_utility
+import westac.corpus.iterators.sparv_xml_corpus_source_reader as sparv_reader
 import westac.corpus.utility as utility
 
 SPARV_XML_EXPORT_FILENAME = './westac/tests/test_data/sparv_xml_export.xml'
@@ -79,7 +79,7 @@ def test_reader_when_only_nouns_ignore_puncts_returns_filter_outs_puncts():
     assert expected == list(tokens)
     assert expected_name == document_name
 
-def test_reader_when_ignore_puncts_returns_filter_outs_puncts():
+def test_reader_when_chunk_size_specified_returns_chunked_text():
 
     expected_documents = [ ['rödräv', 'hunddjur' ], [ 'utbredning', 'halvklot' ] ]
     expected_names = [ "sparv_xml_export_small_001.txt", "sparv_xml_export_small_002.txt"]
@@ -132,7 +132,7 @@ def test_reader_when_source_is_sparv3_succeeds():
 
     reader = sparv_reader.Sparv3XmlCorpusSourceReader(sparv_zipped_xml_export_v3_filename, **opts)
 
-    for i, (document_name, tokens) in enumerate(reader):
+    for _, (_, tokens) in enumerate(reader):
 
         assert len(list(tokens)) > 0
 
@@ -157,11 +157,10 @@ def test_sparv_extract_and_store_when_only_nouns_and_source_is_sparv3_succeeds()
     sparv_reader.sparv_extract_and_store(source_filename, target_filename, **opts)
 
     expected_document_start = \
-        "utredningar justitiedepartementet förslag utlänningslag angående om- händertagande förläggning års gere ide to lm \rstatens utredningar förteckning betänkande förslag utlänningslag lag omhändertagande utlänning anstalt förläggning tryckort tryckorten bokstäverna fetstil begynnelse- bokstäverna departement",
+        "utredningar justitiedepartementet förslag utlänningslag angående om- händertagande förläggning års gere ide to lm \rstatens utredningar förteckning betänkande förslag utlänningslag lag omhändertagande utlänning anstalt förläggning tryckort tryckorten bokstäverna fetstil begynnelse- bokstäverna departement"
 
     test_filename = "sou_1945_1.txt"
 
     content = zip_utility.read_file(target_filename, test_filename, as_binary=False)
 
     assert content.startswith(expected_document_start)
-

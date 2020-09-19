@@ -1,11 +1,13 @@
+import fnmatch
 import os
 import zipfile
-import fnmatch
 
 from kblab import Archive
 from westac.common import utility
 
 logger = utility.setup_logger()
+
+# pylint: disable=logging-not-lazy, unnecessary-comprehension
 
 def connect():
     """Connect to KB-LAB API

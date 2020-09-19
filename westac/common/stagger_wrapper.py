@@ -8,7 +8,7 @@
 #
 r"""Wrapper for `The Stockholm NER tagger(Stagger) NER tagger <https://www.ling.su.se/english/nlp/tools/stagger>`_
 
-Notes
+Notes ==================>    NOT IMPLEMENTED!!!!
 -----
 
 Installation
@@ -18,10 +18,9 @@ Examples
 --------
 
 """
+import datetime
 import logging
 import os
-import tempfile
-import datetime
 
 from gensim.utils import check_output
 
@@ -41,6 +40,10 @@ class StaggerWrapper():
         stagger_model_path : str
             Path to the Stagger model file.
         """
+
+        self.word_topics = None
+        self.wordtopics = None
+
         self.stagger_home = os.environ.get('STAGGER_HOME', None)
         self.stagger_jar_path = stagger_jar_path
         self.stagger_model_path = stagger_model_path
@@ -88,7 +91,7 @@ class StaggerWrapper():
 
         command =  self.build_command(files_or_pattern, memory_size)
 
-        check_output(args=self.command, shell=True)
+        check_output(args=command, shell=True)
 
-        self.word_topics = self.load_word_topics()
-        self.wordtopics = self.word_topics
+        # self.word_topics = self.load_word_topics()
+        # self.wordtopics = self.word_topics

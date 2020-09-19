@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-import os
 import logging
+import os
+
 from lxml import etree
-from io import StringIO
 
 logger = logging.getLogger(__name__)
 
 script_path = os.path.dirname(os.path.abspath( __file__ ))
 XSLT_FILENAME = os.path.join(script_path, 'sparv_xml_extract.xslt')
 XSLT_FILENAME_V3 = os.path.join(script_path, 'sparv_xml_extract.v3.xslt')
+
+# pylint: disable=too-many-instance-attributes
 
 class SparvXml2Text():
 

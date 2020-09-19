@@ -1,10 +1,13 @@
 import itertools
+import types
 
 import numpy as np
 import pandas as pd
+import scipy
 import sklearn
 import sklearn.cluster
 from scipy.cluster.hierarchy import linkage
+
 
 class CorpusClusters():
 
@@ -145,7 +148,6 @@ def compute_kmeans(x_corpus, tokens=None, n_clusters=8, **kwargs):
 
     return KMeansCorpusClusters(x_corpus, tokens, compute_result)
 
-import scipy, types
 
 def compute_kmeans2(x_corpus, tokens=None, n_clusters=8, **kwargs):
 

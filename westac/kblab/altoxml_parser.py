@@ -1,5 +1,7 @@
-import xmltodict
 from itertools import chain
+
+import xmltodict
+
 
 def get_items(data, key):
 

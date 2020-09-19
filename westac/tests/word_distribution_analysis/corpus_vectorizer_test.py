@@ -1,10 +1,9 @@
-import unittest
 import types
+import unittest
 
-from westac.corpus import corpus_vectorizer
 import westac.corpus.processed_text_corpus as corpora
-
-from westac.tests.utils  import create_simple_text_reader
+from westac.corpus import corpus_vectorizer
+from westac.tests.utils import create_simple_text_reader
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
@@ -13,7 +12,7 @@ class MockedProcessedCorpus():
     def __init__(self, mock_data):
         self.tokenized_documents = [ (f,y,self.generate_document(ws)) for f,y,ws in mock_data]
         self.token2id = self.create_token2id()
-        self.n_tokens = { f: len(d) for f,y,d in mock_data }
+        self.n_tokens = { f: len(d) for f,_,d in mock_data }
 
     def get_metadata(self):
 
@@ -61,7 +60,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
 
     def create_corpus(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, =False, min_len=2, max_len=None, keep_numerals=False)
+        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False)
         corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
         return corpus
 

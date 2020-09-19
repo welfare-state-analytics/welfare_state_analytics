@@ -1,22 +1,20 @@
 from __future__ import annotations
 
+import logging
 import os
 import pickle
 import time
-import logging
+from heapq import nlargest
+from typing import Iterable, Optional, Tuple, Dict
+
 import numpy as np
 import pandas as pd
-import sklearn.preprocessing
 import scipy
+import sklearn.preprocessing
 import textacy
-
-
-from typing import List, Tuple, Set, Iterable, Optional, Callable, Union
-
-from heapq import nlargest
 from sklearn.feature_extraction.text import TfidfTransformer
 
-# logging.basicConfig(filename="newfile.log", format='%(asctime)s %(message)s', filemode='w')
+# pylint: disable=logging-format-interpolation, too-many-public-methods
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")
@@ -267,7 +265,7 @@ class VectorizedCorpus():
         return Y, categories
 
     #@jit
-    # FIXME: Refactor away function (make use of `collapse_by_category`)
+    # CONSIDER: Refactor away function (make use of `collapse_by_category`)
     def group_by_year(self) -> VectorizedCorpus:
         """Returns a new corpus where documents have been grouped and summed up by year."""
 
@@ -295,7 +293,7 @@ class VectorizedCorpus():
 
         return v_corpus
 
-    # FIXME: Refactor away function (make use of `collapse_by_category`)
+    # CONSIDER: Refactor away function (make use of `collapse_by_category`)
     def group_by_year2(self, aggregate_function='sum', dtype=None) -> VectorizedCorpus:
         """Variant of `group_by_year` where aggregate function can be specified."""
 
@@ -530,7 +528,7 @@ class VectorizedCorpus():
             'sum_over_bags': self.bag_term_matrix.sum(),
             '10_top_tokens': ' '.join(self.n_top_tokens(10).keys())
         }
-        for key in stats_data.keys():
+        for key in stats_data:
             logger.info('   {}: {}'.format(key, stats_data[key]))
         return stats_data
 
@@ -733,4 +731,3 @@ def load_cached_normalized_vectorized_corpus(tag, folder, n_count=10000, n_top=1
             .slice_by_n_top(n_top)
 
     return v_corpus
-

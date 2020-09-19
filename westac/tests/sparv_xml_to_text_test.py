@@ -1,4 +1,4 @@
-import pytest
+import pytest # pylint: disable=unused-import
 import lxml
 
 import westac.corpus.sparv.sparv_xml_to_text as sparv
@@ -66,5 +66,3 @@ def test_extract_when_lemmatized_and_filter_nouns_returns_nouns_in_baseform_with
     result = parser.transform(content)
 
     assert result == expected
-
-
