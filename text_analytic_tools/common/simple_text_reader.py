@@ -4,7 +4,7 @@ import text_analytic_tools.utility.file_utility as utility
 
 class SimpleTextReader:
 
-    def __init__(self, path, pattern='*.txt', itemfilter=None, meta_extract=None, compress_whitespaces=True, dehyphen=True):
+    def __init__(self, path, pattern='*.txt', itemfilter=None, filename_fields=None, compress_whitespaces=True, dehyphen=True):
         self.path = path
         self.is_zip = os.path.isfile(path) # and path.endswith('zip')
         self.filename_pattern = pattern
@@ -21,16 +21,16 @@ class SimpleTextReader:
                 assert False
         self.filenames = filenames or self.archive_filenames
         self.iterator = None
-        self.metadata = [ utility.extract_metadata(x, **meta_extract) for x in self.filenames] if not meta_extract is None else None
+        self.metadata = [ utility.extract_metadata(x, **filename_fields) for x in self.filenames] if not filename_fields is None else None
         self.metadict = { x.filename: x for x in (self.metadata or [])}
 
     def __iter__(self):
-        self.iterator = None
+        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
         if self.iterator is None:
-            self.iterator = self.get_iterator()
+            self.iterator = self._create_iterator()
         return next(self.iterator)
 
     def get_file(self, filename):
@@ -40,9 +40,11 @@ class SimpleTextReader:
 
         yield self.metadict.get(filename, filename), self.read_content(filename)
 
-    def get_iterator(self):
-        for filename in self.filenames:
-            yield os.path.basename(filename), self.read_content(filename)
+    def _create_iterator(self):
+        return (
+            (os.path.basename(filename), self.read_content(filename))
+                for filename in self.filenames
+        )
 
     def read_content(self, filename):
         content = utility.read_file(self.path, filename)

@@ -35,12 +35,10 @@ class CompressedFileReader:
         self.iterator = None
 
     def __iter__(self):
-        self.iterator = None
+        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
-        if self.iterator is None:
-            self.iterator = self.get_iterator()
         return next(self.iterator)
 
     def get_file(self, filename):
