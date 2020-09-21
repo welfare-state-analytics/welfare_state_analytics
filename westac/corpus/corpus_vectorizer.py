@@ -4,8 +4,8 @@ import os
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
-import text_analytic_tools.common as common
-from westac.corpus import processed_text_corpus, vectorized_corpus
+import westac.corpus.iterators.text_tokenizer as text_tokenizer
+from westac.corpus import tokenized_corpus, vectorized_corpus
 
 logger = logging.getLogger("corpus_vectorizer")
 
@@ -16,7 +16,7 @@ class CorpusVectorizer():
         self.kwargs = kwargs
         self.tokenizer = lambda x: x.split()
 
-    def fit_transform(self, corpus: processed_text_corpus.ProcessedTextCorpus):
+    def fit_transform(self, corpus: tokenized_corpus.TokenizedCorpus):
 
         texts = (' '.join(tokens) for _, tokens in corpus)
 
@@ -58,15 +58,17 @@ def generate_corpus(filename, output_folder, **kwargs):
         os.remove(os.path.join(output_folder, '{}_vectorizer_data.pickle'.format(dump_tag)))
 
     logger.info('Creating new corpus...')
-    # FIXME: BName change?
-    reader = common.SimpleTextReader(
-        filename,
-        meta_extract=kwargs.get("meta_extract"),
-        compress_whitespaces=True,
-        dehyphen=True,
-        pattern=kwargs.get("pattern", "*.txt")
+
+    reader = text_tokenizer.TextTokenizer(
+        source_path=None,
+        filename_pattern=kwargs.get("pattern", "*.txt"),
+        tokenize=None,
+        as_binary=False,
+        fix_whitespaces=True,
+        fix_hyphenation=True,
+        filename_fields=kwargs.get("filename_fields")
     )
-    corpus = processed_text_corpus.ProcessedTextCorpus(reader, **kwargs)
+    corpus = tokenized_corpus.TokenizedCorpus(reader, **kwargs)
 
     logger.info('Creating document-term matrix...')
     vectorizer = CorpusVectorizer()

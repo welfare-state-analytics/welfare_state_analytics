@@ -1,9 +1,9 @@
 import types
 import unittest
 
-import westac.corpus.processed_text_corpus as corpora
+import westac.corpus.tokenized_corpus as corpora
 from westac.corpus import corpus_vectorizer
-from westac.tests.utils import create_simple_text_reader
+from westac.tests.utils import create_text_tokenizer
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
@@ -54,14 +54,14 @@ class Test_CorpusVectorizer(unittest.TestCase):
         pass
 
     def create_reader(self):
-        meta_extract = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_simple_text_reader(meta_extract=meta_extract, compress_whitespaces=True, dehyphen=True)
+        filename_fields = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
+        reader = create_text_tokenizer(filename_fields=filename_fields, fix_whitespaces=True, fix_hyphenation=True)
         return reader
 
     def create_corpus(self):
         reader = self.create_reader()
-        kwargs = dict(isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False)
-        corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
+        kwargs = dict(only_any_alphanumeric=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False)
+        corpus = corpora.TokenizedCorpus(reader, **kwargs)
         return corpus
 
     def mock_vectorizer(self):

@@ -18,24 +18,6 @@ def get_unique_folder_names(filenames):
     folders = set(os.path.dirname(f) for f in filenames)
     return sorted([ f for f in folders if f != '' ])
 
-def filter_filenames(filenames, pattern):
-    """Returns a fitered list of filenames that matches `pattern`
-
-    Parameters
-    ----------
-    filenames : str list
-    pattern : str
-
-    Returns
-    -------
-    str list
-        sorted list of filenames matching pattern
-    """
-    filenames = sorted(fnmatch.filter(filenames, pattern))
-
-    return filenames
-
-
     # for filename, content in kblab_download_package_items(package, excludes):
 
     #     m = re.match(r'(\w+)_(\d{4})__(\d+)\-(\d+)\.xml', filename)

@@ -9,7 +9,7 @@ sys.path = list(set(sys.path + [ root_folder ]))
 import westac.corpus.corpus_vectorizer as corpus_vectorizer
 
 kwargs = dict(
-    isalnum=True,
+    only_any_alphanumeric=True,
     to_lower=True,
     remove_accents=False,
     min_len=2,
@@ -18,7 +18,7 @@ kwargs = dict(
     keep_symbols=False,
     only_alphabetic=True,
     pattern='*.txt',
-    meta_extract = {
+    filename_fields = {
         'year': r"prot\_(\d{4}).*",
         'year2': r"prot_\d{4}(\d{2})__*",
         'number': r"prot_\d+__(\d+).*"

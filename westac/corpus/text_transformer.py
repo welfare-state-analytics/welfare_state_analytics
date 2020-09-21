@@ -40,4 +40,3 @@ class TextTransformer():
 
     def fix_whitespaces(self) -> TextTransformer:
         return self.add(TRANSFORMS.fix_whitespace)
-

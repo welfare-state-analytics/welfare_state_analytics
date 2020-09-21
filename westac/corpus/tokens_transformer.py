@@ -26,6 +26,7 @@ class TokensTransformer():
     """Transforms applied on tokenized text"""
     def __init__(self,
         only_alphabetic: bool = False,
+        only_any_alphanumeric: bool=False,
         to_lower: bool = False,
         to_upper: bool = False,
         min_len: int = None,
@@ -63,6 +64,9 @@ class TokensTransformer():
         if only_alphabetic:
             self.only_alphabetic()
 
+        if only_any_alphanumeric:
+            self.only_any_alphanumeric()
+
         if keep_numerals is False:
             self.remove_numerals()
 
@@ -79,6 +83,8 @@ class TokensTransformer():
             tokens = ft(tokens)
 
         return tokens
+
+    # Shortcuts
 
     def min_chars_filter(self, n_chars) -> TokensTransformer:
         if (n_chars or 0) < 1:
@@ -112,3 +118,6 @@ class TokensTransformer():
 
     def remove_accents(self) -> TokensTransformer:
         return self.add(textacy_remove.remove_accents)
+
+    def only_any_alphanumeric(self) -> TokensTransformer:
+        return self.add(utility.only_any_alphanumeric())

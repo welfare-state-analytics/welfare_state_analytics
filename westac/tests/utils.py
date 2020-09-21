@@ -1,28 +1,39 @@
 import os
+from typing import Callable
 
-import text_analytic_tools.common.simple_text_reader as simple_text_reader
+import westac.corpus.iterators.text_tokenizer as text_tokenizer
 
 TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'
+
+# pylint: disable=too-many-arguments
 
 if __file__ in globals():
     this_file = os.path.dirname(__file__)
     this_path = os.path.abspath(this_file)
     TEST_CORPUS_FILENAME = os.path.join(this_path, TEST_CORPUS_FILENAME)
 
-def create_simple_text_reader(
-    filename=TEST_CORPUS_FILENAME,
-    pattern="*.txt",
-    itemfilter=None,
-    compress_whitespaces=False,
-    dehyphen=True,
-    meta_extract=None
+def create_text_tokenizer(
+    source_path=TEST_CORPUS_FILENAME,
+    transforms=None,
+    chunk_size: int=None,
+    filename_pattern: str="*.txt",
+    filename_filter: str=None,
+    fix_whitespaces=False,
+    fix_hyphenation=True,
+    as_binary: bool=False,
+    tokenize: Callable=None,
+    filename_fields=None
 ):
     kwargs = dict(
-        pattern=pattern,
-        itemfilter=itemfilter,
-        compress_whitespaces=compress_whitespaces,
-        dehyphen=dehyphen,
-        meta_extract=meta_extract
+        transforms=transforms,
+        chunk_size=chunk_size,
+        filename_pattern=filename_pattern,
+        filename_filter=filename_filter,
+        fix_whitespaces=fix_whitespaces,
+        fix_hyphenation=fix_hyphenation,
+        as_binary=as_binary,
+        tokenize=tokenize,
+        filename_fields=filename_fields
     )
-    reader = simple_text_reader.SimpleTextReader(filename, **kwargs)
+    reader = text_tokenizer.TextTokenizer(source_path, **kwargs)
     return reader

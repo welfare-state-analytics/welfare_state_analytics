@@ -43,7 +43,7 @@ def pchip_spline(xs, ys):
     return s_xs, s_ys
 
 def fit_curve(fx, xs, ys, step=0.1):
-    popt, _ = scipy.optimize.curve_fit(fx, xs, ys)
+    popt, _ = scipy.optimize.curve_fit(fx, xs, ys) # pylint: disable=unbalanced-tuple-unpacking
     s_xs = np.arange(xs.min(), xs.max()+step, step)
     s_ys = fx(s_xs, *popt)
     return s_xs, s_ys

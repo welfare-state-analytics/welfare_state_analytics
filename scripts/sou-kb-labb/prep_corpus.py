@@ -2,15 +2,14 @@ import os
 import sys
 
 import click
-from click import IntRange
+
+import westac.corpus.iterators.sparv_xml_iterator as sparv_xml_iterator
+from westac.corpus import utility
+from westac.corpus.tokens_transformer import TokensTransformer
 
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import westac.corpus.iterators.sparv_xml_corpus_source_reader as sparv_reader
-import westac.common.zip_utility as zip_utility
-from westac.corpus.tokens_transformer import TokensTransformer
-from westac.corpus import utility
 
 @click.command()
 @click.argument('input') #, help='Model name.')
@@ -38,7 +37,7 @@ def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, 
         keep_symbols=keep_symbols
     )
 
-    opts = { **sparv_reader.DEFAULT_OPTS, **{
+    opts = { **sparv_xml_iterator.DEFAULT_OPTS, **{
         'transforms': transformer.transforms,
         'pos_includes': pos_includes,
         'pos_excludes': pos_excludes,
@@ -47,7 +46,7 @@ def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, 
         'version': version,
     }}
 
-    sparv_reader.sparv_extract_and_store(input, output, **opts)
+    sparv_xml_iterator.sparv_extract_and_store(input, output, **opts)
 
 if __name__ == '__main__':
     prepare_train_corpus()

@@ -1,46 +1,17 @@
 import os
-from os import close
 import sys
 import click
-import re
-import pandas as pd
-from pprint import pprint as pp
 
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import westac.common.utility as utility
+import westac.corpus.utility as utility
 import westac.corpus.corpus_vectorizer as corpus_vectorizer
 
 def split_filename(filename, sep='_'):
     parts = filename.replace('.', sep).split(sep)
     return parts
-
-def parse_extractor(data):
-
-    if len(data) == 1:
-        # regexp
-        return data[0]
-
-    if len(data) == 2:
-        sep = data[0]
-        position = int(data[1])
-        return lambda f: f.replace('.', sep).split(sep)[position]
-
-    raise Exception("to many parts in extract expression")
-
-def parser_meta_fields(meta_field):
-
-    try:
-        meta_extract = {
-            x[0]: parse_extractor(x[1:]) for x in [ y.split(':') for y in meta_field ]
-        }
-
-        return meta_extract
-    except:
-        print("parse error: meta-fields, must be in format 'name:regexp'")
-        exit(-1)
 
 @click.command()
 @click.argument('filename')
@@ -73,7 +44,6 @@ def vectorize_text_corpus(
 ):
 
     kwargs = dict(
-        isalnum=only_alphanumeric,
         to_lower=to_lower,
         remove_accents=remove_accents,
         min_len=min_length,
@@ -81,9 +51,10 @@ def vectorize_text_corpus(
         doc_chunk_size=doc_chunk_size,
         keep_numerals=keep_numerals,
         keep_symbols=keep_symbols,
+        only_any_alphanumeric=only_alphanumeric,
         only_alphabetic=only_alphabetic,
         pattern=file_pattern,
-        meta_extract=parser_meta_fields(meta_field)
+        filename_fields=utility.filename_field_parser(meta_field)
     )
 
     corpus_vectorizer.generate_corpus(filename, output_folder=output_folder, **kwargs)

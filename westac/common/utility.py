@@ -1,15 +1,8 @@
 import datetime
-import fnmatch
 import itertools
 import logging
-import os
 import re
 import time
-import types
-import typing
-import zipfile
-
-import gensim
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
@@ -42,7 +35,7 @@ def setup_logger(logger=None, to_file=False, filename=None, level=logging.DEBUG)
     logger.addHandler(ch)
     return logger
 
-def nth(iterable, n, default=None):
+def nth(iterable, n: int, default=None):
     "Returns the nth item or a default value"
     return next(itertools.islice(iterable, n, None), default)
 
@@ -54,7 +47,7 @@ def timestamp(format_string=None):
 def flatten(l):
     return [ x for ws in l for x in ws]
 
-def isint(s):
+def isint(s) -> bool:
     try:
         int(s)
         return True
@@ -107,106 +100,10 @@ def extend(target, *args, **kwargs):
     target.update(kwargs)
     return target
 
-def dehyphen(text: str):
+def fix_hyphenation(text: str) -> str:
     result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
 
-def list_files(path_name, pattern):
-    px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
-    if os.path.isdir(path_name):
-        files = [ f for f in os.listdir(path_name) if os.path.isfile(os.path.join(path_name, f)) ]
-    else:
-        with zipfile.ZipFile(path_name) as zf:
-            files = zf.namelist()
-
-    return [ name for name in files if px(name) ]
-
-def compress_whitespaces(text):
+def fix_whitespaces(text: str) -> str:
     result = re.sub(r'\s+', ' ', text).strip()
     return result
-
-# FIXME: Add indexed retrieve feature (as in inidun)
-def extract_metadata(filename, **kwargs):
-    """Extracts metadata from filename
-
-    Parameters
-    ----------
-    filename : str
-        Filename (basename)
-    kwargs: key=extractor list
-
-    Returns
-    -------
-    SimpleNamespace
-        Each key in kwargs is set as a property in the returned instance.
-        The extractor must be either a regular expression that extracts the single value
-        or a callable function that given the filename return corresponding value.
-
-    """
-    params = { x: None for x in kwargs }
-    meta =  types.SimpleNamespace(filename=filename, **params)
-    for k,r in kwargs.items():
-
-        if r is None:
-            continue
-
-        if callable(r):
-            v = r(filename)
-            meta.__setattr__(k, int(v) if v.isnumeric() else v)
-
-        if isinstance(r, str): # typing.re.Pattern):
-            m = re.match(r, filename)
-            if m is not None:
-                v = m.groups()[0]
-                meta.__setattr__(k, int(v) if v.isnumeric() else v)
-
-    return meta
-
-def read_file(path, filename):
-    if os.path.isdir(path):
-        with open(os.path.join(path, filename), 'r') as file:
-            content = file.read()
-    else:
-        with zipfile.ZipFile(path) as zf:
-            with zf.open(filename, 'r') as file:
-                content = file.read()
-    content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
-    return content
-
-def read_textfile(filename):
-    with open(filename, 'r', encoding='utf-8') as f:
-        try:
-            data = f.read()
-            content = data #.decode('utf-8')
-        except UnicodeDecodeError as _:
-            print('UnicodeDecodeError: {}'.format(filename))
-            #content = data.decode('cp1252')
-            raise
-        yield (filename, content)
-
-class IntStepper():
-
-    def __init__(self, min_value, max_value, step=1, callback=None, value=None, data=None):
-        self.min = min_value
-        self.max = max_value
-        self.step = step
-        self.value = value or min_value
-        self.data = data or {}
-        self.callback = callback
-
-    def trigger(self):
-        if callable(self.callback):
-            self.callback(self.value, self.data)
-        return self.value
-
-    def next(self):
-        self.value = self.min + (self.value - self.min + self.step) % (self.max - self.min)
-        return self.trigger()
-
-    def previous(self):
-        self.value = self.min + (self.value - self.min - self.step) % (self.max - self.min)
-        return self.trigger()
-
-    def reset(self):
-        self.value = self.min
-        return self.trigger()

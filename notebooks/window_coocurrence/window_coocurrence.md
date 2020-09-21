@@ -24,7 +24,7 @@ import os, sys
 sys.path = list(set(sys.path + [ '../common' ]))
 
 import utility
-import processed_text_corpus
+import tokenized_corpus
 import corpus_vectorizer
 import types
 
@@ -52,18 +52,13 @@ class DataFrameTextReader:
         self.filenames = [ x.filename for x in self.metadata ]
 
     def __iter__(self):
-
-        self.iterator = None
+        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
-
-        if self.iterator is None:
-            self.iterator = self.get_iterator()
-
         return next(self.iterator)
 
-    def get_iterator(self):
+    def _create_iterator(self):
         return ((str(i), x) for i,x in enumerate(self.df.txt))
 ```
 
@@ -72,7 +67,7 @@ import numpy as np
 
 def compute_coocurrence_matrix(reader, **kwargs):
 
-    corpus = processed_text_corpus.ProcessedCorpus(reader, isalnum=False, **kwargs)
+    corpus = tokenized_corpus.TokenizedCorpus(reader, only_alphanumeric=False, **kwargs)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     vectorizer.fit_transform(corpus)
 

@@ -19,10 +19,9 @@ from westac.corpus.utility import remove_accents
 import pandas as pd
 import numpy as np
 import scipy
-import types
 
 from westac.corpus import corpus_vectorizer
-import westac.corpus.processed_text_corpus as corpora
+import westac.corpus.tokenized_corpus as corpora
 from westac.corpus.iterators import dataframe_text_reader
 
 
@@ -46,14 +45,14 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def create_corpus(self):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        kwargs = dict(isalnum=False, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False)
-        corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
+        kwargs = dict(only_any_alphanumeric=False, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False)
+        corpus = corpora.TokenizedCorpus(reader, **kwargs)
         return corpus
 
     def test_corpus_text_stream(self):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        corpus = corpora.BaseCorpus(reader)
+        corpus = corpora.TokenizedCorpus(reader)
         result = [ x for x in corpus.documents()]
         expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
         self.assertEqual(expected, result)
@@ -69,8 +68,8 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def test_processed_corpus_token_stream(self):
         df = self.create_test_dataframe()
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        kwargs = dict(isalnum=False, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False)
-        corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
+        kwargs = dict(only_any_alphanumeric=False, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False)
+        corpus = corpora.TokenizedCorpus(reader, **kwargs)
         result = [ x for x in corpus.documents()]
         expected = [('0', ['A', 'B', 'C']), ('1', ['B', 'C', 'D']), ('2', ['C', 'B']), ('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E'])]
         self.assertEqual(expected, result)
@@ -82,11 +81,11 @@ class Test_DataFrameVectorize(unittest.TestCase):
         ]
         df = pd.DataFrame(data, columns=['year', 'txt'])
         reader = dataframe_text_reader.DataFrameTextReader(df)
-        corpus = corpora.ProcessedTextCorpus(reader, **kwargs)
+        corpus = corpora.TokenizedCorpus(reader, **kwargs)
         return corpus
 
     def test_tokenized_document_where_symbols_are_filtered_out(self):
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None, only_alphabetic=False)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None, only_alphabetic=False)
         result = [ x for x in corpus.documents()]
         expected = [
             ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', '14', 'token', '3', 'siffror', 'och', '2', 'symboler' ]),
@@ -95,7 +94,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_tokenized_document_where_symbols_and_numerals_are_filtered_out(self):
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False, stopwords=None)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=False, remove_accents=False, min_len=0, max_len=None, keep_numerals=False, stopwords=None)
         result = [ x for x in corpus.documents()]
         expected = [
             ('0',  [ 'Detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
@@ -104,7 +103,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_tokenized_document_in_lowercase_where_symbols_and_numerals_and_one_letter_words_are_filtered_out(self):
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False, stopwords=None)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False, stopwords=None)
         result = [ x for x in corpus.documents()]
         expected = [
             ('0',  [ 'detta', 'är', 'en', 'mening', 'med', 'token', 'siffror', 'och', 'symboler' ]),
@@ -114,7 +113,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
 
     def test_tokenized_document_in_lowercase_where_symbols_and_numerals_and_one_letter_words_and_stopwords_are_filtered_out(self):
         stopwords = { 'är', 'en', 'med', 'och', 'det', 'detta', 'denna' }
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False, stopwords=stopwords)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=True, remove_accents=False, min_len=2, max_len=None, keep_numerals=False, stopwords=stopwords)
         result = [ x for x in corpus.documents()]
         expected = [
             ('0',  [ 'mening', 'token', 'siffror', 'symboler' ]),
@@ -125,7 +124,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
     def test_fit_transform_gives_document_term_matrix(self):
         reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, remove_accents=False, min_len=1, max_len=None, keep_numerals=False)
-        corpus = corpora.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
+        corpus = corpora.TokenizedCorpus(reader, only_any_alphanumeric=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
         v_corpus = vectorizer.fit_transform(corpus)
         expected = np.asarray([
@@ -146,7 +145,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         # Arrange
         reader = dataframe_text_reader.DataFrameTextReader(self.create_test_dataframe())
         kwargs = dict(to_lower=False, remove_accents=False, min_len=1, max_len=None, keep_numerals=False)
-        corpus = corpora.ProcessedTextCorpus(reader, isalnum=False, **kwargs)
+        corpus = corpora.TokenizedCorpus(reader, only_any_alphanumeric=False, **kwargs)
         vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
         v_corpus = vectorizer.fit_transform(corpus)
 
@@ -189,7 +188,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
         print(cdf[['w1', 'w2', 'value']])
 
     def test_tokenized_document_token_counts_is_empty_if_enumerable_not_exhausted(self):
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=True, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=True, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None)
         n_tokens = corpus.n_tokens
         n_raw_tokens = corpus.n_raw_tokens
         self.assertEqual({}, n_tokens)
@@ -197,7 +196,7 @@ class Test_DataFrameVectorize(unittest.TestCase):
 
     def test_tokenized_document_token_counts_is_not_empty_if_enumerable_is_exhausted(self):
         # Note: Symbols are always removed by reader - hence "keep_symbols" filter has not effect
-        corpus = self.create_simple_test_corpus(keep_symbols=False, isalnum=True, to_lower=True, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None)
+        corpus = self.create_simple_test_corpus(keep_symbols=False, only_any_alphanumeric=True, to_lower=True, remove_accents=False, min_len=0, max_len=None, keep_numerals=True, stopwords=None)
         for _ in corpus.documents():
             pass
         n_tokens = corpus.n_tokens

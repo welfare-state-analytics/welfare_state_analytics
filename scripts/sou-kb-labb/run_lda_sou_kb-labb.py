@@ -9,7 +9,7 @@ import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import westac.corpus.vectorized_corpus as vectorized_corpus
 import westac.corpus.corpus_vectorizer as corpus_vectorizer
-import westac.corpus.iterators.sparv_xml_corpus_source_reader as sparv_reader
+import westac.corpus.iterators.sparv_xml_iterator as sparv_xml_iterator
 
 import types
 import pickle
@@ -68,12 +68,12 @@ def _run_model(name, n_topics, data_folder, corpus_filename, engine, passes, ran
 def run_model(name, n_topics, data_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix):
     """ runner """
 
-    if engine not in [ y for x, y in ENGINE_OPTIONS ]:
+    if engine not in [ y for _, y in ENGINE_OPTIONS ]:
         logging.error("Unknown method {}".format(engine))
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
 
-    reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_filename, **opts)
+    reader = sparv_xml_iterator.SparvXmlIterator(corpus_filename, **opts)
 
     kwargs = dict(n_topics=n_topics)
 

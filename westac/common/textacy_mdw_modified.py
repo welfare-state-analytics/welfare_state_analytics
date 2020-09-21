@@ -24,6 +24,8 @@ from textacy import vsm
 logger = logging.getLogger("westac")
 logger.setLevel(logging.INFO)
 
+# pylint: disable=too-many-locals
+
 def compute_most_discriminating_terms(x_corpus, top_n_terms=25, max_n_terms=1000, group1_indices=None, group2_indices=None):
 
     if len(group1_indices) == 0 or len(group2_indices) == 0:
