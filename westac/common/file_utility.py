@@ -1,4 +1,5 @@
 import fnmatch
+import glob
 import logging
 import os
 import re
@@ -36,21 +37,32 @@ def filename_satisfied_by(filename: Iterable[str], filename_filter: Union[List[s
 def basename(path):
     return os.path.splitext(os.path.basename(path))[0]
 
-def create_iterator(path: str, filenames: List[str]=None, filename_pattern: str='*.txt', as_binary: bool=False):
+def create_iterator(folder_or_zip: str, filenames: List[str]=None, filename_pattern: str='*.txt', as_binary: bool=False):
 
-    filenames = filenames or list_filenames(path, filename_pattern=filename_pattern)
+    filenames = filenames or list_filenames(folder_or_zip, filename_pattern=filename_pattern)
 
-    with zipfile.ZipFile(path) as zip_file:
+    if not isinstance(folder_or_zip, str):
+        raise ValueError("folder_or_zip argument must be a path")
 
+    if os.path.isfile(folder_or_zip):
+        with zipfile.ZipFile(folder_or_zip) as zip_file:
+
+            for filename in filenames:
+
+                with zip_file.open(filename, 'r') as text_file:
+
+                    content = text_file.read() if as_binary else text_file.read().decode('utf-8')
+
+                yield os.path.basename(filename), content
+
+    elif os.path.isdir(folder_or_zip):
         for filename in filenames:
-
-            with zip_file.open(filename, 'r') as text_file:
-
-                content = text_file.read() if as_binary else text_file.read().decode('utf-8')
-
+            content = read_textfile(filename)
             yield os.path.basename(filename), content
+    else:
+        raise FileNotFoundError(folder_or_zip)
 
-def list_filenames(folder_or_zip: Union[str, zipfile.ZipFile], filename_pattern: str="*.txt"):
+def list_filenames(folder_or_zip: Union[str, zipfile.ZipFile], filename_pattern: str="*.txt", filename_filter=None):
     """Returns all filenames that matches `pattern` in archive
 
     Parameters
@@ -64,35 +76,39 @@ def list_filenames(folder_or_zip: Union[str, zipfile.ZipFile], filename_pattern:
         List of filenames
     """
 
+    filenames = None
+
     if isinstance(folder_or_zip, zipfile.ZipFile):
-        filenames = sorted(folder_or_zip.nameist())
-    else:
-        with zipfile.ZipFile(folder_or_zip) as zf:
-            filenames = sorted(zf.namelist())
 
-    if filename_pattern is not None:
-        return [ name for name in filenames \
-                if fnmatch.fnmatch(name, filename_pattern) ]
+        filenames = folder_or_zip.namelist()
 
-    return filenames
+    elif isinstance(folder_or_zip, str):
 
-# def list_files(path_name, pattern):
-#     px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
-#     if os.path.isdir(path_name):
-#         files = [ f for f in os.listdir(path_name) if os.path.isfile(os.path.join(path_name, f)) ]
-#     else:
-#         with zipfile.ZipFile(path_name) as zf:
-#             files = zf.namelist()
+        if os.path.isfile(folder_or_zip):
 
-#     return [ name for name in files if px(name) ]
+            if zipfile.is_zipfile(folder_or_zip):
 
-def list_filtered_filenames(folder_or_zip, filename_pattern: str="*.txt", filename_filter: Union[List[str],Callable]=None):
+                with zipfile.ZipFile(folder_or_zip) as zf:
+                    filenames = zf.namelist()
+
+            else:
+                filenames = [ folder_or_zip ]
+
+        elif os.path.isdir(folder_or_zip):
+
+            filenames = glob.glob(os.path.join(folder_or_zip, filename_pattern))
+
+    if filenames is None:
+
+        raise ValueError("Only folder or ZIP or file are valid arguments")
+
     return [
-        x for x in list_filenames(folder_or_zip, filename_pattern)
-            if filename_satisfied_by(x, filename_filter)
+        filename for filename in sorted(filenames)
+            if filename_satisfied_by(filename, filename_filter)
+                and (filename_pattern is None or fnmatch.fnmatch(filename, filename_pattern))
     ]
 
-def store(archive_name: str, stream: Iterable[Tuple(str,Iterable[str])]):
+def store(archive_name: str, stream: Iterable[Tuple[str,Iterable[str]]]):
     """Stores stream of text [(name, tokens), (name, tokens), ..., (name, tokens)] as text files in a new zip-file
 
     Parameters
@@ -110,21 +126,49 @@ def store(archive_name: str, stream: Iterable[Tuple(str,Iterable[str])]):
             out.writestr(filename, data, compresslevel=zipfile.ZIP_DEFLATED)
 
 def read(folder_or_zip: Union[str, zipfile.ZipFile], filename: str, as_binary=False):
+    """Returns content in file `filename` that exists in folder or zip `folder_or_zip`
 
+    Parameters
+    ----------
+    folder_or_zip : Union[str, zipfile.ZipFile]
+        Folder (if `filename` is file in folder) or ZIP-filename
+    filename : str
+        Filename in folder or ZIP-file
+    as_binary : bool, optional
+        Opens file in binary mode, by default False
+
+    Returns
+    -------
+    str
+        File content
+
+    Raises
+    ------
+    IOError
+        If file not found or cannot be read
+    """
     if isinstance(folder_or_zip, zipfile.ZipFile):
         with folder_or_zip.open(filename, 'r') as f:
             return f.read() if as_binary else f.read().decode('utf-8')
 
     if os.path.isdir(folder_or_zip):
+
         path = os.path.join(folder_or_zip, filename)
+
         if os.path.isfile(path):
             with open(path, 'r') as f:
                 return gensim.utils.to_unicode(f.read(), 'utf8', errors='ignore')
 
     if os.path.isfile(folder_or_zip):
-        with zipfile.ZipFile(folder_or_zip) as zf:
-            with zf.open(filename, 'r') as f:
-                return f.read() if as_binary else f.read().decode('utf-8')
+
+        if zipfile.is_zipfile(folder_or_zip):
+
+            with zipfile.ZipFile(folder_or_zip) as zf:
+                with zf.open(filename, 'r') as f:
+                    return f.read() if as_binary else f.read().decode('utf-8')
+
+        else:
+            return read_textfile(folder_or_zip)
 
     raise IOError("File not found")
 
@@ -140,8 +184,10 @@ def read(folder_or_zip: Union[str, zipfile.ZipFile], filename: str, as_binary=Fa
 #     content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
 #     return content
 
-def read_textfile(filename):
-    with open(filename, 'r', encoding='utf-8') as f:
+def read_textfile(filename, as_binary=False):
+
+    opts = { 'mode': 'rb' } if as_binary else { 'mode': 'r', 'encoding': 'utf-8'}
+    with open(filename, **opts) as f:
         try:
             data = f.read()
             content = data #.decode('utf-8')
@@ -149,7 +195,7 @@ def read_textfile(filename):
             print('UnicodeDecodeError: {}'.format(filename))
             #content = data.decode('cp1252')
             raise
-        yield (filename, content)
+        return content
 
 
 def filename_field_parser(meta_fields):

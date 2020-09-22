@@ -1,9 +1,10 @@
 import types
 import unittest
 
+import westac.corpus.iterators.text_tokenizer as text_tokenizer
 import westac.corpus.tokenized_corpus as corpora
+import westac.tests.utils as test_utils
 from westac.corpus import corpus_vectorizer
-from westac.tests.utils import create_text_tokenizer
 
 flatten = lambda l: [ x for ws in l for x in ws]
 
@@ -13,8 +14,10 @@ class MockedProcessedCorpus():
         self.tokenized_documents = [ (f,y,self.generate_document(ws)) for f,y,ws in mock_data]
         self.token2id = self.create_token2id()
         self.n_tokens = { f: len(d) for f,_,d in mock_data }
+        self.iterator = None
 
-    def get_metadata(self):
+    @property
+    def metadata(self):
 
         return [
             types.SimpleNamespace(filename=x[0],year=x[1]) for x in self.tokenized_documents
@@ -23,10 +26,22 @@ class MockedProcessedCorpus():
     def create_token2id(self):
         return { w: i for i, w in enumerate(sorted(list(set(flatten([ x[2] for x in self.tokenized_documents]))))) }
 
-    def documents(self):
+    def _create_iterator(self):
 
         for filename, year, tokens in self.tokenized_documents:
             yield types.SimpleNamespace(filename=filename, year=year), tokens
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.iterator is None:
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise
 
     def generate_document(self, words):
         if isinstance(words, str):
@@ -55,7 +70,7 @@ class Test_CorpusVectorizer(unittest.TestCase):
 
     def create_reader(self):
         filename_fields = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
-        reader = create_text_tokenizer(filename_fields=filename_fields, fix_whitespaces=True, fix_hyphenation=True)
+        reader = test_utils.create_text_tokenizer(filename_fields=filename_fields, fix_whitespaces=True, fix_hyphenation=True)
         return reader
 
     def create_corpus(self):
@@ -64,11 +79,21 @@ class Test_CorpusVectorizer(unittest.TestCase):
         corpus = corpora.TokenizedCorpus(reader, **kwargs)
         return corpus
 
+    def test_create_text_tokenizer_smoke_test(self):
+        kwargs = {}
+        reader = text_tokenizer.TextTokenizer(test_utils.TEST_CORPUS_FILENAME, **kwargs)
+        assert reader is not None
+        assert next(reader) is not None
+
+    def test_create_corpus_smoke_test(self):
+        pass
+
     def mock_vectorizer(self):
         corpus = mock_corpus()
         vectorizer = corpus_vectorizer.CorpusVectorizer()
         vectorizer.fit_transform(corpus)
         return vectorizer
+
 
     def test_fit_transform_creates_a_vocabulary_with_unique_tokens_with_an_id_sequence(self):
         corpus = self.create_corpus()

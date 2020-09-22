@@ -1,5 +1,6 @@
 import glob
 import os
+import zipfile
 from typing import Callable, List, Union
 
 import westac.common.file_utility as file_utility
@@ -30,11 +31,12 @@ def streamify_text_source(
     """
 
     if not isinstance(text_source, str):
-        return text_source
+        if hasattr(text_source, '__iter__') and hasattr(text_source, '__next__'):
+            return text_source
 
     if os.path.isfile(text_source):
 
-        if text_source.endswith(".zip"):
+        if zipfile.is_zipfile(text_source):
             return zip_iterator.ZipTextIterator(
                 text_source,
                 filename_pattern=filename_pattern,
@@ -42,12 +44,13 @@ def streamify_text_source(
                 as_binary=as_binary
             )
 
-        return ((text_source, file_utility.read_textfile(text_source)),)
+        text = file_utility.read_textfile(text_source, as_binary=as_binary)
+        return ((text_source, text),)
 
     if os.path.isdir(text_source):
 
         return (
-            (os.path.basename(filename), file_utility.read_textfile(filename))
+            (os.path.basename(filename), file_utility.read_textfile(filename, as_binary=as_binary))
                 for filename in glob.glob(os.path.join(text_source, filename_pattern))
                     if file_utility.filename_satisfied_by(os.path.basename(filename), filename_filter)
         )

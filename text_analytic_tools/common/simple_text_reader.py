@@ -25,13 +25,16 @@ class SimpleTextReader:
         self.metadict = { x.filename: x for x in (self.metadata or [])}
 
     def __iter__(self):
-        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
         if self.iterator is None:
             self.iterator = self._create_iterator()
-        return next(self.iterator)
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise
 
     def get_file(self, filename):
 

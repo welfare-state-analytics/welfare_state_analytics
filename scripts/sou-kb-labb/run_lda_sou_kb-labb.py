@@ -9,7 +9,7 @@ import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import westac.corpus.vectorized_corpus as vectorized_corpus
 import westac.corpus.corpus_vectorizer as corpus_vectorizer
-import westac.corpus.iterators.sparv_xml_iterator as sparv_xml_iterator
+import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
 
 import types
 import pickle
@@ -73,7 +73,7 @@ def run_model(name, n_topics, data_folder, corpus_filename, engine, passes, rand
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
 
-    reader = sparv_xml_iterator.SparvXmlIterator(corpus_filename, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(corpus_filename, **opts)
 
     kwargs = dict(n_topics=n_topics)
 

@@ -38,7 +38,9 @@ disable=invalid-name,
         c-extension-no-member,
         too-few-public-methods,
         logging-format-interpolation,
-        consider-using-enumerate
+        consider-using-enumerate,
+        unnecessary-comprehension,
+        misplaced-comparison-constant
         # print-statement,
         # parameter-unpacking,
         # unpacking-in-except,

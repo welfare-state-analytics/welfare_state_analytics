@@ -33,7 +33,7 @@ import types
 ```
 
 ```python
-class DataFrameTextReader:
+class DataFrameTextTokenizer:
 
     def __init__(self, df, year=None):
 
@@ -51,15 +51,20 @@ class DataFrameTextReader:
         self.metadict = { x.filename: x for x in (self.metadata or [])}
         self.filenames = [ x.filename for x in self.metadata ]
 
+    def _create_iterator(self):
+        return ((str(i), x) for i,x in enumerate(self.df.txt))
+
     def __iter__(self):
-        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
-        return next(self.iterator)
-
-    def _create_iterator(self):
-        return ((str(i), x) for i,x in enumerate(self.df.txt))
+        if self.iterator is None:
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise
 ```
 
 ```python
@@ -92,7 +97,7 @@ def compute_co_ocurrence_for_year(source_filename, year, result_filename):
 
     df = pd.read_csv(source_filename, sep='\t')[['year', 'txt']]
 
-    reader = DataFrameTextReader(df, year)
+    reader = DataFrameTextTokenizer(df, year)
 
     kwargs = dict(to_lower=True, remove_accents=False, min_len=1, max_len=None, keep_numerals=False)
 

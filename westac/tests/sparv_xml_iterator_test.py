@@ -1,10 +1,6 @@
-import os
-
 import pytest  # pylint: disable=unused-import
 
-import westac.common.file_utility as file_utility
-import westac.corpus.iterators.sparv_xml_iterator as sparv_xml_iterator
-import westac.corpus.utility as utility
+import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
 
 SPARV_XML_EXPORT_FILENAME = './westac/tests/test_data/sparv_xml_export.xml'
 SPARV_XML_EXPORT_FILENAME_SMALL = './westac/tests/test_data/sparv_xml_export_small.xml'
@@ -30,7 +26,7 @@ def test_reader_when_no_transforms_returns_source_tokens():
 
     opts = dict(pos_includes='', lemmatize=False, chunk_size=None, pos_excludes="")
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
 
     document_name, tokens = next(iter(reader))
 
@@ -44,7 +40,7 @@ def test_reader_when_lemmatized_returns_tokens_in_baseform():
 
     opts = dict(pos_includes='', lemmatize=True, chunk_size=None, pos_excludes="")
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
 
     document_name, tokens = next(iter(reader))
 
@@ -58,7 +54,7 @@ def test_reader_when_ignore_puncts_returns_filter_outs_puncts():
 
     opts = dict(pos_includes='', lemmatize=True, chunk_size=None, pos_excludes="|MAD|MID|PAD|")
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
 
     document_name, tokens = next(iter(reader))
 
@@ -72,7 +68,7 @@ def test_reader_when_only_nouns_ignore_puncts_returns_filter_outs_puncts():
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
 
     document_name, tokens = next(iter(reader))
 
@@ -86,7 +82,7 @@ def test_reader_when_chunk_size_specified_returns_chunked_text():
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=2)
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_XML_EXPORT_FILENAME_SMALL, **opts)
 
     for i, (document_name, tokens) in enumerate(reader):
 
@@ -100,29 +96,12 @@ def test_reader_when_source_is_zipped_archive_succeeds():
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
 
-    reader = sparv_xml_iterator.SparvXmlIterator(SPARV_ZIPPED_XML_EXPORT_FILENAME, **opts)
+    reader = sparv_reader.SparvXmlTokenizer(SPARV_ZIPPED_XML_EXPORT_FILENAME, **opts)
 
     for i, (document_name, tokens) in enumerate(reader):
 
         assert expected_documents[i] == list(tokens)
         assert expected_names[i] == document_name
-
-def test_reader_store_result():
-
-    expected_documents = [ ['rödräv', 'hunddjur', 'utbredning', 'halvklot' ], [ 'fjällräv', 'fjällvärld', 'liv', 'fjällräv', 'vinter', 'men', 'variant', 'år' ] ]
-    expected_names = [ "document_001.txt", "document_002.txt"]
-
-    target_filename = './westac/tests/sparv_extract_and_store.zip'
-
-    opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
-
-    sparv_xml_iterator.sparv_extract_and_store(SPARV_ZIPPED_XML_EXPORT_FILENAME, target_filename, **opts)
-
-    for i in range(0, len(expected_names)):
-
-        content = file_utility.read(target_filename, expected_names[i], as_binary=False)
-
-        assert ' '.join(expected_documents[i]) == content
 
 def test_reader_when_source_is_sparv3_succeeds():
 
@@ -130,37 +109,8 @@ def test_reader_when_source_is_sparv3_succeeds():
 
     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None) #, xslt_filename=xslt_filename)
 
-    reader = sparv_xml_iterator.Sparv3XmlCorpusSourceReader(sparv_zipped_xml_export_v3_filename, **opts)
+    reader = sparv_reader.Sparv3XmlTokenizer(sparv_zipped_xml_export_v3_filename, **opts)
 
     for _, (_, tokens) in enumerate(reader):
 
         assert len(list(tokens)) > 0
-
-def test_sparv_extract_and_store_when_only_nouns_and_source_is_sparv3_succeeds():
-
-    os.makedirs('./westac/tests/output', exist_ok=True)
-    opts = {
-        'transforms': [
-            utility.remove_stopwords('swedish', extra_stopwords={'<text>'}),
-            utility.min_chars_filter(2),
-            utility.lower_transform()
-         ],
-        'pos_includes': '|NN|',
-        'lemmatize': False,
-        'chunk_size': None,
-        'version': 3
-    }
-
-    source_filename = './westac/tests/test_data/sou_test_sparv3_xml.zip'
-    target_filename = './westac/tests/output/sou_test_sparv3_extracted_txt.zip'
-
-    sparv_xml_iterator.sparv_extract_and_store(source_filename, target_filename, **opts)
-
-    expected_document_start = \
-        "utredningar justitiedepartementet förslag utlänningslag angående om- händertagande förläggning års gere ide to lm \rstatens utredningar förteckning betänkande förslag utlänningslag lag omhändertagande utlänning anstalt förläggning tryckort tryckorten bokstäverna fetstil begynnelse- bokstäverna departement"
-
-    test_filename = "sou_1945_1.txt"
-
-    content = file_utility.read(target_filename, test_filename, as_binary=False)
-
-    assert content.startswith(expected_document_start)

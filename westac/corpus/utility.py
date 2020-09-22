@@ -30,7 +30,7 @@ def only_any_alphanumeric():
     return lambda tokens: ( t for t in tokens if any(c.isalnum() for c in t) )
 
 def only_alphabetic_filter():
-    return lambda tokens: (x for x in tokens if any(c in x for c in ALPHABETIC_CHARS))
+    return lambda tokens: ( x for x in tokens if any(c in x for c in ALPHABETIC_CHARS) )
 
 def remove_stopwords(language_or_stopwords='swedish', extra_stopwords=None):
     if isinstance(language_or_stopwords, str):
@@ -60,3 +60,4 @@ def remove_symbols():
 
 def remove_accents():
     return lambda tokens: (x.translate(SYMBOLS_TRANSLATION) for x in tokens)
+

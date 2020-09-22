@@ -35,7 +35,7 @@ def find_packages(archive, query, max_count):
 
     Yields
     -------
-    Iterator[Tuple(str,Package)]
+    Iterator[Tuple[str,Package]]
         A stream of (package-id, package) tuples
     """
     for package_id in archive.search(query, max=max_count):

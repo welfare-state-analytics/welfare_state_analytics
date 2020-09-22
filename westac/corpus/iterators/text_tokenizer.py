@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Callable, Iterable, List, Tuple, Union
 
-import gensim
+from nltk.tokenize import word_tokenize
 
 import westac.common.file_utility as file_utility
 import westac.corpus.iterators.streamify_text_source as streamify
@@ -55,7 +55,7 @@ class TextTokenizer():
         """
         self.source = streamify.streamify_text_source(source_path, filename_pattern=filename_pattern, filename_filter=filename_filter, as_binary=as_binary)
         self.chunk_size = chunk_size
-        self.tokenize = tokenize or gensim.utils.tokenize
+        self.tokenize = tokenize or word_tokenize
 
         self.text_transformer = TextTransformer(transforms=transforms)\
             .add(TRANSFORMS.fix_unicode)\
@@ -64,8 +64,9 @@ class TextTokenizer():
 
         self.iterator = None
 
-        self.filenames = file_utility.list_filtered_filenames(source_path, filename_pattern=filename_pattern, filename_filter=filename_filter)
-        self.metadata = [ file_utility.extract_filename_fields(x, **(filename_fields or dict())) for x in self.filenames ]
+        self.filenames = file_utility.list_filenames(source_path, filename_pattern=filename_pattern, filename_filter=filename_filter)
+        self.basenames = [ os.path.basename(filename) for filename in self.filenames ]
+        self.metadata = [ file_utility.extract_filename_fields(x, **(filename_fields or dict())) for x in self.basenames ]
         self.metadict = { x.filename: x for x in (self.metadata or [])}
 
     def _create_iterator(self):
@@ -79,7 +80,7 @@ class TextTokenizer():
         """Process of source text that happens before any tokenization e.g. XML to text transform """
         return content
 
-    def process(self, filename: str, content: str) -> Iterable(Tuple[str,List[str]]):
+    def process(self, filename: str, content: str) -> Iterable[Tuple[str,List[str]]]:
         """Process a document and returns tokenized text, and optionally splits text in equal length chunks
 
         Parameters
@@ -115,10 +116,13 @@ class TextTokenizer():
                 yield stored_name, tokens[i: i + self.chunk_size]
 
     def __iter__(self):
-        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
         if self.iterator is None:
-            raise StopIteration
-        return next(self.iterator)
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise

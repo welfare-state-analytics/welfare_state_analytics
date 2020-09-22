@@ -34,7 +34,7 @@ class CorpusVectorizer():
     def _document_index(self, corpus):
         """ Groups matrix by vales in column summing up all values in each category
         """
-        metadata = corpus.get_metadata()
+        metadata = corpus.metadata
         df = pd.DataFrame([ x.__dict__ for x in metadata ], columns=metadata[0].__dict__.keys())
         df['document_id'] = list(df.index)
         return df

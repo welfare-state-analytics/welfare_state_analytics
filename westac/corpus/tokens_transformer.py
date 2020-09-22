@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 from typing import Any, List
 
 import textacy.preprocessing.remove as textacy_remove
@@ -9,23 +10,32 @@ from westac.corpus import utility
 # pylint: disable=too-many-arguments
 
 DEFAULT_PROCESS_OPTS = dict(
-    only_alphabetic = True,
+    only_alphabetic = False,
+    only_any_alphanumeric = False,
     to_lower = False,
-    remove_accents = False,
-    min_len = 2,
+    to_upper = False,
+    min_len = 1,
     max_len = 100,
-    keep_numerals = True,
+    remove_accents = False,
     remove_stopwords = False,
-    extra_stopwords = None,
     stopwords = None,
+    extra_stopwords = None,
     language = "swedish",
+    keep_numerals = True,
     keep_symbols = True
 )
+
+def default_opts():
+    sig = inspect.signature(TokensTransformer.__init__)
+    return {
+        name: param.default for name, param
+            in sig.parameters.items() if param.name != 'self'
+    }
 
 class TokensTransformer():
     """Transforms applied on tokenized text"""
     def __init__(self,
-        only_alphabetic: bool = False,
+        only_alphabetic: bool=False,
         only_any_alphanumeric: bool=False,
         to_lower: bool = False,
         to_upper: bool = False,
@@ -58,7 +68,7 @@ class TokensTransformer():
         if remove_accents:
             self.remove_accents()
 
-        if min_len > 1:
+        if min_len is not None and min_len > 1:
             self.min_chars_filter(min_len)
 
         if only_alphabetic:
@@ -80,7 +90,7 @@ class TokensTransformer():
     def transform(self, tokens) -> TokensTransformer:
 
         for ft in self.transforms:
-            tokens = ft(tokens)
+            tokens = [ x for x in ft(tokens) ]
 
         return tokens
 

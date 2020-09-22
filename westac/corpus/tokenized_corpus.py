@@ -32,9 +32,13 @@ class TokenizedCorpus():
         n_tokens = []
         for dokument_name, tokens in self.reader:
 
+            tokens = [ x for x in tokens ]
+
             n_raw_tokens.append(len(tokens))
 
             tokens = self.transformer.transform(tokens)
+
+            tokens = [ x for x in tokens ]
 
             n_tokens.append(len(tokens))
 
@@ -51,11 +55,17 @@ class TokenizedCorpus():
     def filenames(self):
         return self.reader.filenames
 
+    def _create_iterator(self):
+        return self.tokens_stream()
+
     def __iter__(self):
-        self.iterator = self.tokens_stream()
         return self
 
     def __next__(self):
         if self.iterator is None:
-            raise StopIteration
-        return next(self.iterator)
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise

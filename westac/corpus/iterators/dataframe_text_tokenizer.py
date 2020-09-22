@@ -1,6 +1,11 @@
 import types
 
-class DataFrameTextReader:
+from nltk.tokenize import word_tokenize
+
+from westac.corpus.text_transformer import TRANSFORMS, TextTransformer
+
+
+class DataFrameTextTokenizer:
     """Text iterator that returns row-wise text documents from a Pandas DataFrame
     """
     def __init__(self, df, **column_filters):
@@ -31,20 +36,42 @@ class DataFrameTextReader:
             print('Warn: {} n/a rows encountered'.format(len(self.df[self.df.txt.isna()])))
             self.df = self.df.dropna()
 
+        self.text_transformer = TextTransformer(transforms=[])\
+            .add(TRANSFORMS.fix_unicode)\
+            .add(TRANSFORMS.fix_whitespaces)\
+            .add(TRANSFORMS.fix_hyphenation)
+
         self.iterator = None
         self.metadata = self._compile_metadata()
         self.metadict = { x.filename: x for x in (self.metadata or [])}
         self.filenames = [ x.filename for x in self.metadata ]
+        self.tokenize = word_tokenize
+
+    def _create_iterator(self):
+        return (self._process(row['filename'], row['txt']) for _, row in self.df.iterrows())
+
+    def _process(self, filename: str, text: str):
+        """Process the text and returns tokenized text
+        """
+        #text = self.preprocess(text)
+
+        text = self.text_transformer.transform(text)
+
+        tokens = self.tokenize(text, )
+
+        return filename, tokens
 
     def __iter__(self):
-        self.iterator = self._create_iterator()
         return self
 
     def __next__(self):
-        return next(self.iterator)
-
-    def _create_iterator(self):
-        return ((row['filename'], row['txt']) for _, row in self.df.iterrows())
+        if self.iterator is None:
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise
 
     def _compile_metadata(self):
         """Returns document metadata as a list of dicts

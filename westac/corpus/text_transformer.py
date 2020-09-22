@@ -18,7 +18,7 @@ class TextTransformer():
     def __init__(self,
         transforms: List[Callable] = None
     ):
-        self.transforms: List[Callable] = transforms
+        self.transforms: List[Callable] = transforms or []
 
     def add(self, transform, condition=True) -> TextTransformer:
         if condition:
@@ -30,7 +30,7 @@ class TextTransformer():
         for ft in self.transforms:
             text = ft(text)
 
-        return text
+        return text.strip()
 
     def fix_hyphenation(self) -> TextTransformer:
         return self.add(TRANSFORMS.fix_hyphenation)

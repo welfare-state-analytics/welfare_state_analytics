@@ -1,11 +1,12 @@
-import unittest
-import pandas as pd
 import types
+import unittest
 
-from westac.corpus import corpus_vectorizer
-from westac.corpus.iterators import dataframe_text_reader
+import pandas as pd
 
-class Test_DataFrameTextReader(unittest.TestCase):
+from westac.corpus.iterators import dataframe_text_tokenizer
+
+
+class Test_DataFrameTextTokenizer(unittest.TestCase):
 
     def create_test_dataframe(self):
         data = [
@@ -49,9 +50,9 @@ class Test_DataFrameTextReader(unittest.TestCase):
 
     def test_reader_with_all_documents(self):
         df = self.create_test_dataframe()
-        reader = dataframe_text_reader.DataFrameTextReader(df)
+        reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df)
         result = [ x for x in reader ]
-        expected = [('0', 'A B C'), ('1', 'B C D'), ('2', 'C B'), ('3', 'A B F'), ('4', 'E B'), ('5', 'F E E')]
+        expected = [('0', 'A B C'.split()), ('1', 'B C D'.split()), ('2', 'C B'.split()), ('3', 'A B F'.split()), ('4', 'E B'.split()), ('5', 'F E E'.split())]
         self.assertEqual(expected, result)
         self.assertEqual(['0', '1', '2', '3', '4', '5'], reader.filenames)
         self.assertEqual([
@@ -66,9 +67,9 @@ class Test_DataFrameTextReader(unittest.TestCase):
 
     def test_reader_with_given_year(self):
         df = self.create_triple_meta_dataframe()
-        reader = dataframe_text_reader.DataFrameTextReader(df, year=2003)
+        reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=2003)
         result = [x for x in reader]
-        expected = [('3', 'A B F'), ('4', 'E B'), ('5', 'F E E'), ('9', 'A A B'), ('10', 'B B'), ('11', 'A E')]
+        expected = [('3', ['A', 'B', 'F']), ('4', ['E', 'B']), ('5', ['F', 'E', 'E']), ('9', ['A', 'A', 'B']), ('10', ['B', 'B']), ('11', ['A', 'E'])]
         self.assertEqual(expected, result)
         self.assertEqual(['3', '4', '5', '9', '10', '11'], reader.filenames)
         self.assertEqual([

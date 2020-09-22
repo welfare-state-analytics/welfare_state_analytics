@@ -3,7 +3,8 @@ import sys
 
 import click
 
-import westac.corpus.iterators.sparv_xml_iterator as sparv_xml_iterator
+import westac.corpus.sparv_corpus as sparv_corpus
+import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
 from westac.corpus import utility
 from westac.corpus.tokens_transformer import TokensTransformer
 
@@ -37,7 +38,7 @@ def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, 
         keep_symbols=keep_symbols
     )
 
-    opts = { **sparv_xml_iterator.DEFAULT_OPTS, **{
+    opts = { **sparv_reader.DEFAULT_OPTS, **{
         'transforms': transformer.transforms,
         'pos_includes': pos_includes,
         'pos_excludes': pos_excludes,
@@ -46,7 +47,7 @@ def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, 
         'version': version,
     }}
 
-    sparv_xml_iterator.sparv_extract_and_store(input, output, **opts)
+    sparv_corpus.sparv_extract_and_store(input, output, **opts)
 
 if __name__ == '__main__':
     prepare_train_corpus()

@@ -2,7 +2,6 @@
 import logging
 from typing import Callable, List
 
-import westac.common.file_utility as file_utility
 import westac.corpus.iterators.text_tokenizer as text_tokenizer
 from westac.corpus.sparv.sparv_xml_to_text import (XSLT_FILENAME_V3,
                                                    SparvXml2Text)
@@ -21,7 +20,7 @@ DEFAULT_OPTS = dict(
     pos_excludes="|MAD|MID|PAD|"
 )
 
-class SparvXmlIterator(text_tokenizer.TextTokenizer):
+class SparvXmlTokenizer(text_tokenizer.TextTokenizer):
 
     def __init__(self,
         source,
@@ -58,7 +57,7 @@ class SparvXmlIterator(text_tokenizer.TextTokenizer):
 
         return self.parser.transform(content)
 
-class Sparv3XmlCorpusSourceReader(SparvXmlIterator):
+class Sparv3XmlTokenizer(SparvXmlTokenizer):
 
     def __init__(self,
         source,
@@ -80,10 +79,3 @@ class Sparv3XmlCorpusSourceReader(SparvXmlIterator):
             append_pos=append_pos,
             pos_excludes=pos_excludes
         )
-
-
-def sparv_extract_and_store(source: str, target: str, **opts):
-
-    stream = SparvXmlIterator(source, **opts)
-
-    file_utility.store(target, stream)

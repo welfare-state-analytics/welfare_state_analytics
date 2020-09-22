@@ -83,39 +83,20 @@ class Test_ProcessedCorpus(unittest.TestCase):
     def test_n_tokens_when_exhausted_and_only_any_alphanumeric_min_len_two_returns_expected_count(self):
         reader = self.create_reader()
         corpus = corpora.TokenizedCorpus(reader, only_any_alphanumeric=True, min_len=2)
-        r_tokens = {}
-        for filename, tokens in corpus:
-            r_tokens[filename] = len(tokens)
-        n_tokens = { x.filename: x.n_tokens for x in corpus.metadata }
-        n_expected = {
-            'dikt_2019_01_test.txt': 18,
-            'dikt_2019_02_test.txt': 14,
-            'dikt_2019_03_test.txt': 24,
-            'dikt_2020_01_test.txt': 42,
-            'dikt_2020_02_test.txt': 18
-        }
-        p_tokens = { x.filename: x.n_tokens for x in corpus.metadata }
-        p_expected = {
-            'dikt_2019_01_test.txt': 17,
-            'dikt_2019_02_test.txt': 13,
-            'dikt_2019_03_test.txt': 21,
-            'dikt_2020_01_test.txt': 42,
-            'dikt_2020_02_test.txt': 18
-        }
+        n_expected = [ 17, 13, 21, 42, 18 ]
+        _ = [ x for x in corpus ]
+        n_tokens = list(corpus.documents.n_tokens)
         self.assertEqual(n_expected, n_tokens)
-        self.assertEqual(p_expected, p_tokens)
-        self.assertEqual(p_expected, r_tokens)
-
 
     def test_next_document_when_new_corpus_returns_document(self):
         reader = create_text_tokenizer(fix_whitespaces=True, fix_hyphenation=True)
         corpus = corpora.TokenizedCorpus(reader)
         result = next(corpus)
-        expected = "Tre svarta ekar ur snön. " + \
-                   "Så grova, men fingerfärdiga. " + \
+        expected = "Tre svarta ekar ur snön . " + \
+                   "Så grova , men fingerfärdiga . " + \
                    "Ur deras väldiga flaskor " + \
-                   "ska grönskan skumma i vår."
-        self.assertEqual(expected, result[1])
+                   "ska grönskan skumma i vår ."
+        self.assertEqual(expected, ' '.join(result[1]))
 
     def test_get_index_when_extract_passed_returns_metadata(self):
         filename_fields = dict(year=r".{5}(\d{4})_.*", serial_no=r".{9}_(\d+).*")
@@ -133,11 +114,11 @@ class Test_ProcessedCorpus(unittest.TestCase):
         for i in range(0,len(expected)):
             self.assertEqual(expected[i], result[i])
 
-    def test_get_index_when_no_extract_passed_returns_none(self):
+    def test_get_index_when_no_extract_passed_returns_not_none(self):
         reader = create_text_tokenizer(filename_fields=None, fix_whitespaces=True, fix_hyphenation=True)
         corpus = corpora.TokenizedCorpus(reader)
         result = corpus.metadata
-        self.assertIsNone(result)
+        self.assertIsNotNone(result)
 
     def test_next_document_when_token_corpus_returns_tokenized_document(self):
         reader = create_text_tokenizer(filename_fields=None, fix_whitespaces=True, fix_hyphenation=True)
@@ -159,33 +140,15 @@ class Test_ProcessedCorpus(unittest.TestCase):
     def test_n_tokens_when_exhausted_iterater_returns_expected_count(self):
         reader = self.create_reader()
         corpus = corpora.TokenizedCorpus(reader, only_any_alphanumeric=False)
-        r_n_tokens = {}
-        for filename, tokens in corpus:
-            r_n_tokens[filename] = len(tokens)
-        n_tokens = { x.filename: x.n_tokens for x in corpus.metadata }
-        expected = {
-            'dikt_2019_01_test.txt': 22,
-            'dikt_2019_02_test.txt': 16,
-            'dikt_2019_03_test.txt': 26,
-            'dikt_2020_01_test.txt': 45,
-            'dikt_2020_02_test.txt': 21
-        }
+        _ = [ x for x in corpus ]
+        n_tokens = list(corpus.documents.n_tokens)
+        expected = [ 22, 16, 26, 45, 21 ]
         self.assertEqual(expected, n_tokens)
-        self.assertEqual(expected, r_n_tokens)
 
     def test_n_tokens_when_exhausted_and_only_any_alphanumeric_is_true_returns_expected_count(self):
         reader = create_text_tokenizer(filename_fields=None, fix_whitespaces=True, fix_hyphenation=True)
         corpus = corpora.TokenizedCorpus(reader, only_any_alphanumeric=True)
-        r_n_tokens = {}
-        for filename, tokens in corpus:
-            r_n_tokens[filename] = len(tokens)
-        n_tokens = { x.filename: x.n_tokens for x in corpus.metadata }
-        expected = {
-            'dikt_2019_01_test.txt': 18,
-            'dikt_2019_02_test.txt': 14,
-            'dikt_2019_03_test.txt': 24,
-            'dikt_2020_01_test.txt': 42,
-            'dikt_2020_02_test.txt': 18
-        }
+        _ = [ x for x in corpus ]
+        n_tokens = list(corpus.documents.n_tokens)
+        expected = [ 18, 14, 24, 42, 18 ]
         self.assertEqual(expected, n_tokens)
-        self.assertEqual(expected, r_n_tokens)

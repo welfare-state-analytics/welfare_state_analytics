@@ -23,13 +23,21 @@ class ZipTextIterator():
             If true then files are opened as `rb` and no decoding, by default False
         """
         self.source_path = source_path
-        self.filenames = file_utility.list_filtered_filenames(source_path, filename_pattern=filename_pattern, filename_filter=filename_filter)
+        self.filenames = file_utility.list_filenames(source_path, filename_pattern=filename_pattern, filename_filter=filename_filter)
         self.as_binary = as_binary
         self.iterator = None
 
+    def _create_iterator(self):
+        return file_utility.create_iterator(self.source_path, filenames=self.filenames, as_binary=self.as_binary)
+
     def __iter__(self):
-        self.iterator = file_utility.create_iterator(self.source_path, filenames=self.filenames, as_binary=self.as_binary)
         return self
 
     def __next__(self):
-        return next(self.iterator)
+        if self.iterator is None:
+            self.iterator = self._create_iterator()
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise

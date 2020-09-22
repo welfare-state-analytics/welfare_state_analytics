@@ -21,9 +21,9 @@ import numpy as np
 import scipy
 import os
 
-from westac.common import corpus_vectorizer
+from westac.corpus import corpus_vectorizer
 from westac.corpus import tokenized_corpus
-from westac.corpus.iterators import dataframe_text_reader
+from westac.corpus.iterators import dataframe_text_tokenizer
 
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
@@ -93,7 +93,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     if min_count > 1:
         cdf = cdf[cdf.value >= min_count]
 
-    n_documents = len(corpus.get_metadata())
+    n_documents = len(corpus.metadata)
     n_tokens = sum(corpus.n_raw_tokens.values())
 
     cdf['value_n_d'] = cdf.value / float(n_documents)
@@ -105,7 +105,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):
-    reader = dataframe_text_reader.DataFrameTextReader(df, year=period, newspaper=newspaper)
+    reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
     df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
     df_y['newspaper'] = newspaper
     df_y['period'] = str(period)
