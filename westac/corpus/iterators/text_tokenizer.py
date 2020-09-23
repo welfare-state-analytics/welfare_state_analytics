@@ -93,11 +93,9 @@ class TextTokenizer():
         Tuple[str,List[str]]
             Filename and tokens
         """
-        content = self.preprocess(content)
-
-        content = self.text_transformer.transform(content)
-
-        tokens = self.tokenize(content)
+        text   = self.preprocess(content)
+        text   = self.text_transformer.transform(text)
+        tokens = self.tokenize(text)
 
         if self.chunk_size is None:
 

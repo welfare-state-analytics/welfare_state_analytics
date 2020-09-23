@@ -16,9 +16,15 @@ def test_reader_store_result():
     expected_documents = [ ['rödräv', 'hunddjur', 'utbredning', 'halvklot' ], [ 'fjällräv', 'fjällvärld', 'liv', 'fjällräv', 'vinter', 'men', 'variant', 'år' ] ]
     expected_names = [ "document_001.txt", "document_002.txt"]
 
-    target_filename = './westac/tests/sparv_extract_and_store.zip'
+    target_filename = './westac/tests/output/sparv_extract_and_store.zip'
 
-    opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
+    opts = dict(
+        version=4,
+        pos_includes='|NN|',
+        lemmatize=True,
+        chunk_size=None,
+        to_lower=True,
+    )
 
     sparv_corpus.sparv_extract_and_store(SPARV_ZIPPED_XML_EXPORT_FILENAME, target_filename, **opts)
 
@@ -37,7 +43,23 @@ def test_sparv_extract_and_store_when_only_nouns_and_source_is_sparv3_succeeds()
         'pos_includes': '|NN|',
         'lemmatize': False,
         'chunk_size': None,
-        'version': 3
+        'version': 3,
+        'to_lower': True,
+        'min_len': 2,
+        'stopwords': ['<text>']
+        # only_alphabetic: bool=False,
+        # only_any_alphanumeric: bool=False,
+        # to_lower: bool = False,
+        # to_upper: bool = False,
+        # min_len: int = None,
+        # max_len: int = None,
+        # remove_accents: bool = False,
+        # remove_stopwords: bool = False,
+        # stopwords: Any = None,
+        # extra_stopwords: List[str] = None,
+        # language: str = "swedish",
+        # keep_numerals: bool = True,
+        # keep_symbols: bool = True
     }
 
     target_filename = './westac/tests/output/sou_test_sparv3_extracted_txt.zip'

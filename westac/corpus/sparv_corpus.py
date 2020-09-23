@@ -34,8 +34,8 @@ class SparvTokenizedCorpus(tokenized_corpus.TokenizedCorpus):
         )
         super().__init__(tokenizer, **tokens_transform_opts)
 
-def sparv_extract_and_store(source: str, target: str, **opts):
+def sparv_extract_and_store(source: str, target: str, version: int, **opts):
 
-    corpus = SparvTokenizedCorpus(source, **opts)
+    corpus = SparvTokenizedCorpus(source, version, **opts)
 
     file_utility.store(target, corpus)

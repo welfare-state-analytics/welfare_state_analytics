@@ -60,4 +60,3 @@ def remove_symbols():
 
 def remove_accents():
     return lambda tokens: (x.translate(SYMBOLS_TRANSLATION) for x in tokens)
-

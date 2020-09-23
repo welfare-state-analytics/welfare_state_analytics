@@ -51,10 +51,15 @@ class SparvXmlTokenizer(text_tokenizer.TextTokenizer):
         self.pos_includes = pos_includes
         self.pos_excludes = pos_excludes
         self.xslt_filename = XSLT_FILENAME_V3 if version == 3 else xslt_filename
-        self.parser = SparvXml2Text(xslt_filename=self.xslt_filename, delimiter=self.delimiter, pos_includes=pos_includes, lemmatize=lemmatize, append_pos=append_pos, pos_excludes=pos_excludes)
-
+        self.parser = SparvXml2Text(
+            xslt_filename=self.xslt_filename,
+            delimiter=self.delimiter,
+            pos_includes=self.pos_includes,
+            lemmatize=self.lemmatize,
+            append_pos=self.append_pos,
+            pos_excludes=self.pos_excludes
+        )
     def preprocess(self, content):
-
         return self.parser.transform(content)
 
 class Sparv3XmlTokenizer(SparvXmlTokenizer):

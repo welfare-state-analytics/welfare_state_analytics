@@ -40,5 +40,11 @@ class SparvXml2Text():
         return "'{}'".format(token)
 
     def _transform(self, xml):
-        text = self.xslt_transformer(xml, pos_includes=self.pos_includes, delimiter=self.delimiter, target=self.target, append_pos=self.append_pos, pos_excludes=self.pos_excludes)
+        text = self.xslt_transformer(xml,
+            pos_includes=self.pos_includes,
+            delimiter=self.delimiter,
+            target=self.target,
+            append_pos=self.append_pos,
+            pos_excludes=self.pos_excludes
+        )
         return str(text)

@@ -35,6 +35,7 @@
                 <xsl:if test="$append_pos!=''">
                     <xsl:value-of select="$append_pos" disable-output-escaping="yes"/><xsl:value-of select="@pos"/>
                 </xsl:if>
+
                 <xsl:value-of select="$delimiter" disable-output-escaping="yes"/>
 
             </xsl:otherwise>
