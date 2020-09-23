@@ -3,13 +3,13 @@ import sys
 
 import click
 
+root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
+sys.path = list(set(sys.path + [ root_folder ]))
+
 import westac.corpus.sparv_corpus as sparv_corpus
 import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
 from westac.corpus import utility
 from westac.corpus.tokens_transformer import TokensTransformer
-
-root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
-sys.path = list(set(sys.path + [ root_folder ]))
 
 
 @click.command()
@@ -21,7 +21,7 @@ sys.path = list(set(sys.path + [ root_folder ]))
 @click.option('--lemmatize/--no-lemmatize', default=True, is_flag=True, help='')
 @click.option('--lower/--no-lower', default=True, is_flag=True, help='')
 @click.option('--remove-stopwords', default=None, type=click.Choice(['swedish', 'english']), help='Remove stopwords using given language')
-@click.option('--min-word-length', default=None, type=click.IntRange(1,99), help='Remove stopwords using given language')
+@click.option('--min-word-length', default=None, type=click.IntRange(1,99), help='Min length of words to keep')
 @click.option('--keep-symbols/--no-keep-symbols', default=True, is_flag=True, help='Keep symbols')
 @click.option('--keep-numerals/--no-keep-numerals', default=True, is_flag=True, help='Keep numerals')
 @click.option('--version', 'version', default=4, help='Sparv version i.e. 3 or 4', type=click.IntRange(3,4))
