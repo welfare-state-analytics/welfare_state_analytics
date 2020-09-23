@@ -13,6 +13,7 @@ invoke = "*"
 nbstripout = "*"
 pytest = "*"
 pre-commit = "*"
+coverage = "*"
 
 [packages]
 appnope = {version = "*",sys_platform = "== 'darwin'"}

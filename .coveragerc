@@ -1,2 +1,16 @@
+[paths]
+source =
+   westac
+   scripts
+
 [run]
-omit = westac/tests/*
+omit =
+    westac/tests/*
+    text_analytic_tools/*
+
+branch = true
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
