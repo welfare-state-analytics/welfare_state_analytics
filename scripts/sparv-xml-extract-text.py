@@ -1,3 +1,5 @@
+import datetime
+import json
 import os
 import sys
 
@@ -6,15 +8,27 @@ import click
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import westac.corpus.sparv_corpus as sparv_corpus
 import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
+import westac.corpus.sparv_corpus as sparv_corpus
+from westac.common.utility import timestamp_filename, suffix_filename, replace_extension
 from westac.corpus import utility
 from westac.corpus.tokens_transformer import TokensTransformer
 
+def store_options_to_json_file(input_filename, output_filename, tokens_transform_opts, sparv_extract_opts):
+
+    store_options = {
+        'input': input_filename,
+        'output': output_filename,
+        'tokens_transform_opts': tokens_transform_opts,
+        'sparv_extract_opts': sparv_extract_opts
+    }
+
+    store_options_filename = replace_extension(output_filename, 'json')
+    with open(store_options_filename, 'w') as json_file:
+      json.dump(store_options, json_file)
 
 @click.command()
-@click.argument('input') #, help='Model name.')
-@click.argument('output') #, help='Model name.')
+@click.argument('input_filename') #, help='Model name.')
 @click.option('--pos-includes', default='', help='List of POS tags to include e.g. "|NN|JJ|".')
 @click.option('--pos-excludes',  default='|MAD|MID|PAD|', help='List of POS tags to exclude e.g. "|MAD|MID|PAD|".')
 @click.option('--chunk-size', 'chunk_size', default=None, help='Document chunk size, defult one.')
@@ -25,10 +39,10 @@ from westac.corpus.tokens_transformer import TokensTransformer
 @click.option('--keep-symbols/--no-keep-symbols', default=True, is_flag=True, help='Keep symbols')
 @click.option('--keep-numerals/--no-keep-numerals', default=True, is_flag=True, help='Keep numerals')
 @click.option('--version', 'version', default=4, help='Sparv version i.e. 3 or 4', type=click.IntRange(3,4))
-def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, lemmatize, lower, remove_stopwords, min_word_length, keep_symbols, keep_numerals, version):
+def prepare_train_corpus(input_filename, pos_includes, pos_excludes, chunk_size, lemmatize, lower, remove_stopwords, min_word_length, keep_symbols, keep_numerals, version):
     """Prepares the a training corpus from Sparv XML archive
     """
-    transformer = TokensTransformer(
+    tokens_transform_opts = dict(
         to_lower=lower,
         remove_stopwords=remove_stopwords is not None,
         language=remove_stopwords,
@@ -38,16 +52,21 @@ def prepare_train_corpus(input, output, pos_includes, pos_excludes, chunk_size, 
         keep_symbols=keep_symbols
     )
 
-    opts = { **sparv_reader.DEFAULT_OPTS, **{
-        'transforms': transformer.transforms,
+    output_filename = replace_extension(timestamp_filename(suffix_filename(input_filename, "text")), 'zip')
+
+    transformer = TokensTransformer(**tokens_transform_opts)
+
+    sparv_extract_opts = { **sparv_reader.DEFAULT_OPTS, **{
         'pos_includes': pos_includes,
         'pos_excludes': pos_excludes,
         'chunk_size': chunk_size,
         'lemmatize': lemmatize,
-        'version': version,
+        'version': version
     }}
 
-    sparv_corpus.sparv_extract_and_store(input, output, **opts)
+    sparv_corpus.sparv_extract_and_store(input_filename, output_filename, transforms=transformer.transforms, **sparv_extract_opts)
+
+    store_options_to_json_file(input_filename, output_filename, tokens_transform_opts, sparv_extract_opts)
 
 if __name__ == '__main__':
     prepare_train_corpus()
