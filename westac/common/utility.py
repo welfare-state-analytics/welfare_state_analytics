@@ -1,6 +1,7 @@
 import datetime
 import itertools
 import logging
+import os
 import re
 import time
 
@@ -39,10 +40,28 @@ def nth(iterable, n: int, default=None):
     "Returns the nth item or a default value"
     return next(itertools.islice(iterable, n, None), default)
 
+def now_timestamp():
+    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+
 def timestamp(format_string=None):
     """ Add timestamp to string that must contain exacly one placeholder """
-    tz = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    tz = now_timestamp()
     return tz if format_string is None else format_string.format(tz)
+
+def suffix_filename(filename, suffix):
+    output_path, output_file = os.path.split(filename)
+    output_base, output_ext = os.path.splitext(output_file)
+    suffixed_filename = os.path.join(output_path, f"{output_base}_{suffix}{output_ext}")
+    return suffixed_filename
+
+def replace_extension(filename, extension):
+    if filename.endswith(extension):
+        return filename
+    base, _ = os.path.splitext(filename)
+    return f"{base}{'' if extension.startswith('.') else '.'}{extension}"
+
+def timestamp_filename(filename):
+    return suffix_filename(filename, now_timestamp())
 
 def flatten(l):
     return [ x for ws in l for x in ws]
