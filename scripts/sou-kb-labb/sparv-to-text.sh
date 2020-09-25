@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "BASH_SOURCE=$BASH_SOURCE"
-echo "PYTHONPATH=$PYTHONPATH"
+#echo "BASH_SOURCE=$BASH_SOURCE"
+#echo "PYTHONPATH=$PYTHONPATH"
 
 project_root_path=
 
@@ -16,13 +16,12 @@ add_project_root_to_python_path() {
 
 add_project_root_to_python_path
 
-echo $PYTHONPATH
+#timestamp=`date "+%Y%m%d%H%M%S"`
+input_file=$project_root_path/data/SOU-KB-labb/SOU-KB-labb-corpus-1945-1989.sparv.xml.zip
+#output_file=$project_root_path/data/SOU-KB-labb/sou_kb-labb_1945-1989.text_${timestamp}.zip
 
-input_file=$project_root_path/data/sou_test_sparv3_xml.zip
-output_file=$project_root_path/data/20202023_sou_test_sparv3_test_txt.zip
-
-pipenv run python scripts/sparv-to-text.py $input_file $output_file \
-     --pos-includes='|NN|JJ|' \
+pipenv run python $project_root_path/scripts/sparv-to-text.py $input_file \
+     --pos-includes='|NN|JJ|AB|PM|' \
      --lemmatize \
      --lower \
      --remove-stopwords=swedish  \
