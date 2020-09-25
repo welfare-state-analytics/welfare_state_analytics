@@ -6,9 +6,9 @@
 The Python script `extract_json_text.py` downloads `content.json` and `meta.json` for all packages having tag "protocoll" (query `{ "tags": "protokoll" }`).
 
 ```bash
-cd source/welfare_state_analytics
+cd source/westac_data
 pipenv shell
-cd westac/kblab
+cd src/kb_labb
 nohup python download_protocol_content_json.py >& run.log &
 ```
 
