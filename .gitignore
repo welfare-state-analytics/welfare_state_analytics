@@ -17,6 +17,7 @@ userlist
 tmp/
 __pycache__/
 .pytest_cache/
+.mypy_cache/
 output.xml
 **/output/
 **/data/
