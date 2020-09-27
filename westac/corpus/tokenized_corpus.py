@@ -26,7 +26,7 @@ class TokenizedCorpus():
         self.transformer = TokensTransformer(**opts)
         self.iterator = None
 
-    def tokens_stream(self):
+    def _create_document_tokens_stream(self):
 
         n_raw_tokens = []
         n_tokens = []
@@ -47,6 +47,13 @@ class TokenizedCorpus():
         self.documents['n_raw_tokens'] = n_raw_tokens
         self.documents['n_tokens'] = n_tokens
 
+    def _create_iterator(self):
+        return self._create_document_tokens_stream()
+
+    @property
+    def terms(self):
+        return ReIterableTerms(self)
+
     @property
     def metadata(self):
         return self.reader.metadata
@@ -54,9 +61,6 @@ class TokenizedCorpus():
     @property
     def filenames(self):
         return self.reader.filenames
-
-    def _create_iterator(self):
-        return self.tokens_stream()
 
     def __iter__(self):
         return self
@@ -69,3 +73,23 @@ class TokenizedCorpus():
         except StopIteration:
             self.iterator = None
             raise
+
+class ReIterableTerms():
+
+    def __init__(self, corpus):
+
+        self.corpus = corpus
+        self.iterator = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.iterator is None:
+            self.iterator = ( tokens for _, tokens in self.corpus )
+        try:
+            return next(self.iterator)
+        except StopIteration:
+            self.iterator = None
+            raise
+
