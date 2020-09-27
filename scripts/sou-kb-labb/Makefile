@@ -5,7 +5,7 @@ CORPUS_FOLDER:="./data"
 .PHONY: gensim_lda_200
 
 gensim_lda_200 : d=x
-	corpus_filename=/data/westac/SOU-KB-labb/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200923195551.zip
+	corpus_filename=/data/westac/sou_kb_labb/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200923195551.zip
 	engine=lda_gensim
 	n_topics=200
     max_iters=2000

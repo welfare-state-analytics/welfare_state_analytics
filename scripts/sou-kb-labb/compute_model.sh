@@ -8,7 +8,7 @@ n_workers=1
 
 if [ ! -d "$corpus_folder" ]; then
     echo "error: data folder '$corpus_folder' is missing (create a folder or a symbolic link)"
-    echo "       e.g. ln -s ~/source/welfare-state-analytics/welfare_state_analytics/data/SOU-KB-labb data"
+    echo "       e.g. ln -s /data/westac/sou_kb_labb data"
     exit 64
 fi
 
