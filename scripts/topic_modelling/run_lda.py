@@ -1,19 +1,20 @@
-import os, sys
+import os
+import sys
+
 import click
 
 root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
 
 sys.path = list(set(sys.path + [ root_folder ]))
 
+import logging
+from os.path import join as jj
+
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.topic_model as topic_model
 import westac.corpus.vectorized_corpus as vectorized_corpus
 
-import types
-import pickle
-import logging
-
-CORPUS_FOLDER = os.path.join(root_folder, "data")
+CORPUS_FOLDER = jj(root_folder, "data")
 
 ENGINE_OPTIONS = [
     ('MALLET LDA', 'gensim_mallet-lda'),
@@ -31,22 +32,6 @@ ENGINE_OPTIONS = [
     ('STTM   DMM', 'gensim_sttm-dmm'),
     ('STTM  WATM', 'gensim_sttm-watm'),
 ]
-
-def store_model(data, filename):
-
-    data = types.SimpleNamespace(
-        topic_model=data.topic_model,
-        id2term=data.id2term,
-        bow_corpus=data.bow_corpus,
-        doc_term_matrix=None, #doc_term_matrix,
-        doc_topic_matrix=None, #doc_topic_matrix,
-        vectorizer=None, #vectorizer,
-        processed=data.processed,
-        coherence_scores=data.coherence_scores
-    )
-
-    with open(filename, 'wb') as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
 @click.command()
 @click.argument('name') #, help='Model name.')
@@ -120,7 +105,7 @@ def run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, pas
         os.mkdir(target_folder)
 
     m_data, c_data = topic_model.compute(
-        terms=terms,
+        terms=None,
         doc_term_matrix=dtm,
         id2word=id2token,
         documents=documents,
@@ -131,12 +116,12 @@ def run_model(name, n_topics, data_folder, corpus_type, corpus_name, engine, pas
     target_name = os.path.join(target_folder, 'gensim.model')
     m_data.topic_model.save(target_name)
 
-    topic_model.store_model(m_data, data_folder, name)
+    topic_model.store_model(m_data, jj(data_folder, name))
 
-    c_data.document_topic_weights = corpus_data.extend_with_document_info(
-        c_data.document_topic_weights,
-        corpus_data.slim_documents(documents)
-    )
+    # c_data.document_topic_weights = corpus_data.extend_with_document_info(
+    #     c_data.document_topic_weights,
+    #     corpus_data.slim_documents(documents)
+    # )
 
     c_data.store(data_folder, name)
 

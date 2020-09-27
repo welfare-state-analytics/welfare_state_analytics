@@ -57,13 +57,11 @@ class CompiledData(object):
             self.document_topic_weights.to_csv(os.path.join(target_folder, 'document_topic_weights.zip'), '\t')
 
     @staticmethod
-    def load(data_folder, model_name, pickled=False):
-
-        target_folder = os.path.join(data_folder, model_name)
+    def load(folder, pickled=False):
 
         if pickled:
 
-            filename = os.path.join(target_folder, "compiled_data.pickle")
+            filename = os.path.join(folder, "compiled_data.pickle")
 
             with open(filename, 'rb') as f:
                 data = pickle.load(f)
@@ -72,11 +70,11 @@ class CompiledData(object):
 
         else:
             return CompiledData(
-                pd.read_csv(os.path.join(target_folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False),
-                pd.read_csv(os.path.join(target_folder, 'dictionary.zip'), '\t', header=0, index_col=0, na_filter=False),
-                pd.read_csv(os.path.join(target_folder, 'topic_token_weights.zip'), '\t', header=0, index_col=0, na_filter=False),
-                pd.read_csv(os.path.join(target_folder, 'topic_token_overview.zip'), '\t', header=0, index_col=0, na_filter=False),
-                pd.read_csv(os.path.join(target_folder, 'document_topic_weights.zip'), '\t', header=0, index_col=0, na_filter=False)
+                pd.read_csv(os.path.join(folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(folder, 'dictionary.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(folder, 'topic_token_weights.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(folder, 'topic_token_overview.zip'), '\t', header=0, index_col=0, na_filter=False),
+                pd.read_csv(os.path.join(folder, 'document_topic_weights.zip'), '\t', header=0, index_col=0, na_filter=False)
             )
 
     def info(self):
@@ -215,10 +213,12 @@ def compile_data(model, corpus, id2term, documents, doc_topic_matrix=None, n_tok
     '''
     try:
 
-        """ Fix missing n_terms """
+        """ Fix missing n_terms (only vectorized corps"""
         if 'n_terms' not in documents.columns:
-            documents['n_terms'] = corpus.sparse.sum(axis=0).A1
-
+            if hasattr(corpus, 'sparse'):
+                documents['n_terms'] = corpus.sparse.sum(axis=0).A1
+            if isinstance(corpus, list):
+                documents['n_terms'] = [ sum((w[1] for w in d)) for d in corpus ]
         dictionary = id2word2df(id2term)
         topic_token_weights = compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
         alpha = model.alpha if 'alpha' in model.__dict__ else None

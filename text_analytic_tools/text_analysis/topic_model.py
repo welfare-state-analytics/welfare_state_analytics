@@ -1,16 +1,15 @@
-import types
-import textacy
-import gensim
+import json
 import os
 import pickle
-import json
+import types
 
-import text_analytic_tools.utility as utility
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
+import gensim
+import textacy
+
 import text_analytic_tools.text_analysis.compute_coherence as coherence
-
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.engine_options as options
-from pprint import pprint as pp
+import text_analytic_tools.utility as utility
 
 logger = utility.getLogger("text_analytic_tools")
 
@@ -24,7 +23,7 @@ def compute(
     documents=None,
     doc_term_matrix=None,
     id2word=None,
-    method='sklearn_lda',
+    method: str='sklearn_lda',
     vectorizer_args=None,
     engine_args=None,
     **args
@@ -116,28 +115,26 @@ def compute(
 
     return m_data, c_data
 
-def store_model(model_data, data_folder, model_name):
+def store_model(model_data, folder):
 
-    target_folder = os.path.join(data_folder, model_name)
-    if not os.path.isdir(target_folder):
-        os.mkdir(target_folder)
+    os.makedirs(folder, exist_ok=True)
 
     model_data.doc_term_matrix = None
     model_data.options['tm_args']['id2word'] = None
     model_data.options['tm_args']['corpus'] = None
 
-    filename = os.path.join(target_folder, "model_data.pickle")
+    filename = os.path.join(folder, "model_data.pickle")
 
     with open(filename, 'wb') as fp:
         pickle.dump(model_data, fp, pickle.HIGHEST_PROTOCOL)
 
-    filename = os.path.join(target_folder, "model_options.json")
+    filename = os.path.join(folder, "model_options.json")
     default = lambda o: f"<<non-serializable: {type(o).__qualname__}>>"
     with open(filename, 'w') as fp:
         json.dump(model_data.options, fp, indent=4, default=default)
 
-def load_model(data_folder, model_name):
-    filename = os.path.join(data_folder, model_name, "model_data.pickle")
+def load_model(folder):
+    filename = os.path.join(folder, "model_data.pickle")
     with open(filename, 'rb') as f:
         data = pickle.load(f)
     return data

@@ -1,12 +1,15 @@
 import os
 import types
+import warnings
+from os.path import join as jj
+
 import ipywidgets as widgets
 import pandas as pd
-import text_analytic_tools.text_analysis.topic_model as topic_model
+
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
+import text_analytic_tools.text_analysis.topic_model as topic_model
 import text_analytic_tools.text_analysis.utility as tmutility
 import westac.common.utility as utility
-import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -24,13 +27,14 @@ pd.set_option('max_colwidth', 300)
 
 from IPython.display import display
 
+
 def load_model(corpus_folder, state, model_name, model_infos=None):
 
     model_infos = model_infos or tmutility.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x['name'] == model_name)
 
-    m_data = topic_model.load_model(*os.path.split(model_info['folder']))
-    c_data = derived_data_compiler.CompiledData.load(corpus_folder, model_info['name'])
+    m_data = topic_model.load_model(model_info['folder'])
+    c_data = derived_data_compiler.CompiledData.load(jj(corpus_folder, model_info['name']))
 
     state.set_data(m_data, c_data)
 
