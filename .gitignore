@@ -22,7 +22,7 @@ output.xml
 **/output/
 **/data/
 **/secrets/
-data/
+**/data
 .ipynb_checkpoints/
 .vscode/
 .spyproject/
