@@ -20,7 +20,7 @@ add_project_root_to_python_path
 input_file=$project_root_path/data/SOU-KB-labb/SOU-KB-labb-corpus-1945-1989.sparv.xml.zip
 #output_file=$project_root_path/data/SOU-KB-labb/sou_kb-labb_1945-1989.text_${timestamp}.zip
 
-pipenv run python $project_root_path/scripts/sparv-to-text.py $input_file \
+pipenv run python $project_root_path/scripts/sparv-xml-extract-text.py $input_file \
      --pos-includes='|NN|JJ|AB|PM|' \
      --lemmatize \
      --lower \
