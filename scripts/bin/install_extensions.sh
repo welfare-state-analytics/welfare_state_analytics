@@ -1,6 +1,6 @@
 #!/bin/bash
 
-jupyter labextension install \
+pipenv run jupyter labextension install \
     @jupyter-widgets/jupyterlab-manager \
     beakerx-jupyterlab \
     @bokeh/jupyter_bokeh \
