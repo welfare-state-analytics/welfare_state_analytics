@@ -100,7 +100,7 @@ def list_filenames(folder_or_zip: Union[str, zipfile.ZipFile], filename_pattern:
 
     if filenames is None:
 
-        raise ValueError("Only folder or ZIP or file are valid arguments")
+        raise ValueError("Source not found. Only folder or ZIP or file are valid arguments")
 
     return [
         filename for filename in sorted(filenames)
