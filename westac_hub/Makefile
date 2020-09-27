@@ -45,7 +45,7 @@ userlist:
 	@echo "    wash"
 	@exit 1
 
-check-files: userlist secrets/.env.oauth2 # $(cert_files) secrets/postgres.env
+check-files: config/userlist secrets/.env.oauth2 # $(cert_files) secrets/postgres.env
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
@@ -97,4 +97,4 @@ requirements.txt: ../../Pipfile.lock
 	@echo "	$(CURDIR)"
 	@echo "  pipenv run pip freeze > requirements.txt"
 
-.PHONY: bash clear_volumes clean down up follow build restart pull nuke network
+.PHONY: bash clear_volumes clean down up follow build restart pull nuke network userlist
