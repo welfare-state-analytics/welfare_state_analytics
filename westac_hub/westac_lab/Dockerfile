@@ -128,8 +128,7 @@ ADD https://api.github.com/repos/humlab/welfare_state_analytics/git/refs/heads/m
 
 RUN git clone https://github.com/humlab/welfare_state_analytics.git \
     && cd welfare_state_analytics \
-    && rm -rf .git* .docker* .travis* Pipfile* archive docker install_extensions.sh pytest* run* sparv_pipeline* westac_hub vectorize_runner* \
-    && cp westac/notebooks/political_in_newspapers/3_explore_topic_models.ipynb .
+    && rm -rf .git* .docker* .travis* Pipfile* archive docker pytest* run* westac_hub
 
 #COPY user-settings  $HOME/.jupyter/lab/
 #COPY jupyter_notebook_config.py $HOME/.jupyter/
