@@ -128,7 +128,7 @@ ADD https://api.github.com/repos/welfare-state-analytics/welfare_state_analytics
 
 RUN git clone https://github.com/welfare-state-analytics/welfare_state_analytics.git \
     && cd welfare_state_analytics \
-    && rm -rf .git* .docker* .travis* Pipfile* archive docker pytest* run* westac_hub
+    && rm -rf .git* .docker* .travis* Pipfile* archive docker pytest* run* westac_hub Makefile requirements.txt setup.py NOTE.md
 
 #COPY user-settings  $HOME/.jupyter/lab/
 #COPY jupyter_notebook_config.py $HOME/.jupyter/
