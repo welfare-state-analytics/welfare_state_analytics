@@ -1,8 +1,8 @@
 
 
-## Typing annotations
+# Typing annotations
 
-### Two ways declaring the type
+## The two ways of declaring the type
 
 ```python
 x : int = 1
@@ -61,9 +61,6 @@ z = {**x, **y}
 
 ```
 
-```python
-```
-
 #### Install Git-LFS on Debian / Ubuntu
 
 ```bash
@@ -103,3 +100,20 @@ Install the hook:
 % pipenv shell
 % pre-commit install
 ```
+
+## Note
+
+Unit test debugging with `pytest` only works when code-coverage is disabled:
+
+```json
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [ "--no-cov" ]
+}
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [ "--cov-config=.coveragerc", "--cov=./westac", ]
+}
+```
+
+See [issue](https://github.com/microsoft/vscode-python/issues/693) and [issue](https://github.com/kondratyev-nv/vscode-python-test-adapter/issues/123).

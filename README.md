@@ -1,22 +1,21 @@
-# The Welfare State Analytics Repository
+# The Welfare State Analytics Text Analysis Repository
 
-### Prerequisites
+## About the Project
 
-### Installation
+Welfare State Analytics. Text Mining and Modeling Swedish Politics, Media & Culture, 1945-1989 (WeStAc) is a digital humanities research project with five co-operatings partners: Umeå University, Uppsala University, Aalto University (Finland) and the National Library of Sweden.
+
+The project will digitise literature, curate already digitised collections, and perform research via probabilistic methods and text mining models. WeStAc will both digitise and curate three massive textual datasets—in all, Big Data of almost four billion tokens—from the domains of Swedish politics, news media and literary culture during the second half of the 20th century.
+
+## Installation
+
+### Local install using pipenv
 
 See [this page](https://github.com/humlab/welfare_state_analytics/wiki/How-to:-Install-notebooks-on-local-machine).
 
-### Note
+### JupyterHub installation
 
-Unit test debugging with `pytest` only works when code-coverage is disabled:
-```
-{
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [ "--no-cov" ]
-}
-{
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [ "--cov-config=.coveragerc", "--cov=./westac", ]
-}
-```
-See [issue](https://github.com/microsoft/vscode-python/issues/693) and [issue](https://github.com/kondratyev-nv/vscode-python-test-adapter/issues/123).
+The `westac_hub` folder contains a ready-to-use Docker setup (`Dockerfile` and `docker-compose.yml`) for a Jupyter Hub using `nginx` as reverse-proxy. The default setup uses `DockerSpawner` that spawns containers as specified in `westac_lab`, and Github for autorization (OAuth2). See the Makefile on how to build the project.
+
+### Single Docker container
+
+You can also run the `westac_lab` container as a single Docker container. You need to have Docker installed on your computer.
