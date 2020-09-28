@@ -1,34 +1,75 @@
 import os
-import types
-import pandas as pd
-import numpy as np
-import text_analytic_tools.utility as utility
-import gensim
 import pickle
 import sys
+import types
+from typing import Any, Tuple, List, Dict
+
+import gensim
+import numpy as np
+import pandas as pd
+
+import text_analytic_tools.utility as utility
 
 logger = utility.getLogger('corpus_text_analysis')
 
 class CompiledData(object):
-
-    def __init__(self, documents, dictionary, topic_token_weights, topic_token_overview, document_topic_weights):
-
+    """Aggregate container for a topic model applied to a corpus and stored as pandas DataFrames.
+    """
+    def __init__(self,
+        documents: pd.DataFrame,
+        dictionary: Any,
+        topic_token_weights: pd.DataFrame,
+        topic_token_overview: pd.DataFrame,
+        document_topic_weights: pd.DataFrame
+    ):
+        """
+        Parameters
+        ----------
+        documents : pd.DataFrame
+            Corpus document index
+        dictionary : Any
+            Corpus dictionary
+        topic_token_weights : pd.DataFrame
+            Topic token weights
+        topic_token_overview : pd.DataFrame
+            Topic overview
+        document_topic_weights : pd.DataFrame
+            Document topic weights
+        """
         self.dictionary = dictionary
         self.documents = documents
         self.topic_token_weights = topic_token_weights
         self.topic_token_overview = topic_token_overview
         self.document_topic_weights = document_topic_weights
 
+        # Ensure that `year` column exists
+
+        self.document_topic_weights =  extend_with_document_column(self.document_topic_weights, 'year', documents)
+
     @property
-    def year_period(self):
+    def year_period(self) -> Tuple[int,int]:
+        """Returns documents `year` interval (if exists)"""
+        if 'year' not in self.document_topic_weights.columns:
+            return (None, None)
         return (self.document_topic_weights.year.min(), self.document_topic_weights.year.max())
 
     @property
-    def topic_ids(self):
+    def topic_ids(self) -> List[int]:
+        """Returns unique topic ids """
         return list(self.document_topic_weights.topic_id.unique())
 
     def store(self, data_folder, model_name, pickled=False):
+        """Stores aggregate in `data_folder` with filenames prefixed by `model_name`
 
+        Parameters
+        ----------
+        data_folder : str
+            target folder
+        model_name : str
+            Model name
+        pickled : bool, optional
+            if True then pickled (binary) format else  CSV, by default False
+        """
         target_folder = os.path.join(data_folder, model_name)
 
         if not os.path.isdir(target_folder):
@@ -57,7 +98,9 @@ class CompiledData(object):
             self.document_topic_weights.to_csv(os.path.join(target_folder, 'document_topic_weights.zip'), '\t')
 
     @staticmethod
-    def load(folder, pickled=False):
+    def load(folder, pickled: bool=False):
+        """Loads previously stored aggregate"""
+        data = None
 
         if pickled:
 
@@ -66,16 +109,18 @@ class CompiledData(object):
             with open(filename, 'rb') as f:
                 data = pickle.load(f)
 
-            return CompiledData(data.documents, data.dictionary, data.topic_token_weights, data.topic_token_overview, data.document_topic_weights)
+            data = CompiledData(data.documents, data.dictionary, data.topic_token_weights, data.topic_token_overview, data.document_topic_weights)
 
         else:
-            return CompiledData(
+            data = CompiledData(
                 pd.read_csv(os.path.join(folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False),
                 pd.read_csv(os.path.join(folder, 'dictionary.zip'), '\t', header=0, index_col=0, na_filter=False),
                 pd.read_csv(os.path.join(folder, 'topic_token_weights.zip'), '\t', header=0, index_col=0, na_filter=False),
                 pd.read_csv(os.path.join(folder, 'topic_token_overview.zip'), '\t', header=0, index_col=0, na_filter=False),
                 pd.read_csv(os.path.join(folder, 'document_topic_weights.zip'), '\t', header=0, index_col=0, na_filter=False)
             )
+
+        return data
 
     def info(self):
         for o_name in [ k for k in self.__dict__ if not k.startswith("__")]:
@@ -91,8 +136,19 @@ class CompiledData(object):
     def term2id(self):
         return { v: k for k,v in self.id2term.items() }
 
-def id2word2df(id2word):
+def id2word2df(id2word: Dict) -> pd.DataFrame:
+    """Returns token id to word mapping `id2word` as a pandas DataFrane, with DFS added
 
+    Parameters
+    ----------
+    id2word : Dict
+        Token ID to word mapping
+
+    Returns
+    -------
+    pd.DataFrame
+        dictionary as dataframe
+    """
     logger.info('Compiling dictionary...')
 
     assert id2word is not None, 'id2word is empty'
@@ -109,8 +165,25 @@ def id2word2df(id2word):
 
     return dictionary
 
-def compile_topic_token_weights(model, dictionary, n_tokens=200, minimum_probability=0.000001):
+def _compile_topic_token_weights(model, dictionary: pd.DataFrame, n_tokens: int=200, minimum_probability: float=0.000001) -> pd.DataFrame:
+    """Creates a DataFrame containing document topic weights
 
+    Parameters
+    ----------
+    model : [type]
+        The topic model
+    dictionary : pd.DataFrame
+        The ID to word mapping
+    n_tokens : int, optional
+        Number of tokens to include per topic, by default 200
+    minimum_probability : float, optional
+        Minimum probability consider, by default 0.000001
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
     logger.info('Compiling topic-tokens weights...')
 
     id2term = dictionary.token.to_dict()
@@ -139,7 +212,7 @@ def compile_topic_token_weights(model, dictionary, n_tokens=200, minimum_probabi
 
     return df_topic_weights[['topic_id', 'token_id', 'token', 'weight']]
 
-def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
+def _compile_topic_token_overview(topic_token_weights: pd.DataFrame, alpha: List[float]=None, n_tokens: int=200) -> pd.DataFrame:
     """
     Group by topic_id and concatenate n_tokens words within group sorted by weight descending.
     There must be a better way of doing this...
@@ -154,8 +227,27 @@ def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
 
     return df.set_index('topic_id')
 
-def compile_document_topics(model, corpus, doc_topic_matrix=None, minimum_probability=0.001):
+def _compile_document_topics(model, corpus: Any, documents: pd.DataFrame=None, doc_topic_matrix: Any=None, minimum_probability: float=0.001) -> pd.DataFrame:
+    """Compiles a document topic dataframe for `corpus`
 
+    Parameters
+    ----------
+    model : ModelData
+        The topic model
+    corpus : Any
+        The corpus
+    documents : pd.DataFrame, optional
+        The document index, by default None
+    doc_topic_matrix : Any, optional
+        The document-topic sparse matrix, by default None
+    minimum_probability : float, optional
+        Threshold, by default 0.001
+
+    Returns
+    -------
+    pd.DataFrame
+        Document topics
+    """
     try:
 
         def document_topics_iter(model, corpus, minimum_probability=0.0):
@@ -199,6 +291,8 @@ def compile_document_topics(model, corpus, doc_topic_matrix=None, minimum_probab
         df_doc_topics['document_id'] = df_doc_topics.document_id.astype(np.uint32)
         df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.uint16)
 
+        df_doc_topics = extend_with_document_column(df_doc_topics, 'year', documents)
+
         logger.info('  DONE!')
 
         return df_doc_topics
@@ -207,45 +301,112 @@ def compile_document_topics(model, corpus, doc_topic_matrix=None, minimum_probab
         logger.error(ex)
         return None
 
-def compile_data(model, corpus, id2term, documents, doc_topic_matrix=None, n_tokens=200):
-    '''
-    Compile metadata associated to given model and corpus
-    '''
+def compile_data(model: Any, corpus: Any, id2term, documents, doc_topic_matrix=None, n_tokens=200):
+    """Main function. Returns compiled aggregated topic modelling data when model is applied to corpus
+
+    Parameters
+    ----------
+    model : ModelData
+        The topic model
+    corpus : Any
+        The corpus
+    id2term : Any
+        The corpus
+    documents : pd.DataFrame, optional
+        The document index, by default None
+    doc_topic_matrix : Any, optional
+        The document-topic sparse matrix, by default None
+    n_tokens : float, optional
+        Number of tokens, by default 0.001
+
+    Returns
+    -------
+    CompiledData
+        Compiled aggregated topic modelling data
+    """
+
     try:
 
         """ Fix missing n_terms (only vectorized corps"""
         if 'n_terms' not in documents.columns:
+
             if hasattr(corpus, 'sparse'):
                 documents['n_terms'] = corpus.sparse.sum(axis=0).A1
+
             if isinstance(corpus, list):
                 documents['n_terms'] = [ sum((w[1] for w in d)) for d in corpus ]
+
         dictionary = id2word2df(id2term)
-        topic_token_weights = compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
+        topic_token_weights = _compile_topic_token_weights(model, dictionary, n_tokens=n_tokens)
         alpha = model.alpha if 'alpha' in model.__dict__ else None
-        topic_token_overview = compile_topic_token_overview(topic_token_weights, alpha)
-        document_topic_weights = compile_document_topics(model, corpus, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
-        return CompiledData(documents, dictionary, topic_token_weights, topic_token_overview, document_topic_weights)
+        topic_token_overview = _compile_topic_token_overview(topic_token_weights, alpha)
+
+        document_topic_weights = _compile_document_topics(model, corpus, documents=documents, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
+
+        data = CompiledData(documents, dictionary, topic_token_weights, topic_token_overview, document_topic_weights)
+
+        return data
+
     except Exception as ex:
         logger.exception(ex)
         return None
 
-def get_topic_titles(topic_token_weights, topic_id=None, n_tokens=100):
+def extend_with_document_column(df, column, documents):
+    """Add document `column` to `df` if not already exists (and year exists in documents).
+
+    Parameters
+    ----------
+    df : DataFrame
+        The dataframe to extend
+    documents : DataFrame, optional
+        Corpus document index, by default None
+
+    Returns
+    -------
+    DataFrame
+        `df` extended with `column`
+    """
+
+    if column in df.columns:
+        return df
+
+    if documents is None:
+        return df
+
+    if column not in documents.columns:
+        return df
+
+    if 'document_id' not in df.columns:
+        return df
+
+    df = df.merge(documents[column], how='inner', left_on='document_id', right_index=True)
+
+    return df
+
+def get_topic_titles(topic_token_weights: pd.DataFrame, topic_id: int=None, n_tokens: int=100) -> pd.DataFrame:
+    """Returns a DataFrame containing a string of `n_tokens` most probable words per topic"""
+
     df_temp = topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id==topic_id)]
+
     df = df_temp\
             .sort_values('weight', ascending=False)\
             .groupby('topic_id')\
             .apply(lambda x: ' '.join(x.token[:n_tokens].str.title()))
+
     return df
 
-def get_topic_title(topic_token_weights, topic_id, n_tokens=100):
+def get_topic_title(topic_token_weights: pd.DataFrame, topic_id: int, n_tokens: int=100) -> str:
+    """Returns a string of `n_tokens` most probable words per topic"""
     return get_topic_titles(topic_token_weights, topic_id, n_tokens=n_tokens).iloc[0]
 
-def get_topic_tokens(topic_token_weights, topic_id=None, n_tokens=100):
+def get_topic_tokens(topic_token_weights: pd.DataFrame, topic_id: int=None, n_tokens: int=100) -> pd.DataFrame:
+    """Returns most probable tokens for given topic sorted by probability descending"""
     df_temp = topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id == topic_id)]
     df = df_temp.sort_values('weight', ascending=False)[:n_tokens]
     return df
 
-def get_topics_unstacked(model, n_tokens=20, id2term=None, topic_ids=None):
+def get_topics_unstacked(model, n_tokens: int=20, id2term: Dict[int,str]=None, topic_ids: List[int]=None) -> pd.DataFrame:
+    """Returns the top `n_tokens` tokens for each topic. The token's column index is in ascending probability"""
 
     if hasattr(model, 'num_topics'):
         # Gensim LDA model
