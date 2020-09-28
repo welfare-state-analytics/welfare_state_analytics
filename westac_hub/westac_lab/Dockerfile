@@ -124,9 +124,9 @@ RUN mkdir -p $HOME/work
 
 WORKDIR $HOME/work
 
-ADD https://api.github.com/repos/humlab/welfare_state_analytics/git/refs/heads/master version.json
+ADD https://api.github.com/repos/welfare-state-analytics/welfare_state_analytics/git/refs/heads/master version.json
 
-RUN git clone https://github.com/humlab/welfare_state_analytics.git \
+RUN git clone https://github.com/welfare-state-analytics/welfare_state_analytics.git \
     && cd welfare_state_analytics \
     && rm -rf .git* .docker* .travis* Pipfile* archive docker pytest* run* westac_hub
 
