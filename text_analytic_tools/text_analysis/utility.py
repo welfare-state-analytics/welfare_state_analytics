@@ -1,12 +1,12 @@
-import os
 import glob
 import json
-import pandas as pd
-import gensim
-import textacy
-import scipy
-import numpy as np
+import os
 
+import gensim
+import numpy as np
+import pandas as pd
+import scipy
+import textacy
 from gensim.models import LdaModel
 
 #from sklearn.preprocessing import normalize
@@ -36,6 +36,7 @@ def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
 
     return doc_iter
 
+# FIXEM
 def vectorize_terms(terms, vectorizer_args):
     vectorizer = textacy.Vectorizer(**vectorizer_args)
     doc_term_matrix = vectorizer.fit_transform(terms)

@@ -1,10 +1,8 @@
-import os
 import types
 import warnings
 from os.path import join as jj
 
 import ipywidgets as widgets
-import pandas as pd
 
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_model as topic_model
@@ -16,17 +14,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
 
-# from beakerx import *
-# from beakerx.object import beakerx
-# beakerx.pandas_display_table()
-
-pd.set_option("max_rows", None)
-pd.set_option("max_columns", None)
-pd.set_option('colheader_justify', 'left')
-pd.set_option('max_colwidth', 300)
-
 from IPython.display import display
-
 
 def load_model(corpus_folder, state, model_name, model_infos=None):
 
@@ -55,7 +43,7 @@ def display_gui(corpus_folder, state):
         output=widgets.Output()
     )
 
-    def load_handler(*args):
+    def load_handler(*_): # pylint: disable=unused-argument
         gui.output.clear_output()
         try:
             gui.load.disabled = True
