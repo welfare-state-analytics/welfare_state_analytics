@@ -1,13 +1,14 @@
 import warnings
-import numpy as np
-import ipywidgets as widgets
+
 import bokeh
 import bokeh.plotting
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-
+import ipywidgets as widgets
+import numpy as np
 from IPython.display import display
+
+import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
+import text_analytic_tools.utility.widgets as widgets_helper
+import text_analytic_tools.utility.widgets_utility as widgets_utility
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
