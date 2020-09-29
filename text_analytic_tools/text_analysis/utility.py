@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+from typing import Any, Dict
 
 import gensim
 import numpy as np
@@ -9,7 +10,12 @@ import scipy
 import textacy
 from gensim.models import LdaModel
 
+import text_analytic_tools.utility as utility
+
 #from sklearn.preprocessing import normalize
+
+
+logger = utility.getLogger('corpus_text_analysis')
 
 def normalize_array(x: np.ndarray, ord: int=1):
     """
