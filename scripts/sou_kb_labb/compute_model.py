@@ -12,19 +12,17 @@ import westac.common.file_utility as file_utility
 from os.path import join as jj
  # pylint: disable=unused-argument, too-many-arguments
 
-CORPUS_FOLDER = os.path.abspath(os.path.join(root_folder, "data"))
-
 @click.command()
 @click.argument('name') #, help='Model name.')
-@click.option('--n-topics', default=50, help='Number of topics.')
-@click.option('--corpus-folder', default=CORPUS_FOLDER, help='Corpus folder (if vectorized corpus exists on disk).')
-@click.option('--corpus-filename', help='Corpus filename (if text corpus or Sparv XML). Corpus tag if vectorized corpus.')
+@click.option('--n-topics', default=50, help='Number of topics.', type=click.INT)
+@click.option('--corpus-folder', default=None, help='Corpus folder (if vectorized corpus exists on disk).')
+@click.option('--corpus-filename', help='Corpus filename (if text corpus file or folder, or Sparv XML). Corpus tag if vectorized corpus.')
 @click.option('--engine', default="gensim_lda-multicore", help='LDA implementation')
-@click.option('--passes', default=None, help='Number of passes.')
+@click.option('--passes', default=None, help='Number of passes.', type=click.INT)
 @click.option('--alpha', default='asymmetric', help='Prior belief of topic probability. symmetric/asymmertic/auto')
-@click.option('--random-seed', default=None, help="Random seed value")
-@click.option('--workers', default=None, help='Number of workers (if applicable).')
-@click.option('--max-iter', default=None, help='Max number of iterations.')
+@click.option('--random-seed', default=None, help="Random seed value", type=click.INT)
+@click.option('--workers', default=None, help='Number of workers (if applicable).', type=click.INT)
+@click.option('--max-iter', default=None, help='Max number of iterations.', type=click.INT)
 @click.option('--prefix', default=None, help='Prefix.')
 def _run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix):
     run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, random_seed, alpha, workers, max_iter, prefix)
@@ -99,25 +97,11 @@ def run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, ra
 
 # %%
 
-run_model(
-    name="SOU-KB-labb-corpus-1945-1989",
-    n_topics=200,
-    corpus_folder=None,
-    corpus_filename="/data/westac/sou_kb_labb/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200923195551.zip",
-    engine="gensim_lda",
-    random_seed=42,
-    alpha="asymmetric",
-    passes=None,
-    workers=None,
-    max_iter=None,
-    prefix=None
-)
-
 # run_model(
-#     name="TEST",
-#     n_topics=10,
+#     name="SOU-KB-labb-corpus-1945-1989",
+#     n_topics=200,
 #     corpus_folder=None,
-#     corpus_filename="/data/westac/sou_kb_labb/test_corpus.zip",
+#     corpus_filename="/data/westac/sou_kb_labb/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200923195551.zip",
 #     engine="gensim_lda",
 #     random_seed=42,
 #     alpha="asymmetric",
@@ -126,6 +110,6 @@ run_model(
 #     max_iter=None,
 #     prefix=None
 # )
-# %%
-# if __name__ == '__main__':
-#     _run_model()
+#%%
+if __name__ == '__main__':
+    _run_model()
