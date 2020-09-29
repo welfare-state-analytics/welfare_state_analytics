@@ -3,14 +3,11 @@ import warnings
 import ipywidgets as widgets
 from IPython.display import display
 
-import notebooks.common.topic_trend_display as topic_trend_display
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_weight_over_time as topic_weight_over_time
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
-
+import notebooks.common.topic_trend_display as topic_trend_display
 # from beakerx import *
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()
@@ -18,10 +15,9 @@ import westac.common.utility as utility
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-def display_gui(state, extra_filter=None):
+def display_gui(state):
 
     text_id = 'topic_share_plot'
-    publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
 
     weighings = [ (x['description'], x['key']) for x in topic_weight_over_time.METHODS ]
 
@@ -29,7 +25,6 @@ def display_gui(state, extra_filter=None):
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_helper.text(text_id),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
         aggregate=widgets.Dropdown(description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="200px")),
         normalize=widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px")),
         topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
@@ -52,19 +47,6 @@ def display_gui(state, extra_filter=None):
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
-    _current_weight_over_time = dict( publication_id=-1, weights=None )
-
-    def weight_over_time(document_topic_weights, publication_id):
-        """Cache weight over time due to the large number of ocuments"""
-        if _current_weight_over_time["publication_id"] != publication_id:
-            _current_weight_over_time["publication_id"] = publication_id
-            df = document_topic_weights
-            if publication_id is not None:
-                df = df[df.publication_id == publication_id]
-            _current_weight_over_time["weights"] = topic_weight_over_time.compute(df).fillna(0)
-
-        return _current_weight_over_time["weights"]
-
     def update_handler(*_):
 
         gui.output.clear_output()
@@ -73,10 +55,7 @@ def display_gui(state, extra_filter=None):
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            weights = weight_over_time(
-                state.compiled_data.document_topic_weights,
-                gui.publication_id.value
-            )
+            weights = topic_weight_over_time.compute(state.compiled_data.document_topic_weights)
 
             topic_trend_display.display(
                 weight_over_time=weights,
@@ -88,7 +67,6 @@ def display_gui(state, extra_filter=None):
             )
 
     gui.topic_id.observe(update_handler, names='value')
-    gui.publication_id.observe(update_handler, names='value')
     gui.normalize.observe(update_handler, names='value')
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
@@ -100,7 +78,6 @@ def display_gui(state, extra_filter=None):
                 gui.progress,
             ]),
             widgets.VBox([gui.topic_id]),
-            widgets.VBox([gui.publication_id]),
             widgets.VBox([gui.aggregate, gui.output_format]),
             widgets.VBox([gui.normalize]),
         ]),

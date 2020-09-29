@@ -3,7 +3,6 @@ import warnings
 import ipywidgets as widgets
 from IPython.display import display
 
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.utility.widgets_utility as widgets_utility
@@ -21,8 +20,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
 
     df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
-    df['pub'] = df.publication_id.apply(lambda x: corpus_data.ID2PUB[x])
-    df = df.drop(['topic_id', 'year', 'publication_id'], axis=1).set_index('document_id')
+    df = df.drop(['topic_id', 'year'], axis=1).set_index('document_id')
     df.index.name = 'id'
     return df.sort_values('weight', ascending=False).head(n_top)
 
@@ -38,16 +36,12 @@ def display_texts(
     id2token = state.model_data.id2term
     document_topic_weights = state.compiled_data.document_topic_weights
 
-    df = filter_document_topic_weights(
-        document_topic_weights,
-        filters=filters,
-        threshold=threshold
-    )
+    df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
 
     df = reconstitue_texts_for_topic(df, corpus, id2token, n_top=n_top)
 
     if len(df) == 0:
-        print('No data to display for this topic and theshold')
+        print('No data to display for this topic and threshold')
     elif output_format == 'Table':
         display(df)
 
@@ -57,14 +51,12 @@ def display_gui(state):
     year_options =  [ (x,x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_document_text'
-    publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
 
     gui = widgets_utility.WidgetUtility(
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_helper.text(text_id),
         year=widgets.Dropdown(description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
         topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
         n_top=widgets.IntSlider(description='#Docs', min=5, max=500, step=1, value=75),
         threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False),
@@ -97,7 +89,7 @@ def display_gui(state):
 
             display_texts(
                 state=state,
-                filters=dict(year=gui.year.value, topic_id=gui.topic_id.value, publication_id=gui.publication_id.value),
+                filters=dict(year=gui.year.value, topic_id=gui.topic_id.value),
                 threshold=gui.threshold.value,
                 n_top=gui.n_top.value,
                 output_format=gui.output_format.value
@@ -105,7 +97,6 @@ def display_gui(state):
 
     gui.topic_id.observe(update_handler, names='value')
     gui.year.observe(update_handler, names='value')
-    gui.publication_id.observe(update_handler, names='value')
     gui.threshold.observe(update_handler, names='value')
     gui.n_top.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
@@ -117,7 +108,7 @@ def display_gui(state):
                 gui.progress,
             ]),
             widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
-            widgets.VBox([gui.publication_id, gui.year]),
+            widgets.VBox([gui.year]),
             widgets.VBox([gui.output_format])
         ]),
         gui.text,

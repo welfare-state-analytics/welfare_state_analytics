@@ -22,7 +22,7 @@ def plot_topic(df, x):
     df = df.reset_index()
     df[df.topic_id==x].set_index('year').drop('topic_id', axis=1).plot()
 
-def compute_weight_over_time(df):
+def compute(df):
 
     """ Initialize year/topic cross product data frame """
     cross_iter = itertools.product(range(df.year.min(), df.year.max() + 1), range(0, df.topic_id.max() + 1))
@@ -48,26 +48,4 @@ def normalize_weights(df):
     df = df.drop(['sum_weight'], axis=1)
     return df
 
-# def year_topic_weight_statistics(years, topics):
-
-#     data = itertools.product(range(df.year.min(), df.year.max() + 1), range(0, df.topic_id.max() + 1))
-
-#     xf = pd.DataFrame(list(data), columns=['year', 'topic_id']).set_index(['year', 'topic_id'])
-
-#     return xf
-
-# df = current_state().compiled_data.document_topic_weights
-
-# xf = aggregate_weights(df)
-# #plot_topic(xf[['true_mean']], 0)
-# print(xf.head())
-
-def get_weight_over_time(current_weight_over_time, document_topic_weights, publication_id):
-    if current_weight_over_time.publication_id != publication_id:
-        current_weight_over_time.publication_id = publication_id
-        df = document_topic_weights
-        if publication_id is not None:
-            df = df[df.publication_id == publication_id]
-        current_weight_over_time.weights = compute_weight_over_time(df).fillna(0)
-    return current_weight_over_time.weights
 

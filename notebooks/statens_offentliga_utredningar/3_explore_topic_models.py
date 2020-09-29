@@ -39,7 +39,7 @@
 # #load_gui.load_model(corpus_folder, current_state(), 'test.4days')
 # # %%
 
-# import notebooks.political_in_newspapers.notebook_gui.topic_wordcloud_gui as wordcloud_gui
+# import notebooks.common.topic_wordcloud_gui as wordcloud_gui
 # try:
 #     wordcloud_gui.display_gui(current_state())
 # except Exception as ex:

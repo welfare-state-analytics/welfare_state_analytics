@@ -7,6 +7,30 @@ import text_analytic_tools.utility as utility
 
 logger = utility.getLogger('corpus_text_analysis')
 
+
+def filter_by_key_value(df: pd.DataFrame, filters: Dict[str, Any]=None) -> pd.DataFrame:
+    """Returns filtered dataframe based custom key/value equality filters`.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data frame to be filtered
+    filters : Dict[str, Any], optional
+        [description], by default None
+
+    Returns
+    -------
+    pd.DataFrame
+        [description]
+    """
+    for k, v in (filters or {}).items():
+        if k not in  df.columns:
+            logger.warning(f'Column {k} does not exist in dataframe (filter_by_key_value)')
+            continue
+        df = df[df[k] == v]
+
+    return df
+
 def filter_document_topic_weights(document_topic_weights: pd.DataFrame, filters: Dict[str, Any]=None, threshold: float=0.0) -> pd.DataFrame:
     """Returns document's topic weights for given `year`, `topic_id`, custom `filters` and threshold.
 

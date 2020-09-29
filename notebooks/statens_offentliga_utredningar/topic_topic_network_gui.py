@@ -1,22 +1,15 @@
 
 # Visualize topic co-occurrence
 import types
-import warnings
-
 import ipywidgets as widgets
 from IPython.display import display
 
 import notebooks.common.topic_topic_network_display as topic_topic_network_display
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.utility as tmutility
 import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
-
-logger = utility.setup_logger()
+#bokeh.plotting.output_notebook()
 
 def display_gui(state):
 
@@ -24,7 +17,6 @@ def display_gui(state):
     n_topics = state.num_topics
 
     text_id = 'nx_topic_topic'
-    publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
     layout_options = [ 'Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
     output_options = { 'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv' }
     ignore_options = [('', None)] + [ ('Topic #'+str(i), i) for i in range(0, n_topics) ]
@@ -42,7 +34,6 @@ def display_gui(state):
         threshold=widgets.FloatSlider(description='Threshold', min=0.01, max=1.0, step=0.01, value=0.20, continues_update=False),
         output_format=widgets.Dropdown(description='Output', options=output_options, value='network', layout=lw('200px')),
         layout=widgets.Dropdown(description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="250px")),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
         ignores=widgets.SelectMultiple(description='Ignore', options=ignore_options, value=[], rows=5, layout=lw('250px')),
         node_range=widgets.IntRangeSlider(description='Node size', min=10, max=100, step=1, value=(20, 60), continues_update=False),
@@ -61,7 +52,7 @@ def display_gui(state):
 
             topic_topic_network_display.display_topic_topic_network(
                 c_data=state.compiled_data,
-                filters=dict(publication_id=gui.publication_id.value),
+                filters=dict(),
                 period=gui.period.value,
                 ignores=gui.ignores.value,
                 threshold=gui.threshold.value,
@@ -86,13 +77,12 @@ def display_gui(state):
     gui.threshold.observe(compute_handler, names='value')
     gui.output_format.observe(compute_handler, names='value')
     gui.layout.observe(compute_handler, names='value')
-    gui.publication_id.observe(compute_handler, names='value')
     gui.ignores.observe(compute_handler, names='value')
 
     display(widgets.VBox([
         widgets.HBox([
             widgets.VBox([gui.layout, gui.threshold, gui.n_docs, gui.period]),
-            widgets.VBox([gui.publication_id, gui.ignores]),
+            widgets.VBox([gui.ignores]),
             widgets.VBox([gui.node_range, gui.edge_range, gui.scale]),
             widgets.VBox([widgets.HBox([gui.output_format]), gui.progress]),
         ]),
