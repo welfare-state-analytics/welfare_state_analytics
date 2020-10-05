@@ -31,7 +31,7 @@ def display_texts(
     output_format='Table',
     n_top=500
 ):
-
+ 
     corpus = state.model_data.corpus
     id2token = state.model_data.id2term
     document_topic_weights = state.compiled_data.document_topic_weights
