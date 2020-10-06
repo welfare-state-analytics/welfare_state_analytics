@@ -5,7 +5,7 @@ import bokeh
 import bokeh.plotting
 import numpy as np
 
-import westac.common.utility as utility
+import penelope.utility as utility
 
 # from beakerx import *
 # from beakerx.object import beakerx
@@ -25,7 +25,7 @@ def _plot(df, category_column, value_column, x_label=None, y_label=None, **figop
 
     p = bokeh.plotting.figure(**figopts)
 
-    glyph = p.vbar(x=xs, top=ys, width=0.5, fill_color="#b3de69")
+    _ = p.vbar(x=xs, top=ys, width=0.5, fill_color="#b3de69")
 
     p.xaxis.major_label_orientation = math.pi/4
     p.xgrid.grid_line_color = None

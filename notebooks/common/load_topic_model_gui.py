@@ -4,10 +4,8 @@ from os.path import join as jj
 
 import ipywidgets as widgets
 
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.text_analysis.topic_model as topic_model
-import text_analytic_tools.text_analysis.utility as tmutility
-import westac.common.utility as utility
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -18,11 +16,11 @@ from IPython.display import display
 
 def load_model(corpus_folder, state, model_name, model_infos=None):
 
-    model_infos = model_infos or tmutility.find_models(corpus_folder)
+    model_infos = model_infos or topic_modelling.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x['name'] == model_name)
 
-    m_data = topic_model.load_model(model_info['folder'])
-    c_data = derived_data_compiler.CompiledData.load(jj(corpus_folder, model_info['name']))
+    m_data = topic_modelling.load_model(model_info['folder'])
+    c_data = topic_modelling.CompiledData.load(jj(corpus_folder, model_info['name']))
 
     state.set_data(m_data, c_data)
 
@@ -34,7 +32,7 @@ def load_model(corpus_folder, state, model_name, model_infos=None):
 
 def display_gui(corpus_folder, state):
 
-    model_infos = tmutility.find_models(corpus_folder)
+    model_infos = topic_modelling.find_models(corpus_folder)
     model_names = list(x['name'] for x in model_infos)
 
     gui = types.SimpleNamespace(

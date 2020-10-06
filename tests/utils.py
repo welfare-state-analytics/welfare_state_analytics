@@ -1,9 +1,9 @@
 import os
 from typing import Callable
 
-import westac.corpus.iterators.text_tokenizer as text_tokenizer
+import penelope.corpus.readers.text_tokenizer as text_tokenizer
 
-TEST_CORPUS_FILENAME = './westac/tests/test_data/test_corpus.zip'
+TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
 
 # pylint: disable=too-many-arguments
 

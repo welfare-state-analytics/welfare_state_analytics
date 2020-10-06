@@ -2,8 +2,8 @@ import warnings
 import bokeh
 import bokeh.plotting
 import bokeh.transform
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
+import penelope.widgets.widgets_utility as widgets_utility
+import penelope.utility as utility
 
 from IPython.display import display
 
@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger()
 
-def _setup_glyph_coloring(df, color_high=0.3):
+def _setup_glyph_coloring(_, color_high=0.3):
 
     #colors = list(reversed(bokeh.palettes.Greens[9]))
     colors = ['#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b']

@@ -1,10 +1,5 @@
 
-import os
-import sys
 import time
-
-root_folder = os.path.abspath("..")
-sys.path = list(set(sys.path + [ root_folder ]))
 
 from notebooks.window_coocurrence import window_coocurrence as political
 from notebooks.window_coocurrence.stopwords import stopwords

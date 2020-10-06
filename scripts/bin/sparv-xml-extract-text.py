@@ -1,18 +1,13 @@
-import datetime
 import json
-import os
-import sys
 
 import click
 
-root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
-sys.path = list(set(sys.path + [ root_folder ]))
+import penelope.corpus.readers.sparv_xml_tokenizer as sparv_reader
+import penelope.corpus.sparv_corpus as sparv_corpus
+from penelope.corpus.tokens_transformer import TokensTransformer
+from penelope.utility import (replace_extension, suffix_filename,
+                              timestamp_filename)
 
-import westac.corpus.iterators.sparv_xml_tokenizer as sparv_reader
-import westac.corpus.sparv_corpus as sparv_corpus
-from westac.common.utility import timestamp_filename, suffix_filename, replace_extension
-from westac.corpus import utility
-from westac.corpus.tokens_transformer import TokensTransformer
 
 def store_options_to_json_file(input_filename, output_filename, tokens_transform_opts, sparv_extract_opts):
 
@@ -69,4 +64,4 @@ def prepare_train_corpus(input_filename, pos_includes, pos_excludes, chunk_size,
     store_options_to_json_file(input_filename, output_filename, tokens_transform_opts, sparv_extract_opts)
 
 if __name__ == '__main__':
-    prepare_train_corpus()
+    prepare_train_corpus() # pylint: disable=no-value-for-parameter

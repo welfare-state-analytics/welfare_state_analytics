@@ -1,10 +1,10 @@
 import wordcloud
 import matplotlib.pyplot as plt
 import ipywidgets as widgets
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import westac.common.utility as utility
+import penelope.widgets.widgets_utility as widgets_utility
+import penelope.widgets.widgets_config as widgets_helper
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
 
 from IPython.display import display
 
@@ -46,7 +46,7 @@ def display_wordcloud(
 
         df = topic_token_weights.loc[(topic_token_weights.topic_id == topic_id)]
 
-        tokens = derived_data_compiler.get_topic_title(topic_token_weights, topic_id, n_tokens=n_words)
+        tokens = topic_modelling.get_topic_title(topic_token_weights, topic_id, n_tokens=n_words)
 
         if len(tokens) == 0:
             print("No data! Please change selection.")
@@ -59,7 +59,7 @@ def display_wordcloud(
         if output_format == 'Wordcloud':
             plot_wordcloud(df, 'token', 'weight', max_words=n_words, **opts)
         else:
-            df = derived_data_compiler.get_topic_tokens(topic_token_weights, topic_id=topic_id, n_tokens=n_words)
+            df = topic_modelling.get_topic_tokens(topic_token_weights, topic_id=topic_id, n_tokens=n_words)
             if output_format == 'Table':
                 display(df)
             if output_format == 'Excel':

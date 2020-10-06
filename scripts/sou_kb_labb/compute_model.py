@@ -5,10 +5,10 @@ root_folder = (lambda d: os.path.join(os.getcwd().split(d)[0], d))("welfare_stat
 
 sys.path = list(set(sys.path + [ root_folder ]))
 
-import text_analytic_tools.text_analysis.topic_model as topic_model
-import westac.corpus.iterators.text_tokenizer as text_tokenizer
-import westac.corpus.tokenized_corpus as tokenized_corpus
-import westac.common.file_utility as file_utility
+import penelope.topic_modelling as topic_modelling
+import penelope.corpus.readers.text_tokenizer as text_tokenizer
+import penelope.corpus.tokenized_corpus as tokenized_corpus
+import penelope.utility.file_utility as file_utility
 from os.path import join as jj
  # pylint: disable=unused-argument, too-many-arguments
 
@@ -70,7 +70,7 @@ def run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, ra
         **transformer_opts
     )
 
-    model_data, corpus_data = topic_model.compute(
+    model_data, corpus_data = topic_modelling.compute_model(
         terms=corpus.terms,
         doc_term_matrix=None,
         id2word=None,
@@ -86,7 +86,7 @@ def run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, ra
 
     model_data.topic_model.save(jj(corpus_folder, name, 'gensim.model'))
 
-    topic_model.store_model(model_data, jj(corpus_folder, name))
+    topic_modelling.store_model(model_data, jj(corpus_folder, name))
 
     # corpus_data.document_topic_weights = corpus_data.extend_with_document_info(
     #     corpus_data.document_topic_weights,
@@ -112,4 +112,4 @@ def run_model(name, n_topics, corpus_folder, corpus_filename, engine, passes, ra
 # )
 #%%
 if __name__ == '__main__':
-    _run_model()
+    _run_model() # pylint: disable=no-value-for-parameter

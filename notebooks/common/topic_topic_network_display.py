@@ -4,9 +4,9 @@ import bokeh
 import bokeh.plotting
 from IPython.display import display
 
-import text_analytic_tools.common.network.plot_utility as plot_utility
-import text_analytic_tools.common.network.utility as network_utility
-import westac.common.utility as utility
+import penelope.network.plot_utility as plot_utility
+import penelope.network.utility as network_utility
+import penelope.utility as utility
 from notebooks.common import filter_document_topic_weights
 
 logger = utility.setup_logger()
@@ -97,6 +97,6 @@ def display_topic_topic_network(
                 df.to_csv(filename, sep='\t')
                 print('Data stored in file {}'.format(filename))
 
-    except Exception as x:
-        raise
-        #print("No data: please adjust filters")
+    except: #  # pylint: disable=bare-except
+        print("No data: please adjust filters")
+        #raise

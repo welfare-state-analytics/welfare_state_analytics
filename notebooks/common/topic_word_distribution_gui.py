@@ -6,9 +6,9 @@ import ipywidgets as widgets
 import numpy as np
 from IPython.display import display
 
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.utility.widgets_utility as widgets_utility
+import penelope.topic_modelling as topic_modelling
+import penelope.widgets.widgets_config as widgets_helper
+import penelope.widgets.widgets_utility as widgets_utility
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -54,7 +54,7 @@ def display_topic_tokens(state, topic_id=0, n_words=100, output_format='Chart', 
 
     tick(1)
 
-    tokens = derived_data_compiler.get_topic_tokens(state.compiled_data.topic_token_weights, topic_id=topic_id, n_tokens=n_words).\
+    tokens = topic_modelling.get_topic_tokens(state.compiled_data.topic_token_weights, topic_id=topic_id, n_tokens=n_words).\
         copy()\
         .drop('topic_id', axis=1)\
         .assign(weight=lambda x: 100.0 * x.weight)\

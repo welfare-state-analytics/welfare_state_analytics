@@ -1,14 +1,11 @@
-import os, sys
-import click
+import logging
+import pickle
+import types
 
-root_folder = os.path.abspath("..")
-sys.path = list(set(sys.path + [ root_folder ]))
+import click
+import penelope.topic_modelling as topic_modelling
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-import text_analytic_tools.text_analysis.topic_model as topic_model
-import types
-import pickle
-import logging
 
 CORPUS_FOLDER = "/home/roger/source/welfare_state_analytics/data/textblock_politisk"
 
@@ -74,7 +71,7 @@ def compute(n_start, n_stop, n_step, data_folder, engine, passes, alpha, workers
     if prefix is not None:
         kwargs.update(dict(prefix=prefix))
 
-    _, c_data = topic_model.compute(
+    _, c_data = topic_modelling.compue.compute_model(
         doc_term_matrix=dtm,
         id2word=id2token,
         documents=documents,
@@ -84,4 +81,4 @@ def compute(n_start, n_stop, n_step, data_folder, engine, passes, alpha, workers
 
 
 if __name__ == '__main__':
-    compute()
+    compute()  # pylint: disable=no-value-for-parameter

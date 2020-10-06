@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
 import pandas as pd
-import text_analytic_tools.utility as utility
+import penelope.utility as utility
 
 #from sklearn.preprocessing import normalize
 

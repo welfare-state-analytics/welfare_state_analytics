@@ -3,7 +3,7 @@ import scipy
 import numpy as np
 import bokeh
 import itertools
-import westac.common.curve_fit as cf
+import penelope.common.curve_fit as cf
 
 def noop(x=None, p=None, max=None): pass  # pylint: disable=redefined-builtin,unused-argument
 
@@ -77,7 +77,7 @@ def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, s
                 smoothers=smoothers
             )
             plots.append(p)
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=bare-except
             print(ex)
 
         tick()

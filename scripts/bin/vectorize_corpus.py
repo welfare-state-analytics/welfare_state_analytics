@@ -1,13 +1,7 @@
-import os
-import sys
 import click
+import penelope.corpus.vectorizer as corpus_vectorizer
+import penelope.utility as utility
 
-root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
-
-sys.path = list(set(sys.path + [ root_folder ]))
-
-import westac.corpus.utility as utility
-import westac.corpus.corpus_vectorizer as corpus_vectorizer
 
 def split_filename(filename, sep='_'):
     parts = filename.replace('.', sep).split(sep)
