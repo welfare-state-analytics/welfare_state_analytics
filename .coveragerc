@@ -5,8 +5,7 @@ source =
 
 [run]
 omit =
-    westac/tests/*
-    text_analytic_tools/*
+    tests/*
 
 branch = true
 parallel = true
