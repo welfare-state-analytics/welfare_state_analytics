@@ -1,15 +1,13 @@
-import itertools
+import bokeh
+import holoviews as hv
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import holoviews as hv
-import bokeh
-import westac.common.curve_fit as cf
-import westac.common.goodness_of_fit as gof
-import matplotlib.pyplot as plt
-from scipy.cluster.hierarchy import dendrogram
-
+import penelope.common.curve_fit as cf
+import penelope.common.goodness_of_fit as gof
 # from bokeh.models import Legend, LegendItem
 from bokeh.models import HoverTool, TapTool
+from scipy.cluster.hierarchy import dendrogram
 
 
 def noop(x=None, p=None, max=None):
@@ -100,7 +98,7 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster, color):
         'width': 900,
         'box_fill_color': color,
         'xrotation': 90,
-        #'violin_width': 0.8
+        # 'violin_width': 0.8
     }
     return violin.opts(**violin_opts)
 
@@ -133,7 +131,7 @@ def plot_clusters_count(source):
     p.axis.minor_tick_line_color = None
     p.x_range.start = 0
 
-    r = p.hbar(source=source, y='cluster', right='count', **bar_opts)
+    _ = p.hbar(source=source, y='cluster', right='count', **bar_opts)
 
     return p
 
@@ -161,7 +159,7 @@ def plot_clusters_mean(source, filter_source=None):
     # p.xaxis.ticker = list(range(1945, 1990))
     p.y_range.start = 0
 
-    r = p.multi_line(source=source, xs='xs', ys='ys', **line_opts)
+    _ = p.multi_line(source=source, xs='xs', ys='ys', **line_opts)
 
     p.legend.location = "top_left"
     p.legend.click_policy = "hide"

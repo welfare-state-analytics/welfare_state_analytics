@@ -1,13 +1,12 @@
-import sys, os
+import os
+
+import penelope.corpus.vectorized_corpus as vectorized_corpus
+
+from notebooks.most_discriminating_words.most_discriminating_terms import \
+    compute_most_discriminating_terms
 
 root_folder = "/Users/frno0044/Documents/Kod/welfare_state_analytics"
 corpus_folder = os.path.join(root_folder, "output")
-sys.path = [root_folder] + sys.path
-
-import westac.corpus.vectorized_corpus as vectorized_corpus
-
-from notebooks.most_discriminating_words.most_discriminating_terms_gui import display_gui
-from notebooks.most_discriminating_words.most_discriminating_terms import compute_most_discriminating_terms
 
 v_corpus = (
     vectorized_corpus.VectorizedCorpus.load('SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S', corpus_folder)

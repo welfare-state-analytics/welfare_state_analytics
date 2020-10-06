@@ -143,6 +143,6 @@ def display_heatmap(weights, titles, key='max', flip_axis=False, glyph='Circle',
         else:
             display(weights)
 
-    except Exception as _:
-        raise
-        # logger.error(ex)
+    except Exception as ex:
+        # raise
+        logger.error(ex)

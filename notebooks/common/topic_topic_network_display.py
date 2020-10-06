@@ -101,6 +101,6 @@ def display_topic_topic_network(
                 df.to_csv(filename, sep='\t')
                 print('Data stored in file {}'.format(filename))
 
-    except:  #  # pylint: disable=bare-except
+    except:  # pylint: disable=bare-except
         print("No data: please adjust filters")
         # raise

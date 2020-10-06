@@ -5,13 +5,12 @@ from os.path import join as jj
 import ipywidgets as widgets
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
+from IPython.display import display
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
-
-from IPython.display import display
 
 
 def load_model(corpus_folder, state, model_name, model_infos=None):

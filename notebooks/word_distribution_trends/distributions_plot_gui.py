@@ -7,7 +7,7 @@ import notebooks.common.distributions_plot as plotter
 def display_gui(x_corpus, tokens, n_columns=3):
 
     tokens = sorted(list(tokens))
-    tokens_map = {token: index for index, token in enumerate(tokens)}
+    # tokens_map = {token: index for index, token in enumerate(tokens)}
     progress = ipywidgets.IntProgress(
         description='', min=0, max=10, step=1, value=0, continuous_update=False, layout=ipywidgets.Layout(width='98%')
     )

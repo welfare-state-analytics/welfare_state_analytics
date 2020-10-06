@@ -53,12 +53,12 @@
 # except Exception as ex:
 #     print(ex)
 # %%
-import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
-import text_analytic_tools.text_analysis.topic_weight_over_time as topic_weight_over_time
+# import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
+# from penelope.topic_modelling import topic_weight_over_time
 
 # _ = importlib.reload(topic_weight_over_time)
 # _ = importlib.reload(trends_gui)
 
-trends_gui.display_gui(current_state())
+# trends_gui.display_gui(current_state())
 # trends_gui.display_topic_trend(current_state().compiled_data.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 # %%

@@ -1,14 +1,7 @@
 import os
-import sys
-
-import click
-
-root_folder = (lambda d: os.path.join(os.getcwd().split(d)[0], d))("welfare_state_analytics")
-
-sys.path = list(set(sys.path + [root_folder]))
-
 from os.path import join as jj
 
+import click
 import penelope.corpus.readers.text_tokenizer as text_tokenizer
 import penelope.corpus.tokenized_corpus as tokenized_corpus
 import penelope.topic_modelling as topic_modelling
@@ -123,6 +116,6 @@ def run_model(
 #     max_iter=None,
 #     prefix=None
 # )
-#%%
+
 if __name__ == '__main__':
     _run_model()  # pylint: disable=no-value-for-parameter

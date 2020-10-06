@@ -1,5 +1,7 @@
 import os
+
 import gensim
+import numpy as np
 import pandas as pd
 
 

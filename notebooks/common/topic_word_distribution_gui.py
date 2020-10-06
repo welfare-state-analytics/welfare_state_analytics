@@ -18,7 +18,7 @@ def plot_topic_word_distribution(tokens, **args):
 
     p = bokeh.plotting.figure(toolbar_location="right", **args)
 
-    cr = p.circle(x='xs', y='ys', source=source)
+    _ = p.circle(x='xs', y='ys', source=source)
 
     label_style = dict(level='overlay', text_font_size='8pt', angle=np.pi / 6.0)
 

@@ -19,20 +19,20 @@ def display_gui(container):
     tab_widget.children = [widgets.Output() for _ in data_handlers]
     _ = [tab_widget.set_title(i, x.NAME) for i, x in enumerate(data_handlers)]
 
-    smooth = False
-    smoothers = (
-        []
-        if not smooth
-        else [
-            # cf.rolling_average_smoother('nearest', 3),
-            cf.pchip_spline
-        ]
-    )
+    # smooth = False
+    # smoothers = (
+    #     []
+    #     if not smooth
+    #     else [
+    #         # cf.rolling_average_smoother('nearest', 3),
+    #         cf.pchip_spline
+    #     ]
+    # )
 
     z_corpus = None
     x_corpus = None
 
-    def update_plot(*args):
+    def update_plot(*_):
 
         nonlocal z_corpus, x_corpus
 
@@ -43,7 +43,7 @@ def display_gui(container):
 
             return
 
-        if z_corpus is None or not z_corpus is container.corpus:
+        if z_corpus is None or z_corpus is not container.corpus:
 
             with output_widget:
                 print("Corpus changed...")

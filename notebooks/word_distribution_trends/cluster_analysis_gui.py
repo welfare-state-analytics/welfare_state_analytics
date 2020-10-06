@@ -1,24 +1,24 @@
+import itertools
 import types
-import ipywidgets
+import warnings
+
 import bokeh
 import holoviews as hv
-import numpy as np
-from markdown import markdown as md
+import ipywidgets
+import penelope.common.cluster_analysis as cluster_analysis
+import penelope.common.curve_fit as cf
+import penelope.common.goodness_of_fit as gof
 from beakerx import *  # pylint: disable=unused-wildcard-import
 from beakerx.object import beakerx
+from IPython.display import display
+from markdown import markdown as md
+from penelope.utility import nth, setup_logger
 from scipy.cluster.hierarchy import dendrogram, linkage
 
-import westac.common.cluster_analysis as cluster_analysis
-import westac.common.goodness_of_fit as gof
-import distributions_plot_gui as pdg
-import cluster_plot as cluster_plot
-import warnings
-import westac.common.curve_fit as cf
-import itertools
+from . import cluster_plot
+from . import distributions_plot_gui as pdg
 
 warnings.filterwarnings("ignore", category=FutureWarning)
-
-from westac.common.utility import setup_logger, nth
 
 logger = setup_logger()
 

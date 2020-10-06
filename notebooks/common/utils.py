@@ -9,8 +9,8 @@ def setup_pandas():
     pd.set_option('max_colwidth', 300)
 
 
-def flatten(l):
-    return [x for ws in l for x in ws]
+def flatten(lst):
+    return [x for ws in lst for x in ws]
 
 
 def to_text(document, id2token):

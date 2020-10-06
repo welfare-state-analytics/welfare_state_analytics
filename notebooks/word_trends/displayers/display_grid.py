@@ -18,10 +18,10 @@ def default_column_defs(df):
         {
             'headerName': column.title(),
             'field': column,
-            #'rowGroup':False,
-            #'hide':False,
+            # 'rowGroup':False,
+            # 'hide':False,
             'cellRenderer': "function(params) { return params.value.toFixed(6); }" if column != 'year' else None,
-            #'type': 'numericColumn'
+            # 'type': 'numericColumn'
         }
         for column in df.columns
     ]

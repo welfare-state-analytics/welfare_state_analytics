@@ -30,7 +30,7 @@ def setup(container, **kwargs):
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
 
-    r = p.multi_line(xs='xs', ys='ys', legend_field='label', line_color='color', source=data_source)
+    _ = p.multi_line(xs='xs', ys='ys', legend_field='label', line_color='color', source=data_source)
 
     p.legend.location = "top_left"
     p.legend.click_policy = "hide"

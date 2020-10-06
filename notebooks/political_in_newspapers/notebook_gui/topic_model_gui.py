@@ -3,11 +3,11 @@ import types
 import glob
 import ipywidgets
 import logging
-import text_analytic_tools.utility as utility
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.text_analysis.topic_model as topic_model
-import text_analytic_tools.common.gensim_utility as gensim_utility
-import text_analytic_tools.common.textacy_utility as textacy_utility
+import penelope.utility as utility
+import penelope.topic_modelling as topic_modelling
+import penelope.vendor.gensim.utils as gensim_utility
+import penelope.vendor.textacy.utils as textacy_utility
+from IPython.display import display
 
 # from . topic_model_compute import compute_topic_model
 
@@ -15,8 +15,6 @@ logger = utility.getLogger('corpus_text_analysis')
 
 gensim_logger = logging.getLogger('gensim')
 gensim_logger.setLevel(logging.INFO)
-
-from IPython.display import display
 
 ENGINE_OPTIONS = [
     ('MALLET LDA', 'gensim_mallet-lda'),
@@ -161,11 +159,11 @@ class ComputeTopicModelUserInterface:
                     terms = list(self.get_corpus_terms(corpus))
 
                     # FIXME API change, use named args
-                    self.state.data = topic_model.compute(
+                    self.state.data = topic_modelling.compute_model(
                         self.data_folder, method, terms, self.document_index, vectorizer_args, topic_modeller_args
                     )
 
-                    topics = derived_data_compiler.get_topics_unstacked(
+                    topics = topic_modelling.get_topics_unstacked(
                         self.state.topic_model,
                         n_tokens=100,
                         id2term=self.state.id2term,
@@ -228,7 +226,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         # assert hasattr(corpus, 'spacy_lang), 'Must be a textaCy corpus!'
         self.corpus_widgets.named_entities.disabled = len(corpus) == 0 or len(corpus[0].ents) == 0
 
-        def pos_change_handler(*args):
+        def pos_change_handler(*_):
             with self.model_widgets.output:
                 self.model_widgets.compute.disabled = True
                 selected = set(self.corpus_widgets.stop_words.value)
@@ -249,7 +247,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         self.corpus_widgets.include_pos.observe(pos_change_handler, 'value')
         pos_change_handler()
 
-        def corpus_method_change_handler(*args):
+        def corpus_method_change_handler(*_):
             self.corpus_widgets.ngrams.disabled = False
             if 'MALLET' in self.model_widgets.method.value:
                 self.corpus_widgets.ngrams.value = [1]

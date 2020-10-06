@@ -1,10 +1,4 @@
 import os
-import sys
-
-root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
-
-# root_folder = os.path.abspath("..")
-sys.path = list(set(sys.path + [root_folder]))
 
 import penelope.corpus.vectorizer as corpus_vectorizer
 
@@ -22,9 +16,7 @@ kwargs = dict(
 )
 
 
-corpus_filename = os.path.join(
-    root_folder, 'data/riksdagens_protokoll/riksdagens_protokoll_content_corpus_1945-1989.zip'
-)
-output_folder = os.path.join(root_folder, 'data/riksdagens_protokoll/')
+corpus_filename = './data/riksdagens_protokoll/riksdagens_protokoll_content_corpus_1945-1989.zip'
+output_folder = './data/riksdagens_protokoll/'
 
 corpus_vectorizer.generate_corpus(corpus_filename, output_folder=output_folder, **kwargs)
