@@ -27,11 +27,14 @@ test: clean
 		tests
 
 lint:
+	#@poetry run pylint westac tests | sort | uniq | grep -v "************* Module" > pylint.log
+	@poetry run flake8 --version
+	@poetry run flake8
+
+lint2file:
 	@poetry run pylint westac tests | sort | uniq | grep -v "************* Module" > pylint.log
 	@poetry run flake8 --version
 	@poetry run flake8
-	# @poetry run mypy --version
-	# @poetry run mypy .
 
 format: clean black isort
 
@@ -44,7 +47,7 @@ yapf: clean
 
 black:clean
 	@poetry run black --version
-	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization scripts westac notebooks/common
+	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization scripts westac notebooks
 
 clean:
 	@rm -rf .pytest_cache build dist .eggs *.egg-info
