@@ -40,11 +40,11 @@ isort:
 
 yapf: clean
 	@poetry run yapf --version
-	@poetry run yapf --in-place --recursive westac
+	@poetry run yapf --in-place --recursive scripts westac notebooks/common
 
 black:clean
 	@poetry run black --version
-	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization westac
+	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization scripts westac notebooks/common
 
 clean:
 	@rm -rf .pytest_cache build dist .eggs *.egg-info

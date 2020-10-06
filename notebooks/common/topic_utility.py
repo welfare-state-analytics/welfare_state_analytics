@@ -3,12 +3,12 @@ from typing import Dict, Any
 import pandas as pd
 import penelope.utility as utility
 
-#from sklearn.preprocessing import normalize
+# from sklearn.preprocessing import normalize
 
 logger = utility.getLogger('corpus_text_analysis')
 
 
-def filter_by_key_value(df: pd.DataFrame, filters: Dict[str, Any]=None) -> pd.DataFrame:
+def filter_by_key_value(df: pd.DataFrame, filters: Dict[str, Any] = None) -> pd.DataFrame:
     """Returns filtered dataframe based custom key/value equality filters`.
 
     Parameters
@@ -24,14 +24,17 @@ def filter_by_key_value(df: pd.DataFrame, filters: Dict[str, Any]=None) -> pd.Da
         [description]
     """
     for k, v in (filters or {}).items():
-        if k not in  df.columns:
+        if k not in df.columns:
             logger.warning(f'Column {k} does not exist in dataframe (filter_by_key_value)')
             continue
         df = df[df[k] == v]
 
     return df
 
-def filter_document_topic_weights(document_topic_weights: pd.DataFrame, filters: Dict[str, Any]=None, threshold: float=0.0) -> pd.DataFrame:
+
+def filter_document_topic_weights(
+    document_topic_weights: pd.DataFrame, filters: Dict[str, Any] = None, threshold: float = 0.0
+) -> pd.DataFrame:
     """Returns document's topic weights for given `year`, `topic_id`, custom `filters` and threshold.
 
     Parameters
@@ -53,10 +56,9 @@ def filter_document_topic_weights(document_topic_weights: pd.DataFrame, filters:
     df = df[df.weight >= threshold]
 
     for k, v in (filters or {}).items():
-        if k not in  df.columns:
+        if k not in df.columns:
             logger.warning(f'Column {k} does not exist in dataframe (_find_documents_for_topics)')
             continue
         df = df[df[k] == v]
 
     return df.copy()
-

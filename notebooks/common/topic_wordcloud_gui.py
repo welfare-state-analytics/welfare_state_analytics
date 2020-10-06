@@ -13,31 +13,29 @@ import pandas as pd
 pd.set_option("display.max_rows", None)
 pd.set_option('max_colwidth', 200)
 
-opts = { 'max_font_size': 100, 'background_color': 'white', 'width': 900, 'height': 600 }
+opts = {'max_font_size': 100, 'background_color': 'white', 'width': 900, 'height': 600}
 
-def plot_wordcloud(df, token='token', weight='weight', figsize=(14, 14/1.618), **args):
-    token_weights = dict({ tuple(x) for x in df[[token, weight]].values })
-    image = wordcloud.WordCloud(**args,)
+
+def plot_wordcloud(df, token='token', weight='weight', figsize=(14, 14 / 1.618), **args):
+    token_weights = dict({tuple(x) for x in df[[token, weight]].values})
+    image = wordcloud.WordCloud(
+        **args,
+    )
     image.fit_words(token_weights)
-    plt.figure(figsize=figsize) #, dpi=100)
+    plt.figure(figsize=figsize)  # , dpi=100)
     plt.imshow(image, interpolation='bilinear')
     plt.axis("off")
     plt.show()
 
-def display_wordcloud(
-    state,
-    topic_id=0,
-    n_words=100,
-    output_format='Wordcloud',
-    gui=None
-):
+
+def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud', gui=None):
     def tick(n=None):
         gui.progress.value = (gui.progress.value + 1) if n is None else n
 
     if gui.n_topics != state.num_topics:
         gui.n_topics = state.num_topics
         gui.topic_id.value = 0
-        gui.topic_id.max=state.num_topics - 1
+        gui.topic_id.max = state.num_topics - 1
 
     tick(1)
 
@@ -72,6 +70,7 @@ def display_wordcloud(
         print('No data for topic')
     tick(0)
 
+
 def display_gui(state):
 
     output_options = ['Wordcloud', 'Table', 'CSV', 'Excel']
@@ -81,10 +80,14 @@ def display_gui(state):
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_helper.text(text_id),
-        topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
+        topic_id=widgets.IntSlider(
+            description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
+        ),
         word_count=widgets.IntSlider(description='#Words', min=5, max=250, step=1, value=25, continuous_update=False),
-        output_format=widgets.Dropdown(description='Format', options=output_options, value=output_options[0], layout=widgets.Layout(width="200px")),
-        progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="95%"))
+        output_format=widgets.Dropdown(
+            description='Format', options=output_options, value=output_options[0], layout=widgets.Layout(width="200px")
+        ),
+        progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="95%")),
     )
 
     gui.prev_topic_id = gui.create_prev_id_button('topic_id', state.num_topics)
@@ -96,14 +99,18 @@ def display_gui(state):
         topic_id=gui.topic_id,
         n_words=gui.word_count,
         output_format=gui.output_format,
-        gui=widgets.fixed(gui)
+        gui=widgets.fixed(gui),
     )
 
-    display(widgets.VBox([
-        gui.text,
-        widgets.HBox([gui.prev_topic_id, gui.next_topic_id, gui.topic_id, gui.word_count, gui.output_format]),
-        gui.progress,
-        iw.children[-1]
-    ]))
+    display(
+        widgets.VBox(
+            [
+                gui.text,
+                widgets.HBox([gui.prev_topic_id, gui.next_topic_id, gui.topic_id, gui.word_count, gui.output_format]),
+                gui.progress,
+                iw.children[-1],
+            ]
+        )
+    )
 
     iw.update()

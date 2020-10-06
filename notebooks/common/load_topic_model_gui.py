@@ -14,6 +14,7 @@ logger = utility.setup_logger(filename=None)
 
 from IPython.display import display
 
+
 def load_model(corpus_folder, state, model_name, model_infos=None):
 
     model_infos = model_infos or topic_modelling.find_models(corpus_folder)
@@ -25,10 +26,12 @@ def load_model(corpus_folder, state, model_name, model_infos=None):
     state.set_data(m_data, c_data)
 
     topics = c_data.topic_token_overview
-    topics.style.set_properties(**{'text-align': 'left'})\
-        .set_table_styles([ dict(selector='td', props=[('text-align', 'left')] ) ])
+    topics.style.set_properties(**{'text-align': 'left'}).set_table_styles(
+        [dict(selector='td', props=[('text-align', 'left')])]
+    )
 
     display(topics)
+
 
 def display_gui(corpus_folder, state):
 
@@ -38,10 +41,10 @@ def display_gui(corpus_folder, state):
     gui = types.SimpleNamespace(
         model_name=widgets.Dropdown(description='Model', options=model_names, layout=widgets.Layout(width='40%')),
         load=widgets.Button(description='Load', button_style='Success', layout=widgets.Layout(width='80px')),
-        output=widgets.Output()
+        output=widgets.Output(),
     )
 
-    def load_handler(*_): # pylint: disable=unused-argument
+    def load_handler(*_):  # pylint: disable=unused-argument
         gui.output.clear_output()
         try:
             gui.load.disabled = True
@@ -55,7 +58,4 @@ def display_gui(corpus_folder, state):
 
     gui.load.on_click(load_handler)
 
-    display(widgets.VBox([
-        widgets.HBox([gui.model_name, gui.load ]),
-        widgets.VBox([gui.output])
-    ]))
+    display(widgets.VBox([widgets.HBox([gui.model_name, gui.load]), widgets.VBox([gui.output])]))

@@ -100,9 +100,7 @@ def run_model(
 
     if corpus_type == "vectorized":
 
-        assert (
-            corpus_name is not None
-        ), "error: Corpus dump name-tag not specified for vectorized corpus"
+        assert corpus_name is not None, "error: Corpus dump name-tag not specified for vectorized corpus"
         assert vectorized_corpus.VectorizedCorpus.dump_exists(
             corpus_name, data_folder
         ), "error: no dump for given tag exists"
@@ -172,7 +170,7 @@ def run_model(
 
 
 if __name__ == "__main__":
-    _run_model() # pylint: disable=no-value-for-parameter
+    _run_model()  # pylint: disable=no-value-for-parameter
 
 # engine = "gensim_mallet-lda"
 # workers = 4

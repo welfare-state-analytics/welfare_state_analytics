@@ -4,18 +4,21 @@ import zipfile
 
 from pprint import pprint as pp
 
+
 def read_file(path, filename):
     with zipfile.ZipFile(path) as zf:
         with zf.open(filename, 'r') as file:
             content = file.read()
-    #content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
+    # content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
     return content
 
+
 def read_file_index(index_name, year):
-    df = pd.read_csv(index_name, header=None)[[1,2,3,7]]
-    df.columns = [ 'key_id', 'year', 'sou_id', 'part_id' ]
+    df = pd.read_csv(index_name, header=None)[[1, 2, 3, 7]]
+    df.columns = ['key_id', 'year', 'sou_id', 'part_id']
     df = df.fillna('d1')
-    return df.loc[df['year']==year]
+    return df.loc[df['year'] == year]
+
 
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.csv.zip
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.text.zip

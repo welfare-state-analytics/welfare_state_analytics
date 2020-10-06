@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def setup_pandas():
 
     pd.set_option("max_rows", None)
@@ -9,8 +10,8 @@ def setup_pandas():
 
 
 def flatten(l):
-    return [ x for ws in l for x in ws]
+    return [x for ws in l for x in ws]
+
 
 def to_text(document, id2token):
-    return ' '.join(flatten([ f * [id2token[token_id]] for token_id, f in document ]))
-
+    return ' '.join(flatten([f * [id2token[token_id]] for token_id, f in document]))

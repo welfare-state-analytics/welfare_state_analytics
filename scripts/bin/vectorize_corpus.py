@@ -7,11 +7,14 @@ def split_filename(filename, sep='_'):
     parts = filename.replace('.', sep).split(sep)
     return parts
 
+
 @click.command()
 @click.argument('filename')
 @click.argument('output-folder')
 @click.option('--to-lower/--no-to-lower', '-l', default=True, help='Transform text to lower case.')
-@click.option('--remove-accents/--no-remove-accents', '-d', default=False, is_flag=True, help='Remove accents to lower case.')
+@click.option(
+    '--remove-accents/--no-remove-accents', '-d', default=False, is_flag=True, help='Remove accents to lower case.'
+)
 @click.option('--min-length', default=2, help='Minimum length of words to keep', type=click.INT)
 @click.option('--max-length', default=None, help='Maximum length of words to keep', type=click.INT)
 @click.option('--doc-chunk-size', default=None, help='Split document in chunks of chunk-size words.', type=click.INT)
@@ -34,7 +37,7 @@ def vectorize_text_corpus(
     only_alphanumeric=True,
     only_alphabetic=True,
     file_pattern='*.txt',
-    meta_field=None
+    meta_field=None,
 ):
 
     kwargs = dict(
@@ -48,10 +51,11 @@ def vectorize_text_corpus(
         only_any_alphanumeric=only_alphanumeric,
         only_alphabetic=only_alphabetic,
         pattern=file_pattern,
-        filename_fields=utility.filename_field_parser(meta_field)
+        filename_fields=utility.filename_field_parser(meta_field),
     )
 
     corpus_vectorizer.generate_corpus(filename, output_folder=output_folder, **kwargs)
+
 
 if __name__ == "__main__":
     vectorize_text_corpus()
