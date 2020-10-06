@@ -39,7 +39,7 @@ lint2file:
 format: clean black isort
 
 isort:
-	@poetry run isort scripts westac notebooks/common
+	@poetry run isort scripts westac notebooks/common tests
 
 yapf: clean
 	@poetry run yapf --version
@@ -47,7 +47,7 @@ yapf: clean
 
 black:clean
 	@poetry run black --version
-	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization scripts westac notebooks
+	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization scripts westac notebooks tests
 
 clean:
 	@rm -rf .pytest_cache build dist .eggs *.egg-info
