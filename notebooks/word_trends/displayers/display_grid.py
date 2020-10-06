@@ -8,8 +8,10 @@ NAME = "Grid"
 
 compile = data_compilers.compile_year_token_vector_data
 
+
 def setup(container, **kwargs):
     pass
+
 
 def default_column_defs(df):
     column_defs = [
@@ -18,19 +20,20 @@ def default_column_defs(df):
             'field': column,
             #'rowGroup':False,
             #'hide':False,
-            'cellRenderer':
-                "function(params) { return params.value.toFixed(6); }" if column != 'year' else None,
+            'cellRenderer': "function(params) { return params.value.toFixed(6); }" if column != 'year' else None,
             #'type': 'numericColumn'
-        } for column in df.columns
+        }
+        for column in df.columns
     ]
     return column_defs
+
 
 def plot(data, **kwargs):
 
     df = pd.DataFrame(data=data).set_index('year')
     column_defs = default_column_defs(df)
     grid_options = {
-        'columnDefs' : column_defs,
+        'columnDefs': column_defs,
         'enableSorting': True,
         'enableFilter': True,
         'enableColResize': True,
@@ -50,9 +53,7 @@ def plot(data, **kwargs):
         columns_fit='auto',
         index=True,
         keep_multiindex=False,
-        menu={
-            'buttons': [ { 'name': 'Export Grid', 'hide': True} ]
-        }
+        menu={'buttons': [{'name': 'Export Grid', 'hide': True}]},
     )
 
     display(g)

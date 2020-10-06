@@ -14,6 +14,7 @@ import westac.common.utility as utility
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()
 
+
 def display_gui(state):
 
     lw = lambda w: widgets.Layout(width=w)
@@ -22,19 +23,25 @@ def display_gui(state):
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
     titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
-    weighings = [ (x['description'], x['key']) for x in topic_weight_over_time.METHODS ]
+    weighings = [(x['description'], x['key']) for x in topic_weight_over_time.METHODS]
 
     gui = types.SimpleNamespace(
         text_id=text_id,
         text=widgets_helper.text(text_id),
         flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
-        aggregate=widgets.Dropdown(description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")),
-        output_format=widgets.Dropdown(description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")),
-        output=widgets.Output()
+        publication_id=widgets.Dropdown(
+            description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")
+        ),
+        aggregate=widgets.Dropdown(
+            description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")
+        ),
+        output_format=widgets.Dropdown(
+            description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")
+        ),
+        output=widgets.Output(),
     )
 
-    _current_weight_over_time = dict( publication_id=-1, weights=None )
+    _current_weight_over_time = dict(publication_id=-1, weights=None)
 
     def weight_over_time(document_topic_weights, publication_id):
         """Cache weight over time due to the large number of ocuments"""
@@ -61,7 +68,7 @@ def display_gui(state):
                 titles,
                 flip_axis=gui.flip_axis.value,
                 aggregate=gui.aggregate.value,
-                output_format=gui.output_format.value
+                output_format=gui.output_format.value,
             )
         gui.flip_axis.disabled = False
         gui.flip_axis.description = 'Flip'
@@ -70,9 +77,14 @@ def display_gui(state):
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
-    display(widgets.VBox([
-        widgets.HBox([gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis ]),
-        widgets.HBox([gui.output]), gui.text
-    ]))
+    display(
+        widgets.VBox(
+            [
+                widgets.HBox([gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis]),
+                widgets.HBox([gui.output]),
+                gui.text,
+            ]
+        )
+    )
 
     update_handler()

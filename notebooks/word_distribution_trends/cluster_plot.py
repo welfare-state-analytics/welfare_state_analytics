@@ -7,25 +7,34 @@ import westac.common.curve_fit as cf
 import westac.common.goodness_of_fit as gof
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
-#from bokeh.models import Legend, LegendItem
+
+# from bokeh.models import Legend, LegendItem
 from bokeh.models import HoverTool, TapTool
 
-def noop(x=None, p=None, max=None): pass  # pylint: disable=redefined-builtin,unused-argument
+
+def noop(x=None, p=None, max=None):
+    pass  # pylint: disable=redefined-builtin,unused-argument
+
 
 def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     # palette = itertools.cycle(bokeh.palettes.Category20[20])
     assert n_cluster <= token_clusters.cluster.max()
 
-    xs                 = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
-    token_ids          = list(token_clusters[token_clusters.cluster==n_cluster].index)
-    word_distributions = x_corpus.todense()[:,token_ids]
+    xs = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
+    token_ids = list(token_clusters[token_clusters.cluster == n_cluster].index)
+    word_distributions = x_corpus.todense()[:, token_ids]
 
-    tick(1,max=len(token_ids))
+    tick(1, max=len(token_ids))
 
-    title=kwargs.get('title', 'Cluster #{}'.format(n_cluster))
+    title = kwargs.get('title', 'Cluster #{}'.format(n_cluster))
 
-    p = bokeh.plotting.figure(title=title, plot_width=kwargs.get('plot_width', 900), plot_height=kwargs.get('plot_height', 600), output_backend="webgl")
+    p = bokeh.plotting.figure(
+        title=title,
+        plot_width=kwargs.get('plot_width', 900),
+        plot_height=kwargs.get('plot_height', 600),
+        output_backend="webgl",
+    )
 
     p.yaxis.axis_label = 'Frequency'
     p.xgrid.grid_line_color = None
@@ -70,19 +79,20 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     return p
 
+
 def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster, color):
 
     xs = np.arange(x_corpus.document_index.year.min(), x_corpus.document_index.year.max() + 1, 1)
 
-    token_ids = list(token_clusters[token_clusters.cluster==n_cluster].index)
+    token_ids = list(token_clusters[token_clusters.cluster == n_cluster].index)
 
-    Y = x_corpus.data[:,token_ids]
+    Y = x_corpus.data[:, token_ids]
     xsr = np.repeat(xs, Y.shape[1])
     ysr = Y.ravel()
 
     data = pd.DataFrame(data={'year': xsr, 'frequency': ysr})
 
-    kind = hv.BoxWhisker # hv.Violin
+    kind = hv.BoxWhisker  # hv.Violin
     violin = kind(data, ('year', 'Year'), ('frequency', 'Frequency'))
 
     violin_opts = {
@@ -94,19 +104,12 @@ def plot_cluster_boxplot(x_corpus, token_clusters, n_cluster, color):
     }
     return violin.opts(**violin_opts)
 
+
 def plot_clusters_count(source):
 
-    figure_opts = dict(
-        plot_width=500,
-        plot_height=600,
-        title="Cluster token count"
-    )
+    figure_opts = dict(plot_width=500, plot_height=600, title="Cluster token count")
 
-    hover_opts = dict(
-        tooltips='@legend: @count words',
-        show_arrow=False,
-        line_policy='next'
-    )
+    hover_opts = dict(tooltips='@legend: @count words', show_arrow=False, line_policy='next')
 
     bar_opts = dict(
         legend_field='legend',
@@ -118,7 +121,7 @@ def plot_clusters_count(source):
         hover_line_color='color',
         line_alpha=1.0,
         hover_line_alpha=1.0,
-        height=0.75
+        height=0.75,
     )
 
     p = bokeh.plotting.figure(tools=[HoverTool(**hover_opts), TapTool()], **figure_opts)
@@ -134,9 +137,10 @@ def plot_clusters_count(source):
 
     return p
 
+
 def plot_clusters_mean(source, filter_source=None):
 
-    figure_opts = dict(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)" )
+    figure_opts = dict(plot_width=600, plot_height=620, title="Cluster mean trends (pchip spline)")
     hover_opts = dict(tooltips=[('Cluster', '@legend')], show_arrow=False, line_policy='next')
 
     line_opts = dict(
@@ -145,7 +149,7 @@ def plot_clusters_mean(source, filter_source=None):
         line_width=5,
         line_alpha=0.4,
         hover_line_color='color',
-        hover_line_alpha=1.0
+        hover_line_alpha=1.0,
     )
 
     p = bokeh.plotting.figure(tools=[HoverTool(**hover_opts), TapTool()], **figure_opts)
@@ -157,10 +161,10 @@ def plot_clusters_mean(source, filter_source=None):
     # p.xaxis.ticker = list(range(1945, 1990))
     p.y_range.start = 0
 
-    r = p.multi_line(source=source, xs='xs', ys='ys',**line_opts)
+    r = p.multi_line(source=source, xs='xs', ys='ys', **line_opts)
 
     p.legend.location = "top_left"
-    p.legend.click_policy="hide"
+    p.legend.click_policy = "hide"
 
     if filter_source is not None:
 
@@ -170,7 +174,7 @@ def plot_clusters_mean(source, filter_source=None):
             title='Show/hide',
             options=filter_source['options'],
             value=filter_source['values'],
-            size=min(len(filter_source['options']), 30)
+            size=min(len(filter_source['options']), 30),
         )
 
         multi_select.js_on_change('value', callback)
@@ -179,11 +183,14 @@ def plot_clusters_mean(source, filter_source=None):
 
     return p
 
+
 def create_multiline_multiselect_callback(source):
 
     full_source = bokeh.models.ColumnDataSource(source.data)
 
-    callback = bokeh.models.CustomJS(args = dict(source=source, full_source=full_source), code = """
+    callback = bokeh.models.CustomJS(
+        args=dict(source=source, full_source=full_source),
+        code="""
         const indices = cb_obj.value.map(x => parseInt(x));
         let items = ['xs', 'ys', 'color', 'legend'];
         for (const item of items) {
@@ -194,8 +201,10 @@ def create_multiline_multiselect_callback(source):
             }
         }
         source.change.emit()
-        """)
+        """,
+    )
     return callback
+
 
 def plot_dendogram(linkage_matrix, labels):
 
@@ -204,15 +213,16 @@ def plot_dendogram(linkage_matrix, labels):
     dendrogram(
         linkage_matrix,
         truncate_mode="level",
-        color_threshold = 1.8,
-        show_leaf_counts = True,
-        no_labels = False,
+        color_threshold=1.8,
+        show_leaf_counts=True,
+        no_labels=False,
         orientation="right",
-        labels = labels,
-        leaf_rotation = 0,  # rotates the x axis labels
-        leaf_font_size = 12,  # font size for the x axis labels
+        labels=labels,
+        leaf_rotation=0,  # rotates the x axis labels
+        leaf_font_size=12,  # font size for the x axis labels
     )
     plt.show()
+
 
 # from ipywidgets import interact, interactive, fixed, interact_manual
 # import ipywidgets as widgets

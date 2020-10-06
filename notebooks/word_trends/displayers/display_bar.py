@@ -6,8 +6,10 @@ NAME = "Bar"
 
 compile = data_compilers.compile_year_token_vector_data
 
+
 def setup(container, **kwargs):
     pass
+
 
 def plot(data, **kwargs):
     container = kwargs['container']

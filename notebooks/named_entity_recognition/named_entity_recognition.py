@@ -25,6 +25,7 @@ from westac.corpus import corpus_vectorizer
 from westac.corpus import tokenized_corpus
 from westac.corpus.iterators import dataframe_text_tokenizer
 
+
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
     The file is written to tsv the first time read for faster subsequent reads.
@@ -59,6 +60,7 @@ def load_text_windows(filename: str):
 
     return df
 
+
 def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     """Computes a term-term coocurrence matrix for documents in reader.
 
@@ -79,16 +81,15 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
     term_term_matrix = np.dot(v_corpus.bag_term_matrix.T, v_corpus.bag_term_matrix)
     term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
 
-    id2token = {
-        i: t for t,i in v_corpus.token2id.items()
-    }
+    id2token = {i: t for t, i in v_corpus.token2id.items()}
 
-    cdf = pd.DataFrame({
-        'w1_id': term_term_matrix.row,
-        'w2_id': term_term_matrix.col,
-        'value': term_term_matrix.data
-    })[['w1_id', 'w2_id', 'value']].sort_values(['w1_id', 'w2_id'])\
+    cdf = (
+        pd.DataFrame({'w1_id': term_term_matrix.row, 'w2_id': term_term_matrix.col, 'value': term_term_matrix.data})[
+            ['w1_id', 'w2_id', 'value']
+        ]
+        .sort_values(['w1_id', 'w2_id'])
         .reset_index(drop=True)
+    )
 
     if min_count > 1:
         cdf = cdf[cdf.value >= min_count]
@@ -104,6 +105,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
 
     return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
+
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):
     reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
     df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
@@ -111,11 +113,12 @@ def compute_for_period_newpaper(df, period, newspaper, min_count, options):
     df_y['period'] = str(period)
     return df_y
 
+
 def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
 
     columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
-    df   = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
+    df = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
     df_r = pd.DataFrame(columns=columns)
 
     n_documents = 0
@@ -139,6 +142,3 @@ def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, targe
         df_r.to_csv(target_filename, sep='\t', compression=extension, index=False, header=True)
     else:
         df_r.to_csv(target_filename, sep='\t', index=False, header=True)
-
-
-

@@ -18,6 +18,7 @@ logger = utility.setup_logger()
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+
 def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
 
     df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
@@ -26,23 +27,14 @@ def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
     df.index.name = 'id'
     return df.sort_values('weight', ascending=False).head(n_top)
 
-def display_texts(
-    state,
-    filters,
-    threshold=0.0,
-    output_format='Table',
-    n_top=500
-):
+
+def display_texts(state, filters, threshold=0.0, output_format='Table', n_top=500):
 
     corpus = state.model_data.corpus
     id2token = state.model_data.id2term
     document_topic_weights = state.compiled_data.document_topic_weights
 
-    df = filter_document_topic_weights(
-        document_topic_weights,
-        filters=filters,
-        threshold=threshold
-    )
+    df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
 
     df = reconstitue_texts_for_topic(df, corpus, id2token, n_top=n_top)
 
@@ -51,10 +43,11 @@ def display_texts(
     elif output_format == 'Table':
         display(df)
 
+
 def display_gui(state):
 
     year_min, year_max = state.compiled_data.year_period
-    year_options =  [ (x,x) for x in range(year_min, year_max + 1)]
+    year_options = [(x, x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_document_text'
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
@@ -63,14 +56,24 @@ def display_gui(state):
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_helper.text(text_id),
-        year=widgets.Dropdown(description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")),
-        topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
+        year=widgets.Dropdown(
+            description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")
+        ),
+        publication_id=widgets.Dropdown(
+            description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")
+        ),
+        topic_id=widgets.IntSlider(
+            description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
+        ),
         n_top=widgets.IntSlider(description='#Docs', min=5, max=500, step=1, value=75),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False),
-        output_format=widgets.Dropdown(description='Format', options=['Table'], value='Table', layout=widgets.Layout(width="200px")),
+        threshold=widgets.FloatSlider(
+            description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False
+        ),
+        output_format=widgets.Dropdown(
+            description='Format', options=['Table'], value='Table', layout=widgets.Layout(width="200px")
+        ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
-        output=widgets.Output()
+        output=widgets.Output(),
     )
 
     gui.prev_topic_id = gui.create_prev_id_button('topic_id', state.num_topics)
@@ -100,7 +103,7 @@ def display_gui(state):
                 filters=dict(year=gui.year.value, topic_id=gui.topic_id.value, publication_id=gui.publication_id.value),
                 threshold=gui.threshold.value,
                 n_top=gui.n_top.value,
-                output_format=gui.output_format.value
+                output_format=gui.output_format.value,
             )
 
     gui.topic_id.observe(update_handler, names='value')
@@ -110,18 +113,26 @@ def display_gui(state):
     gui.n_top.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
-    display(widgets.VBox([
-        widgets.HBox([
-            widgets.VBox([
-                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
-                gui.progress,
-            ]),
-            widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
-            widgets.VBox([gui.publication_id, gui.year]),
-            widgets.VBox([gui.output_format])
-        ]),
-        gui.text,
-        gui.output
-    ]))
+    display(
+        widgets.VBox(
+            [
+                widgets.HBox(
+                    [
+                        widgets.VBox(
+                            [
+                                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
+                                gui.progress,
+                            ]
+                        ),
+                        widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
+                        widgets.VBox([gui.publication_id, gui.year]),
+                        widgets.VBox([gui.output_format]),
+                    ]
+                ),
+                gui.text,
+                gui.output,
+            ]
+        )
+    )
 
     update_handler()

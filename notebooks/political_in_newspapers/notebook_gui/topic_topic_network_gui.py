@@ -1,4 +1,3 @@
-
 # Visualize topic co-occurrence
 import types
 import warnings
@@ -18,6 +17,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger()
 
+
 def display_gui(state):
 
     lw = lambda w: widgets.Layout(width=w)
@@ -25,29 +25,52 @@ def display_gui(state):
 
     text_id = 'nx_topic_topic'
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-    layout_options = [ 'Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
-    output_options = { 'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv' }
-    ignore_options = [('', None)] + [ ('Topic #'+str(i), i) for i in range(0, n_topics) ]
+    layout_options = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
+    output_options = {'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv'}
+    ignore_options = [('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)]
     year_min, year_max = state.compiled_data.year_period
 
-    topic_proportions = tmutility.compute_topic_proportions(state.compiled_data.document_topic_weights, state.compiled_data.documents.n_terms.values)
+    topic_proportions = tmutility.compute_topic_proportions(
+        state.compiled_data.document_topic_weights, state.compiled_data.documents.n_terms.values
+    )
     titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights)
 
     gui = types.SimpleNamespace(
         n_topics=n_topics,
         text=widgets_utility.wf.create_text_widget(text_id),
-        period=widgets.IntRangeSlider(description='Time', min=year_min, max=year_max, step=1, value=(year_min, year_min+5), continues_update=False),
+        period=widgets.IntRangeSlider(
+            description='Time',
+            min=year_min,
+            max=year_max,
+            step=1,
+            value=(year_min, year_min + 5),
+            continues_update=False,
+        ),
         scale=widgets.FloatSlider(description='Scale', min=0.0, max=1.0, step=0.01, value=0.1, continues_update=False),
         n_docs=widgets.IntSlider(description='n-docs', min=10, max=100, step=1, value=1, continues_update=False),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.01, max=1.0, step=0.01, value=0.20, continues_update=False),
-        output_format=widgets.Dropdown(description='Output', options=output_options, value='network', layout=lw('200px')),
-        layout=widgets.Dropdown(description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')),
-        publication_id=widgets.Dropdown(description='Publication', options=publications, value=None, layout=widgets.Layout(width="250px")),
+        threshold=widgets.FloatSlider(
+            description='Threshold', min=0.01, max=1.0, step=0.01, value=0.20, continues_update=False
+        ),
+        output_format=widgets.Dropdown(
+            description='Output', options=output_options, value='network', layout=lw('200px')
+        ),
+        layout=widgets.Dropdown(
+            description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')
+        ),
+        publication_id=widgets.Dropdown(
+            description='Publication', options=publications, value=None, layout=widgets.Layout(width="250px")
+        ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
-        ignores=widgets.SelectMultiple(description='Ignore', options=ignore_options, value=[], rows=5, layout=lw('250px')),
-        node_range=widgets.IntRangeSlider(description='Node size', min=10, max=100, step=1, value=(20, 60), continues_update=False),
-        edge_range=widgets.IntRangeSlider(description='Edge size', min=1, max=20, step=1, value=(2, 6), continues_update=False),
-        output=widgets.Output()
+        ignores=widgets.SelectMultiple(
+            description='Ignore', options=ignore_options, value=[], rows=5, layout=lw('250px')
+        ),
+        node_range=widgets.IntRangeSlider(
+            description='Node size', min=10, max=100, step=1, value=(20, 60), continues_update=False
+        ),
+        edge_range=widgets.IntRangeSlider(
+            description='Edge size', min=1, max=20, step=1, value=(2, 6), continues_update=False
+        ),
+        output=widgets.Output(),
     )
 
     def tick(x=None):
@@ -73,7 +96,7 @@ def display_gui(state):
                 output_format=gui.output_format.value,
                 text_id=text_id,
                 titles=titles,
-                topic_proportions=topic_proportions
+                topic_proportions=topic_proportions,
             )
         tick(0)
 
@@ -89,15 +112,21 @@ def display_gui(state):
     gui.publication_id.observe(compute_handler, names='value')
     gui.ignores.observe(compute_handler, names='value')
 
-    display(widgets.VBox([
-        widgets.HBox([
-            widgets.VBox([gui.layout, gui.threshold, gui.n_docs, gui.period]),
-            widgets.VBox([gui.publication_id, gui.ignores]),
-            widgets.VBox([gui.node_range, gui.edge_range, gui.scale]),
-            widgets.VBox([widgets.HBox([gui.output_format]), gui.progress]),
-        ]),
-        gui.output,
-        gui.text
-    ]))
+    display(
+        widgets.VBox(
+            [
+                widgets.HBox(
+                    [
+                        widgets.VBox([gui.layout, gui.threshold, gui.n_docs, gui.period]),
+                        widgets.VBox([gui.publication_id, gui.ignores]),
+                        widgets.VBox([gui.node_range, gui.edge_range, gui.scale]),
+                        widgets.VBox([widgets.HBox([gui.output_format]), gui.progress]),
+                    ]
+                ),
+                gui.output,
+                gui.text,
+            ]
+        )
+    )
 
     compute_handler()

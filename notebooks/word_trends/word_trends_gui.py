@@ -9,19 +9,25 @@ from pprint import pprint as pp
 
 def display_gui(container):
 
-    output_widget       = widgets.Output(layout=widgets.Layout(width='600px', height='200px'))
-    words_widget        = widgets.Textarea(description="", rows=4, value="och eller hur", layout=widgets.Layout(width='600px', height='200px'))
-    tab_widget          = widgets.Tab()
+    output_widget = widgets.Output(layout=widgets.Layout(width='600px', height='200px'))
+    words_widget = widgets.Textarea(
+        description="", rows=4, value="och eller hur", layout=widgets.Layout(width='600px', height='200px')
+    )
+    tab_widget = widgets.Tab()
 
-    data_handlers       = [ display_table, display_line, display_bar, display_grid ]
-    tab_widget.children = [ widgets.Output() for _ in data_handlers ]
-    _                   = [ tab_widget.set_title(i, x.NAME) for i, x in enumerate(data_handlers) ]
+    data_handlers = [display_table, display_line, display_bar, display_grid]
+    tab_widget.children = [widgets.Output() for _ in data_handlers]
+    _ = [tab_widget.set_title(i, x.NAME) for i, x in enumerate(data_handlers)]
 
-    smooth    = False
-    smoothers = [] if not smooth else [
-        # cf.rolling_average_smoother('nearest', 3),
-        cf.pchip_spline
-    ]
+    smooth = False
+    smoothers = (
+        []
+        if not smooth
+        else [
+            # cf.rolling_average_smoother('nearest', 3),
+            cf.pchip_spline
+        ]
+    )
 
     z_corpus = None
     x_corpus = None
@@ -47,12 +53,14 @@ def display_gui(container):
 
             tab_widget.children[1].clear_output()
             with tab_widget.children[1]:
-                display_line.setup(container, x_ticks=[ x for x in x_corpus.xs_years() ], plot_width=1000, plot_height=500)
+                display_line.setup(
+                    container, x_ticks=[x for x in x_corpus.xs_years()], plot_width=1000, plot_height=500
+                )
 
         tokens = '\n'.join(words_widget.value.split()).split()
         tab_index = tab_widget.selected_index
         data_handler = data_handlers[tab_index]
-        indices = [ x_corpus.token2id[token] for token in tokens if token in x_corpus.token2id ]
+        indices = [x_corpus.token2id[token] for token in tokens if token in x_corpus.token2id]
 
         with output_widget:
 
@@ -60,7 +68,7 @@ def display_gui(container):
                 print("Nothing to show!")
                 return
 
-            missing_tokens = [ token for token in tokens if token not in x_corpus.token2id ]
+            missing_tokens = [token for token in tokens if token not in x_corpus.token2id]
             if len(missing_tokens) > 0:
                 print("Not in corpus subset: {}".format(' '.join(missing_tokens)))
 
@@ -76,10 +84,6 @@ def display_gui(container):
     words_widget.observe(update_plot, names='value')
     tab_widget.observe(update_plot, 'selected_index')
 
-    display(widgets.VBox([
-        widgets.HBox([words_widget, output_widget]),
-        tab_widget
-    ]))
-
+    display(widgets.VBox([widgets.HBox([words_widget, output_widget]), tab_widget]))
 
     update_plot()

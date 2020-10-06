@@ -15,6 +15,7 @@ import westac.common.utility as utility
 
 logger = utility.setup_logger()
 
+
 def display_gui(state):
 
     lw = lambda w: widgets.Layout(width=w)
@@ -24,15 +25,19 @@ def display_gui(state):
     # year_min, year_max = state.compiled_data.year_period
 
     titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
-    weighings = [ (x['description'], x['key']) for x in topic_weight_over_time.METHODS ]
+    weighings = [(x['description'], x['key']) for x in topic_weight_over_time.METHODS]
 
     gui = types.SimpleNamespace(
         text_id=text_id,
         text=widgets_helper.text(text_id),
         flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
-        aggregate=widgets.Dropdown(description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")),
-        output_format=widgets.Dropdown(description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")),
-        output=widgets.Output()
+        aggregate=widgets.Dropdown(
+            description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")
+        ),
+        output_format=widgets.Dropdown(
+            description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")
+        ),
+        output=widgets.Output(),
     )
 
     def update_handler(*_):
@@ -48,15 +53,16 @@ def display_gui(state):
                 titles,
                 flip_axis=gui.flip_axis.value,
                 aggregate=gui.aggregate.value,
-                output_format=gui.output_format.value
+                output_format=gui.output_format.value,
             )
 
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
-    display(widgets.VBox([
-        widgets.HBox([gui.aggregate, gui.output_format, gui.flip_axis ]),
-        widgets.HBox([gui.output]), gui.text
-    ]))
+    display(
+        widgets.VBox(
+            [widgets.HBox([gui.aggregate, gui.output_format, gui.flip_axis]), widgets.HBox([gui.output]), gui.text]
+        )
+    )
 
     update_handler()
