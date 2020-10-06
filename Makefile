@@ -20,14 +20,14 @@ test-coverage:
 
 test: clean
 	@poetry run pytest --verbose --durations=0 \
-		--cov=penelope \
+		--cov=westac \
 		--cov-report=term \
 		--cov-report=xml \
 		--cov-report=html \
 		tests
 
 lint:
-	@poetry run pylint penelope tests | sort | uniq | grep -v "************* Module" > pylint.log
+	@poetry run pylint westac tests | sort | uniq | grep -v "************* Module" > pylint.log
 	@poetry run flake8 --version
 	@poetry run flake8
 	# @poetry run mypy --version
@@ -36,7 +36,7 @@ lint:
 format: clean black isort
 
 isort:
-	@poetry run isort penelope
+	@poetry run isort westac
 
 yapf: clean
 	@poetry run yapf --version
