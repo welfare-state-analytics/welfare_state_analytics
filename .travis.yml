@@ -20,7 +20,7 @@ cache:
 install:
 - pip install poetry
 - poetry install
-- mkdir ./westac/tests/output
+- mkdir ./tests/output
 - travis_wait 30 poetry run python -m nltk.downloader stopwords -d $HOME/nltk_data
 - travis_wait 30 poetry run python -m nltk.downloader punkt -d $HOME/nltk_data
 
