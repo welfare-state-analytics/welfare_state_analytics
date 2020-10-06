@@ -4,8 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy
 from gensim.matutils import Sparse2Corpus
-
-from westac.common.utility import flatten
+from penelope.utility import flatten
 
 PUBLICATION2ID = {'AFTONBLADET': 1, 'EXPRESSEN': 2, 'DAGENS NYHETER': 3, 'SVENSKA DAGBLADET': 4}
 ID2PUBLICATION = {v: k for k, v in PUBLICATION2ID.items()}

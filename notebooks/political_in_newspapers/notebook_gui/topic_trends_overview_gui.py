@@ -1,14 +1,14 @@
 import types
 
 import ipywidgets as widgets
-from IPython.display import display
-
-import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_weight_over_time as topic_weight_over_time
 import text_analytic_tools.utility.widgets as widgets_helper
 import westac.common.utility as utility
+from IPython.display import display
+
+import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 # from beakerx import *
 # from beakerx.object import beakerx

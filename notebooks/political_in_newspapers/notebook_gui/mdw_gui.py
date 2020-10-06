@@ -1,11 +1,13 @@
-import types
 import logging
-import ipywidgets
-import notebooks.political_in_newspapers.corpus_data as corpus_data
-import westac.corpus.vectorized_corpus as vectorized_corpus
+import types
 
-from westac.common.textacy_mdw_modified import compute_most_discriminating_terms
+import ipywidgets
+import westac.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
+from westac.common.textacy_mdw_modified import \
+    compute_most_discriminating_terms
+
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")

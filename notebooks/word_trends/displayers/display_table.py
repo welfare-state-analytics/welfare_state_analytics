@@ -1,5 +1,4 @@
 import pandas as pd
-
 from ipyaggrid import Grid
 from IPython.display import display
 

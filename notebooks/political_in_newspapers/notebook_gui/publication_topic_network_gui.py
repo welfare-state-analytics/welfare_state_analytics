@@ -1,17 +1,19 @@
 # Visualize year-to-topic network by means of topic-document-weights
 import types
-import ipywidgets as widgets
+
 import bokeh
 import bokeh.plotting
+import ipywidgets as widgets
 import numpy as np
+import text_analytic_tools.common.network.utility as network_utility
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.common.network.utility as network_utility
 import westac.common.utility as utility
-import notebooks.political_in_newspapers.corpus_data as corpus_data
-
-from text_analytic_tools.common.network.plot_utility import layout_algorithms, PlotNetworkUtility
 from IPython.display import display
+from text_analytic_tools.common.network.plot_utility import (
+    PlotNetworkUtility, layout_algorithms)
+
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 TEXT_ID = 'nx_pub_topic'
 

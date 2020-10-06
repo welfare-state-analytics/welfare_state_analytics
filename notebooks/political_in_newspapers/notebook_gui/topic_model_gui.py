@@ -1,10 +1,11 @@
+import glob
+import logging
 import os
 import types
-import glob
+
 import ipywidgets
-import logging
-import penelope.utility as utility
 import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
 import penelope.vendor.gensim.utils as gensim_utility
 import penelope.vendor.textacy.utils as textacy_utility
 from IPython.display import display

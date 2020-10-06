@@ -1,12 +1,13 @@
 # Visualize topic co-occurrence
 import types
-import ipywidgets as widgets
-from IPython.display import display
 
-import notebooks.common.topic_topic_network_display as topic_topic_network_display
+import ipywidgets as widgets
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.utility as tmutility
 import text_analytic_tools.utility.widgets_utility as widgets_utility
+from IPython.display import display
+
+import notebooks.common.topic_topic_network_display as topic_topic_network_display
 
 # bokeh.plotting.output_notebook()
 

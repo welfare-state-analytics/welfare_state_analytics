@@ -1,9 +1,9 @@
-import os
 import glob
+import os
 import types
+
 import ipywidgets as widgets
 import westac.corpus.vectorized_corpus as vectorized_corpus
-
 from IPython.display import display
 
 

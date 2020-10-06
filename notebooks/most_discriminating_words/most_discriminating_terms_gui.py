@@ -1,7 +1,7 @@
-import types
 import logging
-import ipywidgets
+import types
 
+import ipywidgets
 from IPython.display import display
 
 logger = logging.getLogger(__name__)

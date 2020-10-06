@@ -1,6 +1,7 @@
 import ipywidgets
-from IPython.display import display
 from bokeh.plotting import show
+from IPython.display import display
+
 import notebooks.common.distributions_plot as plotter
 
 

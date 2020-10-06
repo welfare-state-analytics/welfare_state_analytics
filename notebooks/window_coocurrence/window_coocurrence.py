@@ -16,15 +16,12 @@
 import os
 
 import numpy as np
-
 # +
 # %load_ext autoreload
 # %autoreload 2
 import pandas as pd
 import scipy
-
-from westac.corpus import corpus_vectorizer
-from westac.corpus import tokenized_corpus
+from westac.corpus import corpus_vectorizer, tokenized_corpus
 from westac.corpus.iterators import dataframe_text_tokenizer
 
 

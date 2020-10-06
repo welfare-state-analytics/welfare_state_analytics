@@ -1,6 +1,6 @@
 import pandas as pd
-from IPython.display import display
 from ipyaggrid import Grid
+from IPython.display import display
 
 import notebooks.word_trends.displayers.data_compilers as data_compilers
 

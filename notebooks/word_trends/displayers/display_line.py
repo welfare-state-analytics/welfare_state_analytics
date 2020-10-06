@@ -1,6 +1,8 @@
-import bokeh
-import math
 import itertools
+import math
+
+import bokeh
+
 import notebooks.word_trends.displayers.data_compilers as data_compilers
 
 NAME = "Line"

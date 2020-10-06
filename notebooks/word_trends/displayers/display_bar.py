@@ -1,5 +1,6 @@
-import pandas as pd
 import bokeh
+import pandas as pd
+
 import notebooks.word_trends.displayers.data_compilers as data_compilers
 
 NAME = "Bar"

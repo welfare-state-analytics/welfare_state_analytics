@@ -1,12 +1,12 @@
 import warnings
 
 import ipywidgets as widgets
-from IPython.display import display
-
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.topic_weight_over_time as topic_weight_over_time
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.utility.widgets_utility as widgets_utility
+from IPython.display import display
+
 import notebooks.common.topic_trend_display as topic_trend_display
 
 # from beakerx import *

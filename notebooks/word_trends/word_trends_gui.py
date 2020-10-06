@@ -1,10 +1,12 @@
-import ipywidgets as widgets
-from IPython.display import display
-import bokeh
-import westac.common.curve_fit as cf
-from notebooks.word_trends.displayers import display_bar, display_grid, display_line, display_table
-
 from pprint import pprint as pp
+
+import bokeh
+import ipywidgets as widgets
+import westac.common.curve_fit as cf
+from IPython.display import display
+
+from notebooks.word_trends.displayers import (display_bar, display_grid,
+                                              display_line, display_table)
 
 
 def display_gui(container):

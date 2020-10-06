@@ -3,14 +3,14 @@ import types
 import warnings
 
 import ipywidgets as widgets
-from IPython.display import display
-
-import notebooks.common.topic_topic_network_display as topic_topic_network_display
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.text_analysis.utility as tmutility
 import text_analytic_tools.utility.widgets_utility as widgets_utility
 import westac.common.utility as utility
+from IPython.display import display
+
+import notebooks.common.topic_topic_network_display as topic_topic_network_display
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)

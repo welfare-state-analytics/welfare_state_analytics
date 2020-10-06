@@ -1,13 +1,13 @@
 import warnings
 
 import ipywidgets as widgets
-from IPython.display import display
-
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
 import text_analytic_tools.utility.widgets as widgets_helper
 import text_analytic_tools.utility.widgets_utility as widgets_utility
 import westac.common.utility as utility
+from IPython.display import display
+
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.common import filter_document_topic_weights, to_text
 
 logger = utility.setup_logger()

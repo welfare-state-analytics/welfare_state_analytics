@@ -1,6 +1,7 @@
 import logging
-import westac.common.textacy_most_discriminating_terms as mdw
+
 import pandas as pd
+import westac.common.textacy_most_discriminating_terms as mdw
 
 logger = logging.getLogger(__name__)
 
