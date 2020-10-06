@@ -1,14 +1,12 @@
-import wordcloud
-import matplotlib.pyplot as plt
 import ipywidgets as widgets
-import penelope.widgets.widgets_utility as widgets_utility
-import penelope.widgets.widgets_config as widgets_helper
+import matplotlib.pyplot as plt
+import pandas as pd
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
-
+import penelope.widgets.widgets_config as widgets_helper
+import penelope.widgets.widgets_utility as widgets_utility
+import wordcloud
 from IPython.display import display
-
-import pandas as pd
 
 pd.set_option("display.max_rows", None)
 pd.set_option('max_colwidth', 200)

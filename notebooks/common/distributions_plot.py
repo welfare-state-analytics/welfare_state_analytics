@@ -1,9 +1,10 @@
-import math
-import scipy
-import numpy as np
-import bokeh
 import itertools
+import math
+
+import bokeh
+import numpy as np
 import penelope.common.curve_fit as cf
+import scipy
 
 
 def noop(x=None, p=None, max=None):

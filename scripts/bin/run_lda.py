@@ -1,10 +1,8 @@
-import os
-
-import click
-
 import logging
+import os
 from os.path import join as jj
 
+import click
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 import penelope.topic_modelling as topic_modelling
 

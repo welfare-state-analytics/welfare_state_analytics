@@ -39,7 +39,7 @@ lint2file:
 format: clean black isort
 
 isort:
-	@poetry run isort westac
+	@poetry run isort scripts westac notebooks/common
 
 yapf: clean
 	@poetry run yapf --version

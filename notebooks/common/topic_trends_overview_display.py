@@ -1,10 +1,10 @@
 import warnings
+
 import bokeh
 import bokeh.plotting
 import bokeh.transform
-import penelope.widgets.widgets_utility as widgets_utility
 import penelope.utility as utility
-
+import penelope.widgets.widgets_utility as widgets_utility
 from IPython.display import display
 
 # from beakerx import *

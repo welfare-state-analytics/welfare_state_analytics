@@ -1,11 +1,11 @@
 import json
 
 import click
-
 import penelope.corpus.readers.sparv_xml_tokenizer as sparv_reader
 import penelope.corpus.sparv_corpus as sparv_corpus
 from penelope.corpus.tokens_transformer import TokensTransformer
-from penelope.utility import replace_extension, suffix_filename, timestamp_filename
+from penelope.utility import (replace_extension, suffix_filename,
+                              timestamp_filename)
 
 
 def store_options_to_json_file(input_filename, output_filename, tokens_transform_opts, sparv_extract_opts):

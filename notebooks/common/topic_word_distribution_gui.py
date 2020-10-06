@@ -4,11 +4,10 @@ import bokeh
 import bokeh.plotting
 import ipywidgets as widgets
 import numpy as np
-from IPython.display import display
-
 import penelope.topic_modelling as topic_modelling
 import penelope.widgets.widgets_config as widgets_helper
 import penelope.widgets.widgets_utility as widgets_utility
+from IPython.display import display
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 

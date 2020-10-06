@@ -4,7 +4,6 @@ import warnings
 import bokeh
 import bokeh.plotting
 import numpy as np
-
 import penelope.utility as utility
 
 # from beakerx import *

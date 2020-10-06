@@ -1,15 +1,18 @@
-import os, sys
+import os
+import sys
+
 import click
 
 root_folder = (lambda d: os.path.join(os.getcwd().split(d)[0], d))("welfare_state_analytics")
 
 sys.path = list(set(sys.path + [root_folder]))
 
-import penelope.topic_modelling as topic_modelling
+from os.path import join as jj
+
 import penelope.corpus.readers.text_tokenizer as text_tokenizer
 import penelope.corpus.tokenized_corpus as tokenized_corpus
+import penelope.topic_modelling as topic_modelling
 import penelope.utility.file_utility as file_utility
-from os.path import join as jj
 
 # pylint: disable=unused-argument, too-many-arguments
 

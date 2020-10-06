@@ -3,7 +3,6 @@ import warnings
 from os.path import join as jj
 
 import ipywidgets as widgets
-
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 
