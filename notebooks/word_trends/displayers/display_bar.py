@@ -1,14 +1,13 @@
 import bokeh
-import pandas as pd
 
-import notebooks.word_trends.displayers.data_compilers as data_compilers
+from . import data_compilers
 
 NAME = "Bar"
 
-compile = data_compilers.compile_year_token_vector_data
+compile = data_compilers.compile_year_token_vector_data  # pylint: disable=redefined-builtin
 
 
-def setup(container, **kwargs):
+def setup(container, **kwargs):  # pylint: disable=unused-argument
     pass
 
 

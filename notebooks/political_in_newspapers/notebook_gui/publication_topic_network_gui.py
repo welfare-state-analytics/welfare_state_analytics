@@ -5,20 +5,19 @@ import bokeh
 import bokeh.plotting
 import ipywidgets as widgets
 import numpy as np
-import text_analytic_tools.common.network.utility as network_utility
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.utility.widgets as widgets_helper
-import westac.common.utility as utility
+import penelope.network.plot_utility as plot_utility
+import penelope.network.utility as network_utility
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
+import penelope.notebook.widgets_utils as widgets_helper
 from IPython.display import display
-from text_analytic_tools.common.network.plot_utility import (
-    PlotNetworkUtility, layout_algorithms)
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 TEXT_ID = 'nx_pub_topic'
 
 
-def plot_document_topic_network(network, layout, scale=1.0, titles=None):
+def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
     source_nodes, target_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
@@ -33,11 +32,11 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
     p = bokeh.plotting.figure(plot_width=1000, plot_height=600, x_axis_type=None, y_axis_type=None, tools=tools)
 
     _ = p.multi_line(
-        'xs', 'ys', line_width='weights', level='underlay', alpha='alphas', color='black', source=lines_source
+        xs='xs', ys='ys', line_width='weights', level='underlay', alpha='alphas', color='black', source=lines_source
     )
-    _ = p.circle('x', 'y', size=40, source=source_source, color='lightgreen', line_width=1, alpha=1.0)
+    _ = p.circle(x='x', y='y', size=40, source=source_source, color='lightgreen', line_width=1, alpha=1.0)
 
-    r_topics = p.circle('x', 'y', size=25, source=target_source, color='skyblue', alpha=1.0)
+    r_topics = p.circle(x='x', y='y', size=25, source=target_source, color='skyblue', alpha=1.0)
 
     p.add_tools(
         bokeh.models.HoverTool(
@@ -83,7 +82,7 @@ def display_document_topic_network(
     topic_token_weights = state.compiled_data.topic_token_weights
     document_topic_weights = state.compiled_data.document_topic_weights
 
-    titles = derived_data_compiler.get_topic_titles(topic_token_weights)
+    titles = topic_modelling.get_topic_titles(topic_token_weights)
 
     df = document_topic_weights
     if len(period or []) == 2:
@@ -114,8 +113,8 @@ def display_document_topic_network(
     tick()
 
     if output_format == 'network':
-        args = PlotNetworkUtility.layout_args(layout_algorithm, network, scale)
-        layout = (layout_algorithms[layout_algorithm])(network, **args)
+        args = plot_utility.layout_args(layout_algorithm, network, scale)
+        layout = (plot_utility.layout_algorithms[layout_algorithm])(network, **args)
         tick()
         p = plot_document_topic_network(network, layout, scale=scale, titles=titles)
         bokeh.plotting.show(p)

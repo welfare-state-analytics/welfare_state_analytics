@@ -31,7 +31,7 @@ test: clean
 lint:
 	@poetry run flake8 --version
 	@poetry run flake8 $(SOURCE_FILES)
-	#@poetry run pylint $(SOURCE_FILES) | sort | uniq | grep -v "************* Module" > pylint.log
+	@poetry run pylint $(SOURCE_FILES)
 
 lint2file:
 	@poetry run flake8 --version

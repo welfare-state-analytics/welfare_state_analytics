@@ -8,6 +8,7 @@ import penelope.topic_modelling as topic_modelling
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
+# pylint: disable=too-many-locals, too-many-arguments
 ENGINE_OPTIONS = [
     ("MALLET LDA", "gensim_mallet-lda"),
     ("gensim LDA", "gensim_lda"),
@@ -86,7 +87,7 @@ def run_model(
     engine,
     passes,
     random_seed,
-    alpha,
+    alpha,  # pylint: disable=unused-argument)
     workers,
     max_iter,
     prefix,

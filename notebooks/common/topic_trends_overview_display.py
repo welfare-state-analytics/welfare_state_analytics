@@ -4,7 +4,7 @@ import bokeh
 import bokeh.plotting
 import bokeh.transform
 import penelope.utility as utility
-import penelope.widgets.widgets_utility as widgets_utility
+import penelope.notebook.widgets_utils as widgets_utils
 from IPython.display import display
 
 # from beakerx import *
@@ -55,7 +55,7 @@ def compute_int_range_categories(values):
 HEATMAP_FIGOPTS = dict(title="Topic heatmap", toolbar_location="right", x_axis_location="above", plot_width=1200)
 
 
-def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figopts):
+def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figopts):  # pylint: disable=too-many-arguments, too-many-locals
 
     line_height = 7
     if flip_axis is True:
@@ -104,7 +104,7 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
     p.add_tools(
         bokeh.models.HoverTool(
             tooltips=None,
-            callback=widgets_utility.WidgetUtility.glyph_hover_callback(
+            callback=widgets_utils.glyph_hover_callback2(
                 source, 'topic_id', titles.index, titles, text_id
             ),
             renderers=[cr],
@@ -113,7 +113,7 @@ def plot_topic_relevance_by_year(df, xs, ys, flip_axis, titles, text_id, **figop
     return p
 
 
-def display_heatmap(weights, titles, key='max', flip_axis=False, glyph='Circle', aggregate=None, output_format=None):
+def display_heatmap(weights, titles, key='max', flip_axis=False, glyph='Circle', aggregate=None, output_format=None):  # pylint: disable=unused-argument
     try:
 
         ''' Display aggregate value grouped by year  '''

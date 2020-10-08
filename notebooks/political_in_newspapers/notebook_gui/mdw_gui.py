@@ -1,10 +1,12 @@
 import logging
 import types
+from typing import Sequence
 
 import ipywidgets
-import westac.corpus.vectorized_corpus as vectorized_corpus
+import pandas as pd
+import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
-from westac.common.textacy_mdw_modified import \
+from penelope.vendor.textacy.mdw_modified import \
     compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -13,9 +15,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")
 
 
-def group_indicies(documents, period, pub_ids=None):
+def year_range_group_indicies(documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None) -> pd.Index[int]:
+    """[summary]
 
-    assert 'year' in documents.columns
+    Parameters
+    ----------
+    documents : pd.DataFrame
+        Documents meta data
+    period : Sequence[int]
+        Year range for group
+    pub_ids : : Sequence[int], optional
+        [description], by default None
+
+    Returns
+    -------
+    pd.Index[int]
+        [description]
+    """
+    assert "year" in documents.columns
 
     docs = documents[documents.year.between(*period)]
 
@@ -23,6 +40,7 @@ def group_indicies(documents, period, pub_ids=None):
         pub_ids = list(pub_ids)
 
     if len(pub_ids or []) > 0:
+        # TODO: #90 Make groupings mot generic and move to penelope
         docs = docs[(docs.publication_id.isin(pub_ids))]
 
     return docs.index
@@ -30,9 +48,13 @@ def group_indicies(documents, period, pub_ids=None):
 
 def load_vectorized_corpus(corpus_folder, publication_ids):
     logger.info("Loading DTM corpus...")
-    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
+    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(
+        corpus_folder, list(publication_ids)
+    )
     token2id = {v: k for k, v in id2token.items()}
-    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, document_index)
+    v_corpus = vectorized_corpus.VectorizedCorpus(
+        bag_term_matrix, token2id, document_index
+    )
     return v_corpus
 
 
@@ -58,49 +80,71 @@ def display_gui(v_corpus, v_documents):
     lw = lambda w: ipywidgets.Layout(width=w)
     year_span = (v_documents.year.min(), v_documents.year.max())
     gui = types.SimpleNamespace(
-        progress=ipywidgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('90%')),
+        progress=ipywidgets.IntProgress(
+            value=0, min=0, max=5, step=1, description="", layout=lw("90%")
+        ),
         top_n_terms=ipywidgets.IntSlider(
-            description='#terms',
+            description="#terms",
             min=10,
             max=1000,
             value=200,
-            tooltip='The total number of tokens to return for each group',
+            tooltip="The total number of tokens to return for each group",
         ),
         max_n_terms=ipywidgets.IntSlider(
-            description='#top',
+            description="#top",
             min=1,
             max=2000,
             value=100,
-            tooltip='Only consider tokens whose DF is within the top # terms out of all terms',
+            tooltip="Only consider tokens whose DF is within the top # terms out of all terms",
         ),
         min_df=ipywidgets.FloatSlider(
-            description='Min DF%', min=0.0, max=100.0, value=3.0, step=0.1, layout=lw('250px')
+            description="Min DF%",
+            min=0.0,
+            max=100.0,
+            value=3.0,
+            step=0.1,
+            layout=lw("250px"),
         ),
         max_df=ipywidgets.FloatSlider(
-            description='Max DF%', min=0.0, max=100.0, value=95.0, step=0.1, layout=lw('250px')
+            description="Max DF%",
+            min=0.0,
+            max=100.0,
+            value=95.0,
+            step=0.1,
+            layout=lw("250px"),
         ),
         period1=ipywidgets.IntRangeSlider(
-            description='Period',
+            description="Period",
             min=year_span[0],
             max=year_span[1],
             value=(v_documents.year.min(), v_documents.year.min() + 4),
-            layout=lw('250px'),
+            layout=lw("250px"),
         ),
         period2=ipywidgets.IntRangeSlider(
-            description='Period',
+            description="Period",
             min=year_span[0],
             max=year_span[1],
             value=(v_documents.year.max() - 4, v_documents.year.max()),
-            layout=lw('250px'),
+            layout=lw("250px"),
         ),
         publication_ids1=ipywidgets.SelectMultiple(
-            description='Publication', options=publications, rows=4, value=(1,), layout=ipywidgets.Layout(width="250px")
+            description="Publication",
+            options=publications,
+            rows=4,
+            value=(1,),
+            layout=ipywidgets.Layout(width="250px"),
         ),
         publication_ids2=ipywidgets.SelectMultiple(
-            description='Publication', options=publications, rows=4, value=(3,), layout=ipywidgets.Layout(width="250px")
+            description="Publication",
+            options=publications,
+            rows=4,
+            value=(3,),
+            layout=ipywidgets.Layout(width="250px"),
         ),
-        compute=ipywidgets.Button(description='Compute', icon='', button_style='Success', layout=lw('120px')),
-        output=ipywidgets.Output(layout={'border': '1px solid black'}),
+        compute=ipywidgets.Button(
+            description="Compute", icon="", button_style="Success", layout=lw("120px")
+        ),
+        output=ipywidgets.Output(layout={"border": "1px solid black"}),
     )
 
     boxes = ipywidgets.VBox(
@@ -116,7 +160,7 @@ def display_gui(v_corpus, v_documents):
                             gui.min_df,
                             gui.max_df,
                         ],
-                        layout=ipywidgets.Layout(align_items='flex-end'),
+                        layout=ipywidgets.Layout(align_items="flex-end"),
                     ),
                     ipywidgets.VBox([gui.compute]),
                 ]
@@ -133,12 +177,16 @@ def display_gui(v_corpus, v_documents):
             try:
                 gui.compute.disabled = True
 
-                logger.info("Using min DF %s and max DF %s", gui.min_df.value, gui.max_df.value)
+                logger.info(
+                    "Using min DF %s and max DF %s", gui.min_df.value, gui.max_df.value
+                )
 
                 logger.info("Slicing corpus...")
 
                 x_corpus = v_corpus.slice_by_df(
-                    max_df=gui.max_df.value / 100.0, min_df=gui.min_df.value / 100.0, max_n_terms=gui.max_n_terms.value
+                    max_df=gui.max_df.value / 100.0,
+                    min_df=gui.min_df.value / 100.0,
+                    max_n_terms=gui.max_n_terms.value,
                 )
 
                 logger.info("Corpus size after DF trim %s x %s.", *x_corpus.data.shape)
@@ -149,17 +197,21 @@ def display_gui(v_corpus, v_documents):
                     x_corpus,
                     top_n_terms=gui.top_n_terms.value,
                     max_n_terms=gui.max_n_terms.value,
-                    group1_indices=group_indicies(
-                        x_corpus.document_index, gui.period1.value, gui.publication_ids1.value
+                    group1_indices=year_range_group_indicies(
+                        x_corpus.document_index,
+                        gui.period1.value,
+                        gui.publication_ids1.value,
                     ),
-                    group2_indices=group_indicies(
-                        x_corpus.document_index, gui.period2.value, gui.publication_ids2.value
+                    group2_indices=year_range_group_indicies(
+                        x_corpus.document_index,
+                        gui.period2.value,
+                        gui.publication_ids2.value,
                     ),
                 )
                 if df is not None:
                     display(df)
                 else:
-                    logger.info('No data for selected groups or periods.')
+                    logger.info("No data for selected groups or periods.")
 
             except Exception as ex:
                 logger.error(ex)

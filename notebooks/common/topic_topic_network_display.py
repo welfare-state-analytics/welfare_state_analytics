@@ -23,6 +23,7 @@ def get_topic_titles(topic_token_weights, topic_id=None, n_words=100):
     return df
 
 
+# pylint: disable=too-many-arguments, too-many-locals
 def display_topic_topic_network(
     c_data,
     filters,

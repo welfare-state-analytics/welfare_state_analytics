@@ -3,7 +3,7 @@ import os
 import types
 
 import ipywidgets as widgets
-import westac.corpus.vectorized_corpus as vectorized_corpus
+import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
 
 
@@ -42,7 +42,7 @@ def display_gui(corpus_folder, container=None):
 
     if len(corpus_tags) == 0:
         print("Please install at least one vectorized corpus")
-        return
+        return None
 
     year_range = [1922, 1989]
     normalize_options = {'None': [], 'Over year': [0], 'Over word': [1], 'Over year and word': [0, 1]}

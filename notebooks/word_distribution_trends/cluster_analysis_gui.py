@@ -8,8 +8,8 @@ import ipywidgets
 import penelope.common.cluster_analysis as cluster_analysis
 import penelope.common.curve_fit as cf
 import penelope.common.goodness_of_fit as gof
-from beakerx import *  # pylint: disable=unused-wildcard-import
-from beakerx.object import beakerx
+from beakerx import *  # pylint: disable=unused-wildcard-import, redefined-builtin, wildcard-import
+from beakerx.object import beakerx  # pylint: disable=unused-import
 from IPython.display import display
 from markdown import markdown as md
 from penelope.utility import nth, setup_logger
@@ -43,7 +43,7 @@ class ClustersMeanPlot:
 
         self.output = output
         self.source = None
-
+        self.plot = None
         self.smoothers = [cf.rolling_average_smoother('nearest', 3), cf.pchip_spline]
 
     def update(self, x_corpus, ys_matrix, filter_source=None, smoothers=None):
@@ -69,6 +69,7 @@ class ClustersMeanPlot:
             bokeh.plotting.show(self.plot)
 
 
+# pylint: disable=too-many-locals, too-many-statements
 class ClustersCountPlot:
     def __init__(self, output):
 

@@ -1,3 +1,4 @@
+import types
 import warnings
 
 import bokeh
@@ -5,8 +6,7 @@ import bokeh.plotting
 import ipywidgets as widgets
 import numpy as np
 import penelope.topic_modelling as topic_modelling
-import penelope.widgets.widgets_config as widgets_helper
-import penelope.widgets.widgets_utility as widgets_utility
+import penelope.notebook.widgets_utils as widgets_utils
 from IPython.display import display
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -94,20 +94,22 @@ def display_gui(state):
     text_id = 'wc01'
     output_options = ['Chart', 'Table']
 
-    gui = widgets_utility.WidgetUtility(
+    gui = types.SimpleNamespace(
         n_topics=state.num_topics,
         text_id=text_id,
-        text=widgets_helper.text(text_id),
+        text=widgets_utils.text_widget(text_id),
         topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0),
         n_words=widgets.IntSlider(description='#Words', min=5, max=500, step=1, value=75),
         output_format=widgets.Dropdown(
             description='Format', options=output_options, value=output_options[0], layout=widgets.Layout(width="200px")
         ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="95%")),
+        prev_topic_id=None,
+        next_topic_id=None
     )
 
-    gui.prev_topic_id = gui.create_prev_id_button('topic_id', state.num_topics)
-    gui.next_topic_id = gui.create_next_id_button('topic_id', state.num_topics)
+    gui.prev_topic_id = widgets_utils.button_with_previous_callback(gui, 'topic_id', state.num_topics)
+    gui.next_topic_id = widgets_utils.button_with_next_callback(gui, 'topic_id', state.num_topics)
 
     iw = widgets.interactive(
         display_topic_tokens,

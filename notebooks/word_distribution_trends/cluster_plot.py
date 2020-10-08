@@ -5,15 +5,15 @@ import numpy as np
 import pandas as pd
 import penelope.common.curve_fit as cf
 import penelope.common.goodness_of_fit as gof
-# from bokeh.models import Legend, LegendItem
 from bokeh.models import HoverTool, TapTool
 from scipy.cluster.hierarchy import dendrogram
 
 
-def noop(x=None, p=None, max=None):
-    pass  # pylint: disable=redefined-builtin,unused-argument
+def noop(x=None, p=None, max=None):  # pylint: disable=redefined-builtin, unused-argument
+    pass
 
 
+# pylint: disable=too-many-locals
 def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
 
     # palette = itertools.cycle(bokeh.palettes.Category20[20])
@@ -44,34 +44,34 @@ def plot_cluster(x_corpus, token_clusters, n_cluster, tick=noop, **kwargs):
     xsr = np.repeat(xs, word_distributions.shape[1])
     ysr = word_distributions.ravel()
 
-    p.scatter(xsr, ysr, size=3, color='green', alpha=0.1, marker='square', legend_label='actual')
+    p.scatter(xs=xsr, ys=ysr, size=3, color='green', alpha=0.1, marker='square', legend_label='actual')
 
-    p.line(xsr, ysr, line_width=1.0, color='green', alpha=0.1, legend_label='actual')
+    p.line(xs=xsr, ys=ysr, line_width=1.0, color='green', alpha=0.1, legend_label='actual')
 
     tick(1)
     _, _, _, lx, ly = gof.fit_ordinary_least_square_ravel(word_distributions, xs)
-    p.line(lx, ly, line_width=0.6, color='black', alpha=0.8, legend_label='trend')
+    p.line(xs=lx, ys=ly, line_width=0.6, color='black', alpha=0.8, legend_label='trend')
 
     xsp, ysp = cf.fit_curve_ravel(cf.polynomial3, xs, word_distributions)
-    p.line(xsp, ysp, line_width=0.5, color='blue', alpha=0.5, legend_label='poly3')
+    p.line(xs=xsp, ys=ysp, line_width=0.5, color='blue', alpha=0.5, legend_label='poly3')
 
     if hasattr(token_clusters, 'centroids'):
 
         ys_cluster_center = token_clusters.centroids[n_cluster, :]
-        p.line(xs, ys_cluster_center, line_width=2.0, color='black', legend_label='centroid')
+        p.line(xs=xs, ys=ys_cluster_center, line_width=2.0, color='black', legend_label='centroid')
 
         xs_spline, ys_spline = cf.pchip_spline(xs, ys_cluster_center)
-        p.line(xs_spline, ys_spline, line_width=2.0, color='red', legend_label='centroid (pchip)')
+        p.line(xs=xs_spline, ys=ys_spline, line_width=2.0, color='red', legend_label='centroid (pchip)')
 
     else:
         ys_mean = word_distributions.mean(axis=1)
         ys_median = np.median(word_distributions, axis=1)
 
         xs_spline, ys_spline = cf.pchip_spline(xs, ys_mean)
-        p.line(xs_spline, ys_spline, line_width=2.0, color='red', legend_label='mean (pchip)')
+        p.line(xs=xs_spline, ys=ys_spline, line_width=2.0, color='red', legend_label='mean (pchip)')
 
         xs_spline, ys_spline = cf.pchip_spline(xs, ys_median)
-        p.line(xs_spline, ys_spline, line_width=2.0, color='blue', legend_label='median (pchip)')
+        p.line(xs=xs_spline, ys=ys_spline, line_width=2.0, color='blue', legend_label='median (pchip)')
 
     tick(2)
 

@@ -112,7 +112,7 @@ Unit test debugging with `pytest` only works when code-coverage is disabled:
 }
 {
     "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [ "--cov-config=.coveragerc", "--cov=./westac", ]
+    "python.testing.pytestArgs": [ "--cov-config=.coveragerc", "--cov=./notebooks", ]
 }
 ```
 

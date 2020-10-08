@@ -1,5 +1,3 @@
-import os
-
 import penelope.corpus.vectorizer as corpus_vectorizer
 
 kwargs = dict(

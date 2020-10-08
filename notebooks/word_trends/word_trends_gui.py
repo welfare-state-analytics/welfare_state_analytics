@@ -1,8 +1,5 @@
-from pprint import pprint as pp
 
-import bokeh
 import ipywidgets as widgets
-import westac.common.curve_fit as cf
 from IPython.display import display
 
 from notebooks.word_trends.displayers import (display_bar, display_grid,

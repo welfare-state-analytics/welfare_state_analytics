@@ -1,6 +1,5 @@
 import os
 import zipfile
-from pprint import pprint as pp
 
 import pandas as pd
 
@@ -23,15 +22,16 @@ def read_file_index(index_name, year):
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.csv.zip
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.text.zip
 
-data_folder = '../../data'
-index_name = os.path.join(data_folder, 'sou-1990-1999.csv')
-archive_name = os.path.join(data_folder, 'sou-1990-1999.text.zip')
+def main():
+    data_folder = '../../data'
+    index_name = os.path.join(data_folder, 'sou-1990-1999.csv')
+    archive_name = os.path.join(data_folder, 'sou-1990-1999.text.zip')
 
-df = read_file_index(index_name, 1996)
-for index, row in df.iterrows():
-    original_filename = '{}.txt'.format(row['key_id'].lower())
-    content = read_file(archive_name, original_filename)
-    filename = '{}_{}_{}.txt'.format(row['year'], row['sou_id'], row['part_id'])
-    print(original_filename, len(content), filename)
-    with open(os.path.join(data_folder, filename), 'wb') as out:
-        out.write(content)
+    df = read_file_index(index_name, 1996)
+    for _, row in df.iterrows():
+        original_filename = '{}.txt'.format(row['key_id'].lower())
+        content = read_file(archive_name, original_filename)
+        filename = '{}_{}_{}.txt'.format(row['year'], row['sou_id'], row['part_id'])
+        print(original_filename, len(content), filename)
+        with open(os.path.join(data_folder, filename), 'wb') as out:
+            out.write(content)

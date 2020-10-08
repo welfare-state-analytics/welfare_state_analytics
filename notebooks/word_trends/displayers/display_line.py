@@ -3,11 +3,11 @@ import math
 
 import bokeh
 
-import notebooks.word_trends.displayers.data_compilers as data_compilers
+from . import data_compilers
 
 NAME = "Line"
 
-compile = data_compilers.compile_multiline_data
+compile = data_compilers.compile_multiline_data  # pylint: disable=redefined-builtin
 
 
 def setup(container, **kwargs):
@@ -43,7 +43,7 @@ def setup(container, **kwargs):
     container.data_source = data_source
 
 
-def plot(data, **kwargs):
+def plot(data, **_):
 
     years = [str(y) for y in data['year']]
 

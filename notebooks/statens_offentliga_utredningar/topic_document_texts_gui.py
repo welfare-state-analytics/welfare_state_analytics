@@ -1,10 +1,10 @@
+import types
 import warnings
 
 import ipywidgets as widgets
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
+import penelope.topic_modelling as topic_modelling
+import penelope.notebook.widgets_utils as widgets_utils
+import penelope.utility as utility
 from IPython.display import display
 
 from notebooks.common import filter_document_topic_weights, to_text
@@ -49,10 +49,10 @@ def display_gui(state):
 
     text_id = 'topic_document_text'
 
-    gui = widgets_utility.WidgetUtility(
+    gui = types.SimpleNamespace(
         n_topics=state.num_topics,
         text_id=text_id,
-        text=widgets_helper.text(text_id),
+        text=widgets_utils.text_widget(text_id),
         year=widgets.Dropdown(
             description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")
         ),
@@ -68,10 +68,12 @@ def display_gui(state):
         ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
         output=widgets.Output(),
+        prev_topic_id=None,
+        next_topic_id=None
     )
 
-    gui.prev_topic_id = gui.create_prev_id_button('topic_id', state.num_topics)
-    gui.next_topic_id = gui.create_next_id_button('topic_id', state.num_topics)
+    gui.prev_topic_id = widgets_utils.button_with_previous_callback(gui, 'topic_id', state.num_topics)
+    gui.next_topic_id = widgets_utils.button_with_next_callback(gui, 'topic_id', state.num_topics)
 
     def on_topic_change_update_gui(topic_id):
 
@@ -80,7 +82,7 @@ def display_gui(state):
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = derived_data_compiler.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
+        tokens = topic_modelling.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 

@@ -21,8 +21,8 @@ import numpy as np
 # %autoreload 2
 import pandas as pd
 import scipy
-from westac.corpus import corpus_vectorizer, tokenized_corpus
-from westac.corpus.iterators import dataframe_text_tokenizer
+from penelope.corpus import vectorizer as corpus_vectorizer, tokenized_corpus
+import penelope.corpus.readers as readers
 
 
 def load_text_windows(filename: str):
@@ -43,7 +43,7 @@ def load_text_windows(filename: str):
     ------
     FileNotFoundError
     """
-    filepath = os.path(filename)
+    filepath = os.path.split(filename)[0]
 
     if not os.path.isdir(filepath):
         raise FileNotFoundError("Path {filepath} does not exist!")
@@ -94,6 +94,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
         cdf = cdf[cdf.value >= min_count]
 
     n_documents = len(corpus.metadata)
+    # FIXME: #91 Instance of 'TokenizedCorpus' has no 'n_raw_tokens' member
     n_tokens = sum(corpus.n_raw_tokens.values())
 
     cdf['value_n_d'] = cdf.value / float(n_documents)
@@ -106,7 +107,7 @@ def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
 
 
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):
-    reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
+    reader = readers.dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
     df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
     df_y['newspaper'] = newspaper
     df_y['period'] = str(period)

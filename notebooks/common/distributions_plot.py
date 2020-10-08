@@ -7,8 +7,8 @@ import penelope.common.curve_fit as cf
 import scipy
 
 
-def noop(x=None, p=None, max=None):
-    pass  # pylint: disable=redefined-builtin,unused-argument
+def noop(x=None, p=None, max=None):  # pylint: disable=unused-argument, redefined-builtin
+    pass
 
 
 def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=None, smoothers=None, **kwargs):

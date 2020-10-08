@@ -70,7 +70,7 @@ def display_gui(x_corpus, x_documents, compute_callback, display_callback):
 
     display(boxes)
 
-    def compute_callback_handler(*_args):
+    def compute_callback_handler(*_):
         gui.output.clear_output()
         with gui.output:
             try:

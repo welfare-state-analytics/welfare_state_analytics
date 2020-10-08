@@ -35,7 +35,7 @@ def compile_multiline_data(x_corpus, indices, smoothers=None):
     return data
 
 
-def compile_year_token_vector_data(x_corpus, indices, *args):
+def compile_year_token_vector_data(x_corpus, indices, *args):  # pylint: disable=unused-argument
 
     xs = x_corpus.xs_years()
     data = {x_corpus.id2token[token_id]: x_corpus.bag_term_matrix[:, token_id] for token_id in indices}

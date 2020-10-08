@@ -2,7 +2,7 @@ import os
 
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 
-from notebooks.most_discriminating_words.most_discriminating_terms import \
+from penelope.common.most_discriminating_terms import \
     compute_most_discriminating_terms
 
 root_folder = "/Users/frno0044/Documents/Kod/welfare_state_analytics"

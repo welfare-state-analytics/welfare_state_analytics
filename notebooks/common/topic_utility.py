@@ -3,8 +3,6 @@ from typing import Any, Dict
 import pandas as pd
 import penelope.utility as utility
 
-# from sklearn.preprocessing import normalize
-
 logger = utility.getLogger('corpus_text_analysis')
 
 
@@ -25,7 +23,7 @@ def filter_by_key_value(df: pd.DataFrame, filters: Dict[str, Any] = None) -> pd.
     """
     for k, v in (filters or {}).items():
         if k not in df.columns:
-            logger.warning(f'Column {k} does not exist in dataframe (filter_by_key_value)')
+            logger.warning('Column %s does not exist in dataframe (filter_by_key_value)', k)
             continue
         df = df[df[k] == v]
 
@@ -57,7 +55,7 @@ def filter_document_topic_weights(
 
     for k, v in (filters or {}).items():
         if k not in df.columns:
-            logger.warning(f'Column {k} does not exist in dataframe (_find_documents_for_topics)')
+            logger.warning('Column %s does not exist in dataframe (_find_documents_for_topics)', k)
             continue
         df = df[df[k] == v]
 

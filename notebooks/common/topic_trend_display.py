@@ -38,7 +38,7 @@ def _plot(df, category_column, value_column, x_label=None, y_label=None, **figop
     return p
 
 
-def display(weight_over_time, topic_id, year_range, aggregate, output_format='Chart', normalize=True):
+def display(weight_over_time, topic_id, year_range, aggregate, output_format='Chart', normalize=True):  # pylint: disable=unused-argument
 
     figopts = dict(plot_width=1000, plot_height=400, title='', toolbar_location="right")
 
