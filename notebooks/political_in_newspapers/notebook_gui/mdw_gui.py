@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")
 
 
-def year_range_group_indicies(documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None) -> pd.Index[int]:
+def year_range_group_indicies(documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None) -> pd.Index:
     """[summary]
 
     Parameters
