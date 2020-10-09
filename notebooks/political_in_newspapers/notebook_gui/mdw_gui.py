@@ -6,8 +6,7 @@ import ipywidgets
 import pandas as pd
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
-from penelope.vendor.textacy.mdw_modified import \
-    compute_most_discriminating_terms
+from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
@@ -15,7 +14,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")
 
 
-def year_range_group_indicies(documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None) -> pd.Index:
+def year_range_group_indicies(
+    documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None
+) -> pd.Index:
     """[summary]
 
     Parameters
@@ -48,13 +49,9 @@ def year_range_group_indicies(documents: pd.DataFrame, period: Sequence[int], pu
 
 def load_vectorized_corpus(corpus_folder, publication_ids):
     logger.info("Loading DTM corpus...")
-    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(
-        corpus_folder, list(publication_ids)
-    )
+    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
     token2id = {v: k for k, v in id2token.items()}
-    v_corpus = vectorized_corpus.VectorizedCorpus(
-        bag_term_matrix, token2id, document_index
-    )
+    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, document_index)
     return v_corpus
 
 
@@ -80,9 +77,7 @@ def display_gui(v_corpus, v_documents):
     lw = lambda w: ipywidgets.Layout(width=w)
     year_span = (v_documents.year.min(), v_documents.year.max())
     gui = types.SimpleNamespace(
-        progress=ipywidgets.IntProgress(
-            value=0, min=0, max=5, step=1, description="", layout=lw("90%")
-        ),
+        progress=ipywidgets.IntProgress(value=0, min=0, max=5, step=1, description="", layout=lw("90%")),
         top_n_terms=ipywidgets.IntSlider(
             description="#terms",
             min=10,
@@ -141,9 +136,7 @@ def display_gui(v_corpus, v_documents):
             value=(3,),
             layout=ipywidgets.Layout(width="250px"),
         ),
-        compute=ipywidgets.Button(
-            description="Compute", icon="", button_style="Success", layout=lw("120px")
-        ),
+        compute=ipywidgets.Button(description="Compute", icon="", button_style="Success", layout=lw("120px")),
         output=ipywidgets.Output(layout={"border": "1px solid black"}),
     )
 
@@ -177,9 +170,7 @@ def display_gui(v_corpus, v_documents):
             try:
                 gui.compute.disabled = True
 
-                logger.info(
-                    "Using min DF %s and max DF %s", gui.min_df.value, gui.max_df.value
-                )
+                logger.info("Using min DF %s and max DF %s", gui.min_df.value, gui.max_df.value)
 
                 logger.info("Slicing corpus...")
 

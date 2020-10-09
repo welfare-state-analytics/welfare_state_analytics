@@ -22,6 +22,7 @@ def read_file_index(index_name, year):
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.csv.zip
 # wget https://data.riksdagen.se/dataset/dokument/sou-1990-1999.text.zip
 
+
 def main():
     data_folder = '../../data'
     index_name = os.path.join(data_folder, 'sou-1990-1999.csv')

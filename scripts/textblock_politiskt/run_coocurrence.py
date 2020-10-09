@@ -3,6 +3,7 @@ import time
 from notebooks.window_coocurrence.window_coocurrence import compute_co_ocurrence_for_periods
 from notebooks.window_coocurrence.stopwords import stopwords
 
+
 def run():
     # periods    = list(range(1945, 1990))
     # periods = [(1945, 1954), (1955, 1964), (1965, 1974), (1975, 1984)]
@@ -29,5 +30,7 @@ def run():
         compute_co_ocurrence_for_periods(
             source_filename, newspapers, [year], target_filename, min_count=min_count, **options
         )
+
+
 if __name__ == "__main__":
     run()

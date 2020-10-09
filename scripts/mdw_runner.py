@@ -2,8 +2,7 @@ import os
 
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 
-from penelope.common.most_discriminating_terms import \
-    compute_most_discriminating_terms
+from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
 
 root_folder = "/Users/frno0044/Documents/Kod/welfare_state_analytics"
 corpus_folder = os.path.join(root_folder, "output")

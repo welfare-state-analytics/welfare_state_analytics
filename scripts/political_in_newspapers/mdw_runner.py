@@ -2,8 +2,7 @@ import logging
 import os
 
 import click
-from penelope.vendor.textacy.mdw_modified import \
-    compute_most_discriminating_terms
+from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
@@ -97,11 +96,7 @@ def mdw_run(
     pubs_ids1, pubs_ids2 = pubs2ids(pubs1), pubs2ids(pubs2)
 
     if any((x not in PUB_IDS for x in pubs1 + pubs2)):
-        print(
-            "Error: unknown publication(s):{}".format(
-                ",".join(list(set(pubs1 + pubs2) - set(PUB_IDS)))
-            )
-        )
+        print("Error: unknown publication(s):{}".format(",".join(list(set(pubs1 + pubs2) - set(PUB_IDS)))))
         return
 
     period1, period2 = ((g[1], g[2]) for g in group)
@@ -111,9 +106,9 @@ def mdw_run(
     logger.info("Reading corpus...")
 
     # TODO: #92 Implement VectorizedCorpus.slice_by_df
-    v_corpus = mdw_gui.load_vectorized_corpus(
-        corpus_folder, pubs2ids(PUB_IDS)
-    ).slice_by_document_frequency(max_df=max_df, min_df=min_df, max_n_terms=max_n_terms)
+    v_corpus = mdw_gui.load_vectorized_corpus(corpus_folder, pubs2ids(PUB_IDS)).slice_by_document_frequency(
+        max_df=max_df, min_df=min_df, max_n_terms=max_n_terms
+    )
 
     logger.info("Corpus size after DF trim %s x %s.", *v_corpus.data.shape)
 
@@ -121,12 +116,8 @@ def mdw_run(
         v_corpus,
         top_n_terms=top_n_terms,
         max_n_terms=max_n_terms,
-        group1_indices=mdw_gui.year_range_group_indicies(
-            v_corpus.document_index, period1, pubs_ids1
-        ),
-        group2_indices=mdw_gui.year_range_group_indicies(
-            v_corpus.document_index, period2, pubs_ids2
-        ),
+        group1_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period1, pubs_ids1),
+        group2_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period2, pubs_ids2),
     )
 
     if df is not None:

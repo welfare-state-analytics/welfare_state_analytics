@@ -75,7 +75,7 @@ def display_gui(state):
         ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="95%")),
         prev_topic_id=None,
-        next_topic_id=None
+        next_topic_id=None,
     )
 
     gui.prev_topic_id = widgets_utils.button_with_previous_callback(gui, 'topic_id', state.num_topics)
