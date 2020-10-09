@@ -1,6 +1,6 @@
 
 .DEFAULT_GOAL=lint
-
+SHELL := /bin/bash
 SOURCE_FOLDERS=notebooks scripts tests
 
 init:
@@ -30,6 +30,9 @@ pylint:
 
 pylint2:
 	@find $(SOURCE_FOLDERS) -type f -name "*.py" | grep -v .ipynb_checkpoints | xargs poetry run pylint --disable=W0511
+
+pylint2nb:
+	@find notebooks -type f -name "*.py" | grep -v .ipynb_checkpoints | xargs poetry run pylint --disable=W0511
 
 flake8:
 	@poetry run flake8 --version
@@ -72,4 +75,55 @@ update:
 requirements.txt: poetry.lock
 	@poetry export -f requirements.txt --output requirements.txt
 
-.PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update
+IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
+PY_FILES := $(IPYNB_FILES:.ipynb=.py)
+
+# Create a paired `py` file for all `ipynb` that doesn't have a crorresponding `py` file
+pair_ipynb: $(PY_FILES)
+	@echo "hello"
+
+$(PY_FILES):%.py:%.ipynb
+	@echo target is $@, source is $<
+	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
+
+# The same, but using a bash-loop:
+# pair_ipynb:
+# 	for ipynb_path in $(IPYNB_FILES) ; do \
+# 		ipynb_basepath="$${ipynb_path%.*}" ;\
+# 		py_filepath=$${ipynb_basepath}.py ;\
+# 		if [ ! -f $$py_filepath ] ; then \
+# 			echo "info: pairing $$ipynb_path with formats ipynb,py..." ;\
+# 			poetry run jupytext --quiet --set-formats ipynb,py:percent $$ipynb_path ;\
+# 		fi \
+# 	done
+
+unpair_ipynb:
+	@for ipynb_path in $(IPYNB_FILES) ; do \
+        echo "info: unpairing $$ipynb_path..." ;\
+		ipynb_basepath="$${ipynb_path%.*}" ;\
+		py_filepath=$${ipynb_basepath}.py ;\
+        poetry run jupytext --quiet --update-metadata '{"jupytext": null}' $$ipynb_path &> /dev/null ;\
+        rm -f $$py_filepath ;\
+	done
+
+# The `sync` command updates paired file types based on latest timestamp
+sync_ipynb:
+	for ipynb_path in $(IPYNB_FILES) ; do \
+        poetry run jupytext --sync $$ipynb_path ;\
+	done
+
+# Forces overwrite of ìpynb` using `--to notebook`
+create_ipynb:
+	for ipynb_path in $(IPYNB_FILES) ; do \
+		py_filepath=$${ipynb_path%.*}.py ;\
+		poetry run jupytext --to notebook $$py_filepath
+	done
+
+pre_commit_ipynb:
+	@poetry run jupytext --sync --pre-commit
+	@chmod u+x .git/hooks/pre-commit
+
+.ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
+
+.PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update \
+	pair_ipynb unpair_ipynb sync_ipynb update_ipynb
