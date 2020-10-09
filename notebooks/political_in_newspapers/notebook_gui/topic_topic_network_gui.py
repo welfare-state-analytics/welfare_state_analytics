@@ -3,10 +3,9 @@ import types
 import warnings
 
 import ipywidgets as widgets
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.text_analysis.utility as tmutility
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
+import penelope.notebook.widgets_utils as widgets_utils
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.common.topic_topic_network_display as topic_topic_network_display
@@ -30,14 +29,14 @@ def display_gui(state):
     ignore_options = [('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)]
     year_min, year_max = state.compiled_data.year_period
 
-    topic_proportions = tmutility.compute_topic_proportions(
+    topic_proportions = topic_modelling.compute_topic_proportions(
         state.compiled_data.document_topic_weights, state.compiled_data.documents.n_terms.values
     )
-    titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights)
+    titles = topic_modelling.get_topic_titles(state.compiled_data.topic_token_weights)
 
     gui = types.SimpleNamespace(
         n_topics=n_topics,
-        text=widgets_utility.wf.create_text_widget(text_id),
+        text=widgets_utils.text_widget(text_id),
         period=widgets.IntRangeSlider(
             description='Time',
             min=year_min,

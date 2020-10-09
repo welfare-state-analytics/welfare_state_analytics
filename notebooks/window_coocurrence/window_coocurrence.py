@@ -1,29 +1,13 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py,md
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.2.4
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
 
 import os
 
-import numpy as np
-# +
-# %load_ext autoreload
-# %autoreload 2
 import pandas as pd
-import scipy
-from westac.corpus import corpus_vectorizer, tokenized_corpus
-from westac.corpus.iterators import dataframe_text_tokenizer
 
+from penelope.corpus.readers import dataframe_text_tokenizer
+
+from penelope.co_occurrence.coocurrence_matrix import compute_coocurrence_matrix
+
+# THIS FILE COMPUTES COUCCRRENCE FROM PREDEFINED WINDOWS READ FROM EXCEL FILE!
 
 def load_text_windows(filename: str):
     """Reads excel file "filename" and returns content as a Pandas DataFrame.
@@ -43,7 +27,7 @@ def load_text_windows(filename: str):
     ------
     FileNotFoundError
     """
-    filepath = os.path(filename)
+    filepath = os.path.abspath(filename)
 
     if not os.path.isdir(filepath):
         raise FileNotFoundError("Path {filepath} does not exist!")
@@ -58,51 +42,6 @@ def load_text_windows(filename: str):
     df = pd.read_csv(textfile, sep='\t')[['newspaper', 'year', 'txt']]
 
     return df
-
-
-def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
-    """Computes a term-term coocurrence matrix for documents in reader.
-
-    Parameters
-    ----------
-    reader : enumerable(list(str))
-        Sequence of tokenized documents
-
-    Returns
-    -------
-    [DataFrane]
-        Upper diagonal of term-term frequency matrix (TTM). Note that diagonal (wi, wi) is not returned
-    """
-    corpus = tokenized_corpus.TokenizedCorpus(reader, only_alphanumeric=False, **kwargs)
-    vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
-    v_corpus = vectorizer.fit_transform(corpus)
-
-    term_term_matrix = np.dot(v_corpus.bag_term_matrix.T, v_corpus.bag_term_matrix)
-    term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
-
-    id2token = {i: t for t, i in v_corpus.token2id.items()}
-
-    cdf = (
-        pd.DataFrame({'w1_id': term_term_matrix.row, 'w2_id': term_term_matrix.col, 'value': term_term_matrix.data})[
-            ['w1_id', 'w2_id', 'value']
-        ]
-        .sort_values(['w1_id', 'w2_id'])
-        .reset_index(drop=True)
-    )
-
-    if min_count > 1:
-        cdf = cdf[cdf.value >= min_count]
-
-    n_documents = len(corpus.metadata)
-    n_tokens = sum(corpus.n_raw_tokens.values())
-
-    cdf['value_n_d'] = cdf.value / float(n_documents)
-    cdf['value_n_t'] = cdf.value / float(n_tokens)
-
-    cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
-    cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
-
-    return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
 
 
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):

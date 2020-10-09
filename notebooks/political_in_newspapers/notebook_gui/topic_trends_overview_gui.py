@@ -1,10 +1,9 @@
 import types
 
 import ipywidgets as widgets
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.text_analysis.topic_weight_over_time as topic_weight_over_time
-import text_analytic_tools.utility.widgets as widgets_helper
-import westac.common.utility as utility
+import penelope.topic_modelling as topic_modelling
+import penelope.notebook.widgets_utils as widgets_utils
+import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
@@ -22,12 +21,12 @@ def display_gui(state):
     text_id = 'topic_relevance'
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-    titles = derived_data_compiler.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
-    weighings = [(x['description'], x['key']) for x in topic_weight_over_time.METHODS]
+    titles = topic_modelling.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
+    weighings = [(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS]
 
     gui = types.SimpleNamespace(
         text_id=text_id,
-        text=widgets_helper.text(text_id),
+        text=widgets_utils.text_widget(text_id),
         flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
         publication_id=widgets.Dropdown(
             description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")
@@ -50,11 +49,11 @@ def display_gui(state):
             df = document_topic_weights
             if publication_id is not None:
                 df = df[df.publication_id == publication_id]
-            _current_weight_over_time["weights"] = topic_weight_over_time.compute(df).fillna(0)
+            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)
 
         return _current_weight_over_time["weights"]
 
-    def update_handler(*args):
+    def update_handler(*_):
 
         gui.output.clear_output()
         gui.flip_axis.disabled = True

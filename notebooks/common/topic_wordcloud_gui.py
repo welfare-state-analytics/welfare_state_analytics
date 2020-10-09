@@ -1,29 +1,17 @@
 import types
+
 import ipywidgets as widgets
-import matplotlib.pyplot as plt
 import pandas as pd
+import penelope.notebook.widgets_utils as widgets_utils
+import penelope.plot as plot_utility
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
-import penelope.notebook.widgets_utils as widgets_utils
-import wordcloud
 from IPython.display import display
 
 pd.set_option("display.max_rows", None)
 pd.set_option('max_colwidth', 200)
 
 opts = {'max_font_size': 100, 'background_color': 'white', 'width': 900, 'height': 600}
-
-
-def plot_wordcloud(df, token='token', weight='weight', figsize=(14, 14 / 1.618), **args):
-    token_weights = dict({tuple(x) for x in df[[token, weight]].values})
-    image = wordcloud.WordCloud(
-        **args,
-    )
-    image.fit_words(token_weights)
-    plt.figure(figsize=figsize)  # , dpi=100)
-    plt.imshow(image, interpolation='bilinear')
-    plt.axis("off")
-    plt.show()
 
 
 def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud', gui=None):
@@ -53,7 +41,7 @@ def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud',
         tick()
 
         if output_format == 'Wordcloud':
-            plot_wordcloud(df, 'token', 'weight', max_words=n_words, **opts)
+            plot_utility.plot_wordcloud(df, token='token', weight='weight', max_words=n_words, **opts)
         else:
             df = topic_modelling.get_topic_tokens(topic_token_weights, topic_id=topic_id, n_tokens=n_words)
             if output_format == 'Table':

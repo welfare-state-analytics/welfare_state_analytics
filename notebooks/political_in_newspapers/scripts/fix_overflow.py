@@ -43,10 +43,14 @@ def fix_int32_overflow(data_folder, model_name):
     print(' Stored new version of {}.'.format(target_file))
 
 
-corpus_folder = '/home/roger/source/welfare_state_analytics/data/textblock_politisk'
-for n_topics in [50, 100, 200, 400]:
-    model_name = 'gensim_mallet-lda.topics.{}.AB.DN'.format(n_topics)
-    print('Fixing {}...'.format(model_name))
-    fix_int32_overflow(corpus_folder, model_name)
+def run():
+    corpus_folder = '/home/roger/source/welfare_state_analytics/data/textblock_politisk'
+    for n_topics in [50, 100, 200, 400]:
+        model_name = 'gensim_mallet-lda.topics.{}.AB.DN'.format(n_topics)
+        print('Fixing {}...'.format(model_name))
+        fix_int32_overflow(corpus_folder, model_name)
 
-print('Done!')
+    print('Done!')
+
+if __name__ == "__main__":
+    run()

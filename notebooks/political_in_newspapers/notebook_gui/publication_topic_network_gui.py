@@ -7,16 +7,16 @@ import ipywidgets as widgets
 import numpy as np
 import penelope.network.plot_utility as plot_utility
 import penelope.network.utility as network_utility
+import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
-import penelope.notebook.widgets_utils as widgets_helper
 from IPython.display import display
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 TEXT_ID = 'nx_pub_topic'
 
-
+# pylint: disable=too-many-locals, too-many-arguments
 def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
     source_nodes, target_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
@@ -42,7 +42,7 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
         bokeh.models.HoverTool(
             renderers=[r_topics],
             tooltips=None,
-            callback=widgets_helper.glyph_hover_callback2(
+            callback=widgets_utils.glyph_hover_callback2(
                 target_source, 'node_id', text_ids=titles.index, text=titles, element_id=TEXT_ID
             ),
         )
@@ -147,7 +147,7 @@ def display_gui(state):
     n_topics = state.num_topics
 
     gui = types.SimpleNamespace(
-        text=widgets_helper.text(TEXT_ID),
+        text=widgets_utils.text_widget(TEXT_ID),
         period=widgets.IntRangeSlider(
             description='Time', min=year_min, max=year_max, step=1, value=(year_min, year_max), continues_update=False
         ),

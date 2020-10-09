@@ -110,9 +110,10 @@ def mdw_run(
 
     logger.info("Reading corpus...")
 
+    # TODO: #92 Implement VectorizedCorpus.slice_by_df
     v_corpus = mdw_gui.load_vectorized_corpus(
         corpus_folder, pubs2ids(PUB_IDS)
-    ).slice_by_df(max_df=max_df, min_df=min_df, max_n_terms=max_n_terms)
+    ).slice_by_document_frequency(max_df=max_df, min_df=min_df, max_n_terms=max_n_terms)
 
     logger.info("Corpus size after DF trim %s x %s.", *v_corpus.data.shape)
 

@@ -90,7 +90,7 @@ class ClustersCountPlot:
             cluster=[x for x in token_counts.index],  # [ str(x) for x in token_counts.index ],
             count=[x for x in token_counts.token],
             legend=['cluster {}'.format(i) for i in token_counts.index],
-            color=[next(colors) for i in token_counts.index],
+            color=[next(colors) for _ in token_counts.index],
         )
         # self.source.data = source
         # bokeh.io.push_notebook(self.handle)
@@ -193,7 +193,7 @@ def display_gui(x_corpus, df_gof):
             p.max = max
         p.value = x if x is not None else p.value + 1
 
-    def plot_cluster(*args):  # pylint: disable=unused-argument
+    def plot_cluster(*_):  # pylint: disable=unused-argument
 
         cluster_output_type = widgets.cluster_output_type.value
         widgets.cluster_output.clear_output()
@@ -233,7 +233,7 @@ def display_gui(x_corpus, df_gof):
         plot_words()
         tick(0)
 
-    def plot_clusters(*args):  # pylint: disable=unused-argument
+    def plot_clusters(*_):  # pylint: disable=unused-argument
 
         output_type = widgets.clusters_output_type.value
         token_clusters = container.data.token_clusters
@@ -267,7 +267,7 @@ def display_gui(x_corpus, df_gof):
 
         return dict(options=cluster_options, values=cluster_values)
 
-    def plot_words(*argv):  # pylint: disable=unused-argument
+    def plot_words(*_):  # pylint: disable=unused-argument
         widgets.cluster_words_output.clear_output()
         with widgets.cluster_words_output:
             token_clusters = container.data.token_clusters
@@ -285,7 +285,7 @@ def display_gui(x_corpus, df_gof):
 
         # plot_cluster()
 
-    def set_method(*args):  # pylint: disable=unused-argument
+    def set_method(*_):  # pylint: disable=unused-argument
 
         wth = widgets.threshold
         wnc = widgets.n_cluster_count
@@ -300,7 +300,7 @@ def display_gui(x_corpus, df_gof):
             wnc.disabled = False
             wth.disabled = True
 
-    def threshold_range_changed(*args):  # pylint: disable=unused-argument
+    def threshold_range_changed(*_):  # pylint: disable=unused-argument
 
         if widgets.threshold.disabled is True:
             return
@@ -320,7 +320,7 @@ def display_gui(x_corpus, df_gof):
 
         plot_cluster()
 
-    def compute_clicked(*args):  # pylint: disable=unused-argument
+    def compute_clicked(*_):  # pylint: disable=unused-argument
 
         widgets.compute.disabled = True
         widgets.cluster_index.disabled = True

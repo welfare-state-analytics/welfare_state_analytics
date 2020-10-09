@@ -14,8 +14,8 @@ See [this page](https://github.com/humlab/welfare_state_analytics/wiki/How-to:-I
 
 ### JupyterHub installation
 
-The `westac_hub` folder contains a ready-to-use Docker setup (`Dockerfile` and `docker-compose.yml`) for a Jupyter Hub using `nginx` as reverse-proxy. The default setup uses `DockerSpawner` that spawns containers as specified in `westac_lab`, and Github for autorization (OAuth2). See the Makefile on how to build the project.
+The `westac_hub` repository contains a ready-to-use Docker setup (`Dockerfile` and `docker-compose.yml`) for a Jupyter Hub using `nginx` as reverse-proxy. The default setup uses `DockerSpawner` that spawns containers as specified in `westac_lab`, and Github for autorization (OAuth2). See the Makefile on how to build the project.
 
 ### Single Docker container
 
-You can also run the `westac_lab` container as a single Docker container. You need to have Docker installed on your computer.
+You can also run the `westac_lab` container as a single Docker container if you have Docker installed on your computer.

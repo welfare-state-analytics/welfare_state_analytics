@@ -36,7 +36,7 @@ def display_gui(x_corpus, tokens, n_columns=3):
             p.max = max
         p.value = x if x is not None else p.value + 1
 
-    def update_plot(*args):  # pylint: disable=unused-argument
+    def update_plot(*_):
 
         output.clear_output()
 
@@ -65,10 +65,10 @@ def display_gui(x_corpus, tokens, n_columns=3):
 
         wtokens.value = tokens[current_index : current_index + n_count.value]
 
-    def split_changed(*args):  # pylint: disable=unused-argument)
+    def split_changed(*_):
         update_plot()
 
-    def token_select_changed(*args):  # pylint: disable=unused-argument)
+    def token_select_changed(*_):
         update_plot()
 
     n_count.observe(update_plot, 'value')
