@@ -113,7 +113,7 @@ sync_ipynb:
 	done
 
 # Forces overwrite of ìpynb` using `--to notebook`
-create_ipynb:
+write_to_ipynb:
 	for ipynb_path in $(IPYNB_FILES) ; do \
 		py_filepath=$${ipynb_path%.*}.py ;\
 		poetry run jupytext --to notebook $$py_filepath
@@ -126,4 +126,4 @@ pre_commit_ipynb:
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
 .PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update \
-	pair_ipynb unpair_ipynb sync_ipynb update_ipynb
+	pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
