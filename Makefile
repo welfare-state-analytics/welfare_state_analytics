@@ -8,7 +8,7 @@ init:
 	@pip install poetry --upgrade
 	@poetry install
 
-build: requirements.txt
+build: requirements.txt write_to_ipynb
 	@poetry build
 
 test-coverage:
