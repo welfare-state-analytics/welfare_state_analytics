@@ -25,7 +25,7 @@ def get_topic_titles(topic_token_weights, topic_id=None, n_words=100):
 
 # pylint: disable=too-many-arguments, too-many-locals
 def display_topic_topic_network(
-    c_data,
+    inferred_topics,
     filters,
     period=None,
     ignores=None,
@@ -42,12 +42,12 @@ def display_topic_topic_network(
 ):
     try:
 
-        documents = c_data.documents
+        documents = inferred_topics.documents
 
         if 'document_id' not in documents.columns:
             documents['document_id'] = documents.index
 
-        df = filter_document_topic_weights(c_data.document_topic_weights, filters=filters, threshold=threshold)
+        df = filter_document_topic_weights(inferred_topics.document_topic_weights, filters=filters, threshold=threshold)
 
         if ignores is not None:
             df = df[~df.topic_id.isin(ignores)]

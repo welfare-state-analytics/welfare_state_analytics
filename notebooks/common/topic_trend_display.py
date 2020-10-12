@@ -4,17 +4,14 @@ import warnings
 import bokeh
 import bokeh.plotting
 import numpy as np
+import pandas as pd
 import penelope.utility as utility
-
-# from beakerx import *
-# from beakerx.object import beakerx
-# beakerx.pandas_display_table()
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-def _plot(df, category_column, value_column, x_label=None, y_label=None, **figopts):
+def _plot(df: pd.DataFrame, category_column: str, value_column: str, x_label=None, y_label=None, **figopts):
 
     xs = df[category_column].astype(np.str)
     ys = df[value_column]
@@ -39,7 +36,12 @@ def _plot(df, category_column, value_column, x_label=None, y_label=None, **figop
 
 
 def display(
-    weight_over_time, topic_id, year_range, aggregate, output_format='Chart', normalize=True
+    weight_over_time: pd.DataFrame,
+    topic_id: int,
+    year_range,
+    aggregate: str,
+    output_format: str = 'Chart',
+    normalize: bool = True,
 ):  # pylint: disable=unused-argument
 
     figopts = dict(plot_width=1000, plot_height=400, title='', toolbar_location="right")

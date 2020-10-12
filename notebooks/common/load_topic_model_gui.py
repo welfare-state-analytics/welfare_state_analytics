@@ -1,11 +1,14 @@
 import types
 import warnings
 from os.path import join as jj
+from typing import Any, Dict, List
 
 import ipywidgets as widgets
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+
+from notebooks.common.model_container import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -13,17 +16,19 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 logger = utility.setup_logger(filename=None)
 
 
-def load_model(corpus_folder, state, model_name, model_infos=None):
+def load_model(
+    corpus_folder: str, state: TopicModelContainer, model_name: str, model_infos: List[Dict[str, Any]] = None
+):
 
     model_infos = model_infos or topic_modelling.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x['name'] == model_name)
 
-    m_data = topic_modelling.load_model(model_info['folder'])
-    c_data = topic_modelling.CompiledData.load(jj(corpus_folder, model_info['name']))
+    inferred_model = topic_modelling.load_model(model_info['folder'])
+    inderred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info['name']))
 
-    state.set_data(m_data, c_data)
+    state.set_data(inferred_model, inderred_topics)
 
-    topics = c_data.topic_token_overview
+    topics = inderred_topics.topic_token_overview
     topics.style.set_properties(**{'text-align': 'left'}).set_table_styles(
         [dict(selector='td', props=[('text-align', 'left')])]
     )
@@ -31,7 +36,7 @@ def load_model(corpus_folder, state, model_name, model_infos=None):
     display(topics)
 
 
-def display_gui(corpus_folder, state):
+def display_gui(corpus_folder: str, state: TopicModelContainer):
 
     model_infos = topic_modelling.find_models(corpus_folder)
     model_names = list(x['name'] for x in model_infos)

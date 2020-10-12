@@ -9,6 +9,8 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 from IPython.display import display
 
+from notebooks.common import TopicModelContainer
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
@@ -49,7 +51,9 @@ def plot_topic_word_distribution(tokens, **args):
     return p
 
 
-def display_topic_tokens(state, topic_id=0, n_words=100, output_format='Chart', gui=None):
+def display_topic_tokens(
+    state: TopicModelContainer, topic_id: int = 0, n_words: int = 100, output_format: str = 'Chart', gui=None
+):
     def tick(n=None):
         if gui is not None:
             gui.progress.value = (gui.progress.value + 1) if n is None else n
@@ -62,7 +66,7 @@ def display_topic_tokens(state, topic_id=0, n_words=100, output_format='Chart', 
     tick(1)
 
     tokens = (
-        topic_modelling.get_topic_tokens(state.compiled_data.topic_token_weights, topic_id=topic_id, n_tokens=n_words)
+        topic_modelling.get_topic_tokens(state.inferred_topics.topic_token_weights, topic_id=topic_id, n_tokens=n_words)
         .copy()
         .drop('topic_id', axis=1)
         .assign(weight=lambda x: 100.0 * x.weight)
@@ -89,7 +93,7 @@ def display_topic_tokens(state, topic_id=0, n_words=100, output_format='Chart', 
     tick(0)
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     text_id = 'wc01'
     output_options = ['Chart', 'Table']
