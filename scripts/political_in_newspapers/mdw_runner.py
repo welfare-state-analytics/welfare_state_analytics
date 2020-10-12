@@ -2,7 +2,8 @@ import logging
 import os
 
 import click
-from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
+from penelope.vendor.textacy.mdw_modified import \
+    compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui

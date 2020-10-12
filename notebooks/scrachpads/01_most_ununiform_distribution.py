@@ -127,7 +127,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
- # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
 import sys
 
@@ -180,6 +180,7 @@ df_fits.sort_values('l2_norm', ascending=False).head()
 #
 
 # %%
+
 
 def plot_word_distribution(x_corpus, df):  # pylint: disable=too-many-locals
 

@@ -3,8 +3,8 @@ import warnings
 import bokeh
 import bokeh.plotting
 import bokeh.transform
-import penelope.utility as utility
 import penelope.notebook.widgets_utils as widgets_utils
+import penelope.utility as utility
 from IPython.display import display
 
 # from beakerx import *

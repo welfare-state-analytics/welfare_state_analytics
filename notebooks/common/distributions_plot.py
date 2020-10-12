@@ -50,7 +50,9 @@ def plot_distribution(xs, ys, plot=None, title='', color='navy', ticker_labels=N
     return p
 
 
-def plot_distributions(x_corpus, indices, n_columns=3, width=1000, height=600, smoothers=None, tick=noop):
+def plot_distributions(
+    x_corpus, indices, n_columns: int = 3, width: int = 1000, height: int = 600, smoothers=None, tick=noop
+):
 
     x_corpus = x_corpus.todense()
 
