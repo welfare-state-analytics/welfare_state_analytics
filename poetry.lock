@@ -1599,7 +1599,7 @@ develop = true
 name = "penelope"
 optional = false
 python-versions = "^3.8"
-version = "0.2.1"
+version = "0.2.2"
 
 [package.dependencies]
 bokeh = "^2.2.1"
