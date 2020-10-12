@@ -1,13 +1,17 @@
 import time
 
-from notebooks.window_coocurrence.window_coocurrence import compute_co_ocurrence_for_periods
 from notebooks.window_coocurrence.stopwords import stopwords
+from notebooks.window_coocurrence.window_coocurrence import \
+    compute_co_ocurrence_for_periods
+
+# FIXME: Work in progress
+# pylint: disable=too-many-function-args, expected-keyword-arg
 
 
 def run():
     # periods    = list(range(1945, 1990))
     # periods = [(1945, 1954), (1955, 1964), (1965, 1974), (1975, 1984)]
-    newspapers = ['AFTONBLADET', 'EXPRESSEN', 'DAGENS NYHETER', 'SVENSKA DAGBLADET']
+    # newspapers = ['AFTONBLADET', 'EXPRESSEN', 'DAGENS NYHETER', 'SVENSKA DAGBLADET']
     min_count = 0
 
     options = dict(
@@ -28,7 +32,12 @@ def run():
     for year in [1948, 1958, 1968, 1978, 1988]:
         target_filename = './output/political_co_occurrence_{}.csv.zip'.format(year)
         compute_co_ocurrence_for_periods(
-            source_filename, newspapers, [year], target_filename, min_count=min_count, **options
+            source_filename,
+            # newspapers,
+            [year],
+            target_filename,
+            min_count=min_count,
+            **options,
         )
 
 
