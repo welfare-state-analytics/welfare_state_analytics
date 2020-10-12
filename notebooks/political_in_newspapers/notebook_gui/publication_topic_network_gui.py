@@ -1,10 +1,12 @@
 # Visualize year-to-topic network by means of topic-document-weights
 import types
+from typing import Sequence
 
 import bokeh
 import bokeh.plotting
 import ipywidgets as widgets
 import numpy as np
+import penelope.network.metrics as network_metrics
 import penelope.network.plot_utility as plot_utility
 import penelope.network.utility as network_utility
 import penelope.notebook.widgets_utils as widgets_utils
@@ -13,6 +15,7 @@ import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
+from notebooks.common import TopicModelContainer
 
 TEXT_ID = 'nx_pub_topic'
 
@@ -25,7 +28,7 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
     target_source = network_utility.get_node_subset_source(network, layout, target_nodes)
     lines_source = network_utility.get_edges_source(network, layout, scale=6.0, normalize=False)
 
-    edges_alphas = network_utility.compute_alpha_vector(lines_source.data['weights'])
+    edges_alphas = network_metrics.compute_alpha_vector(lines_source.data['weights'])
 
     lines_source.add(edges_alphas, 'alphas')
 
@@ -65,22 +68,22 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
 
 
 def display_document_topic_network(
-    layout_algorithm,
-    state,
-    document_threshold=0.0,
-    mean_threshold=0.10,
-    period=None,
-    ignores=None,
-    scale=1.0,
-    aggregate='mean',
-    output_format='network',
+    layout_algorithm: str,
+    state: TopicModelContainer,
+    document_threshold: float = 0.0,
+    mean_threshold: float = 0.10,
+    period: Sequence[int] = None,
+    ignores: Sequence[int] = None,
+    scale: float = 1.0,
+    aggregate: str = 'mean',
+    output_format: str = 'network',
     tick=utility.noop,
 ):
 
     tick(1)
 
-    topic_token_weights = state.compiled_data.topic_token_weights
-    document_topic_weights = state.compiled_data.document_topic_weights
+    topic_token_weights = state.inferred_topics.topic_token_weights
+    document_topic_weights = state.inferred_topics.document_topic_weights
 
     titles = topic_modelling.get_topic_titles(topic_token_weights)
 
@@ -137,12 +140,12 @@ def display_document_topic_network(
     tick(0)
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     lw = lambda w: widgets.Layout(width=w)
 
     layout_options = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
-    year_min, year_max = state.compiled_data.year_period
+    year_min, year_max = state.inferred_topics.year_period
 
     n_topics = state.num_topics
 

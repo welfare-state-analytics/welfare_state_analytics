@@ -1,27 +1,28 @@
 import types
 
 import ipywidgets as widgets
-import penelope.topic_modelling as topic_modelling
 import penelope.notebook.widgets_utils as widgets_utils
+import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
+from notebooks.common import TopicModelContainer
 
 # from beakerx import *
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     lw = lambda w: widgets.Layout(width=w)
 
     text_id = 'topic_relevance'
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-    titles = topic_modelling.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
+    titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights, n_tokens=100)
     weighings = [(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS]
 
     gui = types.SimpleNamespace(
@@ -60,7 +61,7 @@ def display_gui(state):
         gui.flip_axis.description = 'Wait!'
         with gui.output:
 
-            weights = weight_over_time(state.compiled_data.document_topic_weights, gui.publication_id.value)
+            weights = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
 
             topic_trends_overview_display.display_heatmap(
                 weights,

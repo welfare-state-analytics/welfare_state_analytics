@@ -19,7 +19,7 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
- # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
 import os
 import sys
@@ -36,11 +36,8 @@ sys.path = list(set(sys.path + [root_folder]))
 # from beakerx import *
 # from beakerx.object import beakerx
 
-from IPython.core.interactiveshell import InteractiveShell
-
-
 import bokeh.plotting
-import penelope.notebook
+from IPython.core.interactiveshell import InteractiveShell
 
 import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
@@ -50,12 +47,13 @@ import notebooks.political_in_newspapers.notebook_gui.topic_document_texts_gui a
 import notebooks.political_in_newspapers.notebook_gui.topic_topic_network_gui as topic_topic_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_overview_gui as overview_gui
+from notebooks.common import TopicModelContainer
 
 InteractiveShell.ast_node_interactivity = "all"
 
 # %matplotlib inline
 
-current_state = penelope.notebook.model_container.TopicModelContainer.singleton
+current_state = TopicModelContainer.singleton
 bokeh.plotting.output_notebook()
 
 # %% [markdown]
@@ -96,7 +94,7 @@ except Exception as ex:
 
 try:
     trends_gui.display_gui(current_state())
-    # trends_gui.display_topic_trend(current_state().compiled_data.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
+    # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 except Exception as ex:
     print(ex)
 

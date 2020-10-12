@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import types
+import uuid
 
 import ipywidgets as widgets
 import penelope.topic_modelling as topic_modelling
@@ -9,6 +10,8 @@ import penelope.utility as utility
 import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
+
+from notebooks.common import TopicModelContainer
 
 # from . topic_model_compute import compute_topic_model
 
@@ -52,7 +55,7 @@ def get_spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
 
 
 class ComputeTopicModelUserInterface:
-    def __init__(self, data_folder, state, document_index, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, document_index, **opts):
         self.terms = []
         self.data_folder = data_folder
         self.state = state
@@ -146,6 +149,11 @@ class ComputeTopicModelUserInterface:
 
                 try:
 
+                    # FIXME: Generate folder name based on corpus filename and options
+                    name = uuid.uuid1()
+
+                    target_folder = os.path.join(self.data_folder, name)
+
                     vectorizer_args = dict(apply_idf=self.model_widgets.apply_idf.value)
 
                     topic_modeller_args = dict(
@@ -157,11 +165,23 @@ class ComputeTopicModelUserInterface:
 
                     method = self.model_widgets.method.value
 
-                    terms = list(self.get_corpus_terms(corpus))
-
-                    self.state.data = topic_modelling.compute_model(
-                        self.data_folder, method, terms, self.document_index, vectorizer_args, topic_modeller_args
+                    train_corpus = topic_modelling.TrainingCorpus(
+                        terms=list(self.get_corpus_terms(corpus)),
+                        documents=self.document_index,
+                        vectorizer_args=vectorizer_args,
                     )
+
+                    inferred_model = topic_modelling.infer_model(
+                        train_corpus=train_corpus, method=method, engine_args=topic_modeller_args
+                    )
+
+                    inferred_topics = topic_modelling.compile_inferred_topics_data(
+                        inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.documents
+                    )
+
+                    inferred_model.topic_model.save(os.path.join(target_folder, 'gensim.model'))
+                    topic_modelling.store_model(inferred_model, target_folder)
+                    inferred_topics.store(target_folder)
 
                     topics = topic_modelling.get_topics_unstacked(
                         self.state.topic_model,
@@ -169,6 +189,10 @@ class ComputeTopicModelUserInterface:
                         id2term=self.state.id2term,
                         topic_ids=self.state.relevant_topics,
                     )
+
+                    self.state.inferred_model = inferred_model
+                    self.state.inferred_topics = inferred_model
+                    self.state.inferred_model = inferred_model
 
                     display(topics)
 
@@ -211,9 +235,9 @@ class ComputeTopicModelUserInterface:
 
 
 class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
-    def __init__(self, data_folder, state, document_index, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, document_index, **opts):
 
-        ComputeTopicModelUserInterface.__init__(self, data_folder, state, document_index, **opts)
+        super().__init__(data_folder, state, document_index, **opts)
 
         self.substitution_filename = self.opts.get('substitution_filename', None)
         self.tagset = self.opts.get('tagset', None)
@@ -379,9 +403,9 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
 
 
 class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
-    def __init__(self, data_folder, state, fn_doc_index, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, fn_doc_index, **opts):
 
-        ComputeTopicModelUserInterface.__init__(self, data_folder, state, document_index=None, **opts)
+        super().__init__(data_folder, state, document_index=None, **opts)
 
         self.corpus_widgets, self.corpus_widgets_boxes = self.prepare_source_widgets()
         self.widget_boxes = self.corpus_widgets_boxes + self.widget_boxes

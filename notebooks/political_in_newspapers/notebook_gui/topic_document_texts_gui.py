@@ -1,14 +1,17 @@
 import types
 import warnings
+from typing import Any, Dict
 
 import ipywidgets as widgets
+import pandas as pd
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import filter_document_topic_weights, to_text
+from notebooks.common import (TopicModelContainer,
+                              filter_document_topic_weights, to_text)
 
 logger = utility.setup_logger()
 # from beakerx import *
@@ -19,7 +22,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
+def reconstitue_texts_for_topic(df: pd.DataFrame, corpus, id2token, n_top=500):
 
     df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
     df['pub'] = df.publication_id.apply(lambda x: corpus_data.ID2PUB[x])
@@ -28,11 +31,21 @@ def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
     return df.sort_values('weight', ascending=False).head(n_top)
 
 
-def display_texts(state, filters, threshold=0.0, output_format='Table', n_top=500):
+def display_texts(
+    state: TopicModelContainer,
+    filters: Dict[str, Any],
+    threshold: float = 0.0,
+    output_format: str = 'Table',
+    n_top: int = 500,
+):
 
-    corpus = state.model_data.corpus
-    id2token = state.model_data.id2term
-    document_topic_weights = state.compiled_data.document_topic_weights
+    if state.inferred_model.train_corpus is None:
+        print("Corpus is not avaliable. Please store model with corpus!")
+        return
+
+    corpus = state.inferred_model.train_corpus.corpus
+    id2token = state.inferred_model.train_corpus.id2word
+    document_topic_weights = state.inferred_topics.document_topic_weights
 
     df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
 
@@ -44,9 +57,9 @@ def display_texts(state, filters, threshold=0.0, output_format='Table', n_top=50
         display(df)
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
-    year_min, year_max = state.compiled_data.year_period
+    year_min, year_max = state.inferred_topics.year_period
     year_options = [(x, x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_document_text'
@@ -88,7 +101,7 @@ def display_gui(state):
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = topic_modelling.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
+        tokens = topic_modelling.get_topic_title(state.inferred_topics.topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 

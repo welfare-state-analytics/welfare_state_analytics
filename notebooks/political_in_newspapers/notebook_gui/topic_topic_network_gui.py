@@ -10,6 +10,7 @@ from IPython.display import display
 
 import notebooks.common.topic_topic_network_display as topic_topic_network_display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
+from notebooks.common import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -17,7 +18,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 logger = utility.setup_logger()
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     lw = lambda w: widgets.Layout(width=w)
     n_topics = state.num_topics
@@ -27,12 +28,12 @@ def display_gui(state):
     layout_options = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
     output_options = {'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv'}
     ignore_options = [('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)]
-    year_min, year_max = state.compiled_data.year_period
+    year_min, year_max = state.inferred_topics.year_period
 
     topic_proportions = topic_modelling.compute_topic_proportions(
-        state.compiled_data.document_topic_weights, state.compiled_data.documents.n_terms.values
+        state.inferred_topics.document_topic_weights, state.inferred_topics.documents.n_terms.values
     )
-    titles = topic_modelling.get_topic_titles(state.compiled_data.topic_token_weights)
+    titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights)
 
     gui = types.SimpleNamespace(
         n_topics=n_topics,
@@ -82,7 +83,7 @@ def display_gui(state):
         with gui.output:
 
             topic_topic_network_display.display_topic_topic_network(
-                c_data=state.compiled_data,
+                inferred_topics=state.inferred_topics,
                 filters=dict(publication_id=gui.publication_id.value),
                 period=gui.period.value,
                 ignores=gui.ignores.value,

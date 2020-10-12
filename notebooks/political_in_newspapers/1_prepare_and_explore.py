@@ -30,13 +30,11 @@ import numpy as np
 import pandas as pd
 from IPython.core.interactiveshell import InteractiveShell
 
-root_folder = os.path.join(
-    os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics"
-)
+from . import corpus_data
+
+root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
 
 sys.path = list(set(sys.path + [root_folder]))
-
-from . import corpus_data
 
 corpus_folder = os.path.join(root_folder, "data/textblock_politisk")
 
@@ -54,9 +52,7 @@ def load_meta_text_blocks_as_data_frame(folder):
     """ Load censored corpus data """
 
     filename = os.path.join(folder, corpus_data.meta_textblocks_filename)
-    df_meta = pd.read_csv(
-        filename, compression="zip", header=0, sep=",", quotechar='"', na_filter=False
-    )
+    df_meta = pd.read_csv(filename, compression="zip", header=0, sep=",", quotechar='"', na_filter=False)
     # df_meta = df_meta[['id', 'pred_bodytext']].drop_duplicates()
     # df_meta.columns = ["doc_id", "pred_bodytext"]
     # df_meta = df_meta.set_index("doc_id")
@@ -70,17 +66,11 @@ def load_reconstructed_text_corpus(folder):
         df_vocabulary = corpus_data.load_vocabulary_file_as_data_frame(folder)
         id2token = df_vocabulary["token"].to_dict()
         df_reconstructed_text_corpus = (df_corpus.groupby("document_id")).apply(
-            lambda x: " ".join(
-                flatten(x["tf"] * (x["token_id"].apply(lambda y: [id2token[y]])))
-            )
+            lambda x: " ".join(flatten(x["tf"] * (x["token_id"].apply(lambda y: [id2token[y]]))))
         )
-        df_reconstructed_text_corpus.to_csv(
-            filename, compression="zip", header=0, sep=",", quotechar='"'
-        )
+        df_reconstructed_text_corpus.to_csv(filename, compression="zip", header=0, sep=",", quotechar='"')
     else:
-        df_reconstructed_text_corpus = pd.read_csv(
-            filename, compression="zip", header=None, sep=",", quotechar='"'
-        )
+        df_reconstructed_text_corpus = pd.read_csv(filename, compression="zip", header=None, sep=",", quotechar='"')
         df_reconstructed_text_corpus.columns = ["document_id", "test"]
         df_reconstructed_text_corpus.set_index("document_id")
 
@@ -91,12 +81,8 @@ def plot_document_size_distribution(df_document):
 
     df_term_counts = df_document.groupby("term_count").size()
 
-    dx = pd.DataFrame(
-        {"term_count": list(range(0, df_term_counts.index.max() + 1))}
-    ).set_index("term_count")
-    df_term_counts = (
-        dx.join(df_term_counts.rename("x"), how="left").fillna(0).astype(np.int)
-    )
+    dx = pd.DataFrame({"term_count": list(range(0, df_term_counts.index.max() + 1))}).set_index("term_count")
+    df_term_counts = dx.join(df_term_counts.rename("x"), how="left").fillna(0).astype(np.int)
 
     ax = df_term_counts.plot.bar(figsize=(20, 10), rot=45)
 
@@ -162,9 +148,7 @@ _ = plot_document_size_distribution(df_document)
 
 unique_yearly_docs = unique_documents_per_year_and_publication(df_document)
 
-unique_yearly_docs.unstack("publication").plot(
-    kind="bar", subplots=True, figsize=(20, 20), layout=(2, 2), rot=45
-)
+unique_yearly_docs.unstack("publication").plot(kind="bar", subplots=True, figsize=(20, 20), layout=(2, 2), rot=45)
 
 
 # %% [markdown]
