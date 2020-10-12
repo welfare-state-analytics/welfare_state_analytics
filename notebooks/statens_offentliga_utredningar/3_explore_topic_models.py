@@ -29,13 +29,12 @@ from IPython.core.interactiveshell import InteractiveShell
 import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
 import notebooks.common.topic_wordcloud_gui as wordcloud_gui
+import notebooks.statens_offentliga_utredningar.topic_document_network_gui as topic_document_gui
 import notebooks.statens_offentliga_utredningar.topic_document_texts_gui as texts_gui
 import notebooks.statens_offentliga_utredningar.topic_topic_network_gui as topic_topic_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_gui as trends_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_overview_gui as overview_gui
 from notebooks.common import TopicModelContainer, setup_pandas
-
-print(addpaths.root_folder)
 
 InteractiveShell.ast_node_interactivity = "all"
 
@@ -122,5 +121,14 @@ try:
     topic_topic_gui.display_gui(current_state())
 except Exception as ex:
     print(ex)
+
+# %%
+
+
+try:
+    topic_document_gui.display_gui(current_state())
+except Exception as ex:
+    print(ex)
+
 
 # %%
