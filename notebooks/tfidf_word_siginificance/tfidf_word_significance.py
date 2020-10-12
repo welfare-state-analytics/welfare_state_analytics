@@ -20,7 +20,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
- # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
 import logging
 import os
@@ -75,7 +75,7 @@ logger = logging.getLogger(__name__)
 
 # %%
 
- # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
 v_corpus = (
     vectorized_corpus.VectorizedCorpus.load("SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder)
@@ -91,6 +91,7 @@ tf_idf_corpus = v_corpus.tf_idf().group_by_year2(aggregate_function="mean", dtyp
 
 
 # %%
+
 
 def display_top_terms(data):
 

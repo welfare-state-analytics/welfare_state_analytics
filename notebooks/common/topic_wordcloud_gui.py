@@ -8,13 +8,15 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 
+from notebooks.common import TopicModelContainer
+
 pd.set_option("display.max_rows", None)
 pd.set_option('max_colwidth', 200)
 
 opts = {'max_font_size': 100, 'background_color': 'white', 'width': 900, 'height': 600}
 
 
-def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud', gui=None):
+def display_wordcloud(state: TopicModelContainer, topic_id=0, n_words=100, output_format='Wordcloud', gui=None):
     def tick(n=None):
         gui.progress.value = (gui.progress.value + 1) if n is None else n
 
@@ -26,7 +28,7 @@ def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud',
     tick(1)
 
     try:
-        topic_token_weights = state.compiled_data.topic_token_weights
+        topic_token_weights = state.inferred_topics.topic_token_weights
 
         df = topic_token_weights.loc[(topic_token_weights.topic_id == topic_id)]
 
@@ -57,7 +59,7 @@ def display_wordcloud(state, topic_id=0, n_words=100, output_format='Wordcloud',
     tick(0)
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     output_options = ['Wordcloud', 'Table', 'CSV', 'Excel']
     text_id = 'tx02'

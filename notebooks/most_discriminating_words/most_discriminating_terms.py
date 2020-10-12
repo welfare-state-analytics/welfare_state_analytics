@@ -25,27 +25,22 @@
 import os
 import sys
 
-root_folder = os.path.join(
-    os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics"
-)
+root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
 
 sys.path = list(set(sys.path + [root_folder]))
 
 import penelope.corpus.vectorized_corpus as vectorized_corpus
-from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
+from penelope.common.most_discriminating_terms import \
+    compute_most_discriminating_terms
 
 from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
-    display_gui,
-    display_most_discriminating_terms,
-)
+    display_gui, display_most_discriminating_terms)
 
 corpus_folder = os.path.join(root_folder, "output")
 
 # %%
 v_corpus = (
-    vectorized_corpus.VectorizedCorpus.load(
-        "SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder
-    )
+    vectorized_corpus.VectorizedCorpus.load("SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )

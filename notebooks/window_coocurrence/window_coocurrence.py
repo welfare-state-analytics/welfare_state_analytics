@@ -39,10 +39,9 @@ import penelope.corpus.vectorizer as corpus_vectorizer
 # df.to_csv('./data/year+text_window.txt', sep='\t')
 
 
-def compute_coocurrence_matrix(reader, **kwargs):
+def compute_coocurrence_matrix(reader, **tokenize_opts):
 
-    # FIXME: Which vectorizer should be used???
-    corpus = tokenized_corpus.TokenizedCorpus(reader, only_alphanumeric=False, **kwargs)
+    corpus = tokenized_corpus.TokenizedCorpus(reader, only_alphanumeric=False, **tokenize_opts)
     vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
     v_corpus = vectorizer.fit_transform(corpus)
 
@@ -52,9 +51,7 @@ def compute_coocurrence_matrix(reader, **kwargs):
 
     coo = term_term_matrix
     cdf = (
-        pd.DataFrame({"w1_id": coo.row, "w2_id": coo.col, "value": coo.data})[
-            ["w1_id", "w2_id", "value"]
-        ]
+        pd.DataFrame({"w1_id": coo.row, "w2_id": coo.col, "value": coo.data})[["w1_id", "w2_id", "value"]]
         .sort_values(["w1_id", "w2_id"])
         .reset_index(drop=True)
     )
@@ -64,22 +61,25 @@ def compute_coocurrence_matrix(reader, **kwargs):
     return cdf[["w1", "w2", "value"]]
 
 
-def compute_co_ocurrence_for_year(source_filename, year, result_filename):
+def compute_co_ocurrence_for_periods(source_filename: str, periods, result_filename: str, **options):
 
     df = pd.read_csv(source_filename, sep="\t")[["year", "txt"]]
 
-    reader = readers.DataFrameTextTokenizer(df, column_filters={"year": year})
+    reader = readers.DataFrameTextTokenizer(df, column_filters={"year": periods})
 
-    kwargs = dict(
-        to_lower=True,
-        remove_accents=False,
-        min_len=1,
-        max_len=None,
-        keep_numerals=False,
-    )
+    options = {
+        **dict(
+            to_lower=True,
+            remove_accents=False,
+            min_len=1,
+            max_len=None,
+            keep_numerals=False,
+        ),
+        **options,
+    }
 
-    coo_df = compute_coocurrence_matrix(reader, **kwargs)
+    coo_df = compute_coocurrence_matrix(reader, **options)
     coo_df.to_excel(result_filename)
 
 
-compute_co_ocurrence_for_year("./data/year+text_window.txt", 1957, "test_1957.xlsx")
+compute_co_ocurrence_for_periods("./data/year+text_window.txt", 1957, "test_1957.xlsx")

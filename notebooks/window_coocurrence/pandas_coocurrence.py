@@ -1,10 +1,9 @@
 import os
 
 import pandas as pd
-
+from penelope.co_occurrence.coocurrence_matrix import \
+    compute_coocurrence_matrix
 from penelope.corpus.readers import dataframe_text_tokenizer
-
-from penelope.co_occurrence.coocurrence_matrix import compute_coocurrence_matrix
 
 # THIS FILE COMPUTES COUCCRRENCE FROM PREDEFINED WINDOWS READ FROM EXCEL FILE!
 
