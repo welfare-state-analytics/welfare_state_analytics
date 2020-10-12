@@ -1,7 +1,7 @@
 #!/bin/bash
 
 corpus_folder="./data"
-run_script="../../topic_modelling/run_lda.py"
+run_script="poetry run python -m penelope.scripts.compute_topic_model"
 
 max_iter=2000
 n_workers=1

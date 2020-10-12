@@ -3,12 +3,9 @@
 	"context": "..",
 	"build": {
 		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick a Python version. Rebuild the container
-		// if it already exists to update. Available variants: 3, 3.6, 3.7, 3.8
 		"args": { "VARIANT": "3.8" }
 	},
 
-	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"python.pythonPath": "/usr/local/bin/python",
@@ -23,7 +20,6 @@
 		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
 		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
         "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
-        // "python.pipenvPath": "/home/roger/.pyenv/shims/pipenv",
         "files.watcherExclude": {
             "**/.git/objects/**": true,
             "**/.git/subtree-cache/**": true,
@@ -40,20 +36,15 @@
         "python.testing.nosetestsEnabled": false,
         "python.testing.pytestEnabled": true,
         "python.testing.pytestArgs": [
-            // "--no-cov"
-            // "--cov-config=.coveragerc",
-            // "--cov=./westac"
         ],
         "[makefile]": {
             "editor.insertSpaces": false,
             "editor.detectIndentation": false,
             "editor.autoIndent": "none"
-        },
+        }
 	},
 
-	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-        // "DavidAnson.vscode-markdownlint",
         "donjayamanne.githistory",
         "eamodio.gitlens",
         "EditorConfig.EditorConfig",
@@ -74,13 +65,10 @@
         "yzhang.markdown-all-in-one"
 	],
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [9000],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "pip3 install -r requirements.txt",
 
-	// Comment out to connect as root instead.
 	"remoteUser": "vscode"
 }
 

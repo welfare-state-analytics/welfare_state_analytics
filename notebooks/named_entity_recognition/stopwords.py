@@ -1,7 +1,10 @@
 import nltk
 
 fredrik_stopwords = [
-    '""', '``', '"', 'örn',
+    '""',
+    '``',
+    '"',
+    'örn',
     'aderton',
     'adertonde',
     'adjö',
@@ -402,10 +405,11 @@ fredrik_stopwords = [
     'över',
     'övermorgon',
     'överst',
-    'övre'
+    'övre',
 ]
 
-stopwords = set(nltk.corpus.stopwords.words('swedish'))\
-    .union({ "politisk", "politiska", "politiskt" })\
+stopwords = (
+    set(nltk.corpus.stopwords.words('swedish'))
+    .union({"politisk", "politiska", "politiskt"})
     .union(set(fredrik_stopwords))
-
+)

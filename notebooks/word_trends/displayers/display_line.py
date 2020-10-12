@@ -1,19 +1,22 @@
-import bokeh
-import math
 import itertools
-import notebooks.word_trends.displayers.data_compilers as data_compilers
+import math
+
+import bokeh
+
+from . import data_compilers
 
 NAME = "Line"
 
-compile = data_compilers.compile_multiline_data
+compile = data_compilers.compile_multiline_data  # pylint: disable=redefined-builtin
+
 
 def setup(container, **kwargs):
 
-    x_ticks=kwargs.get('x_ticks', None)
-    plot_width=kwargs.get('plot_width', 1000)
-    plot_height=kwargs.get('plot_height', 800)
+    x_ticks = kwargs.get('x_ticks', None)
+    plot_width = kwargs.get('plot_width', 1000)
+    plot_height = kwargs.get('plot_height', 800)
 
-    data = { 'xs': [ [0] ],  'ys': [ [0] ], 'label': [ "" ], 'color': ['red'] } #, 'token_id': [ 0 ] }
+    data = {'xs': [[0]], 'ys': [[0]], 'label': [""], 'color': ['red']}  # , 'token_id': [ 0 ] }
 
     data_source = bokeh.models.ColumnDataSource(data)
 
@@ -29,36 +32,45 @@ def setup(container, **kwargs):
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
 
-    r = p.multi_line(xs='xs', ys='ys', legend_field='label', line_color='color', source=data_source)
+    _ = p.multi_line(xs='xs', ys='ys', legend_field='label', line_color='color', source=data_source)
 
     p.legend.location = "top_left"
-    p.legend.click_policy="hide"
+    p.legend.click_policy = "hide"
     p.legend.background_fill_alpha = 0.0
 
     container.figure = p
     container.handle = bokeh.plotting.show(p, notebook_handle=True)
     container.data_source = data_source
 
-def plot(data, **kwargs):
 
-    years = [ str(y) for y in data['year'] ]
+def plot(data, **_):
+
+    years = [str(y) for y in data['year']]
 
     data['year'] = years
 
-    tokens = [ w for w in data.keys() if w != 'year' ]
+    tokens = [w for w in data.keys() if w != 'year']
 
     source = bokeh.models.ColumnDataSource(data=data)
 
-    max_value = max([ max(data[key]) for key in data if key != 'year']) + 0.005
+    max_value = max([max(data[key]) for key in data if key != 'year']) + 0.005
 
-    p = bokeh.plotting.figure(x_range=years, y_range=(0, max_value), plot_height=400, plot_width=1000, title="Word frequecy by year")
+    p = bokeh.plotting.figure(
+        x_range=years, y_range=(0, max_value), plot_height=400, plot_width=1000, title="Word frequecy by year"
+    )
 
     colors = itertools.islice(itertools.cycle(bokeh.palettes.d3['Category20b'][20]), len(tokens))
 
     offset = -0.25
     v = []
     for token in tokens:
-        w = p.vbar(x=bokeh.transform.dodge('year', offset, range=p.x_range), top=token, width=0.2, source=source, color=next(colors)) #, legend_label=token)
+        w = p.vbar(
+            x=bokeh.transform.dodge('year', offset, range=p.x_range),
+            top=token,
+            width=0.2,
+            source=source,
+            color=next(colors),
+        )  # , legend_label=token)
         offset += 0.25
         v.append(w)
 

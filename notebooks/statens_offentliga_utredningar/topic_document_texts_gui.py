@@ -1,13 +1,14 @@
+import types
 import warnings
 
 import ipywidgets as widgets
+import penelope.notebook.widgets_utils as widgets_utils
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
 from IPython.display import display
 
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.utility.widgets as widgets_helper
-import text_analytic_tools.utility.widgets_utility as widgets_utility
-import westac.common.utility as utility
-from notebooks.common import filter_document_topic_weights, to_text
+from notebooks.common import (TopicModelContainer,
+                              filter_document_topic_weights, to_text)
 
 logger = utility.setup_logger()
 # from beakerx import *
@@ -17,6 +18,7 @@ logger = utility.setup_logger()
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+
 def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
 
     df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
@@ -24,17 +26,12 @@ def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
     df.index.name = 'id'
     return df.sort_values('weight', ascending=False).head(n_top)
 
-def display_texts(
-    state,
-    filters,
-    threshold=0.0,
-    output_format='Table',
-    n_top=500
-):
- 
-    corpus = state.model_data.corpus
-    id2token = state.model_data.id2term
-    document_topic_weights = state.compiled_data.document_topic_weights
+
+def display_texts(state: TopicModelContainer, filters, threshold=0.0, output_format='Table', n_top=500):
+
+    corpus = state.inferred_model.train_corpus.corpus
+    id2token = state.inferred_model.train_corpus.id2term
+    document_topic_weights = state.inferred_topics.document_topic_weights
 
     df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
 
@@ -45,37 +42,48 @@ def display_texts(
     elif output_format == 'Table':
         display(df)
 
-def display_gui(state):
 
-    year_min, year_max = state.compiled_data.year_period
-    year_options =  [ (x,x) for x in range(year_min, year_max + 1)]
+def display_gui(state: TopicModelContainer):
+
+    year_min, year_max = state.inferred_topics.year_period
+    year_options = [(x, x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_document_text'
 
-    gui = widgets_utility.WidgetUtility(
+    gui = types.SimpleNamespace(
         n_topics=state.num_topics,
         text_id=text_id,
-        text=widgets_helper.text(text_id),
-        year=widgets.Dropdown(description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")),
-        topic_id=widgets.IntSlider(description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False),
+        text=widgets_utils.text_widget(text_id),
+        year=widgets.Dropdown(
+            description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")
+        ),
+        topic_id=widgets.IntSlider(
+            description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
+        ),
         n_top=widgets.IntSlider(description='#Docs', min=5, max=500, step=1, value=75),
-        threshold=widgets.FloatSlider(description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False),
-        output_format=widgets.Dropdown(description='Format', options=['Table'], value='Table', layout=widgets.Layout(width="200px")),
+        threshold=widgets.FloatSlider(
+            description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False
+        ),
+        output_format=widgets.Dropdown(
+            description='Format', options=['Table'], value='Table', layout=widgets.Layout(width="200px")
+        ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
-        output=widgets.Output()
+        output=widgets.Output(),
+        prev_topic_id=None,
+        next_topic_id=None,
     )
 
-    gui.prev_topic_id = gui.create_prev_id_button('topic_id', state.num_topics)
-    gui.next_topic_id = gui.create_next_id_button('topic_id', state.num_topics)
+    gui.prev_topic_id = widgets_utils.button_with_previous_callback(gui, 'topic_id', state.num_topics)
+    gui.next_topic_id = widgets_utils.button_with_next_callback(gui, 'topic_id', state.num_topics)
 
-    def on_topic_change_update_gui(topic_id):
+    def on_topic_change_update_gui(topic_id: int):
 
         if gui.n_topics != state.num_topics:
             gui.n_topics = state.num_topics
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = derived_data_compiler.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
+        tokens = topic_modelling.get_topic_title(state.inferred_topics.topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
@@ -92,7 +100,7 @@ def display_gui(state):
                 filters=dict(year=gui.year.value, topic_id=gui.topic_id.value),
                 threshold=gui.threshold.value,
                 n_top=gui.n_top.value,
-                output_format=gui.output_format.value
+                output_format=gui.output_format.value,
             )
 
     gui.topic_id.observe(update_handler, names='value')
@@ -101,18 +109,26 @@ def display_gui(state):
     gui.n_top.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
-    display(widgets.VBox([
-        widgets.HBox([
-            widgets.VBox([
-                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
-                gui.progress,
-            ]),
-            widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
-            widgets.VBox([gui.year]),
-            widgets.VBox([gui.output_format])
-        ]),
-        gui.text,
-        gui.output
-    ]))
+    display(
+        widgets.VBox(
+            [
+                widgets.HBox(
+                    [
+                        widgets.VBox(
+                            [
+                                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
+                                gui.progress,
+                            ]
+                        ),
+                        widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
+                        widgets.VBox([gui.year]),
+                        widgets.VBox([gui.output_format]),
+                    ]
+                ),
+                gui.text,
+                gui.output,
+            ]
+        )
+    )
 
     update_handler()

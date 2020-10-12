@@ -1,36 +1,39 @@
 import pandas as pd
-from IPython.display import display
 from ipyaggrid import Grid
+from IPython.display import display
 
-import notebooks.word_trends.displayers.data_compilers as data_compilers
+from . import data_compilers
 
 NAME = "Grid"
 
-compile = data_compilers.compile_year_token_vector_data
+compile = data_compilers.compile_year_token_vector_data  # pylint: disable=redefined-builtin
 
-def setup(container, **kwargs):
+
+def setup(container, **kwargs):  # pylint: disable=unused-argument
     pass
+
 
 def default_column_defs(df):
     column_defs = [
         {
             'headerName': column.title(),
             'field': column,
-            #'rowGroup':False,
-            #'hide':False,
-            'cellRenderer':
-                "function(params) { return params.value.toFixed(6); }" if column != 'year' else None,
-            #'type': 'numericColumn'
-        } for column in df.columns
+            # 'rowGroup':False,
+            # 'hide':False,
+            'cellRenderer': "function(params) { return params.value.toFixed(6); }" if column != 'year' else None,
+            # 'type': 'numericColumn'
+        }
+        for column in df.columns
     ]
     return column_defs
 
-def plot(data, **kwargs):
+
+def plot(data, **kwargs):  # pylint: disable=unused-argument
 
     df = pd.DataFrame(data=data).set_index('year')
     column_defs = default_column_defs(df)
     grid_options = {
-        'columnDefs' : column_defs,
+        'columnDefs': column_defs,
         'enableSorting': True,
         'enableFilter': True,
         'enableColResize': True,
@@ -50,9 +53,7 @@ def plot(data, **kwargs):
         columns_fit='auto',
         index=True,
         keep_multiindex=False,
-        menu={
-            'buttons': [ { 'name': 'Export Grid', 'hide': True} ]
-        }
+        menu={'buttons': [{'name': 'Export Grid', 'hide': True}]},
     )
 
     display(g)

@@ -1,0 +1,19 @@
+{
+    "include": [
+        "notebooks",
+        "scripts",
+        "tests"
+    ],
+    "exclude": [
+        "**/deprecated",
+        "**/.ipynb_checkpoints"
+    ],
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "reportUntypedFunctionDecorator": true,
+    "reportUntypedClassDecorator": true,
+    "reportOptionalSubscript": true,
+    "reportOptionalMemberAccess": true,
+    "reportOptionalCall": true,
+    "pythonVersion": "3.8"
+}

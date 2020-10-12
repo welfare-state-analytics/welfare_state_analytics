@@ -1,49 +1,53 @@
 import types
 import warnings
 from os.path import join as jj
+from typing import Any, Dict, List
 
 import ipywidgets as widgets
+import penelope.topic_modelling as topic_modelling
+import penelope.utility as utility
+from IPython.display import display
 
-import text_analytic_tools.text_analysis.derived_data_compiler as derived_data_compiler
-import text_analytic_tools.text_analysis.topic_model as topic_model
-import text_analytic_tools.text_analysis.utility as tmutility
-import westac.common.utility as utility
+from notebooks.common.model_container import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
 
-from IPython.display import display
 
-def load_model(corpus_folder, state, model_name, model_infos=None):
+def load_model(
+    corpus_folder: str, state: TopicModelContainer, model_name: str, model_infos: List[Dict[str, Any]] = None
+):
 
-    model_infos = model_infos or tmutility.find_models(corpus_folder)
+    model_infos = model_infos or topic_modelling.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x['name'] == model_name)
 
-    m_data = topic_model.load_model(model_info['folder'])
-    c_data = derived_data_compiler.CompiledData.load(jj(corpus_folder, model_info['name']))
+    inferred_model = topic_modelling.load_model(model_info['folder'])
+    inderred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info['name']))
 
-    state.set_data(m_data, c_data)
+    state.set_data(inferred_model, inderred_topics)
 
-    topics = c_data.topic_token_overview
-    topics.style.set_properties(**{'text-align': 'left'})\
-        .set_table_styles([ dict(selector='td', props=[('text-align', 'left')] ) ])
+    topics = inderred_topics.topic_token_overview
+    topics.style.set_properties(**{'text-align': 'left'}).set_table_styles(
+        [dict(selector='td', props=[('text-align', 'left')])]
+    )
 
     display(topics)
 
-def display_gui(corpus_folder, state):
 
-    model_infos = tmutility.find_models(corpus_folder)
+def display_gui(corpus_folder: str, state: TopicModelContainer):
+
+    model_infos = topic_modelling.find_models(corpus_folder)
     model_names = list(x['name'] for x in model_infos)
 
     gui = types.SimpleNamespace(
         model_name=widgets.Dropdown(description='Model', options=model_names, layout=widgets.Layout(width='40%')),
         load=widgets.Button(description='Load', button_style='Success', layout=widgets.Layout(width='80px')),
-        output=widgets.Output()
+        output=widgets.Output(),
     )
 
-    def load_handler(*_): # pylint: disable=unused-argument
+    def load_handler(*_):  # pylint: disable=unused-argument
         gui.output.clear_output()
         try:
             gui.load.disabled = True
@@ -57,7 +61,4 @@ def display_gui(corpus_folder, state):
 
     gui.load.on_click(load_handler)
 
-    display(widgets.VBox([
-        widgets.HBox([gui.model_name, gui.load ]),
-        widgets.VBox([gui.output])
-    ]))
+    display(widgets.VBox([widgets.HBox([gui.model_name, gui.load]), widgets.VBox([gui.output])]))

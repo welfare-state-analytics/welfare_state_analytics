@@ -16,7 +16,7 @@ function run_task() {
         exit 64
     fi
 
-    pipenv run python compute_model.py $name \
+    pipenv run python -m penelope.scripts.compute_topic_model $name \
         --corpus-filename "$corpus_filename" \
         --n-topics $2 \
         --engine "$1" \

@@ -1,32 +1,56 @@
-import logging
-import westac.common.textacy_most_discriminating_terms as mdw
-import pandas as pd
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.6.0
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-logger = logging.getLogger(__name__)
+# %% [markdown]
+# ## Most Discriminating Terms
 
-def compute_most_discriminating_terms(
-    x_corpus,
-    x_documents,
-    top_n_terms=25,
-    max_n_terms=1000,
-    period1=None,
-    period2=None
-):
+# %%
+# %load_ext autoreload
+# %autoreload 2
 
-    group1_indices = x_documents[x_documents.year.between(*period1)].index
-    group2_indices = x_documents[x_documents.year.between(*period2)].index
+# pylint: disable=wrong-import-position
 
-    if len(group1_indices) == 0 or len(group2_indices) == 0:
-        return None
+import os
+import sys
 
-    indices = group1_indices.append(group2_indices)
+root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
 
-    in_group1 = [True] * group1_indices.size + [False] * group2_indices.size
+sys.path = list(set(sys.path + [root_folder]))
 
-    dtm = x_corpus.data[indices, :]
-    terms = mdw.most_discriminating_terms(dtm, x_corpus.id2token, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
-    min_terms = min(len(terms[0]), len(terms[1]))
-    df = pd.DataFrame({'Group 1': terms[0][:min_terms], 'Group 2': terms[1][:min_terms] })
+import penelope.corpus.vectorized_corpus as vectorized_corpus
+from penelope.common.most_discriminating_terms import \
+    compute_most_discriminating_terms
 
-    return df
+from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
+    display_gui, display_most_discriminating_terms)
 
+corpus_folder = os.path.join(root_folder, "output")
+
+# %%
+v_corpus = (
+    vectorized_corpus.VectorizedCorpus.load("SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder)
+    .slice_by_n_count(10)
+    .slice_by_n_top(500000)
+)
+
+
+# %%
+
+display_gui(
+    v_corpus,
+    v_corpus.document_index,
+    compute_callback=compute_most_discriminating_terms,
+    display_callback=display_most_discriminating_terms,
+)

@@ -1,144 +1,130 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py,md
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.2.4
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.6.0
 #   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
+#     display_name: 'Python 3.7.5 64-bit (''welfare_state_analytics'': pipenv)'
+#     name: python37564bitwelfarestateanalyticspipenvb857bd21a5fc4575b483276067dc0241
 # ---
 
-# +
+# %%
 # %load_ext autoreload
 # %autoreload 2
-import pandas as pd
-import numpy as np
-import scipy
+
+import glob
 import os
+import sys
+import zipfile
 
-from westac.corpus import corpus_vectorizer
-from westac.corpus import tokenized_corpus
-from westac.corpus.iterators import dataframe_text_tokenizer
+import numpy as np
+import pandas as pd
 
-def load_text_windows(filename: str):
-    """Reads excel file "filename" and returns content as a Pandas DataFrame.
-    The file is written to tsv the first time read for faster subsequent reads.
+# def export_excel_to_text(excel_file, text_file):
+#     """Exports Excel to a tab-seperated text file"""
+#     df = pd.read_excel('./data/year+text_window.xlsx')
+#     df.to_csv('./data/year+text_window.txt', sep='\t')
+#     return df
 
-    Parameters
-    ----------
-    filename : str
-        Name of excel file that has two columns: year and txt
 
-    Returns
-    -------
-    [DataFrame]
-        Content of filename as a DataFrame
+def read_text_file(filename):
+    """Exports Excel to a tab-seperated text file"""
+    df = pd.read_csv(filename, sep="\t")  # [['year', 'txt']]
+    return df
 
-    Raises
-    ------
-    FileNotFoundError
-    """
-    filepath = os.path(filename)
 
-    if not os.path.isdir(filepath):
-        raise FileNotFoundError("Path {filepath} does not exist!")
+root_folder = (lambda x: os.path.join(os.getcwd().split(x)[0], x))("welfare_state_analytics")
+sys.path.append(root_folder)
 
-    filebase = os.path.basename(filename).split('.')[0]
-    textfile = os.path.join(filepath, filebase + '.txt')
 
-    if not os.path.isfile(textfile):
-        df = pd.read_excel(filename)
-        df.to_csv(textfile, sep='\t')
+# %% [markdown]
+# ## Convert Excel data to yearly documents
+# This script creates merges the text lines into a single text file for each year and news-paper.
 
-    df = pd.read_csv(textfile, sep='\t')[['newspaper', 'year', 'txt']]
+# %%
+
+# Convert excel to a temporary tab seperated text file
+
+data_folder = os.path.join(root_folder, "data")
+source_excel_filename = os.path.join(data_folder, "year+text_window.xlsx")
+target_text_filename = os.path.join(data_folder, "year+newspaper+text.txt")
+target_zip_filename = os.path.join(data_folder, "year+newspaper+text_yearly_document.txt.zip")
+
+
+def create_yearly_documents(source_filename, target_name):
+
+    df = read_text_file(source_filename)
+    documents = df.fillna("").groupby(["year", "newspaper"])["txt"].apply(" ".join).reset_index()
+
+    with zipfile.ZipFile(target_name, "w") as zf:
+        for _, document in documents.iterrows():
+            store_filename = "{}_{}.txt".format(document["newspaper"], document["year"])
+            zf.writestr(store_filename, document["txt"], zipfile.ZIP_DEFLATED)
+
+
+if not os.path.exists(target_zip_filename):
+    print("Creating yearly documents...")
+    # export_excel_to_text(source_excel_filename, target_text_filename)
+    # create_yearly_documents(target_text_filename, target_zip_filename)
+
+print("OK!")
+
+# %% [markdown]
+# ## Run STAGGER NER tagging
+# Note that archive created above must first be unzipped into a seperate folder.
+
+# %% language="bash"
+# # nohup java -Xmx4G -jar ~/source/stagger/stagger.jar -modelfile ~/source/stagger/models/swedish.bin -lang sv -tag *.txt &
+#
+
+# %% [markdown]
+# ## Compile result
+
+# %%
+
+
+def read_conll_ner_tag(filename, only_ner_tags=True):
+
+    df = pd.read_csv(filename, sep="\t", header=None, index_col=0, skip_blank_lines=True, quoting=3)
+    df.columns = [
+        "token",
+        "lemma",
+        "pos",
+        "F4",
+        "pos2",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "tag",
+        "type",
+        "id",
+    ]
+    df = df[["id", "token", "pos", "tag", "type"]]
+
+    df["parts"] = df.id.str.split("_")
+    df["paper"] = df.parts.apply(lambda x: x[0] if isinstance(x, list) and len(x) > 0 else "??")
+    df["year"] = df.parts.apply(lambda x: x[1].split(":")[0] if isinstance(x, list) and len(x) > 1 else "0").astype(
+        np.int32
+    )
+
+    df = df[["paper", "year", "token", "tag", "type"]]
+
+    if only_ner_tags:
+        df = df.loc[df.type != "_"]
 
     return df
 
-def compute_coocurrence_matrix(reader, min_count=1, **kwargs):
-    """Computes a term-term coocurrence matrix for documents in reader.
 
-    Parameters
-    ----------
-    reader : enumerable(list(str))
-        Sequence of tokenized documents
+result_folder = os.path.join(data_folder, "year+newspaper+text_yearly_document")
+result_files = glob.glob("{}/*.conll".format(result_folder))
 
-    Returns
-    -------
-    [DataFrane]
-        Upper diagonal of term-term frequency matrix (TTM). Note that diagonal (wi, wi) is not returned
-    """
-    corpus = tokenized_corpus.TokenizedCorpus(reader, only_alphanumeric=False, **kwargs)
-    vectorizer = corpus_vectorizer.CorpusVectorizer(lowercase=False)
-    v_corpus = vectorizer.fit_transform(corpus)
-
-    term_term_matrix = np.dot(v_corpus.bag_term_matrix.T, v_corpus.bag_term_matrix)
-    term_term_matrix = scipy.sparse.triu(term_term_matrix, 1)
-
-    id2token = {
-        i: t for t,i in v_corpus.token2id.items()
-    }
-
-    cdf = pd.DataFrame({
-        'w1_id': term_term_matrix.row,
-        'w2_id': term_term_matrix.col,
-        'value': term_term_matrix.data
-    })[['w1_id', 'w2_id', 'value']].sort_values(['w1_id', 'w2_id'])\
-        .reset_index(drop=True)
-
-    if min_count > 1:
-        cdf = cdf[cdf.value >= min_count]
-
-    n_documents = len(corpus.metadata)
-    n_tokens = sum(corpus.n_raw_tokens.values())
-
-    cdf['value_n_d'] = cdf.value / float(n_documents)
-    cdf['value_n_t'] = cdf.value / float(n_tokens)
-
-    cdf['w1'] = cdf.w1_id.apply(lambda x: id2token[x])
-    cdf['w2'] = cdf.w2_id.apply(lambda x: id2token[x])
-
-    return cdf[['w1', 'w2', 'value', 'value_n_d', 'value_n_t']]
-
-def compute_for_period_newpaper(df, period, newspaper, min_count, options):
-    reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
-    df_y = compute_coocurrence_matrix(reader, min_count=min_count, **options)
-    df_y['newspaper'] = newspaper
-    df_y['period'] = str(period)
-    return df_y
-
-def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
-
-    columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
-
-    df   = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
-    df_r = pd.DataFrame(columns=columns)
-
-    n_documents = 0
-    for newspaper in newspapers:
-        for period in periods:
-            print("Processing: {} {}...".format(newspaper, period))
-            df_y = compute_for_period_newpaper(df, period, newspaper, min_count, options)
-            df_r = df_r.append(df_y[columns], ignore_index=True)
-            n_documents += len(df_y)
-
-    print("Done! Processed {} rows...".format(n_documents))
-
-    # Scale a normalized data matrix to the [0, 1] range:
-    df_r['value_n_t'] = df_r.value_n_t / df_r.value_n_t.max()
-    df_r['value_n_d'] = df_r.value_n_d / df_r.value_n_d.max()
-
-    extension = target_filename.split(".")[-1]
-    if extension == ".xlsx":
-        df_r.to_excel(target_filename, index=False)
-    elif extension in ["zip", "gzip"]:
-        df_r.to_csv(target_filename, sep='\t', compression=extension, index=False, header=True)
-    else:
-        df_r.to_csv(target_filename, sep='\t', index=False, header=True)
+df_all_tags = pd.concat([read_conll_ner_tag(filename) for filename in result_files])
+df_all_tags.to_excel("year+newspaper+text_yearly_document_all_ner_tags.xlsx")
 
 
-
+# %%

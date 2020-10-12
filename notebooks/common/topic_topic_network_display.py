@@ -1,26 +1,31 @@
-
 # Visualize topic co-occurrence
 import bokeh
 import bokeh.plotting
+import penelope.network.plot_utility as plot_utility
+import penelope.network.utility as network_utility
+import penelope.utility as utility
 from IPython.display import display
 
-import text_analytic_tools.common.network.plot_utility as plot_utility
-import text_analytic_tools.common.network.utility as network_utility
-import westac.common.utility as utility
 from notebooks.common import filter_document_topic_weights
 
 logger = utility.setup_logger()
 
+
 def get_topic_titles(topic_token_weights, topic_id=None, n_words=100):
-    df_temp = topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id==topic_id)]
-    df = df_temp\
-        .sort_values('weight', ascending=False)\
-        .groupby('topic_id')\
+    df_temp = (
+        topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id == topic_id)]
+    )
+    df = (
+        df_temp.sort_values('weight', ascending=False)
+        .groupby('topic_id')
         .apply(lambda x: ' '.join(x.token[:n_words].str.title()))
+    )
     return df
 
+
+# pylint: disable=too-many-arguments, too-many-locals
 def display_topic_topic_network(
-    c_data,
+    inferred_topics,
     filters,
     period=None,
     ignores=None,
@@ -33,22 +38,22 @@ def display_topic_topic_network(
     titles=None,
     topic_proportions=None,
     node_range=(20, 60),
-    edge_range=(1, 10)
+    edge_range=(1, 10),
 ):
     try:
 
-        documents = c_data.documents
+        documents = inferred_topics.documents
 
         if 'document_id' not in documents.columns:
             documents['document_id'] = documents.index
 
-        df = filter_document_topic_weights(c_data.document_topic_weights, filters=filters, threshold=threshold)
+        df = filter_document_topic_weights(inferred_topics.document_topic_weights, filters=filters, threshold=threshold)
 
         if ignores is not None:
             df = df[~df.topic_id.isin(ignores)]
 
         if len(period or []) == 2:
-            df = df[(df.year>=period[0]) & (df.year<=period[1])]
+            df = df[(df.year >= period[0]) & (df.year <= period[1])]
 
         if isinstance(period, int):
             df = df[df.year == period]
@@ -79,9 +84,9 @@ def display_topic_topic_network(
                 weight_scale=1.0,
                 normalize_weights=False,
                 element_id=text_id,
-                figsize=(1200,800),
+                figsize=(1200, 800),
                 node_range=node_range,
-                edge_range=edge_range
+                edge_range=edge_range,
             )
             bokeh.plotting.show(p)
         else:
@@ -97,6 +102,6 @@ def display_topic_topic_network(
                 df.to_csv(filename, sep='\t')
                 print('Data stored in file {}'.format(filename))
 
-    except Exception as x:
-        raise
-        #print("No data: please adjust filters")
+    except:  # pylint: disable=bare-except
+        print("No data: please adjust filters")
+        # raise
