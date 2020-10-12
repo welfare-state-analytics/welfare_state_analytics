@@ -2,17 +2,18 @@ import types
 import warnings
 
 import ipywidgets as widgets
-import penelope.topic_modelling as topic_modelling
 import penelope.notebook.widgets_utils as widgets_utils
+import penelope.topic_modelling as topic_modelling
 from IPython.display import display
 
 import notebooks.common.topic_trend_display as topic_trend_display
+from notebooks.common import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     text_id = 'topic_share_plot'
 
@@ -48,7 +49,7 @@ def display_gui(state):
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = topic_modelling.get_topic_title(state.compiled_data.topic_token_weights, topic_id, n_tokens=200)
+        tokens = topic_modelling.get_topic_title(state.inferred_topics.topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
@@ -60,12 +61,12 @@ def display_gui(state):
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            weights = topic_modelling.compute_topic_yearly_means(state.compiled_data.document_topic_weights)
+            weights = topic_modelling.compute_topic_yearly_means(state.inferred_topics.document_topic_weights)
 
             topic_trend_display.display(
                 weight_over_time=weights,
                 topic_id=gui.topic_id.value,
-                year_range=state.compiled_data.year_period,
+                year_range=state.inferred_topics.year_period,
                 aggregate=gui.aggregate.value,
                 normalize=gui.normalize.value,
                 output_format=gui.output_format.value,

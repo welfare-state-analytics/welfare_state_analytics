@@ -1,12 +1,13 @@
 import types
 
 import ipywidgets as widgets
-import penelope.topic_modelling as topic_modelling
 import penelope.notebook.widgets_utils as widgets_utils
+import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
+from notebooks.common import TopicModelContainer
 
 # from beakerx import *
 # from beakerx.object import beakerx
@@ -15,15 +16,15 @@ import notebooks.common.topic_trends_overview_display as topic_trends_overview_d
 logger = utility.setup_logger()
 
 
-def display_gui(state):
+def display_gui(state: TopicModelContainer):
 
     lw = lambda w: widgets.Layout(width=w)
 
     text_id = 'topic_relevance'
 
-    # year_min, year_max = state.compiled_data.year_period
+    # year_min, year_max = state.inferred_topics.year_period
 
-    titles = topic_modelling.get_topic_titles(state.compiled_data.topic_token_weights, n_tokens=100)
+    titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights, n_tokens=100)
     weighings = [(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS]
 
     gui = types.SimpleNamespace(
@@ -45,7 +46,7 @@ def display_gui(state):
 
         with gui.output:
 
-            weights = topic_modelling.compute_topic_yearly_means(state.compiled_data.document_topic_weights).fillna(0)
+            weights = topic_modelling.compute_topic_yearly_means(state.inferred_topics.document_topic_weights).fillna(0)
 
             topic_trends_overview_display.display_heatmap(
                 weights,

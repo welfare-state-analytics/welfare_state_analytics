@@ -20,22 +20,10 @@
 
 # %%
 
- # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
-import os
-import sys
-
-if os.environ.get("JUPYTER_IMAGE_SPEC", "") == "westac_lab":
-    root_folder = "/home/jovyan/work/welfare_state_analytics"
-else:
-    root_folder = (lambda x: os.path.join(os.getcwd().split(x)[0], x))("welfare_state_analytics")
-
-corpus_folder = "/data/westac/sou_kb_labb"
-
-sys.path = list(set(sys.path + [root_folder]))
-
+import addpaths  # pylint: disable=import-error
 import bokeh.plotting
-import penelope.notebook.model_container as topic_model_container
 from IPython.core.interactiveshell import InteractiveShell
 
 import notebooks.common.load_topic_model_gui as load_gui
@@ -45,14 +33,17 @@ import notebooks.statens_offentliga_utredningar.topic_document_texts_gui as text
 import notebooks.statens_offentliga_utredningar.topic_topic_network_gui as topic_topic_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_gui as trends_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_overview_gui as overview_gui
-from notebooks.common import setup_pandas
+from notebooks.common import TopicModelContainer, setup_pandas
+
+print(addpaths.root_folder)
 
 InteractiveShell.ast_node_interactivity = "all"
 
 bokeh.plotting.output_notebook()
 setup_pandas()
-current_state = topic_model_container.TopicModelContainer.singleton
+current_state: TopicModelContainer = TopicModelContainer.singleton
 
+corpus_folder = "/data/westac/sou_kb_labb"
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
@@ -91,7 +82,7 @@ except Exception as ex:
 
 try:
     trends_gui.display_gui(current_state())
-    # trends_gui.display_topic_trend(current_state().compiled_data.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
+    # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 except Exception as ex:
     print(ex)
 
