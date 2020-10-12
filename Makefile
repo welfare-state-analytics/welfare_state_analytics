@@ -75,6 +75,14 @@ clean_cache:
 update:
 	@poetry update
 
+labextension:
+	@poetry run jupyter labextension install \
+		@jupyter-widgets/jupyterlab-manager \
+		@bokeh/jupyter_bokeh \
+		jupyter-matplotlib \
+		jupyterlab-jupytext \
+		ipyaggrid
+
 requirements.txt: poetry.lock
 	@poetry export -f requirements.txt --output requirements.txt
 
@@ -128,5 +136,5 @@ pre_commit_ipynb:
 
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
-.PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update \
+.PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update labextension \
 	pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
