@@ -4,16 +4,19 @@ SHELL := /bin/bash
 SOURCE_FOLDERS=notebooks scripts tests
 
 init:
-	@pip install --upgrade pip poetry
+	@pip install --upgrade pip
 	@pip install poetry --upgrade
 	@poetry install
 
-build: requirements.txt write_to_ipynb
+build: penelope requirements.txt write_to_ipynb
 	@poetry build
+
+penelope:
+	@poetry update penelope
 
 test-coverage:
 	-poetry run coverage --rcfile=.coveragerc run -m pytest
-	-coveralls
+	-poetry run coveralls
 
 test: clean
 	@poetry run pytest --verbose --durations=0 \
