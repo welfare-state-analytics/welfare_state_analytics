@@ -74,7 +74,6 @@ def test_infer_model():
     assert len(inferred_model.train_corpus.documents.columns) == 6
     assert 'n_terms' in inferred_model.train_corpus.documents.columns
     assert inferred_model.train_corpus.corpus is not None
-    import numpy as np
 
     # dtm = corpus
     # data = np.empty(n_nonzero, dtype=np.intc)     # all non-zero term frequencies at data[k]
@@ -93,7 +92,7 @@ def test_store_inferred_model():
     topic_modelling.store_model(inferred_model, target_folder)
 
     # Assert
-    assert os.path.isfile(os.path.join(target_folder, "inferred_model.pickle"))
+    assert os.path.isfile(os.path.join(target_folder, "topic_model.pickle.pbz2"))
 
     shutil.rmtree(target_folder)
 
@@ -285,7 +284,7 @@ def test_run_cli():
     target_folder = jj(kwargs['corpus_folder'], kwargs['name'])
 
     assert os.path.isdir(target_folder)
-    assert os.path.isfile(jj(target_folder, 'inferred_model.pickle'))
+    assert os.path.isfile(jj(target_folder, 'topic_model.pickle.pbz2'))
     assert os.path.isfile(jj(target_folder, 'model_options.json'))
 
     shutil.rmtree(target_folder)
