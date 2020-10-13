@@ -9,7 +9,7 @@ init:
 	@poetry install
 
 build: penelope requirements.txt write_to_ipynb
-	@poetry build
+	# @-poetry build
 
 penelope:
 	@poetry update penelope
