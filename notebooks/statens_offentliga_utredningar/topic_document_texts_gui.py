@@ -30,7 +30,7 @@ def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
 def display_texts(state: TopicModelContainer, filters, threshold=0.0, output_format='Table', n_top=500):
 
     corpus = state.inferred_model.train_corpus.corpus
-    id2token = state.inferred_model.train_corpus.id2term
+    id2token = state.inferred_model.train_corpus.id2word
     document_topic_weights = state.inferred_topics.document_topic_weights
 
     df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
