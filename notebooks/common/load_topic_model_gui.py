@@ -19,7 +19,7 @@ logger = utility.setup_logger(filename=None)
 
 def temporary_bug_fixupdate_documents(inferred_topics):
 
-    logger.info("applying temporary bug fix of ")
+    logger.info("applying temporary bug fix of missing year in documents...done!")
     documents = inferred_topics.documents
     document_topic_weights = inferred_topics.document_topic_weights
 
