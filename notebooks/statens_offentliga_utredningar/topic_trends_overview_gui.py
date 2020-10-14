@@ -30,9 +30,9 @@ def display_gui(state: TopicModelContainer):
     gui = types.SimpleNamespace(
         text_id=text_id,
         text=widgets_utils.text_widget(text_id),
-        flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
+        flip_axis=widgets.ToggleButton(value=False, description='Flip', icon='', layout=lw("80px")),
         aggregate=widgets.Dropdown(
-            description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")
+            description='Aggregate', options=weighings, value='max_weight', layout=widgets.Layout(width="250px")
         ),
         output_format=widgets.Dropdown(
             description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")
@@ -58,6 +58,7 @@ def display_gui(state: TopicModelContainer):
 
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
+    gui.flip_axis.observe(update_handler, names='value')
 
     display(
         widgets.VBox(
