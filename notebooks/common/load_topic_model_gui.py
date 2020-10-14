@@ -19,6 +19,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 logger = utility.setup_logger(filename=None)
 
 
+# FIXME: #94 Column 'year' is missing in `documents` in model metadata (InferredTopicsData)
 def temporary_bug_fixupdate_documents(inferred_topics):
 
     logger.info("applying temporary bug fix of missing year in documents...done!")
