@@ -30,7 +30,7 @@ import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
 import notebooks.common.topic_wordcloud_gui as wordcloud_gui
 import notebooks.statens_offentliga_utredningar.topic_document_network_gui as topic_document_gui
-import notebooks.statens_offentliga_utredningar.topic_document_texts_gui as texts_gui
+import notebooks.statens_offentliga_utredningar.topic_documents_gui as documents_gui
 import notebooks.statens_offentliga_utredningar.topic_topic_network_gui as topic_topic_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_gui as trends_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_overview_gui as overview_gui
@@ -101,12 +101,12 @@ except ValueError as ex:
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
 #
-# Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring if they both exists  in the same document both having weights above threshold. Weight are number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus (normalized document) length, and are computed in accordance to how node sizes are computed in LDAvis.
+# Displays a list of documents that the topic occurs in above a given threshold.
 
 # %%
 
 try:
-    texts_gui.display_gui(current_state())
+    documents_gui.display_gui(current_state())
 except Exception as ex:
     print(ex)
 

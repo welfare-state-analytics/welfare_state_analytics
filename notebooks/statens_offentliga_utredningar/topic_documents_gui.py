@@ -8,7 +8,7 @@ import penelope.utility as utility
 from IPython.display import display
 
 from notebooks.common import (TopicModelContainer,
-                              filter_document_topic_weights, to_text)
+                              filter_document_topic_weights)
 
 logger = utility.setup_logger()
 # from beakerx import *
@@ -19,34 +19,27 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-def reconstitue_texts_for_topic(df, corpus, id2token, n_top=500):
+def display_documents(inferred_topics: topic_modelling.InferredTopicsData, filters, threshold=0.0, output_format='Table', n_top=500):
 
-    df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
-    df = df.drop(['topic_id', 'year'], axis=1).set_index('document_id')
-    df.index.name = 'id'
-    return df.sort_values('weight', ascending=False).head(n_top)
+    document_topic_weights = filter_document_topic_weights(
+        inferred_topics.document_topic_weights, filters=filters, threshold=threshold
+    )
 
-
-def display_texts(state: TopicModelContainer, filters, threshold=0.0, output_format='Table', n_top=500):
-
-    corpus = state.inferred_model.train_corpus.corpus
-    id2token = state.inferred_model.train_corpus.id2word
-    document_topic_weights = state.inferred_topics.document_topic_weights
-
-    df = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
-
-    df = reconstitue_texts_for_topic(df, corpus, id2token, n_top=n_top)
-
-    if len(df) == 0:
+    if len(document_topic_weights) == 0:
         print('No data to display for this topic and threshold')
-    elif output_format == 'Table':
-        display(df)
+        return
+
+    if output_format == 'Table':
+        document_topic_weights = document_topic_weights\
+            .drop(['topic_id'], axis=1)\
+                .set_index('document_id')\
+                    .sort_values('weight', ascending=False)\
+                        .head(n_top)
+        document_topic_weights.index.name = 'id'
+        display(document_topic_weights)
 
 
 def display_gui(state: TopicModelContainer):
-
-    year_min, year_max = state.inferred_topics.year_period
-    year_options = [(x, x) for x in range(year_min, year_max + 1)]
 
     text_id = 'topic_document_text'
 
@@ -54,9 +47,6 @@ def display_gui(state: TopicModelContainer):
         n_topics=state.num_topics,
         text_id=text_id,
         text=widgets_utils.text_widget(text_id),
-        year=widgets.Dropdown(
-            description='Year', options=year_options, value=year_options[0][0], layout=widgets.Layout(width="200px")
-        ),
         topic_id=widgets.IntSlider(
             description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
         ),
@@ -78,12 +68,16 @@ def display_gui(state: TopicModelContainer):
 
     def on_topic_change_update_gui(topic_id: int):
 
+        topic_token_weights = state.inferred_topics.topic_token_weights
         if gui.n_topics != state.num_topics:
             gui.n_topics = state.num_topics
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        tokens = topic_modelling.get_topic_title(state.inferred_topics.topic_token_weights, topic_id, n_tokens=200)
+        if len(topic_token_weights[topic_token_weights.topic_id==topic_id]) == 0:
+            tokens = [ "Topics has no significant presence in any documents in the entire corpus" ]
+        else:
+            tokens = topic_modelling.get_topic_title(topic_token_weights, topic_id, n_tokens=200)
 
         gui.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
@@ -95,16 +89,15 @@ def display_gui(state: TopicModelContainer):
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            display_texts(
-                state=state,
-                filters=dict(year=gui.year.value, topic_id=gui.topic_id.value),
+            display_documents(
+                inferred_topics=state.inferred_topics,
+                filters=dict(topic_id=gui.topic_id.value),
                 threshold=gui.threshold.value,
                 n_top=gui.n_top.value,
                 output_format=gui.output_format.value,
             )
 
     gui.topic_id.observe(update_handler, names='value')
-    gui.year.observe(update_handler, names='value')
     gui.threshold.observe(update_handler, names='value')
     gui.n_top.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
@@ -121,7 +114,6 @@ def display_gui(state: TopicModelContainer):
                             ]
                         ),
                         widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
-                        widgets.VBox([gui.year]),
                         widgets.VBox([gui.output_format]),
                     ]
                 ),
