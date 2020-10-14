@@ -26,6 +26,7 @@ import addpaths  # pylint: disable=import-error
 import bokeh.plotting
 from IPython.core.interactiveshell import InteractiveShell
 
+# FIXME #95 Topic Modelling notebook setup celldisplays a load of trace information when run
 import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
 import notebooks.common.topic_wordcloud_gui as wordcloud_gui
@@ -47,7 +48,7 @@ corpus_folder = "/data/westac/sou_kb_labb"
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-
+# FIXME #96 Add ipyaggrid for better table display
 load_gui.display_gui(corpus_folder, current_state())
 # load_gui.load_model(corpus_folder, current_state(), 'test.4days')
 
