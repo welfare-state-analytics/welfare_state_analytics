@@ -1,9 +1,11 @@
+from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
 import types
 import warnings
 from os.path import join as jj
 from typing import Any, Dict, List
 
 import ipywidgets as widgets
+import numpy as np
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
@@ -15,6 +17,26 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
 
+def temporary_bug_fixupdate_documents(inferred_topics):
+
+    logger.info("applying temporary bug fix of ")
+    documents = inferred_topics.documents
+    document_topic_weights = inferred_topics.document_topic_weights
+
+    if 'year' not in documents.columns:
+        documents['year'] = documents.filename.str.split('_').apply(lambda x: x[1]).astype(np.int)
+
+    if 'year' not in document_topic_weights.columns:
+        document_topic_weights = extend_with_document_info(document_topic_weights, documents)
+
+    inferred_topics.documents = documents
+    inferred_topics.document_topic_weights = document_topic_weights
+
+    assert 'year' in inferred_topics.documents.columns
+    assert 'year' in inferred_topics.document_topic_weights.columns
+
+    return inferred_topics
+
 
 def load_model(
     corpus_folder: str, state: TopicModelContainer, model_name: str, model_infos: List[Dict[str, Any]] = None
@@ -24,11 +46,13 @@ def load_model(
     model_info = next(x for x in model_infos if x['name'] == model_name)
 
     inferred_model = topic_modelling.load_model(model_info['folder'])
-    inderred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info['name']))
+    inferred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info['name']))
 
-    state.set_data(inferred_model, inderred_topics)
+    inferred_topics = temporary_bug_fixupdate_documents(inferred_topics)
 
-    topics = inderred_topics.topic_token_overview
+    state.set_data(inferred_model, inferred_topics)
+
+    topics = inferred_topics.topic_token_overview
     topics.style.set_properties(**{'text-align': 'left'}).set_table_styles(
         [dict(selector='td', props=[('text-align', 'left')])]
     )
