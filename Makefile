@@ -8,8 +8,10 @@ init:
 	@pip install poetry --upgrade
 	@poetry install
 
+# FIXME: #97 Add `make build` to `westac_lab` Dockerfile
 build: penelope requirements.txt write_to_ipynb
-	@poetry build
+	@echo "Penelope, requirements and ipynb files is now up-to-date"
+	#@poetry build
 
 penelope:
 	@poetry update penelope
