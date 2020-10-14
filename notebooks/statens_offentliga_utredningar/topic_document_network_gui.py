@@ -30,10 +30,10 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
 
     p = bokeh.plotting.figure(plot_width=1000, plot_height=600, x_axis_type=None, y_axis_type=None, tools=tools)
 
-    _ = p.multi_line(xs='xs', ys='ys', line_width='weights', alpha='alphas', level='underlay', color='black', source=lines_source)
-    _ = p.circle(
-        x='x', y='y', size=40, source=year_source, color='lightgreen', line_width=1, alpha=1.0
+    _ = p.multi_line(
+        xs='xs', ys='ys', line_width='weights', alpha='alphas', level='underlay', color='black', source=lines_source
     )
+    _ = p.circle(x='x', y='y', size=40, source=year_source, color='lightgreen', line_width=1, alpha=1.0)
 
     r_topics = p.circle(x='x', y='y', size=25, source=topic_source, color='skyblue', alpha=1.00)
 

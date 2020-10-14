@@ -7,8 +7,7 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 
-from notebooks.common import (TopicModelContainer,
-                              filter_document_topic_weights)
+from notebooks.common import TopicModelContainer, filter_document_topic_weights
 
 logger = utility.setup_logger()
 # from beakerx import *
@@ -19,7 +18,9 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-def display_documents(inferred_topics: topic_modelling.InferredTopicsData, filters, threshold=0.0, output_format='Table', n_top=500):
+def display_documents(
+    inferred_topics: topic_modelling.InferredTopicsData, filters, threshold=0.0, output_format='Table', n_top=500
+):
 
     document_topic_weights = filter_document_topic_weights(
         inferred_topics.document_topic_weights, filters=filters, threshold=threshold
@@ -30,11 +31,12 @@ def display_documents(inferred_topics: topic_modelling.InferredTopicsData, filte
         return
 
     if output_format == 'Table':
-        document_topic_weights = document_topic_weights\
-            .drop(['topic_id'], axis=1)\
-                .set_index('document_id')\
-                    .sort_values('weight', ascending=False)\
-                        .head(n_top)
+        document_topic_weights = (
+            document_topic_weights.drop(['topic_id'], axis=1)
+            .set_index('document_id')
+            .sort_values('weight', ascending=False)
+            .head(n_top)
+        )
         document_topic_weights.index.name = 'id'
         display(document_topic_weights)
 
@@ -74,8 +76,8 @@ def display_gui(state: TopicModelContainer):
             gui.topic_id.value = 0
             gui.topic_id.max = state.num_topics - 1
 
-        if len(topic_token_weights[topic_token_weights.topic_id==topic_id]) == 0:
-            tokens = [ "Topics has no significant presence in any documents in the entire corpus" ]
+        if len(topic_token_weights[topic_token_weights.topic_id == topic_id]) == 0:
+            tokens = ["Topics has no significant presence in any documents in the entire corpus"]
         else:
             tokens = topic_modelling.get_topic_title(topic_token_weights, topic_id, n_tokens=200)
 

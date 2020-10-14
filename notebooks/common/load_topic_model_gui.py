@@ -1,4 +1,3 @@
-from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
 import types
 import warnings
 from os.path import join as jj
@@ -11,11 +10,14 @@ import penelope.utility as utility
 from IPython.display import display
 
 from notebooks.common.model_container import TopicModelContainer
+from notebooks.political_in_newspapers.corpus_data import \
+    extend_with_document_info
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.setup_logger(filename=None)
+
 
 def temporary_bug_fixupdate_documents(inferred_topics):
 
