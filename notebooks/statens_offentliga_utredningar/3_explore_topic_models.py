@@ -19,6 +19,7 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
+# %%capture
 
 # pylint: disable=wrong-import-position
 
