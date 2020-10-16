@@ -56,6 +56,7 @@ load_gui.display_gui(corpus_folder, current_state())
 
 # %%
 
+bokeh.plotting.output_notebook()
 try:
     wordcloud_gui.display_gui(current_state())
 except Exception as ex:
@@ -67,6 +68,7 @@ except Exception as ex:
 
 # %%
 
+bokeh.plotting.output_notebook()
 try:
     topic_word_distribution_gui.display_gui(current_state())
     # topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
@@ -79,6 +81,7 @@ except Exception as ex:
 
 # %%
 
+bokeh.plotting.output_notebook()
 try:
     trends_gui.display_gui(current_state())
     # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
@@ -93,6 +96,7 @@ except Exception as ex:
 
 # %%
 
+bokeh.plotting.output_notebook()
 try:
     overview_gui.display_gui(current_state())
 except ValueError as ex:
@@ -105,6 +109,7 @@ except ValueError as ex:
 
 # %%
 
+bokeh.plotting.output_notebook()
 try:
     texts_gui.display_gui(current_state())
 except Exception as ex:
@@ -117,6 +122,7 @@ except Exception as ex:
 
 # %% code_folding=[0]
 
+bokeh.plotting.output_notebook()
 try:
     topic_topic_gui.display_gui(current_state())
 except Exception as ex:
@@ -124,7 +130,7 @@ except Exception as ex:
 
 # %%
 
-
+bokeh.plotting.output_notebook()
 try:
     topic_document_gui.display_gui(current_state())
 except Exception as ex:
