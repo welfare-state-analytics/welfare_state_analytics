@@ -1599,7 +1599,7 @@ develop = true
 name = "penelope"
 optional = false
 python-versions = "^3.8"
-version = "0.2.3"
+version = "0.2.4"
 
 [package.dependencies]
 bokeh = "^2.2.1"
@@ -1609,6 +1609,7 @@ glove-python-binary = "^0.2.0"
 ipywidgets = "^7.5.1"
 lxml = "^4.5.2"
 memoization = "^0.3.1"
+more_itertools = "^8.5.0"
 nltk = "^3.5"
 numpy = "^1.19.2"
 pandas = "^1.1.2"

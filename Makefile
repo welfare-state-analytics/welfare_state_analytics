@@ -9,7 +9,8 @@ init:
 	@poetry install
 
 build: penelope requirements.txt write_to_ipynb
-	# @-poetry build
+	@echo "Penelope, requirements and ipynb files is now up-to-date"
+	#@poetry build
 
 penelope:
 	@poetry update penelope

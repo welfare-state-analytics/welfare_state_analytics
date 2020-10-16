@@ -30,12 +30,12 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
 
     p = bokeh.plotting.figure(plot_width=1000, plot_height=600, x_axis_type=None, y_axis_type=None, tools=tools)
 
-    _ = p.multi_line(xs='xs', ys='ys', line_width='weights', alpha='alphas', color='black', source=lines_source)
-    _ = p.circle(
-        x='x', y='y', size=40, source=year_source, color='lightgreen', level='overlay', line_width=1, alpha=1.0
+    _ = p.multi_line(
+        xs='xs', ys='ys', line_width='weights', alpha='alphas', level='underlay', color='black', source=lines_source
     )
+    _ = p.circle(x='x', y='y', size=40, source=year_source, color='lightgreen', line_width=1, alpha=1.0)
 
-    r_topics = p.circle(x='x', y='y', size=25, source=topic_source, color='skyblue', level='overlay', alpha=1.00)
+    r_topics = p.circle(x='x', y='y', size=25, source=topic_source, color='skyblue', alpha=1.00)
 
     callback = widget_utils.glyph_hover_callback2(
         topic_source, 'node_id', text_ids=titles.index, text=titles, element_id='nx_id1'
@@ -91,7 +91,9 @@ def display_document_topic_network(
         print('No data')
         return
 
-    df = df.merge(inferred_topics.documents['filename'], left_on='document_id', right_index=True)
+    if 'filename' not in df:
+        df = df.merge(inferred_topics.documents['filename'], left_on='document_id', right_index=True)
+
     df['title'] = df.filename
 
     network = network_utility.create_bipartite_network(df, 'title', 'topic_id')
