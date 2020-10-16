@@ -131,6 +131,12 @@ write_to_ipynb:
 		poetry run jupytext --to notebook $$py_filepath
 	done
 
+write_to_ipynb2:
+	for ipynb_path in $(IPYNB_FILES) ; do \
+		py_filepath=$${ipynb_path%.*}.py ;\
+		jupytext --to notebook $$py_filepath
+	done
+
 pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
