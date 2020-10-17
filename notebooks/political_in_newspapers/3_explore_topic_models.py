@@ -21,21 +21,7 @@
 # %%
 # pylint: disable=wrong-import-position
 
-import os
-import sys
-
-if os.environ.get("JUPYTER_IMAGE_SPEC", "") == "westac_lab":
-    root_folder = "/home/jovyan/work/welfare_state_analytics"
-    corpus_folder = "/data/westac/textblock_politisk"
-else:
-    root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
-    corpus_folder = os.path.join(root_folder, "data/textblock_politisk")
-
-sys.path = list(set(sys.path + [root_folder]))
-
-# from beakerx import *
-# from beakerx.object import beakerx
-
+import __paths__  # pylint: disable=import-error, unused-import
 import bokeh.plotting
 from IPython.core.interactiveshell import InteractiveShell
 

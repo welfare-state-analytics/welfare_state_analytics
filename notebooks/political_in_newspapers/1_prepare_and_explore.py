@@ -23,9 +23,9 @@
 # pylint: disable=redefined-outer-name
 
 import os
-import sys
 import warnings
 
+import __paths__  # pylint: disable=import-error, unused-import
 import numpy as np
 import pandas as pd
 from IPython.core.interactiveshell import InteractiveShell
@@ -33,9 +33,6 @@ from IPython.core.interactiveshell import InteractiveShell
 from . import corpus_data
 
 root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
-
-sys.path = list(set(sys.path + [root_folder]))
-
 corpus_folder = os.path.join(root_folder, "data/textblock_politisk")
 
 InteractiveShell.ast_node_interactivity = "all"
@@ -87,7 +84,7 @@ def plot_document_size_distribution(df_document):
     ax = df_term_counts.plot.bar(figsize=(20, 10), rot=45)
 
     ticks = ax.xaxis.get_ticklocs()
-    ticklabels = [l.get_text() for l in ax.xaxis.get_ticklabels()]
+    ticklabels = [lst.get_text() for lst in ax.xaxis.get_ticklabels()]
     ax.xaxis.set_ticks(ticks[::100])
     ax.xaxis.set_ticklabels(ticklabels[::100])
 

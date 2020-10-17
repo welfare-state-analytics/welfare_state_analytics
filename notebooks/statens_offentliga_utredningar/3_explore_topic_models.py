@@ -23,7 +23,7 @@
 
 # pylint: disable=wrong-import-position
 
-import addpaths  # pylint: disable=import-error
+import __paths__  # pylint: disable=import-error, unused-import
 import bokeh.plotting
 from IPython.core.interactiveshell import InteractiveShell
 
@@ -127,14 +127,6 @@ except Exception as ex:
 bokeh.plotting.output_notebook()
 try:
     topic_topic_gui.display_gui(current_state())
-except Exception as ex:
-    print(ex)
-
-# %%
-
-bokeh.plotting.output_notebook()
-try:
-    topic_document_gui.display_gui(current_state())
 except Exception as ex:
     print(ex)
 
