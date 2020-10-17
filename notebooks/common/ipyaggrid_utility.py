@@ -30,9 +30,7 @@ def default_column_defs(df):
             "field": column,
             # 'rowGroup':False,
             # 'hide':False,
-            "cellRenderer": "function(params) { return params.value.toFixed(6); }"
-            if column != "year"
-            else None,
+            "cellRenderer": "function(params) { return params.value.toFixed(6); }" if column != "year" else None,
             # 'type': 'numericColumn'
         }
         for column in df.columns

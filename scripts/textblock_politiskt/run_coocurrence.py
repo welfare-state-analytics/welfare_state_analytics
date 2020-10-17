@@ -5,7 +5,7 @@ from notebooks.window_coocurrence.window_coocurrence import \
     compute_co_ocurrence_for_periods
 
 # FIXME: Work in progress
-# pylint: disable=too-many-function-args, expected-keyword-arg
+# pylint: disable=too-many-function-args
 
 
 def run():

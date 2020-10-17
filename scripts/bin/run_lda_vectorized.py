@@ -128,7 +128,7 @@ def run_model(
 
         dtm = v_corpus.data
         id2token = v_corpus.id2token
-        documents = v_corpus.document_index
+        documents = v_corpus.documents
         # documents['publication_id'] = 1
 
     # elif corpus_type == 'text':
