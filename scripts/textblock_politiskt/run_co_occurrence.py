@@ -1,10 +1,11 @@
 import time
 
-from notebooks.window_coocurrence.stopwords import stopwords
-from notebooks.window_coocurrence.window_coocurrence import \
-    compute_co_ocurrence_for_periods
+import penelope.vendor.nltk as nltk_utility
 
-# FIXME: Work in progress
+from notebooks.textblock_politiskt.pandas_co_occurrence import compute_co_occurrence_for_periods
+
+stopwords = nltk_utility.extended_stopwords()
+
 # pylint: disable=too-many-function-args
 
 
@@ -31,7 +32,7 @@ def run():
 
     for year in [1948, 1958, 1968, 1978, 1988]:
         target_filename = './output/political_co_occurrence_{}.csv.zip'.format(year)
-        compute_co_ocurrence_for_periods(
+        compute_co_occurrence_for_periods(
             source_filename,
             # newspapers,
             [year],

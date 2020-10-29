@@ -127,15 +127,18 @@ df_document = df_document.merge(df_tf, how="inner", right_index=True, left_index
 # %%
 
 # Load DN 68, write Excel and ZP
-dn68 = df_document[(df_document.publication=='DAGENS NYHETER')&(df_document.year==1968)]
+dn68 = df_document[(df_document.publication == 'DAGENS NYHETER') & (df_document.year == 1968)]
 rt = load_reconstructed_text_corpus(corpus_folder)
 
-dn68_text = rt.merge(dn68, how='inner', left_index=True, right_index=True)[['document_id', 'year', 'date', 'term_count', 'text']]
+dn68_text = rt.merge(dn68, how='inner', left_index=True, right_index=True)[
+    ['document_id', 'year', 'date', 'term_count', 'text']
+]
 dn68_text.columns = ['document_id', 'year', 'date', 'term_count', 'text']
 dn68_text.to_excel('dn68_text.xlsx')
-#dn68_text.to_csv('dn68_text.csv', sep='\t')
+# dn68_text.to_csv('dn68_text.csv', sep='\t')
 
 import zipfile
+
 with zipfile.ZipFile('dn68.zip', 'w', zipfile.ZIP_DEFLATED) as out:
     i = 0
     for index, row in dn68_text.iterrows():

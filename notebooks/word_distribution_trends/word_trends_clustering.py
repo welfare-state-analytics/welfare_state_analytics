@@ -25,18 +25,12 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position, import-error
 
 import os
-import sys
-
-root_folder = os.getcwd().split("notebooks")[0]
-corpus_folder = os.path.join(root_folder, "output")
-
-sys.path = [root_folder] + sys.path
-
 import warnings
 
+import __paths__
 import holoviews as hv
 import ipywidgets
 import penelope.common.goodness_of_fit as gof
@@ -46,6 +40,9 @@ from IPython.display import display
 
 import notebooks.word_distribution_trends.cluster_analysis_gui as cluster_analysis_gui
 import notebooks.word_distribution_trends.distributions_plot_gui as pdg
+
+root_folder = os.getcwd().split("notebooks")[0]
+corpus_folder = os.path.join(root_folder, "output")
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -198,3 +195,4 @@ container = cluster_analysis_gui.display_gui(n_corpus, df_gof)
 # | Reference | Daniel Mullner, “Modern hierarchical, agglomerative clustering algorithms”, [arXiv:1109.2378v1](https://arxiv.org/abs/1109.2378v1). |
 # |  | [Link](https://stackabuse.com/hierarchical-clustering-with-python-and-scikit-learn/) [Link](https://github.com/giusdp/Clustering-Techniques/tree/0c78d1a893995c4603ed07216d645801ab4fdb4d)
 #
+# %%

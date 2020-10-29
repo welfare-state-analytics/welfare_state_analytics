@@ -44,13 +44,13 @@ def load_text_windows(filename: str):
 
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):
     reader = dataframe_text_tokenizer.DataFrameTextTokenizer(df, year=period, newspaper=newspaper)
-    df_y = to_coocurrence_matrix(reader, min_count=min_count, **options)
+    df_y = to_co_occurrence_matrix(reader, min_count=min_count, **options)
     df_y['newspaper'] = newspaper
     df_y['period'] = str(period)
     return df_y
 
 
-def compute_co_ocurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
+def compute_co_occurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
 
     columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 

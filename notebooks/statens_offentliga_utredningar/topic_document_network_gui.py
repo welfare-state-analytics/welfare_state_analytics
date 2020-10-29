@@ -9,9 +9,10 @@ import penelope.network.utility as network_utility
 import penelope.notebook.widgets_utils as widget_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
-from IPython.display import display
-import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 from ipyaggrid import Grid
+from IPython.display import display
+
+import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 from notebooks.common import TopicModelContainer
 
 logger = utility.getLogger("westac")
@@ -19,15 +20,11 @@ logger = utility.getLogger("westac")
 
 def plot_document_topic_network(network, layout, scale=1.0, titles=None):
     tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
-    year_nodes, topic_nodes = network_utility.get_bipartite_node_set(
-        network, bipartite=0
-    )
+    year_nodes, topic_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
     year_source = network_utility.get_node_subset_source(network, layout, year_nodes)
     topic_source = network_utility.get_node_subset_source(network, layout, topic_nodes)
-    lines_source = network_utility.get_edges_source(
-        network, layout, scale=6.0, normalize=False
-    )
+    lines_source = network_utility.get_edges_source(network, layout, scale=6.0, normalize=False)
 
     edges_alphas = network_metrics.compute_alpha_vector(lines_source.data["weights"])
 
@@ -60,17 +57,13 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
         alpha=1.0,
     )
 
-    r_topics = p.circle(
-        x="x", y="y", size=25, source=topic_source, color="skyblue", alpha=1.00
-    )
+    r_topics = p.circle(x="x", y="y", size=25, source=topic_source, color="skyblue", alpha=1.00)
 
     callback = widget_utils.glyph_hover_callback2(
         topic_source, "node_id", text_ids=titles.index, text=titles, element_id="nx_id1"
     )
 
-    p.add_tools(
-        bokeh.models.HoverTool(renderers=[r_topics], tooltips=None, callback=callback)
-    )
+    p.add_tools(bokeh.models.HoverTool(renderers=[r_topics], tooltips=None, callback=callback))
 
     text_opts = dict(
         x="x",
@@ -84,20 +77,12 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):
 
     p.add_layout(
         bokeh.models.LabelSet(
-            source=year_source,
-            text_color="black",
-            text_align="center",
-            text_baseline="middle",
-            **text_opts
+            source=year_source, text_color="black", text_align="center", text_baseline="middle", **text_opts
         )
     )
     p.add_layout(
         bokeh.models.LabelSet(
-            source=topic_source,
-            text_color="black",
-            text_align="center",
-            text_baseline="middle",
-            **text_opts
+            source=topic_source, text_color="black", text_align="center", text_baseline="middle", **text_opts
         )
     )
 
@@ -125,12 +110,8 @@ def display_as_grid(df):
         {"headerName": "Title", "field": "title"},
     ]
 
-    grid_options = dict(
-        columnDefs=column_defs, **ipyaggrid_utility.DEFAULT_GRID_OPTIONS
-    )
-    g = Grid(
-        grid_data=df, grid_options=grid_options, **ipyaggrid_utility.DEFAULT_GRID_STYLE
-    )
+    grid_options = dict(columnDefs=column_defs, **ipyaggrid_utility.DEFAULT_GRID_OPTIONS)
+    g = Grid(grid_data=df, grid_options=grid_options, **ipyaggrid_utility.DEFAULT_GRID_STYLE)
     display(g)
 
 
@@ -210,7 +191,7 @@ def display_gui(state: TopicModelContainer):
             min=year_min,
             max=year_max,
             step=1,
-            value=(year_min, year_min+5),
+            value=(year_min, year_min + 5),
             continues_update=False,
         ),
         scale=widgets.FloatSlider(
@@ -241,13 +222,10 @@ def display_gui(state: TopicModelContainer):
             value="Fruchterman-Reingold",
             layout=lw("250px"),
         ),
-        progress=widgets.IntProgress(
-            min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")
-        ),
+        progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
         ignores=widgets.SelectMultiple(
             description="Ignore",
-            options=[("", None)]
-            + [("Topic #" + str(i), i) for i in range(0, n_topics)],
+            options=[("", None)] + [("Topic #" + str(i), i) for i in range(0, n_topics)],
             value=[],
             rows=8,
             layout=lw("180px"),
@@ -274,9 +252,7 @@ def display_gui(state: TopicModelContainer):
             [
                 widgets.HBox(
                     [
-                        widgets.VBox(
-                            [gui.layout, gui.threshold, gui.scale, gui.period]
-                        ),
+                        widgets.VBox([gui.layout, gui.threshold, gui.scale, gui.period]),
                         widgets.VBox([gui.ignores]),
                         widgets.VBox([gui.output_format, gui.progress]),
                     ]

@@ -31,7 +31,7 @@ class TranströmerCorpus(SimpleTextLinesCorpus):
         super().__init__(
             filename='./tests/test_data/tranströmer.txt',
             fields={'filename': 0, 'title': 1, 'text': 2},
-            meta_fields=["year:_:1", "year_serial_id:_:2"],  # tran_2019_02_test.txt
+            filename_fields=["year:_:1", "year_serial_id:_:2"],  # tran_2019_02_test.txt
         )
 
 
@@ -275,7 +275,7 @@ def test_run_cli():
         # 'workers': None,
         # 'max_iter': None,
         # 'prefix': None,
-        'meta_field': ('year:_:1', 'sequence_id:_:2'),
+        'filename_fields': ('year:_:1', 'sequence_id:_:2'),
     }
 
     run_model(**kwargs)

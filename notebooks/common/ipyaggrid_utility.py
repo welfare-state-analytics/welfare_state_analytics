@@ -31,7 +31,9 @@ def default_column_defs(df):
             "field": column,
             # 'rowGroup':False,
             # 'hide':False,
-            "cellRenderer": "function(params) { return params.value.toFixed(6); }" if isinstance(df.dtypes[i], np.floating) else None,
+            "cellRenderer": "function(params) { return params.value.toFixed(6); }"
+            if isinstance(df.dtypes[i], np.floating)
+            else None,
             # 'type': 'numericColumn'
         }
         for i, column in enumerate(df.columns)

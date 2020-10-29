@@ -11,7 +11,8 @@ from ipyaggrid.grid import Grid
 from IPython.display import display
 
 from notebooks.common.model_container import TopicModelContainer
-from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
+from notebooks.political_in_newspapers.corpus_data import \
+    extend_with_document_info
 
 from .ipyaggrid_utility import DEFAULT_GRID_OPTIONS, DEFAULT_GRID_STYLE
 
@@ -46,14 +47,10 @@ def temporary_bug_fixupdate_documents(inferred_topics):
     document_topic_weights = inferred_topics.document_topic_weights
 
     if "year" not in documents.columns:
-        documents["year"] = (
-            documents.filename.str.split("_").apply(lambda x: x[1]).astype(np.int)
-        )
+        documents["year"] = documents.filename.str.split("_").apply(lambda x: x[1]).astype(np.int)
 
     if "year" not in document_topic_weights.columns:
-        document_topic_weights = extend_with_document_info(
-            document_topic_weights, documents
-        )
+        document_topic_weights = extend_with_document_info(document_topic_weights, documents)
 
     inferred_topics.documents = documents
     inferred_topics.document_topic_weights = document_topic_weights
@@ -75,9 +72,7 @@ def load_model(
     model_info = next(x for x in model_infos if x["name"] == model_name)
 
     inferred_model = topic_modelling.load_model(model_info["folder"])
-    inferred_topics = topic_modelling.InferredTopicsData.load(
-        jj(corpus_folder, model_info["name"])
-    )
+    inferred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info["name"]))
 
     inferred_topics = temporary_bug_fixupdate_documents(inferred_topics)
 
@@ -97,9 +92,7 @@ def display_gui(corpus_folder: str, state: TopicModelContainer):
     model_names = list(x["name"] for x in model_infos)
 
     gui = types.SimpleNamespace(
-        model_name=widgets.Dropdown(
-            description="Model", options=model_names, layout=widgets.Layout(width="40%")
-        ),
+        model_name=widgets.Dropdown(description="Model", options=model_names, layout=widgets.Layout(width="40%")),
         load=widgets.Button(
             description="Load",
             button_style="Success",
@@ -122,8 +115,4 @@ def display_gui(corpus_folder: str, state: TopicModelContainer):
 
     gui.load.on_click(load_handler)
 
-    display(
-        widgets.VBox(
-            [widgets.HBox([gui.model_name, gui.load]), widgets.VBox([gui.output])]
-        )
-    )
+    display(widgets.VBox([widgets.HBox([gui.model_name, gui.load]), widgets.VBox([gui.output])]))
