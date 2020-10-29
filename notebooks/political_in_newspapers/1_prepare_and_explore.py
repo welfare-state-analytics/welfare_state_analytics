@@ -28,14 +28,10 @@ import warnings
 import __paths__  # pylint: disable=import-error, unused-import
 import numpy as np
 import pandas as pd
-from IPython.core.interactiveshell import InteractiveShell
 
-from . import corpus_data
+from notebooks.political_in_newspapers import corpus_data
 
-root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
-corpus_folder = os.path.join(root_folder, "data/textblock_politisk")
-
-InteractiveShell.ast_node_interactivity = "all"
+corpus_folder = '/data/westac/textblock_politisk'
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -68,7 +64,7 @@ def load_reconstructed_text_corpus(folder):
         df_reconstructed_text_corpus.to_csv(filename, compression="zip", header=0, sep=",", quotechar='"')
     else:
         df_reconstructed_text_corpus = pd.read_csv(filename, compression="zip", header=None, sep=",", quotechar='"')
-        df_reconstructed_text_corpus.columns = ["document_id", "test"]
+        df_reconstructed_text_corpus.columns = ["document_id", "text"]
         df_reconstructed_text_corpus.set_index("document_id")
 
     return df_reconstructed_text_corpus
@@ -127,6 +123,26 @@ id2token = df_vocabulary["token"].to_dict()
 df_tf = df_corpus.groupby(["document_id"]).agg(term_count=("tf", "sum"))
 df_document = df_document.merge(df_tf, how="inner", right_index=True, left_index=True)
 
+
+# %%
+
+# Load DN 68, write Excel and ZP
+dn68 = df_document[(df_document.publication=='DAGENS NYHETER')&(df_document.year==1968)]
+rt = load_reconstructed_text_corpus(corpus_folder)
+
+dn68_text = rt.merge(dn68, how='inner', left_index=True, right_index=True)[['document_id', 'year', 'date', 'term_count', 'text']]
+dn68_text.columns = ['document_id', 'year', 'date', 'term_count', 'text']
+dn68_text.to_excel('dn68_text.xlsx')
+#dn68_text.to_csv('dn68_text.csv', sep='\t')
+
+import zipfile
+with zipfile.ZipFile('dn68.zip', 'w', zipfile.ZIP_DEFLATED) as out:
+    i = 0
+    for index, row in dn68_text.iterrows():
+        i += 1
+        filename = 'dn_{}_{}_{}.txt'.format(row['date'], index, 1)
+        text = row['text']
+        out.writestr(filename, text, zipfile.ZIP_DEFLATED)
 
 # %% [markdown]
 # ### Document size distribution
