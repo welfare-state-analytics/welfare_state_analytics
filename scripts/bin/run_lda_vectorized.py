@@ -51,7 +51,6 @@ ENGINE_OPTIONS = [
 @click.option('--workers', default=None, help='Number of workers (if applicable).', type=click.INT)
 @click.option('--max-iter', default=None, help='Max number of iterations.', type=click.INT)
 @click.option('--prefix', default=None, help='Prefix.')
-@click.option('--meta-field', '-f', default=None, help='RegExp fields to extract from document name', multiple=True)
 def compute_topic_model(
     name,
     n_topics,
@@ -65,7 +64,6 @@ def compute_topic_model(
     workers,
     max_iter,
     prefix,
-    meta_field,
 ):
     run_model(
         name=name,
@@ -80,7 +78,6 @@ def compute_topic_model(
         workers=workers,
         max_iter=max_iter,
         prefix=prefix,
-        meta_field=meta_field,
     )
 
 
@@ -97,7 +94,6 @@ def run_model(
     workers=None,
     max_iter=None,
     prefix=None,
-    meta_field=None,
 ):
     """ runner """
 
@@ -110,8 +106,6 @@ def run_model(
         for k, v in call_arguments.items()
         if k in ['n_topics', 'passes', 'random_seed', 'alpha', 'workers', 'max_iter', 'prefix'] and v is not None
     }
-
-    # filename_fields = None if len(meta_field or []) == 0 else file_utility.filename_field_parser(meta_field)
 
     if engine not in [y for _, y in ENGINE_OPTIONS]:
         click.echo('Unknown method {}'.format(engine))
