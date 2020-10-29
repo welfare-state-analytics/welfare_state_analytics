@@ -58,8 +58,7 @@ traitlets = "==4.3.3"
 wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
-yapf = "*"
-penelope = {path = "../../penelope", develop = true}
+humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
@@ -76,3 +75,4 @@ black = "^20.8b1"
 isort = "^5.5.4"
 flake8 = "^3.8.4"
 mypy = "^0.782"
+pytest-cov = "^2.10.1"
