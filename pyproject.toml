@@ -59,7 +59,7 @@ wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
 yapf = "*"
-penelope = {path = "../../penelope"}
+penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
