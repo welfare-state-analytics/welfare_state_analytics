@@ -47,3 +47,5 @@ userlist
 ipycytoscape
 .DS_Store
 deprecated
+htmlcov
+coverage.xml
