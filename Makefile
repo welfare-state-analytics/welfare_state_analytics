@@ -3,14 +3,16 @@
 SHELL := /bin/bash
 SOURCE_FOLDERS=notebooks scripts tests
 
-init:
-	@pip install --upgrade pip
-	@pip install poetry --upgrade
+init: tools
 	@poetry install
 
-build: penelope requirements.txt write_to_ipynb
+build: tools penelope requirements.txt write_to_ipynb
 	@echo "Penelope, requirements and ipynb files is now up-to-date"
 	#@poetry build
+
+tools:
+	@pip install --upgrade pip --quiet
+	@pip install poetry --upgrade --quiet
 
 penelope:
 	@poetry update penelope
@@ -61,6 +63,10 @@ yapf: clean
 black:clean
 	@poetry run black --version
 	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization $(SOURCE_FOLDERS)
+
+tidy: black isort
+
+ready: format tidy test flake8 pylint2
 
 clean:
 	@rm -rf .pytest_cache build dist .eggs *.egg-info
@@ -144,4 +150,4 @@ pre_commit_ipynb:
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
 .PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update labextension \
-	pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
+	pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb tools ready tidy
