@@ -22,6 +22,8 @@
 # %%capture
 
 # pylint: disable=wrong-import-position
+# %load_ext autoreload
+# %autoreload 2
 
 import __paths__  # pylint: disable=import-error, unused-import
 import bokeh.plotting
