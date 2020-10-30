@@ -17,17 +17,33 @@ tools:
 penelope:
 	@poetry update penelope
 
+bump.patch: requirements.txt
+	@poetry run dephell project bump patch
+	@git add pyproject.toml requirements.txt
+	@git commit -m "Bump version patch"
+	@git push
+
+tag:
+	# @poetry build
+	@git push
+	@git tag $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g") -a
+	@git push origin --tags
 test-coverage:
 	-poetry run coverage --rcfile=.coveragerc run -m pytest
 	-poetry run coveralls
 
 test: clean
+	@mkdir -p ./tests/output
 	@poetry run pytest --verbose --durations=0 \
 		--cov=notebooks \
 		--cov-report=term \
 		--cov-report=xml \
 		--cov-report=html \
 		tests
+	@rm -rf ./tests/output/*
+pytest:
+	@mkdir -p ./tests/output
+	@poetry run pytest --quiet tests
 
 pylint:
 	@poetry run pylint $(SOURCE_FOLDERS)
@@ -54,13 +70,13 @@ lint2file:
 format: clean black isort
 
 isort:
-	@poetry run isort $(SOURCE_FOLDERS)
+	@poetry run isort --profile black --float-to-top --line-length 120 --py 38 $(SOURCE_FOLDERS)
 
 yapf: clean
 	@poetry run yapf --version
 	@poetry run yapf --in-place --recursive $(SOURCE_FOLDERS)
 
-black:clean
+black: clean
 	@poetry run black --version
 	@poetry run black --line-length 120 --target-version py38 --skip-string-normalization $(SOURCE_FOLDERS)
 
@@ -90,8 +106,12 @@ labextension:
 		jupyterlab-jupytext \
 		ipyaggrid
 
-requirements.txt: poetry.lock
-	@poetry export -f requirements.txt --output requirements.txt
+nltk_data:
+	@mkdir -p $(NLTK_DATA)
+	@poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
+
+spacy_data:
+	@poetry run python -m spacy download en
 
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
@@ -147,6 +167,9 @@ pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
 
+requirements.txt: poetry.lock
+	@poetry export -f requirements.txt --output requirements.txt
+	
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
 .PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update labextension \
