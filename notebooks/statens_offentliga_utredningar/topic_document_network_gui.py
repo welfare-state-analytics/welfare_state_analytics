@@ -18,7 +18,7 @@ from notebooks.common import TopicModelContainer
 logger = utility.getLogger("westac")
 
 
-def plot_document_topic_network(network, layout, scale=1.0, titles=None):
+def plot_document_topic_network(network, layout, _=1.0, titles=None):
     tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
     year_nodes, topic_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 

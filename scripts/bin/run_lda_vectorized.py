@@ -118,7 +118,7 @@ def run_model(
             corpus_name, corpus_folder
         ), 'error: no dump for given tag exists'
 
-        v_corpus = vectorized_corpus.VectorizedCorpus.load(corpus_name, corpus_folder)
+        v_corpus = vectorized_corpus.VectorizedCorpus.load(tag=corpus_name, folder=corpus_folder)
 
         dtm = v_corpus.data
         id2token = v_corpus.id2token
