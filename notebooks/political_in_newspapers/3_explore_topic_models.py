@@ -48,7 +48,7 @@ bokeh.plotting.output_notebook()
 
 # %%
 
-load_gui.display_gui(corpus_folder, current_state())
+load_gui.display_gui('/data/westac/political_in_newspapers', current_state())
 # load_gui.load_model(corpus_folder, current_state(), 'test.4days')
 
 # %% [markdown]
