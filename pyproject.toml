@@ -81,3 +81,67 @@ flake8-black = "^0.2.1"
 pyflakes = "^2.2.0"
 pycodestyle = "^2.6.0"
 pep8-naming = "^0.11.1"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "-ra",
+    "-q",
+    "-s",
+]
+log_cli = "False"
+testpaths = [
+    "tests",
+]
+norecursedirs = ['notebooks', '.git', 'data', 'output', 'deprecated', '__pycache__', 'tmp']
+python_files = "*_test.py"
+python_functions = "test_*"
+filterwarnings = [
+#   "ignore",
+  "ignore::_pytest.warning_types.PytestCollectionWarning"
+]
+
+[tool.dephell.main]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "poetry", path = "pyproject.toml"}
+
+[tool.black]
+line-length = 120
+target-version = ["py38"]
+skip-string-normalization = true
+# include = '\.pyi?$'
+exclude = '''
+(
+  \.git
+  | \.pypy_cache
+  | \.pytest_cache
+  | \.ipynb_checkpoints
+  | deprecated
+)
+'''
+
+[tool.isort]
+# https://github.com/timothycrosley/isort/wiki/isort-Settings
+profile = "black"
+line_length = 120
+py_version = "auto"
+float_to_top = true
+src_paths = [ "notebooks", "tests" ]
+
+[tool.coverage]
+# https://github.com/nedbat/coveragepy
+
+    [tool.coverage.run]
+    source = ["penelope"]
+    branch = true
+    omit = ['']
+
+    [tool.coverage.report]
+    exclude_lines = [
+        "pragma: no cover",
+        "raise NotImplementedError"
+    ]
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
