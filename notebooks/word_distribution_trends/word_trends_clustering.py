@@ -27,27 +27,25 @@
 
 # pylint: disable=wrong-import-position, import-error
 
+import __paths__ #isort:skip
+
 import os
 import warnings
 
-import __paths__
 import holoviews as hv
 import ipywidgets
 import penelope.common.goodness_of_fit as gof
 import penelope.corpus.vectorized_corpus as vectorized_corpus
+import penelope.notebook.cluster_analysis_gui as cluster_analysis_gui
+import penelope.notebook.distributions_plot_gui as pdg
 from bokeh.plotting import output_notebook
 from IPython.display import display
-
-import notebooks.word_distribution_trends.cluster_analysis_gui as cluster_analysis_gui
-import notebooks.word_distribution_trends.distributions_plot_gui as pdg
 
 root_folder = os.getcwd().split("notebooks")[0]
 corpus_folder = os.path.join(root_folder, "output")
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-# from beakerx import *
-# from beakerx.object import beakerx
 
 output_notebook()
 
@@ -80,8 +78,8 @@ hv.extension("bokeh")
 # %% tags=[]
 
 y_corpus = vectorized_corpus.load_corpus(
-    "SOU_test_L0_+N_+S",
-    os.path.join(root_folder, "output"),
+    tag="SOU_test_L0_+N_+S",
+    folder=os.path.join(root_folder, "output"),
     n_count=5000,
     n_top=50000,
     axis=1,
