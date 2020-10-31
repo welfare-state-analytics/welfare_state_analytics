@@ -22,10 +22,11 @@
 
 # pylint: disable=redefined-outer-name
 
+import __paths__  # isort:skip pylint: disable=import-error, unused-import
+
 import os
 import warnings
 
-import __paths__  # pylint: disable=import-error, unused-import
 import numpy as np
 import pandas as pd
 

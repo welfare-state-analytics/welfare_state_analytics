@@ -22,9 +22,10 @@
 
 # pylint: disable=wrong-import-position
 
+import __paths__  # isort:skip pylint: disable=import-error, unused-import
+
 import os
 
-import __paths__  # pylint: disable=import-error, unused-import
 import pandas as pd
 from penelope.corpus import TokenizedCorpus
 from penelope.corpus.readers import DataFrameTextTokenizer

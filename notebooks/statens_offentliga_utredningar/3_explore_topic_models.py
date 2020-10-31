@@ -25,7 +25,8 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import __paths__  # pylint: disable=import-error, unused-import
+import __paths__  # isort:skip pylint: disable=import-error, unused-import
+
 import bokeh.plotting
 from IPython.core.interactiveshell import InteractiveShell
 
