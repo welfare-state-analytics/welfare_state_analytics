@@ -146,9 +146,10 @@ unpair_ipynb:
 
 # The `sync` command updates paired file types based on latest timestamp
 sync_ipynb:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-        poetry run jupytext --sync $$ipynb_path ;\
-	done
+	@echo "Syncing of PY <=> IPYNB is TURNED OFF. Only one-way write of PY => IPYNB is allowed"
+	# for ipynb_path in $(IPYNB_FILES) ; do \
+    #     poetry run jupytext --sync $$ipynb_path ;\
+	# done
 
 # Forces overwrite of ìpynb` using `--to notebook`
 write_to_ipynb:
@@ -169,7 +170,7 @@ pre_commit_ipynb:
 
 requirements.txt: poetry.lock
 	@poetry export -f requirements.txt --output requirements.txt
-	
+
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
 .PHONY: init build format yapf black lint pylint pylint2 flake8 clean test test-coverage update labextension \
