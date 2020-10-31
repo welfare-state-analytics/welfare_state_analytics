@@ -10,8 +10,7 @@ import penelope.utility as utility
 from IPython.display import display
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import (TopicModelContainer,
-                              filter_document_topic_weights, to_text)
+from notebooks.common import TopicModelContainer, filter_document_topic_weights, to_text
 
 logger = utility.setup_logger()
 # from beakerx import *

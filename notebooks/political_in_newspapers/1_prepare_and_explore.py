@@ -26,6 +26,7 @@ import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import os
 import warnings
+import zipfile
 
 import numpy as np
 import pandas as pd
@@ -138,7 +139,6 @@ dn68_text.columns = ['document_id', 'year', 'date', 'term_count', 'text']
 dn68_text.to_excel('dn68_text.xlsx')
 # dn68_text.to_csv('dn68_text.csv', sep='\t')
 
-import zipfile
 
 with zipfile.ZipFile('dn68.zip', 'w', zipfile.ZIP_DEFLATED) as out:
     i = 0

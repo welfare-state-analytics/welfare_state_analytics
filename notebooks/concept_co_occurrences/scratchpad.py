@@ -1,7 +1,6 @@
 from typing import Set
 
-from penelope.co_occurrence import (partitioned_corpus_concept_co_occurrence,
-                                    to_vectorized_corpus)
+from penelope.co_occurrence import partitioned_corpus_concept_co_occurrence, to_vectorized_corpus
 from penelope.corpus import SparvTokenizedCsvCorpus
 
 

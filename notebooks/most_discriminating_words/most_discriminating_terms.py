@@ -25,16 +25,19 @@
 import os
 import sys
 
+import penelope.corpus.vectorized_corpus as vectorized_corpus
+from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
+
+from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
+    display_gui,
+    display_most_discriminating_terms,
+)
+
 root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
 
 sys.path = list(set(sys.path + [root_folder]))
 
-import penelope.corpus.vectorized_corpus as vectorized_corpus
-from penelope.common.most_discriminating_terms import \
-    compute_most_discriminating_terms
 
-from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
-    display_gui, display_most_discriminating_terms)
 
 corpus_folder = os.path.join(root_folder, "output")
 

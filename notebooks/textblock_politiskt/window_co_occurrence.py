@@ -30,9 +30,9 @@ import pandas as pd
 from penelope.corpus import TokenizedCorpus
 from penelope.corpus.readers import DataFrameTextTokenizer
 
-from notebooks.textblock_politiskt.pandas_co_occurrence import (
-    compute_co_occurrence_for_periods,
-)
+# from notebooks.textblock_politiskt.pandas_co_occurrence import (
+#     compute_co_occurrence_for_periods,
+# )
 
 root_folder = os.getcwd().split("notebooks")[0]
 
@@ -62,6 +62,6 @@ corpus = create_corpus(
     source_filename=source_filename, periods=1957, result_filename="test_1957.xlsx"
 )
 
-compute_co_occurrence_for_periods("./data/year+text_window.txt", 1957, "test_1957.xlsx")
+# compute_co_occurrence_for_periods("./data/year+text_window.txt", 1957, target_filename="test_1957.xlsx")
 
 # %%

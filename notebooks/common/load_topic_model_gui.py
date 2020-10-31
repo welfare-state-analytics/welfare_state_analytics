@@ -11,8 +11,7 @@ from ipyaggrid.grid import Grid
 from IPython.display import display
 
 from notebooks.common.model_container import TopicModelContainer
-from notebooks.political_in_newspapers.corpus_data import \
-    extend_with_document_info
+from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
 
 from .ipyaggrid_utility import DEFAULT_GRID_OPTIONS, DEFAULT_GRID_STYLE
 

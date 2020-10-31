@@ -26,18 +26,19 @@ import logging
 import os
 import sys
 
-root_folder = os.path.abspath(os.path.join(globals()["_dh"][-1], "../.."))
-
-corpus_folder = os.path.join(root_folder, "output")
-
-sys.path = [root_folder] + sys.path
-
 import ipywidgets
 import numpy as np
 import pandas as pd
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+root_folder = os.path.abspath(os.path.join(globals()["_dh"][-1], "../.."))
+
+corpus_folder = os.path.join(root_folder, "output")
+
+sys.path = [root_folder] + sys.path
+
 
 logger = logging.getLogger(__name__)
 

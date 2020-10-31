@@ -129,11 +129,8 @@
 
 # pylint: disable=wrong-import-position
 
-import sys
-
-sys.path = ['/home/roger/source/welfare_state_analytics'] + sys.path
-
 import itertools
+import sys
 
 import bokeh
 import pandas as pd
@@ -142,6 +139,10 @@ from bokeh.io import output_file, output_notebook, show
 from bokeh.plotting import figure
 from penelope.common import goodness_of_fit as gof
 from penelope.corpus import vectorized_corpus
+
+sys.path = ['/home/roger/source/welfare_state_analytics'] + sys.path
+
+
 
 logger = utility.setup_logger(filename='./westac.log')
 output_notebook()
