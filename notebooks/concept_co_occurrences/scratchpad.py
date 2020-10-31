@@ -50,8 +50,5 @@ def generate_test_vectorized_corpus(
 
 
 v_corpus = generate_test_vectorized_corpus(
-    "/data/westac/riksdagens-protokoll.1920-2019.test.zip",
-    concepts={"arbetare"},
-    context_width=2,
-    lemmatize=True
+    "/data/westac/riksdagens-protokoll.1920-2019.test.zip", concepts={"arbetare"}, context_width=2, lemmatize=True
 )

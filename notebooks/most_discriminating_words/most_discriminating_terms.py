@@ -38,7 +38,6 @@ root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "wel
 sys.path = list(set(sys.path + [root_folder]))
 
 
-
 corpus_folder = os.path.join(root_folder, "output")
 
 # %%

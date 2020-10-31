@@ -27,7 +27,7 @@
 
 # pylint: disable=wrong-import-position, import-error
 
-import __paths__ #isort:skip
+import __paths__  # isort:skip
 
 import os
 import warnings

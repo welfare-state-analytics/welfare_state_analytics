@@ -58,9 +58,7 @@ def create_corpus(source_filename: str, periods, result_filename: str, **options
 
 
 source_filename = "./data/year+text_window.txt"
-corpus = create_corpus(
-    source_filename=source_filename, periods=1957, result_filename="test_1957.xlsx"
-)
+corpus = create_corpus(source_filename=source_filename, periods=1957, result_filename="test_1957.xlsx")
 
 # compute_co_occurrence_for_periods("./data/year+text_window.txt", 1957, target_filename="test_1957.xlsx")
 

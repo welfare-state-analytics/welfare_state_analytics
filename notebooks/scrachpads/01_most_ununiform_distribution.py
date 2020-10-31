@@ -143,7 +143,6 @@ from penelope.corpus import vectorized_corpus
 sys.path = ['/home/roger/source/welfare_state_analytics'] + sys.path
 
 
-
 logger = utility.setup_logger(filename='./westac.log')
 output_notebook()
 
