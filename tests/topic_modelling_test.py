@@ -5,7 +5,6 @@ import uuid
 import gensim
 import pandas as pd
 import penelope.topic_modelling as topic_modelling
-import pytest  # pylint: disable=unused-import
 from penelope.corpus.text_lines_corpus import SimpleTextLinesCorpus
 from penelope.scripts.compute_topic_model import run_model
 from penelope.topic_modelling.container import InferredTopicsData, TrainingCorpus
@@ -274,7 +273,7 @@ def test_run_cli():
         # 'workers': None,
         # 'max_iter': None,
         # 'prefix': None,
-        'filename_fields': ('year:_:1', 'sequence_id:_:2'),
+        'filename_field': ('year:_:1', 'sequence_id:_:2'),
     }
 
     run_model(**kwargs)

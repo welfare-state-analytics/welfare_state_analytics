@@ -27,7 +27,7 @@
 
 # pylint: disable=wrong-import-position, import-error
 
-import __paths__  # isort:skip
+import __paths__  # isort: skip
 
 import os
 import warnings
@@ -41,7 +41,7 @@ import penelope.notebook.distributions_plot_gui as pdg
 from bokeh.plotting import output_notebook
 from IPython.display import display
 
-root_folder = os.getcwd().split("notebooks")[0]
+root_folder = __paths__.ROOT_FOLDER
 corpus_folder = os.path.join(root_folder, "output")
 
 warnings.filterwarnings("ignore", category=FutureWarning)

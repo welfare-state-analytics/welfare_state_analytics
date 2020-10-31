@@ -15,3 +15,5 @@ else:
 
 if root_folder not in sys.path:
     sys.path.insert(0, root_folder)
+
+ROOT_FOLDER = root_folder

@@ -133,5 +133,14 @@ try:
 except Exception as ex:
     print(ex)
 
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Document-Topic Network<span style='color: red; float: right'>TRY IT</span>
+#
+
 
 # %%
+bokeh.plotting.output_notebook()
+try:
+    topic_document_gui.display_gui(current_state())
+except Exception as ex:
+    print(ex)
