@@ -3,10 +3,9 @@ import sys
 from os.path import join as jj
 
 import click
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 import penelope.topic_modelling as topic_modelling
-
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 # pylint: disable=unused-argument, too-many-locals, too-many-arguments
 

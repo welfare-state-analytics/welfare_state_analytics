@@ -9,7 +9,6 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid.grid import Grid
 from IPython.display import display
-
 from notebooks.common.model_container import TopicModelContainer
 from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
 

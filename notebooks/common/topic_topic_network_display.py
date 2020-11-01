@@ -5,7 +5,6 @@ import penelope.network.plot_utility as plot_utility
 import penelope.network.utility as network_utility
 import penelope.utility as utility
 from IPython.display import display
-
 from notebooks.common import filter_document_topic_weights
 
 logger = utility.setup_logger()

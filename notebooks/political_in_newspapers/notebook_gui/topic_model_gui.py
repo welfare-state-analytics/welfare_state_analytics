@@ -10,7 +10,6 @@ import penelope.utility as utility
 import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
-
 from notebooks.common import TopicModelContainer
 
 # from . topic_model_compute import compute_topic_model

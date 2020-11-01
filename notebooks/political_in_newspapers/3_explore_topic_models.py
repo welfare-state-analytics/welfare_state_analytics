@@ -24,8 +24,6 @@
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import bokeh.plotting
-from IPython.core.interactiveshell import InteractiveShell
-
 import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
 import notebooks.common.topic_wordcloud_gui as wordcloud_gui
@@ -34,6 +32,7 @@ import notebooks.political_in_newspapers.notebook_gui.topic_document_texts_gui a
 import notebooks.political_in_newspapers.notebook_gui.topic_topic_network_gui as topic_topic_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_overview_gui as overview_gui
+from IPython.core.interactiveshell import InteractiveShell
 from notebooks.common import TopicModelContainer
 
 InteractiveShell.ast_node_interactivity = "all"

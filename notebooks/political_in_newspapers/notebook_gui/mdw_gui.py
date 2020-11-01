@@ -3,12 +3,11 @@ import types
 from typing import Sequence
 
 import ipywidgets
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 import pandas as pd
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
 from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
-
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")

@@ -5,6 +5,7 @@ from typing import Sequence
 import bokeh
 import bokeh.plotting
 import ipywidgets as widgets
+import notebooks.political_in_newspapers.corpus_data as corpus_data
 import numpy as np
 import penelope.network.metrics as network_metrics
 import penelope.network.plot_utility as plot_utility
@@ -13,8 +14,6 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
-
-import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.common import TopicModelContainer
 
 TEXT_ID = 'nx_pub_topic'
