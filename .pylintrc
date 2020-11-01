@@ -19,7 +19,8 @@ disable=invalid-name,
         consider-using-enumerate,
         unnecessary-comprehension,
         misplaced-comparison-constant,
-        broad-except
+        broad-except,
+        wrong-import-order
 
 [REPORTS]
 score=no
@@ -34,6 +35,11 @@ max-spelling-suggestions=4
 [DESIGN]
 
 max-args=8
+
+[MISCELLANEOUS]
+
+notes=
+#notes=FIXME, XXX, TODO
 
 [EXCEPTIONS]
 
