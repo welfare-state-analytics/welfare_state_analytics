@@ -58,4 +58,4 @@ sys.path = [root_folder] + sys.path
 
 v_corpus = mdw_gui.load_vectorized_corpus(corpus_folder, [1, 3])
 
-gui = mdw_gui.display_gui(v_corpus, v_corpus.document_index)
+gui = mdw_gui.display_gui(v_corpus, v_corpus.documents)

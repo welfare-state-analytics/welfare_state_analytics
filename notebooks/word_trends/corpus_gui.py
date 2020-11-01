@@ -19,7 +19,7 @@ def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_
     try:
         year_filter = lambda x: year_range[0] <= x['year'] <= year_range[1]
         x_corpus = (
-            vectorized_corpus.VectorizedCorpus.load(corpus_tag, folder=corpus_folder)
+            vectorized_corpus.VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
             .filter(year_filter)
             .group_by_year()
             .slice_by_n_count(n_count)

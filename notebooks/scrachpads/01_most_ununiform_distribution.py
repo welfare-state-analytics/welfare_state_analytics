@@ -150,7 +150,7 @@ output_notebook()
 
 v_y_corpus = (
     vectorized_corpus.VectorizedCorpus.load(
-        'SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output'
+        tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output'
     )
     .group_by_year()
     .slice_by_n_count(10000)
@@ -188,8 +188,8 @@ def plot_word_distribution(x_corpus, df):  # pylint: disable=too-many-locals
 
     colors = itertools.cycle(bokeh.palettes.Dark2[8])
 
-    min_year = x_corpus.document_index.year.min()
-    max_year = x_corpus.document_index.year.max()
+    min_year = x_corpus.documents.year.min()
+    max_year = x_corpus.documents.year.max()
 
     years = [str(y) for y in range(min_year, max_year + 1)]
 

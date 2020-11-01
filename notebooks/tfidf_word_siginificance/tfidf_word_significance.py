@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 # pylint: disable=wrong-import-position
 
 v_corpus = (
-    vectorized_corpus.VectorizedCorpus.load("SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder)
+    vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )
@@ -195,7 +195,7 @@ def display_gui(x_corpus, x_documents):
     w_compute.on_click(compute_callback_handler)
 
 
-display_gui(tf_idf_corpus, tf_idf_corpus.document_index)
+display_gui(tf_idf_corpus, tf_idf_corpus.documents)
 
 
 # %% jupyter={"source_hidden": true}
@@ -206,7 +206,7 @@ display_gui(tf_idf_corpus, tf_idf_corpus.document_index)
 def plot_word(x_corpus, word):
     wv = x_corpus.get_word_vector(word)
 
-    df = pd.DataFrame({"count": wv, "year": x_corpus.document_index.year}).set_index("year")
+    df = pd.DataFrame({"count": wv, "year": x_corpus.documents.year}).set_index("year")
     df.plot()
 
 

@@ -41,7 +41,7 @@ corpus_folder = os.path.join(root_folder, "output")
 
 # %%
 v_corpus = (
-    vectorized_corpus.VectorizedCorpus.load("SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", corpus_folder)
+    vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )
@@ -51,7 +51,7 @@ v_corpus = (
 
 display_gui(
     v_corpus,
-    v_corpus.document_index,
+    v_corpus.documents,
     compute_callback=compute_most_discriminating_terms,
     display_callback=display_most_discriminating_terms,
 )

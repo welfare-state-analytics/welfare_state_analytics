@@ -48,9 +48,9 @@ def year_range_group_indicies(
 
 def load_vectorized_corpus(corpus_folder, publication_ids):
     logger.info("Loading DTM corpus...")
-    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
+    bag_term_matrix, documents, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
     token2id = {v: k for k, v in id2token.items()}
-    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, document_index)
+    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, documents)
     return v_corpus
 
 
@@ -188,12 +188,12 @@ def display_gui(v_corpus, v_documents):
                     top_n_terms=gui.top_n_terms.value,
                     max_n_terms=gui.max_n_terms.value,
                     group1_indices=year_range_group_indicies(
-                        x_corpus.document_index,
+                        x_corpus.documents,
                         gui.period1.value,
                         gui.publication_ids1.value,
                     ),
                     group2_indices=year_range_group_indicies(
-                        x_corpus.document_index,
+                        x_corpus.documents,
                         gui.period2.value,
                         gui.publication_ids2.value,
                     ),

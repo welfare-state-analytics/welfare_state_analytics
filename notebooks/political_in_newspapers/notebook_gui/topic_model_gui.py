@@ -5,11 +5,13 @@ import types
 import uuid
 
 import ipywidgets as widgets
+import pandas as pd
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
+
 from notebooks.common import TopicModelContainer
 
 # from . topic_model_compute import compute_topic_model
@@ -54,11 +56,11 @@ def get_spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
 
 
 class ComputeTopicModelUserInterface:
-    def __init__(self, data_folder: str, state: TopicModelContainer, document_index, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, documents: pd.DataFrame, **opts):
         self.terms = []
         self.data_folder = data_folder
         self.state = state
-        self.document_index = document_index
+        self.documents = documents
         self.opts = opts
         self.model_widgets, self.widget_boxes = self.prepare_widgets()
 
@@ -166,7 +168,7 @@ class ComputeTopicModelUserInterface:
 
                     train_corpus = topic_modelling.TrainingCorpus(
                         terms=list(self.get_corpus_terms(corpus)),
-                        documents=self.document_index,
+                        documents=self.documents,
                         vectorizer_args=vectorizer_args,
                     )
 
@@ -234,9 +236,9 @@ class ComputeTopicModelUserInterface:
 
 
 class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
-    def __init__(self, data_folder: str, state: TopicModelContainer, document_index, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, documents, **opts):
 
-        super().__init__(data_folder, state, document_index, **opts)
+        super().__init__(data_folder, state, documents, **opts)
 
         self.substitution_filename = self.opts.get('substitution_filename', None)
         self.tagset = self.opts.get('tagset', None)
@@ -247,7 +249,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
     def display(self, corpus=None):
 
         # assert hasattr(corpus, 'spacy_lang), 'Must be a textaCy corpus!'
-        self.corpus_widgets.named_entities.disabled = len(corpus) == 0 or len(corpus[0].ents) == 0
 
         def pos_change_handler(*_):
             with self.model_widgets.output:
@@ -281,43 +282,32 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         ComputeTopicModelUserInterface.display(self, corpus)
 
     def get_corpus_terms(self, corpus):
-
-        tokenizer_args = self.compile_tokenizer_args(vocab=corpus.spacy_lang.vocab)
-        terms = [list(doc) for doc in textacy_utility.extract_corpus_terms(corpus, tokenizer_args)]
+        pipeline = self._create_extract_pipeline(corpus=corpus)
+        terms = [list(doc) for doc in pipeline.process() ]
         return terms
 
-    def compile_tokenizer_args(self, vocab=None):
-
-        term_substitutions = {}
+    def _create_extract_pipeline(self, corpus):
 
         gui = self.corpus_widgets
 
-        if gui.substitute_terms.value is True:
-            assert self.substitution_filename is not None
-            term_substitutions = textacy_utility.load_term_substitutions(
-                self.substitution_filename, default_term='_mask_', delim=';', vocab=vocab
-            )
-
-        args = dict(
-            args=dict(
+        pipeline = (
+            textacy_utility.ExtractPipeline.build(corpus, target=gui.normalize.value)
+            .ingest(
                 ngrams=gui.ngrams.value,
-                named_entities=gui.named_entities.value,
-                normalize=gui.normalize.value,
                 as_strings=True,
-            ),
-            kwargs=dict(
-                min_freq=gui.min_freq.value,
                 include_pos=gui.include_pos.value,
                 filter_stops=gui.filter_stops.value,
                 filter_punct=True,
-            ),
-            extra_stop_words=set(gui.stop_words.value),
-            substitutions=term_substitutions,
-            min_freq=gui.min_freq.value,
-            max_doc_freq=gui.max_doc_freq.value,
+            )
+            .frequent_word_filter(max_doc_freq=gui.max_doc_freq.value)
+            .infrequent_word_filter(min_freq=gui.min_freq.value)
+            .remove_stopwords(extra_stopwords=set(gui.stop_words.value))
         )
 
-        return args
+        if gui.substitute_terms.value is True:
+            pipeline = pipeline.substitute(subst_map=None, filename=self.substitution_filename )
+
+        return pipeline
 
     def prepare_textacy_widgets(self):
 
@@ -333,10 +323,8 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         ngrams_options = {'1': [1], '1, 2': [1, 2], '1,2,3': [1, 2, 3]}
         default_include_pos = ['NOUN', 'PROPN']
         frequent_words = ['_mask_']
-        # ipywidgets.Label(
+
         gui = types.SimpleNamespace(
-            # min_freq=ipywidgets.IntSlider(description='Min word freq',min=0, max=10, value=2, step=1, layout=ipywidgets.Layout(width='240px', **item_layout)),
-            # max_doc_freq=ipywidgets.IntSlider(description='Min doc %', min=75, max=100, value=100, step=1, layout=ipywidgets.Layout(width='240px', **item_layout)),
             min_freq=widgets.Dropdown(
                 description='Min word freq',
                 options=list(range(0, 11)),
@@ -361,9 +349,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
             filter_stops=widgets.ToggleButton(
                 value=True, description='Remove stopword', tooltip='Filter out stopwords', icon='check'
             ),
-            named_entities=widgets.ToggleButton(
-                value=False, description='Merge entities', tooltip='Merge entities', icon='check', disabled=False
-            ),
             substitute_terms=widgets.ToggleButton(
                 value=False, description='Map words', tooltip='Substitute words', icon='check'
             ),
@@ -387,7 +372,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
                 ]
             ),
             widgets.VBox(
-                [gui.filter_stops, gui.named_entities, gui.substitute_terms],
+                [gui.filter_stops, gui.substitute_terms],
                 layout=widgets.Layout(margin='0px 0px 0px 10px'),
             ),
             widgets.HBox(
@@ -404,7 +389,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
 class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
     def __init__(self, data_folder: str, state: TopicModelContainer, fn_doc_index, **opts):
 
-        super().__init__(data_folder, state, document_index=None, **opts)
+        super().__init__(data_folder, state, documents=None, **opts)
 
         self.corpus_widgets, self.corpus_widgets_boxes = self.prepare_source_widgets()
         self.widget_boxes = self.corpus_widgets_boxes + self.widget_boxes
@@ -425,10 +410,10 @@ class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
         filepath = self.corpus_widgets.filepath.value
         self.corpus = gensim_utility.SimpleExtTextCorpus(filepath)
         doc_terms = [list(terms) for terms in self.corpus.get_texts()]
-        self.document_index = self.fn_doc_index(self.corpus)
+        self.documents = self.fn_doc_index(self.corpus)
         return doc_terms
 
-    def display(self, default_source=None):  # pylint: disable=arguments-differ, unused-argument
+    def display(self, _=None):  # pylint: disable=arguments-differ, unused-argument
 
         ComputeTopicModelUserInterface.display(self, None)
 

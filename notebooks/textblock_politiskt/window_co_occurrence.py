@@ -37,7 +37,7 @@ from penelope.corpus.readers import DataFrameTextTokenizer
 root_folder = os.getcwd().split("notebooks")[0]
 
 
-def create_corpus(source_filename: str, periods, result_filename: str, **options):
+def create_corpus(source_filename: str, periods, **options):
 
     df = pd.read_csv(source_filename, sep="\t")[["year", "txt"]]
 
@@ -57,8 +57,8 @@ def create_corpus(source_filename: str, periods, result_filename: str, **options
     return corpus
 
 
-source_filename = "./data/year+text_window.txt"
-corpus = create_corpus(source_filename=source_filename, periods=1957, result_filename="test_1957.xlsx")
+ytw_filename = "./data/year+text_window.txt"
+ytw_corpus = create_corpus(source_filename=ytw_filename, periods=1957)
 
 # compute_co_occurrence_for_periods("./data/year+text_window.txt", 1957, target_filename="test_1957.xlsx")
 

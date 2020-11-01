@@ -95,7 +95,6 @@ def display_gui(state: TopicModelContainer):
     gui.scale.observe(compute_handler, names='value')
     gui.node_range.observe(compute_handler, names='value')
     gui.edge_range.observe(compute_handler, names='value')
-    gui.threshold.observe(compute_handler, names='value')
     gui.output_format.observe(compute_handler, names='value')
     gui.layout.observe(compute_handler, names='value')
     gui.ignores.observe(compute_handler, names='value')

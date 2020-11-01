@@ -2,6 +2,7 @@
 import types
 
 import bokeh
+from bokeh.io import output
 import ipywidgets as widgets
 import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 import penelope.network.metrics as network_metrics
@@ -17,7 +18,7 @@ from notebooks.common import TopicModelContainer
 logger = utility.getLogger("westac")
 
 
-def plot_document_topic_network(network, layout, _=1.0, titles=None):
+def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument, too-many-locals
     tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
     year_nodes, topic_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
@@ -90,8 +91,6 @@ def plot_document_topic_network(network, layout, _=1.0, titles=None):
 
 def display_as_grid(df):
 
-    display.clear_output()
-
     column_defs = [
         {"headerName": "Index", "field": "index"},
         {"headerName": "Document_Id", "field": "document_id"},
@@ -114,7 +113,7 @@ def display_as_grid(df):
     display(g)
 
 
-def display_document_topic_network(
+def display_document_topic_network(  # pylint: disable=too-many-locals)
     layout_algorithm,
     inferred_topics: topic_modelling.InferredTopicsData,
     threshold=0.10,
@@ -229,22 +228,36 @@ def display_gui(state: TopicModelContainer):
             rows=8,
             layout=lw("180px"),
         ),
+        output=widgets.Output()
     )
 
     def tick(x=None):
         gui.progress.value = gui.progress.value + 1 if x is None else x
 
-    iw = widgets.interactive(
-        display_document_topic_network,
-        layout_algorithm=gui.layout,
-        inferred_topics=widgets.fixed(inferred_topics),
-        threshold=gui.threshold,
-        period=gui.period,
-        ignores=gui.ignores,
-        scale=gui.scale,
-        output_format=gui.output_format,
-        tick=widgets.fixed(tick),
-    )
+    def update_handler(*_):
+
+        if gui.output.value == "table":
+            gui.output.clear_output()
+
+        with gui.output:
+
+            display_document_topic_network(
+                layout_algorithm=gui.layout.value,
+                inferred_topics=widgets.fixed(inferred_topics),
+                threshold=gui.threshold.value,
+                period=gui.period.value,
+                ignores=gui.ignores.value,
+                scale=gui.scale.value,
+                output_format=gui.output_format.value,
+                tick=widgets.fixed(tick),
+            )
+
+    gui.threshold.observe(update_handler, names='value')
+    gui.period.observe(update_handler, names='value')
+    gui.scale.observe(update_handler, names='value')
+    gui.output_format.observe(update_handler, names='value')
+    gui.layout_algorithm.observe(update_handler, names='value')
+    gui.ignores.observe(update_handler, names='value')
 
     display(
         widgets.VBox(
@@ -256,7 +269,7 @@ def display_gui(state: TopicModelContainer):
                         widgets.VBox([gui.output_format, gui.progress]),
                     ]
                 ),
-                iw.children[-1],
+                gui.output,
                 gui.text,
             ]
         )
