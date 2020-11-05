@@ -2,9 +2,7 @@
 import types
 
 import bokeh
-from bokeh.io import output
 import ipywidgets as widgets
-import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 import penelope.network.metrics as network_metrics
 import penelope.network.plot_utility as network_plot
 import penelope.network.utility as network_utility
@@ -13,12 +11,16 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
+
+import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 from notebooks.common import TopicModelContainer
 
 logger = utility.getLogger("westac")
 
 
-def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument, too-many-locals
+def plot_document_topic_network(
+    network, layout, scale=1.0, titles=None
+):  # pylint: disable=unused-argument, too-many-locals
     tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
     year_nodes, topic_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
@@ -228,7 +230,7 @@ def display_gui(state: TopicModelContainer):
             rows=8,
             layout=lw("180px"),
         ),
-        output=widgets.Output()
+        output=widgets.Output(),
     )
 
     def tick(x=None):
@@ -274,4 +276,5 @@ def display_gui(state: TopicModelContainer):
             ]
         )
     )
-    iw.update()
+
+    update_handler()

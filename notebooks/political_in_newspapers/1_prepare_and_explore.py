@@ -30,6 +30,7 @@ import zipfile
 
 import numpy as np
 import pandas as pd
+
 from notebooks.political_in_newspapers import corpus_data
 
 corpus_folder = '/data/westac/textblock_politisk'

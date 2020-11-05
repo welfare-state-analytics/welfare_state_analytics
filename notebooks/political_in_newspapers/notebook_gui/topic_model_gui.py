@@ -283,7 +283,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
 
     def get_corpus_terms(self, corpus):
         pipeline = self._create_extract_pipeline(corpus=corpus)
-        terms = [list(doc) for doc in pipeline.process() ]
+        terms = [list(doc) for doc in pipeline.process()]
         return terms
 
     def _create_extract_pipeline(self, corpus):
@@ -305,7 +305,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         )
 
         if gui.substitute_terms.value is True:
-            pipeline = pipeline.substitute(subst_map=None, filename=self.substitution_filename )
+            pipeline = pipeline.substitute(subst_map=None, filename=self.substitution_filename)
 
         return pipeline
 

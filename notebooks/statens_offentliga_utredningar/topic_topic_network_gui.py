@@ -2,10 +2,11 @@
 import types
 
 import ipywidgets as widgets
-import notebooks.common.topic_topic_network_display as topic_topic_network_display
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 from IPython.display import display
+
+import notebooks.common.topic_topic_network_display as topic_topic_network_display
 from notebooks.common import TopicModelContainer
 
 # bokeh.plotting.output_notebook()

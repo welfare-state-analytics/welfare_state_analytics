@@ -8,6 +8,7 @@ import numpy as np
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 from IPython.display import display
+
 from notebooks.common import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)

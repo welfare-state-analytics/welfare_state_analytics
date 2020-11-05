@@ -28,6 +28,7 @@
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import bokeh.plotting
+from IPython.core.interactiveshell import InteractiveShell
 
 # FIXME #95 Topic Modelling notebook setup celldisplays a load of trace information when run
 import notebooks.common.load_topic_model_gui as load_gui
@@ -38,7 +39,6 @@ import notebooks.statens_offentliga_utredningar.topic_documents_gui as documents
 import notebooks.statens_offentliga_utredningar.topic_topic_network_gui as topic_topic_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_gui as trends_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_overview_gui as overview_gui
-from IPython.core.interactiveshell import InteractiveShell
 from notebooks.common import TopicModelContainer, setup_pandas
 
 InteractiveShell.ast_node_interactivity = "all"

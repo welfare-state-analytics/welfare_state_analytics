@@ -1,11 +1,12 @@
 import types
 
 import ipywidgets as widgets
-import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+
+import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
 from notebooks.common import TopicModelContainer
 
 # from beakerx import *

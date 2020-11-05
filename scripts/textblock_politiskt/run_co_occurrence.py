@@ -1,6 +1,7 @@
 import time
 
 import penelope.vendor.nltk as nltk_utility
+
 from notebooks.textblock_politiskt.pandas_co_occurrence import compute_co_occurrence_for_periods
 
 stopwords = nltk_utility.extended_stopwords()

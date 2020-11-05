@@ -79,6 +79,7 @@ import sys
 import types
 
 import bokeh.plotting
+
 import notebooks.word_trends.corpus_gui as corpus_gui
 import notebooks.word_trends.word_trends_gui as word_trends_gui
 
