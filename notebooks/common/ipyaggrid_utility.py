@@ -3,11 +3,11 @@ import pandas as pd
 from ipyaggrid import Grid
 
 DEFAULT_GRID_STYLE = dict(
-    quick_filter=False,
+    quick_filter=True,
     show_toggle_edit=False,
     export_mode="buttons",
     export_csv=True,
-    export_excel=False,
+    export_excel=True,
     theme="ag-theme-balham",
     show_toggle_delete=False,
     columns_fit="auto",
@@ -52,13 +52,13 @@ def display_grid(data, column_defs=None, grid_options=None, grid_style=None):
 
     column_defs = default_column_defs(df) if column_defs is None else column_defs
 
-    grid_options = dict(
-        columnDefs=column_defs,
+    grid_options = {
+        'columnDefs': column_defs,
         **DEFAULT_GRID_OPTIONS,
-        **grid_options,
-    )
+        **(grid_options or {}),
+    }
 
-    grid_style = {**DEFAULT_GRID_STYLE, **grid_style}
+    grid_style = {**DEFAULT_GRID_STYLE, **(grid_style or {})}
 
     g = Grid(grid_data=df, grid_options=grid_options, **grid_style)
 
