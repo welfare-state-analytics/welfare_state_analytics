@@ -37,7 +37,7 @@ import ipywidgets
 import penelope.common.goodness_of_fit as gof
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 import penelope.notebook.cluster_analysis_gui as cluster_analysis_gui
-import penelope.notebook.distributions_plot_gui as pdg
+import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
 from bokeh.plotting import output_notebook
 from IPython.display import display
 
@@ -118,14 +118,6 @@ n_corpus = y_corpus.normalize(axis=0)
 # pylint: disable=redefined-outer-name
 
 
-def compute_uniformity_metrics(x_corpus, n_count=2000):
-
-    df_gof = gof.compute_goddness_of_fits_to_uniform(x_corpus)
-    df_most_deviating = gof.compile_most_deviating_words(df_gof, n_count=n_count)
-
-    return df_gof, df_most_deviating
-
-
 def display_uniformity_metrics(x_corpus, df_gof, df_most_deviating):
 
     output_row = [ipywidgets.Output(), ipywidgets.Output()]
@@ -160,7 +152,10 @@ def display_uniformity_metrics(x_corpus, df_gof, df_most_deviating):
 
 # n_corpus.data.shape[0]
 
-df_gof, df_most_deviating = compute_uniformity_metrics(n_corpus, n_count=10000)
+df_gof = gof.compute_goddness_of_fits_to_uniform(n_corpus)
+df_most_deviating = gof.compile_most_deviating_words(df_gof, n_count=10000)
+
+
 display_uniformity_metrics(n_corpus, df_gof, df_most_deviating)
 
 
@@ -170,7 +165,7 @@ display_uniformity_metrics(n_corpus, df_gof, df_most_deviating)
 # %%
 
 tokens = df_most_deviating["l2_norm_token"]
-pdg.display_gui(n_corpus, tokens)
+word_trend_plot_gui.display_gui(n_corpus, tokens)
 
 
 # %% [markdown]
