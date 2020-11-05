@@ -6,16 +6,21 @@ SOURCE_FOLDERS=notebooks scripts tests
 init: tools
 	@poetry install
 
-build: tools penelope requirements.txt write_to_ipynb
+build: tools penelope-pypi requirements.txt write_to_ipynb
 	@echo "Penelope, requirements and ipynb files is now up-to-date"
-	#@poetry build
+	@poetry build
 
 tools:
 	@pip install --upgrade pip --quiet
 	@pip install poetry --upgrade --quiet
 
-penelope:
-	@poetry update penelope
+penelope-pypi:
+	@poetry remove humlab-penelope
+	@poetry add humlab-penelope
+
+penelope-edit-mode:
+	@poetry remove humlab-penelope
+	@poetry add ../../penelope
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
@@ -28,6 +33,7 @@ tag:
 	@git push
 	@git tag $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g") -a
 	@git push origin --tags
+	
 test-coverage:
 	-poetry run coverage --rcfile=.coveragerc run -m pytest
 	-poetry run coveralls
@@ -104,7 +110,8 @@ labextension:
 		@bokeh/jupyter_bokeh \
 		jupyter-matplotlib \
 		jupyterlab-jupytext \
-		ipyaggrid
+		ipyaggrid \
+		qgrid2
 
 nltk_data:
 	@mkdir -p $(NLTK_DATA)
