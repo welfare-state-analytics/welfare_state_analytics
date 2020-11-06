@@ -1,7 +1,8 @@
 from typing import Set
 
 from penelope.co_occurrence import partitioned_corpus_concept_co_occurrence, to_vectorized_corpus
-from penelope.corpus import SparvTokenizedCsvCorpus
+from penelope.co_occurrence.concept_co_occurrence import ConceptContextOpts
+from penelope.corpus import SparvTokenizedCsvCorpus, AnnotationOpts
 
 
 def generate_test_vectorized_corpus(
@@ -9,20 +10,18 @@ def generate_test_vectorized_corpus(
     concepts: Set[str],
     *,
     context_width: int = 2,
-    pos_includes: str = "|NN|VB|",
-    lemmatize: bool = True,
+    annotation_opts: AnnotationOpts = None,
     n_count_threshold: int = None,
     partition_keys: str = "year",
     no_concept: bool = False,
 ):
-
+    annotation_opts = annotation_opts or AnnotationOpts()
     corpus = SparvTokenizedCsvCorpus(
         filename,
         tokenizer_opts=dict(
             filename_fields={"year": r"prot\_(\d{4}).*"},
         ),
-        pos_includes=pos_includes,
-        lemmatize=lemmatize,
+        annotation_opts=annotation_opts,
     )
 
     if not any([concept in corpus.token2id for concept in concepts]):
@@ -31,10 +30,8 @@ def generate_test_vectorized_corpus(
 
     coo_df = partitioned_corpus_concept_co_occurrence(
         corpus,
-        concepts=concepts,
-        no_concept=no_concept,
+        concept_opts=ConceptContextOpts(concepts=concepts, no_concept=no_concept, n_context_width=context_width),
         n_count_threshold=n_count_threshold,
-        n_context_width=context_width,
         partition_keys=partition_keys,
     )
 
@@ -42,7 +39,7 @@ def generate_test_vectorized_corpus(
     _v_corpus = to_vectorized_corpus(coo_df, value_column="value_n_t")
 
     _v_corpus.dump(
-        tag=f"coo_vectors_{'_'.join(concepts)}_{pos_includes.replace('|','')}_{context_width}",
+        tag=f"coo_vectors_{'_'.join(concepts)}_{''.join(annotation_opts.get_pos_includes())}_{context_width}",
         folder="/data/westac/",
     )
 
@@ -50,7 +47,10 @@ def generate_test_vectorized_corpus(
 
 
 v_corpus_riksdagens_protokoll = generate_test_vectorized_corpus(
-    "/data/westac/riksdagens-protokoll.1920-2019.test.zip", concepts={"arbetare"}, context_width=2, lemmatize=True
+    "/data/westac/riksdagens-protokoll.1920-2019.test.zip",
+    concepts={"arbetare"},
+    context_width=2,
+    annotation_opts=AnnotationOpts(lemmatize=True),
 )
 
 # %%
