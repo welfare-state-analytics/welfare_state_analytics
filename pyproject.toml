@@ -34,7 +34,6 @@ ftfy = "*"
 gensim = "*"
 holoviews = "*"
 humanfriendly = "*"
-humlab-penelope = {path = "../../penelope", develop = true}
 ipyaggrid = "*"
 ipycytoscape = "*"
 ipykernel = "*"
@@ -75,6 +74,7 @@ traitlets = "==4.3.3"
 wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
+humlab-penelope = {path = "../../penelope"}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
