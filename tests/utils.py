@@ -1,8 +1,8 @@
 import os
 from typing import Callable
 
-from penelope.corpus.readers import TextTokenizer
 from penelope.corpus import TextTransformOpts
+from penelope.corpus.readers import TextTokenizer
 
 TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
 
@@ -34,9 +34,7 @@ def create_text_tokenizer(
         as_binary=as_binary,
         tokenize=tokenize,
         filename_fields=filename_fields,
-        text_transform_opts=TextTransformOpts(
-            fix_whitespaces=fix_whitespaces, fix_hyphenation=fix_hyphenation
-        ),
+        text_transform_opts=TextTransformOpts(fix_whitespaces=fix_whitespaces, fix_hyphenation=fix_hyphenation),
     )
     reader = TextTokenizer(source_path, **kwargs)
     return reader

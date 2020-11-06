@@ -2,7 +2,7 @@ from typing import Set
 
 from penelope.co_occurrence import partitioned_corpus_concept_co_occurrence, to_vectorized_corpus
 from penelope.co_occurrence.concept_co_occurrence import ConceptContextOpts
-from penelope.corpus import SparvTokenizedCsvCorpus, AnnotationOpts
+from penelope.corpus import AnnotationOpts, SparvTokenizedCsvCorpus
 
 
 def generate_test_vectorized_corpus(

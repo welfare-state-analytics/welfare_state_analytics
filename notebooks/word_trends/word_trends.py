@@ -14,114 +14,106 @@
 # ---
 
 # %% [markdown]
-# # Prepare Riksdagens Protokoll for Text Analysis
+# ## Word Trend Analysis
 #
-# ## Download Text from KB-LAB API (JSON)
+# ### Load previously vectorized corpus
 #
-# Use Python script `extract_json_text.py` to download `content.json` and `meta.json`. The script downloads queries packagers having "protocoll" tag (query `{ "tags": "protokoll" }`).
-#
-# ```bash
-# cd source/westac_data
-# pipenv shell
-# cd src/kb_labb
-# nohup python download_protocol_content_json.py >& run.log &
-# ```
-#
-# The result is stored as a Zip archive.
-#
-# ### Extract text from JSON and store as a corpus of individual text files
-#
-# Use the script `extract_json_text.py` to extract the text from the JSON files.
-#
-# ```bash
-# python extract_json_text.py --source-filename ~/tmp/riksdagens_protokoll_content.zip --target-filename ~/tmp/riksdagens_protokoll_content_corpus.zip
-# ```
-#
-# The resulting Zip file contains the text files named as `prot_yyyyyy__NN.txt`. One file per protocoll.
-#
-# ### Vectorize the corpus to a BoW corpus (westac.VectorizedCorpus)
-#
-# Use the script `vectorize_protocols.py` to create a BoW corpus.
-#
-# ```bash
-# python vectorize_protocols.py --source-filename ~/tmp/riksdagens_protokoll_content.zip --target-filename ~/tmp/riksdagens_protokoll_content_corpus.zip
-# ```
-#
-# The script calls `generate_corpus` in `westac.corpus.corpus_vectorizer`:
-#
-# ```python
-# import westac.corpus.corpus_vectorizer as corpus_vectorizer
-#
-# kwargs = dict( ...vectorize arguments...)
-# corpus_filename = ...
-# output_folder = ...
-#
-# corpus_vectorizer.generate_corpus(corpus_filename, output_folder=output_folder, **kwargs)
-#
-# ```
-#
-# The resulting corpus are stored in the specified output folder in two files; a numpy file containing the DTM and a Pythin pickled file with the dictionary and a document index.
-#
-# ### Prepare text files for Sparv
-#
-# The Sparv pipeline requires that the individual document are stored as (individual) XML files. The shell script `sparvit-to-xml` can be used to add a root tag to all text files in a Zip archive. The resulting XML files iare stored as a new Zip archive.
-#
-# ```bash
-#  sparvit-to-xml --input riksdagens_protokoll_content_corpus.zip --output riksdagens_protokoll_content_corpus_xml.zip
-#  ```
+# Use the `vectorize_protocol` script to create a new corpus with different settings.
 
-# %% tags=[] vscode={}
+# %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
 # %load_ext autoreload
 # %autoreload 2
 
+
+# %%
+
+import importlib
 import os
-import sys
-import types
+from dataclasses import dataclass
+from typing import Any
 
-import bokeh.plotting
+import pandas as pd
+import penelope.common.goodness_of_fit as gof
+import penelope.notebook.load_vectorized_corpus_gui as load_corpus_gui
+import penelope.notebook.utility as notebook_utility
+import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui
+import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
+from bokeh.plotting import output_notebook
+from penelope.corpus import VectorizedCorpus
 
-import notebooks.word_trends.corpus_gui as corpus_gui
-import notebooks.word_trends.word_trends_gui as word_trends_gui
-
-# from beakerx import *
-# from beakerx.object import beakerx
-
-root_folder = os.path.join(os.getcwd().split('welfare_state_analytics')[0], 'welfare_state_analytics')
-corpus_folder = os.path.join(root_folder, 'data/riksdagens_protokoll')
-
-sys.path = sys.path + [root_folder, globals()['_dh'][-1]]
-
-bokeh.plotting.output_notebook(hide_banner=True)
-
-container = types.SimpleNamespace(corpus=None, handle=None, data_source=None, data=None, figure=None)
+import __paths__  # pylint: disable=unused-import
+import notebooks.word_trends.word_trends_gui as xxx_word_trends_gui
+from notebooks.concept_co_occurrences.utils import display_as_grid
 
 
-# %% [markdown]
-# # Load previously vectorized corpus
-#
-# The corpus was created with the following settings:
-#  - Tokens were converted to lower case.
-#  - Only tokens that contains at least one alphanumeric character (only_alphanumeric).
-#  - Accents are ot removed (remove_accents)
-#  - Min token length 2 (min_len)
-#  - Max length not set (max_len)
-#  - Numerals are removed (keep_numerals, -N)
-#  - Symbols are removed (keep_symbols, -S)
-#
-# Use the `vectorize_protocol` script to create a new corpus with different settings.
-#
-# The corpus is processed in the following ways when loaded:
-#
-#  - Exclude tokens having a total word count less than `Min count`
-#  - Include at most `Top count` most frequent words.
-#  - Group and sum up documents by year.
-#  - Normalize token distribution over years to 1.0
-#
+@dataclass
+class State:
+    corpus_folder: str = '/data/westac'
+    corpus: VectorizedCorpus = None
+    data: Any = None
+    df_gof: pd.DataFrame = None
+    df_most_deviating_overview: pd.DataFrame = None
+    df_most_deviating_overview: pd.DataFrame = None
+
+
+state = State(corpus_folder='/data/westac')
+
+output_notebook(hide_banner=True)
 
 # %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
 
 
-ui = corpus_gui.display_gui(corpus_folder, container=container)
+importlib.reload(vectorize_corpus_gui)
+importlib.reload(notebook_utility)
+
+vectorize_corpus_gui.display_gui(state.corpus_folder, '*sparv4.csv.zip', generated_callback=None)
+
+# %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
+importlib.reload(load_corpus_gui)
+importlib.reload(notebook_utility)
+
+
+def load_succeeded(_v_corpus: VectorizedCorpus, _corpus_tag, output):
+
+    output.clear_output()
+    try:
+        global state
+
+        state.corpus = _v_corpus
+        state.df_gof = gof.compute_goddness_of_fits_to_uniform(state.corpus, 10000, verbose=False)
+        state.df_most_deviating_overview = gof.compile_most_deviating_words(state.df_gof, n_count=10000)
+
+        if os.environ.get('VSCODE_LOGS', None) is None:
+            tab = notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])
+            tab.display().display_fx_result(0, display_as_grid, state.df_gof).display_fx_result(
+                1, display_as_grid, state.df_most_deviating_overview[['l2_norm_token', 'l2_norm', 'abs_l2_norm']]
+            ).display_fx_result(2, gof.plot_metrics, state.df_gof, plot=False, lazy=True).display_fx_result(
+                3,
+                gof.plot_slopes,
+                state.corpus,
+                state.df_most_deviating_overview,
+                "l2_norm",
+                600,
+                600,
+                plot=False,
+                lazy=True,
+            )
+
+    except Exception as ex:
+        with output:
+            print(ex)
+
+
+load_corpus_gui.display_gui(state.corpus_folder, load_succeeded)
 
 # %%
-word_trends_gui.display_gui(container)
+
+xxx_word_trends_gui.display_gui(state=state)
+
+# %%
+
+importlib.reload(word_trend_plot_gui)
+
+most_deviating = gof.get_most_deviating_words(state.df_gof, 'l2_norm', n_count=5000, ascending=False, abs_value=True)
+
+word_trend_plot_gui.display_gui(state.corpus, most_deviating)

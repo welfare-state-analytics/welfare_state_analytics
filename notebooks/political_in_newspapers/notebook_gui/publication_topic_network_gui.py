@@ -19,6 +19,7 @@ from notebooks.common import TopicModelContainer
 
 TEXT_ID = 'nx_pub_topic'
 
+
 # pylint: disable=too-many-locals, too-many-arguments
 def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"

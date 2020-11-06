@@ -33,7 +33,7 @@ import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
 from bokeh.plotting import output_notebook
 from penelope.corpus import VectorizedCorpus
 
-import __paths__
+import __paths__  # pylint: disable=unused-import
 import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 from notebooks.concept_co_occurrences.utils import display_as_grid
 
@@ -48,9 +48,7 @@ output_notebook()
 # For long running tasks, please use the CLI `concept_co_occurrence` instead.
 # %%
 
-generate_concept_co_occurrences_gui.display_gui(
-    '/data/westac', '*sparv4.csv.zip', generated_callback=None
-)
+generate_concept_co_occurrences_gui.display_gui('/data/westac', '*sparv4.csv.zip', generated_callback=None)
 
 # %% [markdown]
 # ### Load vectorized corpus and compute deviation metrics
@@ -87,18 +85,9 @@ def load_succeeded(_v_corpus: VectorizedCorpus, _corpus_tag, output):
 
 load_vectorized_corpus_gui.display_gui("/data/westac", load_succeeded)
 # %%
-import notebooks.concept_co_occurrences.word_trend_plot_gui as trend_plot_gui
-from IPython.display import display
-importlib.reload(trend_plot_gui)
+
+importlib.reload(word_trend_plot_gui)
 
 most_deviating = gof.get_most_deviating_words(df_gof, 'l2_norm', n_count=5000, ascending=False, abs_value=True)
 
-trend_plot_gui.display_gui(v_corpus, most_deviating)
-
-
-# %%
-#trend_plot_gui.QgridTokensSelector(most_deviating).widget
-
-trend_plot_gui.SelectMultipleTokensSelector(most_deviating).widget
-
-# %%
+word_trend_plot_gui.display_gui(v_corpus, most_deviating)
