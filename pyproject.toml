@@ -77,7 +77,9 @@ wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
 ipyfilechooser = "^0.4.0"
-humlab-penelope = {path = "../../penelope", develop = true}
+
+humlab-penelope = "^0.2.24"
+#humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
