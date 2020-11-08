@@ -49,8 +49,7 @@ penelope-pypi:
 	@poetry add humlab-penelope
 
 penelope-edit-mode:
-	@poetry remove humlab-penelope
-	@poetry add ../../penelope
+	@poetry install --develop ../../penelope
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch

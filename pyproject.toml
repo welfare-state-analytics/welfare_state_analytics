@@ -21,6 +21,7 @@ homepage = "https://westac.se"
 repository = "https://github.com/welfare-state-analytics/welfare_state_analytics"
 
 [tool.poetry.dependencies]
+alive-progress = "^1.6.1"
 appnope = "*"
 attrs = "*"
 beakerx = "==1.4.1"
@@ -66,6 +67,7 @@ scattertext = "*"
 scikit-learn = "*"
 scipy = "*"
 seaborn = "*"
+sklearn = "*"
 spacy = "==2.3.2"
 statsmodels = "*"
 textacy = "==0.10.1"
@@ -74,7 +76,8 @@ traitlets = "==4.3.3"
 wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
-humlab-penelope = {path = "../../penelope"}
+ipyfilechooser = "^0.4.0"
+humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
