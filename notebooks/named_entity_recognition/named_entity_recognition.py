@@ -24,19 +24,6 @@ import zipfile
 import numpy as np
 import pandas as pd
 
-# def export_excel_to_text(excel_file, text_file):
-#     """Exports Excel to a tab-seperated text file"""
-#     df = pd.read_excel('./data/year+text_window.xlsx')
-#     df.to_csv('./data/year+text_window.txt', sep='\t')
-#     return df
-
-
-def read_text_file(filename):
-    """Exports Excel to a tab-seperated text file"""
-    df = pd.read_csv(filename, sep="\t")  # [['year', 'txt']]
-    return df
-
-
 root_folder = (lambda x: os.path.join(os.getcwd().split(x)[0], x))("welfare_state_analytics")
 sys.path.append(root_folder)
 
@@ -57,7 +44,7 @@ target_zip_filename = os.path.join(data_folder, "year+newspaper+text_yearly_docu
 
 def create_yearly_documents(source_filename, target_name):
 
-    df = read_text_file(source_filename)
+    df = pd.read_csv(source_filename, sep="\t")
     documents = df.fillna("").groupby(["year", "newspaper"])["txt"].apply(" ".join).reset_index()
 
     with zipfile.ZipFile(target_name, "w") as zf:
@@ -68,7 +55,7 @@ def create_yearly_documents(source_filename, target_name):
 
 if not os.path.exists(target_zip_filename):
     print("Creating yearly documents...")
-    # export_excel_to_text(source_excel_filename, target_text_filename)
+    # excel_to_csv(source_excel_filename, target_text_filename)
     # create_yearly_documents(target_text_filename, target_zip_filename)
 
 print("OK!")
