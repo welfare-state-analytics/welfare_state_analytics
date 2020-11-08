@@ -40,10 +40,10 @@ import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui
 import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
 from bokeh.plotting import output_notebook
 from penelope.corpus import VectorizedCorpus
+from penelope.notebook.ipyaggrid_utility import display_grid
 
 import __paths__  # pylint: disable=unused-import
 import notebooks.word_trends.word_trends_gui as xxx_word_trends_gui
-from notebooks.concept_co_occurrences.utils import display_as_grid
 
 
 @dataclass
@@ -84,19 +84,25 @@ def load_succeeded(_v_corpus: VectorizedCorpus, _corpus_tag, output):
         state.df_most_deviating_overview = gof.compile_most_deviating_words(state.df_gof, n_count=10000)
 
         if os.environ.get('VSCODE_LOGS', None) is None:
-            tab = notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])
-            tab.display().display_fx_result(0, display_as_grid, state.df_gof).display_fx_result(
-                1, display_as_grid, state.df_most_deviating_overview[['l2_norm_token', 'l2_norm', 'abs_l2_norm']]
-            ).display_fx_result(2, gof.plot_metrics, state.df_gof, plot=False, lazy=True).display_fx_result(
-                3,
-                gof.plot_slopes,
-                state.corpus,
-                state.df_most_deviating_overview,
-                "l2_norm",
-                600,
-                600,
-                plot=False,
-                lazy=True,
+            _ = (
+                notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])
+                .display()
+                .display_fx_result(0, display_grid, state.df_gof)
+                .display_fx_result(
+                    1, display_grid, state.df_most_deviating_overview[['l2_norm_token', 'l2_norm', 'abs_l2_norm']]
+                )
+                .display_fx_result(2, gof.plot_metrics, state.df_gof, plot=False, lazy=True)
+                .display_fx_result(
+                    3,
+                    gof.plot_slopes,
+                    state.corpus,
+                    state.df_most_deviating_overview,
+                    "l2_norm",
+                    600,
+                    600,
+                    plot=False,
+                    lazy=True,
+                )
             )
 
     except Exception as ex:
