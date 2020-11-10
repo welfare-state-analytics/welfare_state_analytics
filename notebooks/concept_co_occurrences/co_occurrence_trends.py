@@ -43,7 +43,7 @@ output_notebook()
 # This function computes new concept context co-occurrence data and stores the result in a CSV file.
 # Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
 # %%
-compute_gui.display_gui('/data/westac', '*sparv4.csv.zip', generated_callback=None)
+compute_gui.display_gui(data_folder=None, corpus_pattern='*sparv4.csv.zip', generated_callback=None)
 
 # %% [markdown]
 # ## Display concept context co-occurrences
