@@ -115,7 +115,7 @@ def run_model(
 
         assert corpus_name is not None, 'error: Corpus dump name-tag not specified for vectorized corpus'
         assert vectorized_corpus.VectorizedCorpus.dump_exists(
-            corpus_name, corpus_folder
+            tag=corpus_name, folder=corpus_folder
         ), 'error: no dump for given tag exists'
 
         v_corpus = vectorized_corpus.VectorizedCorpus.load(tag=corpus_name, folder=corpus_folder)
