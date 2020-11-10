@@ -6,13 +6,13 @@ import ipywidgets as widgets
 import penelope.network.metrics as network_metrics
 import penelope.network.plot_utility as network_plot
 import penelope.network.utility as network_utility
+import penelope.notebook.ipyaggrid_utility as ipyaggrid_utility
 import penelope.notebook.widgets_utils as widget_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
 
-import notebooks.common.ipyaggrid_utility as ipyaggrid_utility
 from notebooks.common import TopicModelContainer
 
 logger = utility.getLogger("westac")
