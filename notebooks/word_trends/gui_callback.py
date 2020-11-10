@@ -6,16 +6,18 @@ import ipywidgets
 import pandas as pd
 import penelope.common.goodness_of_fit as gof
 import penelope.notebook.utility as notebook_utility
-import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
-from penelope.co_occurrence.concept_co_occurrence import to_vectorized_corpus
 from penelope.corpus import VectorizedCorpus
 from penelope.notebook.ipyaggrid_utility import display_grid as display_as_grid
+from penelope.utility import getLogger
+
+import __paths__  # pylint: disable=unused-import
+import notebooks.word_trends.word_trends_gui as xxx_word_trends_gui
+
+logger = getLogger("penelope")
 
 
 @dataclass
-class State:  # pylint: disable=too-many-instance-attributes
-    concept_co_occurrences: pd.DataFrame = None
-    concept_co_occurrences_metadata: Dict = None
+class State:
     corpus: VectorizedCorpus = None
     corpus_folder: str = None
     corpus_tag: str = None
@@ -31,25 +33,16 @@ def update_state(
     corpus: VectorizedCorpus = None,
     corpus_folder: str = None,
     corpus_tag: str = None,
-    **kwargs,
+    **_,
 ):
 
     state.corpus = corpus
     state.corpus_folder = corpus_folder
     state.corpus_tag = corpus_tag
-    state.concept_co_occurrences = kwargs.get('concept_co_occurrences', None)
-    state.compute_options = kwargs.get('compute_options', None)
 
-    if corpus is None:
-
-        if state.concept_co_occurrences is None:
-            raise ValueError("Both corpus and concept_co_occurrences cannot be None")
-
-        state.corpus = to_vectorized_corpus(
-            co_occurrences=state.concept_co_occurrences, value_column='value_n_t'
-        ).group_by_year()
-
+    logger.info("Computing goodness of fit to uniform distribution...")
     state.goodness_of_fit = gof.compute_goddness_of_fits_to_uniform(state.corpus, None, verbose=False)
+    logger.info("Compiling most deviating words...")
     state.most_deviating_overview = gof.compile_most_deviating_words(state.goodness_of_fit, n_count=10000)
     state.most_deviating = gof.get_most_deviating_words(
         state.goodness_of_fit, 'l2_norm', n_count=5000, ascending=False, abs_value=True
@@ -61,7 +54,7 @@ def update_state(
 def build_layout(
     state: State,  # pylint: disable=redefined-outer-name
 ):
-    tab_trends = word_trend_plot_gui.display_gui(state.corpus, tokens=state.most_deviating, display_widgets=False)
+    tab_trends = xxx_word_trends_gui.display_gui(state=state, display_widgets=False)
 
     tab_gof = (
         notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])
@@ -75,12 +68,12 @@ def build_layout(
         )
     )
 
+    logger.info("Plotting...")
     layout = (
-        notebook_utility.OutputsTabExt(["Data", "Explore", "Options", "GoF"])
-        .display_fx_result(0, display_as_grid, state.concept_co_occurrences)
-        .display_content(1, what=tab_trends, clear=True)
-        .display_as_yaml(2, state.compute_options, clear=True, width='800px', height='600px')
-        .display_content(3, tab_gof, clear=True)
+        notebook_utility.OutputsTabExt(["Trends", "GoF"])
+        .display()
+        .display_content(0, what=tab_trends, clear=True)
+        .display_content(1, what=tab_gof, clear=True)
     )
 
     return layout
@@ -104,7 +97,13 @@ def loaded_callback(
         try:
 
             if os.environ.get('VSCODE_LOGS', None) is not None:
+                logger.error("bug-check: vscode detected, aborting plot...")
                 return
+
+            if corpus is None:
+                logger.info("Please wait, loading corpus...")
+                # FIXME IS GROUP BY YEAR NEEDED?
+                corpus = VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder).group_by_year()
 
             _ = update_state(
                 state,
@@ -114,8 +113,8 @@ def loaded_callback(
                 **kwargs,
             )
 
-            build_layout(state=state).display()
+            build_layout(state=state)
 
         except Exception as ex:
             with output:
-                print(ex)
+                raise ex

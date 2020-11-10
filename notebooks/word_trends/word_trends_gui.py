@@ -5,7 +5,7 @@ from penelope.corpus.vectorized_corpus import VectorizedCorpus
 from notebooks.word_trends.displayers import display_bar, display_grid, display_line, display_table
 
 
-def display_gui(state, show_layout=True):
+def display_gui(state, display_widgets=True):
 
     output_widget = widgets.Output(layout=widgets.Layout(width='600px', height='200px'))
     words_widget = widgets.Textarea(
@@ -72,7 +72,7 @@ def display_gui(state, show_layout=True):
 
     _layout = widgets.VBox([widgets.HBox([words_widget, output_widget]), tab_widget])
 
-    if show_layout:
+    if display_widgets:
 
         display(_layout)
 
