@@ -18,10 +18,7 @@
 # ## Concept Context Co-Occurrences Analysis
 
 # %% [markdown]
-# ### Generate a new concept context co-co_occurrence
-# For long running tasks, please use the CLI `concept_co_occurrence` instead.
-# This function computes new concept context co-occurrence data and stores the result in a CSV file.
-# Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
+# ### Setup notebook
 # %%
 # %load_ext autoreload
 # %autoreload 2
@@ -41,6 +38,11 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 output_notebook()
 
+# %% [markdown]
+# ### Generate new concept context co-co_occurrences
+# For long running tasks, please use the CLI `concept_co_occurrence` instead.
+# This function computes new concept context co-occurrence data and stores the result in a CSV file.
+# Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
 # %%
 importlib.reload(compute_gui)
 compute_gui.display_gui(data_folder=None, corpus_pattern='*sparv4.csv.zip', generated_callback=loaded_callback)
