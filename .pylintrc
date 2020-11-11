@@ -16,11 +16,13 @@ disable=invalid-name,
         c-extension-no-member,
         too-few-public-methods,
         logging-format-interpolation,
+        logging-fstring-interpolation,
         consider-using-enumerate,
         unnecessary-comprehension,
-        misplaced-comparison-constant,
+        # misplaced-comparison-constant,
         broad-except,
         wrong-import-order
+
 
 [REPORTS]
 score=no
