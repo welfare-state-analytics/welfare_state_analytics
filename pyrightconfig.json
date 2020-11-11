@@ -6,11 +6,12 @@
     ],
     "exclude": [
         "**/deprecated",
-        "**/.ipynb_checkpoints"
+        "**/.ipynb_checkpoints",
+        ".git"
     ],
     "reportMissingImports": true,
     "reportMissingTypeStubs": false,
-    "reportUntypedFunctionDecorator": true,
+    "reportUntypedFunctionDecorator": false,
     "reportUntypedClassDecorator": true,
     "reportOptionalSubscript": true,
     "reportOptionalMemberAccess": true,
