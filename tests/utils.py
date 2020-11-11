@@ -5,6 +5,10 @@ from penelope.corpus import TextTransformOpts
 from penelope.corpus.readers import TextTokenizer
 
 TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
+OUTPUT_FOLDER = './tests/output'
+TEST_DATA_FOLDER = './tests/test_data'
+
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # pylint: disable=too-many-arguments
 

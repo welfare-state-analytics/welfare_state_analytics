@@ -1,10 +1,12 @@
-
 import pandas as pd
-from notebooks.word_trends.gui_callback import loaded_callback, State, build_layout
 from penelope.notebook.utility import OutputsTabExt
+
+from notebooks.word_trends.gui_callback import State, build_layout, loaded_callback
+
 
 def xtest_loaded_callback():
     pass
+
 
 def test_build_layout():
 
@@ -14,24 +16,28 @@ def test_build_layout():
         corpus=None,
         corpus_folder="",
         corpus_tag="",
-        goodness_of_fit=pd.DataFrame(data={k: [] for k in             [
-                "token",
-                "word_count",
-                "l2_norm",
-                "slope",
-                "chi2_stats",
-                "earth_mover",
-                "kld",
-                "skew",
-                "entropy",
-            ]}),
-        most_deviating=pd.DataFrame(data={'l2_norm_token':[], 'l2_norm':[], 'abs_l2_norm':[]}),
-        most_deviating_overview=pd.DataFrame(data={'l2_norm_token':[], 'l2_norm':[], 'abs_l2_norm':[]})
+        goodness_of_fit=pd.DataFrame(
+            data={
+                k: []
+                for k in [
+                    "token",
+                    "word_count",
+                    "l2_norm",
+                    "slope",
+                    "chi2_stats",
+                    "earth_mover",
+                    "kld",
+                    "skew",
+                    "entropy",
+                ]
+            }
+        ),
+        most_deviating=pd.DataFrame(data={'l2_norm_token': [], 'l2_norm': [], 'abs_l2_norm': []}),
+        most_deviating_overview=pd.DataFrame(data={'l2_norm_token': [], 'l2_norm': [], 'abs_l2_norm': []}),
     )
 
     w: OutputsTabExt = build_layout(state=state)
 
     assert w is not None and isinstance(w, OutputsTabExt)
     assert 2 == len(w.children)
-    #assert 4 == len(w.children[1].children)
-
+    # assert 4 == len(w.children[1].children)
