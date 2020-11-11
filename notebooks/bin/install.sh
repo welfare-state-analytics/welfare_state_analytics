@@ -5,7 +5,7 @@ if [ "$NLTK_DATA" == "" ]; then
     export NLTK_DATA=$HOME/nltk_data
 fi
 
-poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
+poetry run python -m nltk.downloader -d $NLTK_DATA stopwords punkt sentiwordnet
 
 poetry run jupyter labextension install \
     @jupyter-widgets/jupyterlab-manager \
