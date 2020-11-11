@@ -35,6 +35,7 @@ from penelope.utility import get_logger
 import notebooks.common.load_topic_model_gui as load_gui
 import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
 import notebooks.common.topic_wordcloud_gui as wordcloud_gui
+import notebooks.statens_offentliga_utredningar.focus_topics_network_gui as focus_gui
 import notebooks.statens_offentliga_utredningar.topic_document_network_gui as topic_document_gui
 import notebooks.statens_offentliga_utredningar.topic_documents_gui as documents_gui
 import notebooks.statens_offentliga_utredningar.topic_topic_network_gui as topic_topic_gui
@@ -142,7 +143,8 @@ except Exception as ex:
 
 # %%
 bokeh.plotting.output_notebook()
-try:
-    topic_document_gui.display_gui(current_state())
-except Exception as ex:
-    logger.exception(ex)
+w = topic_document_gui.display_gui(current_state())
+
+# %%
+bokeh.plotting.output_notebook()
+w = focus_gui.display_gui(current_state())
