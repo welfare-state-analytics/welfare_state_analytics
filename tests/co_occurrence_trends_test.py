@@ -23,6 +23,7 @@ def simple_co_occurrences():
             ('b', 'c', 5, 5.0 / 11.0, 1977),
         ],
         columns=['w1', 'w2', 'value', 'value_n_t', 'year'],
+        index=[0, 1, 2, 3, 4, 5],
     )
     return co_occurrences
 
@@ -36,17 +37,17 @@ def test_filter_co_coccurrences_by_global_threshold():
     expected_result = pd.DataFrame(
         [
             ('a', 'b', 2, 1976),
-            ('a', 'b', 4, 1977),
             ('b', 'c', 3, 1976),
+            ('a', 'b', 4, 1977),
             ('b', 'c', 5, 1977),
         ],
         columns=['w1', 'w2', 'value', 'year'],
         index=[0, 1, 4, 5],
     )
-    assert (result['w1'] == expected_result['w1']).all()
-    assert (result['w2'] == expected_result['w2']).all()
-    assert (result['value'] == expected_result['value']).all()
-    assert (result['year'] == expected_result['year']).all()
+    assert result['w1'].tolist() == expected_result['w1'].tolist()
+    assert result['w2'].tolist() == expected_result['w2'].tolist()
+    assert result['value'].tolist() == expected_result['value'].tolist()
+    assert result['year'].tolist() == expected_result['year'].tolist()
 
 
 jj = os.path.join

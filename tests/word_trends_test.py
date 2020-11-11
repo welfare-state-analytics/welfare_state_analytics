@@ -1,7 +1,7 @@
 import pandas as pd
 from penelope.notebook.utility import OutputsTabExt
 
-from notebooks.word_trends.gui_callback import State, build_layout, loaded_callback
+from notebooks.word_trends.gui_callback import State, build_layout
 
 
 def xtest_loaded_callback():
