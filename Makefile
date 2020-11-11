@@ -15,6 +15,13 @@ lint: pylint flake8
 
 tidy: black isort
 
+tidy-to-git: guard_clean_working_repository tidy
+	@status="$$(git status --porcelain)"
+	@if [[ "$$status" != "" ]]; then
+		@git commit -m "make tidy"
+		@git push
+	fi
+
 test: clean
 	@mkdir -p ./tests/output
 	@poetry run pytest --verbose --durations=0 \
@@ -200,7 +207,7 @@ gh-exists: ; @which gh > /dev/null
 .ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
 
 .PHONY: help check init version
-.PHONY: lint flake8 pylint pylint2 yapf black isort tidy
+.PHONY: lint flake8 pylint pylint2 yapf black isort tidy tidy-to-git
 .PHONY: test test-coverage pytest
 .PHONY: ready build tag bump.patch release
 .PHONY: clean clean_cache update
