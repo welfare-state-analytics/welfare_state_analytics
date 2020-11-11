@@ -18,6 +18,7 @@ tidy: black isort
 tidy-to-git: guard_clean_working_repository tidy
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
+		@git add .
 		@git commit -m "make tidy"
 		@git push
 	fi
