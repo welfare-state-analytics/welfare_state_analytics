@@ -13,7 +13,6 @@ import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
 
-
 from notebooks.common import TopicModelContainer
 
 logger = utility.getLogger("westac")
