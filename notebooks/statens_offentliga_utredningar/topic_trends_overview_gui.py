@@ -13,7 +13,7 @@ from notebooks.common import TopicModelContainer
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 
 
 def display_gui(state: TopicModelContainer):

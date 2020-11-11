@@ -15,7 +15,7 @@ from notebooks.common import TopicModelContainer
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 
 
 def display_gui(state: TopicModelContainer):

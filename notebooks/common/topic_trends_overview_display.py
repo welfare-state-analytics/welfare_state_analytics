@@ -14,7 +14,7 @@ from IPython.display import display
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 
 
 def _setup_glyph_coloring(_, color_high=0.3):

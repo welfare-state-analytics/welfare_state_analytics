@@ -9,7 +9,7 @@ from IPython.display import display
 
 from notebooks.common import TopicModelContainer, filter_document_topic_weights
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 # from beakerx import *
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()

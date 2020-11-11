@@ -12,7 +12,7 @@ from IPython.display import display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.common import TopicModelContainer, filter_document_topic_weights, to_text
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 # from beakerx import *
 # from beakerx.object import beakerx
 # beakerx.pandas_display_table()
