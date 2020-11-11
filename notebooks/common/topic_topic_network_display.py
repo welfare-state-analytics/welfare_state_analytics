@@ -8,7 +8,7 @@ from IPython.display import display
 
 from notebooks.common import filter_document_topic_weights
 
-logger = utility.setup_logger()
+logger = utility.get_logger()
 
 
 def get_topic_titles(topic_token_weights, topic_id=None, n_words=100):

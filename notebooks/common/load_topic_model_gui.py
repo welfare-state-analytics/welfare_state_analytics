@@ -17,7 +17,7 @@ from notebooks.political_in_newspapers.corpus_data import extend_with_document_i
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-logger = utility.setup_logger(filename=None)
+logger = utility.get_logger(filename=None)
 
 
 def display_as_grid(df):
