@@ -29,6 +29,7 @@ import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import bokeh.plotting
 from IPython.core.interactiveshell import InteractiveShell
+from penelope.utility import get_logger
 
 # FIXME #95 Topic Modelling notebook setup celldisplays a load of trace information when run
 import notebooks.common.load_topic_model_gui as load_gui
@@ -41,6 +42,7 @@ import notebooks.statens_offentliga_utredningar.topic_trends_gui as trends_gui
 import notebooks.statens_offentliga_utredningar.topic_trends_overview_gui as overview_gui
 from notebooks.common import TopicModelContainer, setup_pandas
 
+logger = get_logger()
 InteractiveShell.ast_node_interactivity = "all"
 
 bokeh.plotting.output_notebook()
@@ -65,7 +67,7 @@ bokeh.plotting.output_notebook()
 try:
     wordcloud_gui.display_gui(current_state())
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -78,7 +80,7 @@ try:
     topic_word_distribution_gui.display_gui(current_state())
     # topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
@@ -91,7 +93,7 @@ try:
     trends_gui.display_gui(current_state())
     # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -105,7 +107,7 @@ bokeh.plotting.output_notebook()
 try:
     overview_gui.display_gui(current_state())
 except ValueError as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -118,7 +120,7 @@ bokeh.plotting.output_notebook()
 try:
     documents_gui.display_gui(current_state())
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -131,7 +133,7 @@ bokeh.plotting.output_notebook()
 try:
     topic_topic_gui.display_gui(current_state())
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Document-Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -143,4 +145,4 @@ bokeh.plotting.output_notebook()
 try:
     topic_document_gui.display_gui(current_state())
 except Exception as ex:
-    print(ex)
+    logger.exception(ex)

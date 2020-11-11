@@ -5,6 +5,9 @@ import types
 import ipywidgets as widgets
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
+from penelope.utility import get_logger
+
+logger = get_logger()
 
 
 def get_corpus_tags(corpus_folder):
@@ -32,7 +35,7 @@ def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_
         return x_corpus
 
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return None
 
 
@@ -41,7 +44,7 @@ def display_gui(corpus_folder, container=None):
     corpus_tags = get_corpus_tags(corpus_folder)
 
     if len(corpus_tags) == 0:
-        print("Please install at least one vectorized corpus")
+        logger.info("Please install at least one vectorized corpus")
         return None
 
     year_range = [1922, 1989]
@@ -104,7 +107,7 @@ def display_gui(corpus_folder, container=None):
 
         # with gui.output:
 
-        #    print("Corpus loaded.")
+        #    logger.exception("Corpus loaded.")
 
     gui.load.on_click(load)
 
