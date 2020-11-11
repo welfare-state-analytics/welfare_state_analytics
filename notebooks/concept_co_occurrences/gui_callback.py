@@ -71,9 +71,7 @@ def build_layout(
     tab_gof = (
         notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])
         .display_fx_result(0, display_grid, state.goodness_of_fit)
-        .display_fx_result(
-            1, display_grid, state.most_deviating_overview[['l2_norm_token', 'l2_norm', 'abs_l2_norm']]
-        )
+        .display_fx_result(1, display_grid, state.most_deviating_overview[['l2_norm_token', 'l2_norm', 'abs_l2_norm']])
         .display_fx_result(2, gof.plot_metrics, state.goodness_of_fit, plot=False, lazy=True)
         .display_fx_result(
             3, gof.plot_slopes, state.corpus, state.most_deviating, "l2_norm", 600, 600, plot=False, lazy=True
