@@ -160,7 +160,10 @@ def display_document_topic_network(  # pylint: disable=too-many-locals)
     tick()
 
     if output_format == "network":
-        args = network_plot.layout_args(layout_algorithm, network, scale)
+        if layout_algorithm == "Circular":
+            args = dict(dim=2, center=None, scale=1.0)
+        else:
+            args = network_plot.layout_args(layout_algorithm, network, scale)
         layout = (network_plot.layout_algorithms[layout_algorithm])(network, **args)
         tick()
         p = plot_document_topic_network(network, layout, scale=scale, titles=titles)
@@ -238,43 +241,44 @@ def display_gui(state: TopicModelContainer):
 
     def update_handler(*_):
 
-        if gui.output.value == "table":
-            gui.output.clear_output()
+        gui.output.clear_output()
 
         with gui.output:
 
             display_document_topic_network(
                 layout_algorithm=gui.layout.value,
-                inferred_topics=widgets.fixed(inferred_topics),
+                inferred_topics=inferred_topics,
                 threshold=gui.threshold.value,
                 period=gui.period.value,
                 ignores=gui.ignores.value,
                 scale=gui.scale.value,
                 output_format=gui.output_format.value,
-                tick=widgets.fixed(tick),
+                tick=tick,
             )
 
     gui.threshold.observe(update_handler, names='value')
     gui.period.observe(update_handler, names='value')
     gui.scale.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
-    gui.layout_algorithm.observe(update_handler, names='value')
+    gui.layout.observe(update_handler, names='value')
     gui.ignores.observe(update_handler, names='value')
 
-    display(
-        widgets.VBox(
-            [
-                widgets.HBox(
-                    [
-                        widgets.VBox([gui.layout, gui.threshold, gui.scale, gui.period]),
-                        widgets.VBox([gui.ignores]),
-                        widgets.VBox([gui.output_format, gui.progress]),
-                    ]
-                ),
-                gui.output,
-                gui.text,
-            ]
-        )
+    # FIXME: Add button
+
+    w = widgets.VBox(
+        [
+            widgets.HBox(
+                [
+                    widgets.VBox([gui.layout, gui.threshold, gui.scale, gui.period]),
+                    widgets.VBox([gui.ignores]),
+                    widgets.VBox([gui.output_format, gui.progress]),
+                ]
+            ),
+            gui.output,
+            gui.text,
+        ]
     )
 
+    display(w)
     update_handler()
+    return w
