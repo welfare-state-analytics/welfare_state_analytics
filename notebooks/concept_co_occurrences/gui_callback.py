@@ -109,7 +109,7 @@ def loaded_callback(
             output.clear_output()
 
             if os.environ.get('VSCODE_LOGS', None) is not None:
-                logger.info("vscode plot is disabled")
+                logger.error("bug-check: vscode detected, aborting plot...")
                 return
 
             _ = update_state(
