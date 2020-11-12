@@ -1,3 +1,6 @@
+import uuid
+
+import numpy as np
 import pandas as pd
 import pytest
 from penelope.common.curve_fit import pchip_spline, rolling_average_smoother
@@ -18,6 +21,16 @@ OUTPUT_FOLDER = './tests/output'
 def xtest_loaded_callback():
     pass
 
+@pytest.fixture
+def bigger_corpus():
+    corpus_filename = BIGGER_CORPUS_FILENAME
+    output_folder = OUTPUT_FOLDER
+    output_tag = str(uuid.uuid1())
+    count_threshold = 5
+    corpus = create_bigger_vectorized_corpus(
+        corpus_filename, output_tag=output_tag, output_folder=output_folder, count_threshold=count_threshold
+    )
+    return corpus
 
 def test_build_layout():
 
@@ -54,25 +67,17 @@ def test_build_layout():
     # assert 4 == len(w.children[1].children)
 
 
-def test_vectorize_workflow():
+def test_vectorize_workflow(bigger_corpus):
 
-    corpus_filename = './tests/test_data/riksdagens-protokoll.1950-1959.ak.sparv4.csv.zip'
-    output_folder = "./tests/output"
-    output_tag = "xyz"
-    count_threshold = 5
     n_count = 10000
-
-    corpus = create_bigger_vectorized_corpus(
-        corpus_filename, output_tag=output_tag, output_folder=output_folder, count_threshold=count_threshold
-    )
 
     state = State()
 
     _ = update_state(
         state,
-        corpus=corpus,
-        corpus_folder=output_folder,
-        corpus_tag=output_tag,
+        corpus=bigger_corpus,
+        corpus_folder=OUTPUT_FOLDER,
+        corpus_tag="dummy",
         n_count=n_count,
     )
 
@@ -82,30 +87,6 @@ def test_vectorize_workflow():
     assert isinstance(state.most_deviating, pd.DataFrame)
 
 
-def test_vectorize_workflow2():
-    output_tag = "xyz"
-    count_threshold = 5
-    corpus = create_bigger_vectorized_corpus(
-        BIGGER_CORPUS_FILENAME, output_tag=output_tag, output_folder=OUTPUT_FOLDER, count_threshold=count_threshold
-    )
-    n_count = 10000
-    assert corpus is not None
-
-    state = State()
-
-    _ = update_state(
-        state,
-        corpus=corpus,
-        corpus_folder=OUTPUT_FOLDER,
-        corpus_tag=output_tag,
-        n_count=n_count,
-    )
-
-    assert state.goodness_of_fit is not None
-    assert state.most_deviating_overview is not None
-    assert state.goodness_of_fit is not None
-    assert state.most_deviating is not None
-
 
 def test_compile_multiline_data_with_no_smoothers():
     corpus = create_smaller_vectorized_corpus().group_by_year()
@@ -114,10 +95,10 @@ def test_compile_multiline_data_with_no_smoothers():
 
     assert isinstance(multiline_data, dict)
     assert ["A", "B"] == multiline_data['label']
-    assert [[2013, 2014], [2013, 2014]] == multiline_data['xs']
+    assert all([(x == y).all() for x, y in zip([[2013, 2014], [2013, 2014]], multiline_data['xs'])])
     assert 2 == len(multiline_data['color'])
     assert 2 == len(multiline_data['ys'])
-    assert [[4.0, 6.0], [3.0, 7.0]] == multiline_data['ys']
+    assert all([np.allclose(x,y) for x, y in zip([[4.0, 6.0], [3.0, 7.0]], multiline_data['ys'])])
 
 
 def test_compile_multiline_data_with_smoothers():
@@ -141,8 +122,8 @@ def test_compile_year_token_vector_data_when_corpus_is_grouped_by_year_succeeds(
     indices = [0, 1, 2, 3]
     data = compile_year_token_vector_data(corpus, indices)
     assert isinstance(data, dict)
-    assert all(token in data.keys() for token in ["A", "B", "C", "D"])
-    assert 2 == len(data["B"])
+    assert all(token in data.keys() for token in ["a", "b", "c", "d"])
+    assert 2 == len(data["b"])
 
 
 def test_compile_year_token_vector_data_when_corpus_is_not_grouped_by_year_fails():
