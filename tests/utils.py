@@ -1,8 +1,12 @@
 import os
 from typing import Callable
 
-from penelope.corpus import TextTransformOpts
-from penelope.corpus.readers import TextTokenizer
+import numpy as np
+import pandas as pd
+from penelope.corpus import TextTransformOpts, TokensTransformOpts
+from penelope.corpus.readers import AnnotationOpts, TextTokenizer
+from penelope.corpus.vectorized_corpus import VectorizedCorpus
+from penelope.workflows import vectorize_sparv_csv_corpus_workflow
 
 TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
 OUTPUT_FOLDER = './tests/output'
@@ -42,3 +46,55 @@ def create_text_tokenizer(
     )
     reader = TextTokenizer(source_path, **kwargs)
     return reader
+
+
+def create_smaller_vectorized_corpus():
+    bag_term_matrix = np.array([[2, 1, 4, 1], [2, 2, 3, 0], [2, 3, 2, 0], [2, 4, 1, 1], [2, 0, 1, 1]])
+    token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
+    df = pd.DataFrame({'year': [2013, 2013, 2014, 2014, 2014]})
+    v_corpus = VectorizedCorpus(bag_term_matrix, token2id, df)
+    return v_corpus
+
+
+def create_bigger_vectorized_corpus(
+    corpus_filename: str,
+    output_tag: str = "xyz_nnvb_lemma",
+    output_folder: str = "./tests/output",
+    count_threshold: int = 5,
+):
+    filename_field = r"year:prot\_(\d{4}).*"
+    count_threshold = 5
+    output_tag = f"{output_tag}_nnvb_lemma"
+    annotation_opts = AnnotationOpts(
+        pos_includes="|NN|PM|UO|PC|VB|",
+        pos_excludes="|MAD|MID|PAD|",
+        passthrough_tokens=[],
+        lemmatize=True,
+        append_pos=False,
+    )
+    tokens_transform_opts = TokensTransformOpts(
+        only_alphabetic=False,
+        only_any_alphanumeric=False,
+        to_lower=True,
+        to_upper=False,
+        min_len=1,
+        max_len=None,
+        remove_accents=False,
+        remove_stopwords=True,
+        stopwords=None,
+        extra_stopwords=["Örn"],
+        language="swedish",
+        keep_numerals=True,
+        keep_symbols=True,
+    )
+    corpus = vectorize_sparv_csv_corpus_workflow(
+        input_filename=corpus_filename,
+        output_folder=output_folder,
+        output_tag=output_tag,
+        filename_field=filename_field,
+        count_threshold=count_threshold,
+        annotation_opts=annotation_opts,
+        tokens_transform_opts=tokens_transform_opts,
+    )
+
+    return corpus
