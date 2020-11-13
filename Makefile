@@ -93,7 +93,7 @@ pylint2:
 
 flake8:
 	@poetry run flake8 --version
-	@poetry run flake8
+	@poetry run flake8 $(SOURCE_FOLDERS)
 
 isort:
 	@poetry run isort --profile black --float-to-top --line-length 120 --py 38 $(SOURCE_FOLDERS)
