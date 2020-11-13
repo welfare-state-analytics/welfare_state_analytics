@@ -227,9 +227,9 @@ holoviews==1.13.5; python_version >= "2.7" \
 humanfriendly==8.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0") \
     --hash=sha256:e78960b31198511f45fd455534ae7645a6207d33e512d2e842c766d15d9c8080 \
     --hash=sha256:bf52ec91244819c780341a3438d5d7b09f431d3f113a475147ac9b7b167a3d12
-humlab-penelope==0.2.24; python_full_version >= "3.8.0" and python_full_version < "4.0.0" \
-    --hash=sha256:67bb3a8986a7e79af1dca9a10ea745a098a8dbfd68f5afebda05d0dec71d1fb3 \
-    --hash=sha256:1fa4ffd670f373712c2d374de2635fedbc98c6a4dd5e9b386a6fa80f259c97b6
+humlab-penelope==0.2.28; python_full_version >= "3.8.0" and python_full_version < "4.0.0" \
+    --hash=sha256:9d72dfac3b3757989527ccbf72b8c04c82defe408bc3a0210b655751c238819d \
+    --hash=sha256:d651d06645d9198bbbedaa82f37714048e542cb43c3afca313dac1b378697ba1
 idna==2.10; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" \
     --hash=sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0 \
     --hash=sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6
