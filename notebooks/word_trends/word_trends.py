@@ -23,15 +23,18 @@
 # %%
 # %load_ext autoreload
 # %autoreload 2
+
+# %%
+
 import importlib
 
+import numpy as np
+import pandas as pd
 import penelope.notebook.load_vectorized_corpus_gui as load_corpus_gui
 import penelope.notebook.utility as notebook_utility
 import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui
 from bokeh.plotting import output_notebook
-
-import __paths__  # pylint: disable=unused-import
-from notebooks.word_trends.gui_callback import loaded_callback
+from penelope.notebook.word_trends.loaded_callback import loaded_callback
 
 output_notebook(hide_banner=True)
 
@@ -43,7 +46,28 @@ importlib.reload(notebook_utility)
 
 # %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
 importlib.reload(vectorize_corpus_gui)
-vectorize_corpus_gui.display_gui('*sparv4.csv.zip', generated_callback=loaded_callback)
+
+data = None
+
+
+def loaded_callback_wrapper(
+    output,
+    *,
+    corpus=None,
+    corpus_folder: str = None,
+    corpus_tag: str = None,
+    n_count: int = 10000,
+    **kwargs,
+):
+    global data
+    data = locals()
+    loaded_callback(
+        output, corpus=corpus, corpus_folder=corpus_folder, corpus_tag=corpus_tag, n_count=n_count, **kwargs
+    )
+
+
+vectorize_corpus_gui.display_gui('*sparv4.csv.zip', generated_callback=loaded_callback_wrapper)
+
 
 # %%
 load_corpus_gui.display_gui(loaded_callback=loaded_callback)
