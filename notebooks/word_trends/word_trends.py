@@ -28,8 +28,6 @@
 
 import importlib
 
-import numpy as np
-import pandas as pd
 import penelope.notebook.load_vectorized_corpus_gui as load_corpus_gui
 import penelope.notebook.utility as notebook_utility
 import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui

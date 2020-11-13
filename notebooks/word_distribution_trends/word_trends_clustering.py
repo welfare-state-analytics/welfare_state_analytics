@@ -37,7 +37,7 @@ import ipywidgets
 import penelope.common.goodness_of_fit as gof
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 import penelope.notebook.cluster_analysis_gui as cluster_analysis_gui
-import penelope.notebook.word_trend_plot_gui as word_trend_plot_gui
+import penelope.notebook.word_trends.word_trend_plot_gui as word_trend_plot_gui
 from bokeh.plotting import output_notebook
 from IPython.display import display
 
