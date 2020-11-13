@@ -77,8 +77,7 @@ wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
 ipyfilechooser = "^0.4.0"
-
-humlab-penelope = {path = "../../penelope", develop = true}
+humlab-penelope = "^0.2.28"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -106,6 +105,7 @@ yapf = "==0.*,>=0.30.0"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
 # concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
 
+# edit mode: humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.pytest.ini_options]
 minversion = "6.0"
