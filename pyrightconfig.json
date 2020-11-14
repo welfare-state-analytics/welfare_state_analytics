@@ -6,8 +6,7 @@
     ],
     "exclude": [
         "**/deprecated",
-        "**/.ipynb_checkpoints",
-        ".git"
+        "**/.ipynb_checkpoints"
     ],
     "reportMissingImports": true,
     "reportMissingTypeStubs": false,
