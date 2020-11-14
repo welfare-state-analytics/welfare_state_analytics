@@ -5,12 +5,8 @@ import pandas as pd
 import pytest
 from penelope.common.curve_fit import pchip_spline, rolling_average_smoother
 from penelope.notebook.utility import OutputsTabExt
-from penelope.notebook.word_trends.displayers.data_compilers import (
-    PenelopeBugCheck,
-    compile_multiline_data,
-    compile_year_token_vector_data,
-)
-from penelope.notebook.word_trends.loaded_callback import State, build_layout, update_state
+from penelope.notebook.word_trends.displayers._displayer import MultiLineDataMixin, PenelopeBugCheck, YearTokenDataMixin
+from penelope.notebook.word_trends.loaded_callback import WordTrendData, build_layout, update_trend_data
 
 from tests.utils import create_bigger_vectorized_corpus, create_smaller_vectorized_corpus
 
@@ -37,7 +33,7 @@ def bigger_corpus():
 def test_build_layout():
 
     # FIXME: Use mocks/patches!
-    state = State(
+    data = WordTrendData(
         compute_options={},
         corpus=None,
         corpus_folder="",
@@ -62,7 +58,7 @@ def test_build_layout():
         most_deviating_overview=pd.DataFrame(data={'l2_norm_token': [], 'l2_norm': [], 'abs_l2_norm': []}),
     )
 
-    w: OutputsTabExt = build_layout(state=state)
+    w: OutputsTabExt = build_layout(data=data)
 
     assert w is not None and isinstance(w, OutputsTabExt)
     assert len(w.children) == 2
@@ -73,26 +69,23 @@ def test_vectorize_workflow(bigger_corpus):  # pylint: disable=redefined-outer-n
 
     n_count = 10000
 
-    state = State()
-
-    _ = update_state(
-        state,
+    data = update_trend_data(
         corpus=bigger_corpus,
         corpus_folder=OUTPUT_FOLDER,
         corpus_tag="dummy",
         n_count=n_count,
     )
 
-    assert isinstance(state.goodness_of_fit, pd.DataFrame)
-    assert isinstance(state.most_deviating_overview, pd.DataFrame)
-    assert isinstance(state.goodness_of_fit, pd.DataFrame)
-    assert isinstance(state.most_deviating, pd.DataFrame)
+    assert isinstance(data.goodness_of_fit, pd.DataFrame)
+    assert isinstance(data.most_deviating_overview, pd.DataFrame)
+    assert isinstance(data.goodness_of_fit, pd.DataFrame)
+    assert isinstance(data.most_deviating, pd.DataFrame)
 
 
 def test_compile_multiline_data_with_no_smoothers():
     corpus = create_smaller_vectorized_corpus().group_by_year()
     indices = [0, 1]
-    multiline_data = compile_multiline_data(corpus, indices, smoothers=None)
+    multiline_data = MultiLineDataMixin().compile(corpus, indices, smoothers=None)
 
     assert isinstance(multiline_data, dict)
     assert ["A", "B"] == multiline_data['label']
@@ -106,7 +99,7 @@ def test_compile_multiline_data_with_smoothers():
     corpus = create_smaller_vectorized_corpus().group_by_year()
     indices = [0, 1, 2, 3]
     smoothers = [pchip_spline, rolling_average_smoother('nearest', 3)]
-    multiline_data = compile_multiline_data(corpus, indices, smoothers=smoothers)
+    multiline_data = MultiLineDataMixin().compile(corpus, indices, smoothers=smoothers)
 
     assert isinstance(multiline_data, dict)
     assert ["A", "B", "C", "D"] == multiline_data['label']
@@ -121,7 +114,7 @@ def test_compile_multiline_data_with_smoothers():
 def test_compile_year_token_vector_data_when_corpus_is_grouped_by_year_succeeds():
     corpus = create_smaller_vectorized_corpus().group_by_year()
     indices = [0, 1, 2, 3]
-    data = compile_year_token_vector_data(corpus, indices)
+    data = YearTokenDataMixin().compile(corpus, indices)
     assert isinstance(data, dict)
     assert all(token in data.keys() for token in ["a", "b", "c", "d"])
     assert len(data["b"]) == 2
@@ -131,4 +124,4 @@ def test_compile_year_token_vector_data_when_corpus_is_not_grouped_by_year_fails
     corpus = create_smaller_vectorized_corpus()
     indices = [0, 1, 2, 3]
     with pytest.raises(PenelopeBugCheck):
-        _ = compile_year_token_vector_data(corpus, indices)
+        _ = YearTokenDataMixin().compile(corpus, indices)
