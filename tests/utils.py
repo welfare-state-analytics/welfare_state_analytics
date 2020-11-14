@@ -6,7 +6,7 @@ import pandas as pd
 from penelope.corpus import TextTransformOpts, TokensTransformOpts
 from penelope.corpus.readers import AnnotationOpts, TextTokenizer
 from penelope.corpus.vectorized_corpus import VectorizedCorpus
-from penelope.workflows import vectorize_sparv_csv_corpus_workflow
+from penelope.workflows import vectorize_corpus_workflow
 
 TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
 OUTPUT_FOLDER = './tests/output'
@@ -87,10 +87,12 @@ def create_bigger_vectorized_corpus(
         keep_numerals=True,
         keep_symbols=True,
     )
-    corpus = vectorize_sparv_csv_corpus_workflow(
+    corpus = vectorize_corpus_workflow(
+        corpus_type="sparv4-csv",
         input_filename=corpus_filename,
         output_folder=output_folder,
         output_tag=output_tag,
+        create_subfolder=True,
         filename_field=filename_field,
         count_threshold=count_threshold,
         annotation_opts=annotation_opts,
