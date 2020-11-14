@@ -7,7 +7,7 @@ from penelope.co_occurrence import filter_co_coccurrences_by_global_threshold, l
 from penelope.co_occurrence.concept_co_occurrence import to_vectorized_corpus
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
 
-from notebooks.concept_co_occurrences.gui_callback import State, build_layout, update_state
+from notebooks.concept_co_occurrences.loaded_callback import CoOccurrenceData, build_layout, compile_data
 from tests.utils import TEST_DATA_FOLDER
 
 
@@ -67,9 +67,7 @@ def test_update_state_with_corpus_passed_succeeds():
     co_occurrences = load_co_occurrences(filename)
     corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
 
-    state = State()
-    _ = update_state(
-        state,
+    data = compile_data(
         corpus=corpus,
         corpus_folder=None,
         corpus_tag=None,
@@ -77,9 +75,9 @@ def test_update_state_with_corpus_passed_succeeds():
         compute_options=compute_options,
     )
 
-    assert state.goodness_of_fit == 42
-    assert state.most_deviating == 42
-    assert state.most_deviating_overview == 42
+    assert data.goodness_of_fit == 42
+    assert data.most_deviating == 42
+    assert data.most_deviating_overview == 42
 
 
 @patch('penelope.common.goodness_of_fit.compile_most_deviating_words', generic_patch)
@@ -88,11 +86,8 @@ def test_update_state_when_only_one_year_should_fail():
     co_occurrences = simple_co_occurrences().query('year == 1976')
     corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
 
-    state = State()
-
     with pytest.raises(GoodnessOfFitComputeError):
-        _ = update_state(
-            state,
+        _ = compile_data(
             corpus=corpus,
             corpus_folder=None,
             corpus_tag=None,
@@ -105,7 +100,7 @@ def test_update_state_when_only_one_year_should_fail():
 def test_build_layout():
     co_occurrences = simple_co_occurrences()
     corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
-    state = State(
+    state = CoOccurrenceData(
         corpus=corpus,
         concept_co_occurrences=co_occurrences,
         compute_options={},
