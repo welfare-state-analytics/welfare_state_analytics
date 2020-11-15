@@ -32,6 +32,7 @@ import penelope.notebook.load_co_occurrences_gui as load_gui
 from bokeh.plotting import output_notebook
 
 import __paths__  # pylint: disable=unused-import
+
 from .loaded_callback import loaded_callback
 
 warnings.filterwarnings("ignore", category=FutureWarning)

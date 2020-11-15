@@ -37,9 +37,9 @@ import ipywidgets
 import penelope.common.goodness_of_fit as gof
 import penelope.corpus.vectorized_corpus as vectorized_corpus
 import penelope.notebook.cluster_analysis_gui as cluster_analysis_gui
-from penelope.notebook.word_trends import word_trends_pick_gui
 from bokeh.plotting import output_notebook
 from IPython.display import display
+from penelope.notebook.word_trends import word_trends_pick_gui
 
 root_folder = __paths__.ROOT_FOLDER
 corpus_folder = os.path.join(root_folder, "output")
