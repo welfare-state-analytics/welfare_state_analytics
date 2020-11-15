@@ -6,7 +6,7 @@ import ipywidgets
 import pandas as pd
 import penelope.common.goodness_of_fit as gof
 import penelope.notebook.utility as notebook_utility
-import penelope.notebook.word_trends as word_trends_pick_gui
+from penelope.notebook.word_trends import word_trends_pick_gui
 from penelope.co_occurrence.concept_co_occurrence import to_vectorized_corpus
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
 from penelope.corpus import VectorizedCorpus
