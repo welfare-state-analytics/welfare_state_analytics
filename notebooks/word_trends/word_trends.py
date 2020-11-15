@@ -29,7 +29,7 @@
 import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui
 import penelope.notebook.vectorized_corpus_load_gui as load_corpus_gui
 from bokeh.plotting import output_notebook
-from penelope.notebook.word_trends.loaded_callback import loaded_callback
+from penelope.notebook.word_trends import loaded_callback
 
 output_notebook()
 
