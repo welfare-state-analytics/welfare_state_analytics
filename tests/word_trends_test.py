@@ -5,13 +5,13 @@ import pandas as pd
 import pytest
 from penelope.common.curve_fit import pchip_spline, rolling_average_smoother
 from penelope.notebook.utility import OutputsTabExt
+from penelope.notebook.word_trends.display_word_trends import build_layout, update_trend_data
 from penelope.notebook.word_trends.displayers._displayer import (
     MultiLineDataMixin,
     PenelopeBugCheck,
     WordTrendData,
     YearTokenDataMixin,
 )
-from penelope.notebook.word_trends.loaded_callback import build_layout, update_trend_data
 
 from tests.utils import create_bigger_vectorized_corpus, create_smaller_vectorized_corpus
 
