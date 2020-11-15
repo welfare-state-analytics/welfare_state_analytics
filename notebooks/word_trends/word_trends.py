@@ -29,14 +29,14 @@
 import penelope.notebook.vectorize_corpus_gui as vectorize_corpus_gui
 import penelope.notebook.vectorized_corpus_load_gui as load_corpus_gui
 from bokeh.plotting import output_notebook
-from penelope.notebook.word_trends import loaded_callback
+from penelope.notebook.word_trends import display_word_trends
 
 output_notebook()
 
 # %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
 
-vectorize_corpus_gui.display_gui('*sparv4.csv.zip', generated_callback=loaded_callback)
+vectorize_corpus_gui.display_gui('*sparv4.csv.zip', generated_callback=display_word_trends)
 
 
 # %%
-load_corpus_gui.display_gui(loaded_callback=loaded_callback)
+load_corpus_gui.display_gui(loaded_callback=display_word_trends)
