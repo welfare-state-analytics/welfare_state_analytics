@@ -129,15 +129,10 @@ nltk_data:
 spacy_data:
 	@poetry run python -m spacy download en
 
-gh:
-	@sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-	@sudo apt-add-repository https://cli.github.com/packages
-	@sudo apt update && sudo apt install gh
-
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
-# Create a paired `py` file for all `ipynb` that doesn't have a crorresponding `py` file
+# Create a paired `py` file for all `ipynb` that doesn't have a corresponding `py` file
 pair_ipynb: $(PY_FILES)
 	@echo "hello"
 
@@ -201,6 +196,11 @@ pre_commit_ipynb:
 
 requirements.txt: poetry.lock
 	@poetry export -f requirements.txt --output requirements.txt
+
+gh:
+	@sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+	@sudo apt-add-repository https://cli.github.com/packages
+	@sudo apt update && sudo apt install gh
 
 check-gh: gh-exists
 gh-exists: ; @which gh > /dev/null
