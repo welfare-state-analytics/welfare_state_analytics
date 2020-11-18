@@ -9,7 +9,8 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid.grid import Grid
 from IPython.display import display
-from penelope.notebook.ipyaggrid_utility import DEFAULT_GRID_OPTIONS, DEFAULT_GRID_STYLE
+
+from .display_topic_titles import display_as_grid
 
 from notebooks.common.model_container import TopicModelContainer
 from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
@@ -18,23 +19,6 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 logger = utility.get_logger()
-
-
-def display_as_grid(df):
-
-    column_defs = [
-        {"headerName": "Topic", "field": "topic_id"},
-        {"headerName": "Tokens", "field": "tokens"},
-        {
-            "headerName": "alpha",
-            "field": "alpha",
-            "cellRenderer": "function(params) { return params.value.toFixed(6); }",
-        },
-    ]
-
-    grid_options = dict(columnDefs=column_defs, **DEFAULT_GRID_OPTIONS)
-    g = Grid(grid_data=df, grid_options=grid_options, **DEFAULT_GRID_STYLE)
-    display(g)
 
 
 # FIXME: #94 Column 'year' is missing in `documents` in model metadata (InferredTopicsData)
@@ -81,7 +65,8 @@ def load_model(
     #     [dict(selector='td', props=[('text-align', 'left')])]
     # )
 
-    display_as_grid(topics)
+    g = display_as_grid(topics)
+    display(g)
 
 
 def display_gui(corpus_folder: str, state: TopicModelContainer):
