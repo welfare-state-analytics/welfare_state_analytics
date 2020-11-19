@@ -12,11 +12,13 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
+from .utils import display_document_topics_as_grid
 
 from notebooks.common import TopicModelContainer
 
 logger = utility.getLogger("westac")
 
+#FIXME: Consolidate document topic network files
 
 def plot_document_topic_network(
     network, layout, scale=1.0, titles=None
@@ -91,28 +93,6 @@ def plot_document_topic_network(
     return p
 
 
-def display_as_grid(df):
-
-    column_defs = [
-        {"headerName": "Index", "field": "index"},
-        {"headerName": "Document_Id", "field": "document_id"},
-        {"headerName": "Topic_Id", "field": "topic_id"},
-        {
-            "headerName": "Weight",
-            "field": "weight",
-            "cellRenderer": "function(params) { return params.value.toFixed(6); }",
-        },
-        {"headerName": "Filename", "field": "filename"},
-        {"headerName": "N_Raw_Tokens", "field": "n_raw_tokens"},
-        {"headerName": "N_Tokens", "field": "n_tokens"},
-        {"headerName": "N_Terms", "field": "n_terms"},
-        {"headerName": "Year", "field": "year", "cellRenderer": None},
-        {"headerName": "Title", "field": "title"},
-    ]
-
-    grid_options = dict(columnDefs=column_defs, **ipyaggrid_utility.DEFAULT_GRID_OPTIONS)
-    g = Grid(grid_data=df, grid_options=grid_options, **ipyaggrid_utility.DEFAULT_GRID_STYLE)
-    display(g)
 
 
 def display_document_topic_network(  # pylint: disable=too-many-locals)
@@ -170,7 +150,7 @@ def display_document_topic_network(  # pylint: disable=too-many-locals)
         bokeh.plotting.show(p)
 
     elif output_format == "table":
-        display_as_grid(df)
+        display_document_topics_as_grid(df)
 
     tick(0)
 
