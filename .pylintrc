@@ -1,5 +1,4 @@
 [MASTER]
-ignore-patterns=corpus_data.py
 init-hook='import sys, os; sys.path.append((lambda d: os.path.join(os.getcwd().split(d)[0], d))("welfare_state_analytics"))'
 jobs=0
 
