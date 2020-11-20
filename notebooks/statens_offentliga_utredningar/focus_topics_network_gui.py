@@ -6,15 +6,16 @@ import ipywidgets as widgets
 import penelope.network.metrics as network_metrics
 import penelope.network.plot_utility as network_plot
 import penelope.network.utility as network_utility
-from penelope.utility.utils import extract_counter_items_within_threshold
-from .utils import display_document_topics_as_grid
 import penelope.notebook.widgets_utils as widget_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
+from penelope.utility.utils import extract_counter_items_within_threshold
 
 from notebooks.common import TopicModelContainer
+
+from .utils import display_document_topics_as_grid
 
 logger = utility.getLogger("westac")
 
@@ -105,7 +106,6 @@ def plot_document_topic_network(
     )
 
     return p
-
 
 
 def display_document_topic_network(  # pylint: disable=too-many-locals)

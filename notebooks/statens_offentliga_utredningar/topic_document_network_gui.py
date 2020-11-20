@@ -12,13 +12,15 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from ipyaggrid import Grid
 from IPython.display import display
-from .utils import display_document_topics_as_grid
 
 from notebooks.common import TopicModelContainer
 
+from .utils import display_document_topics_as_grid
+
 logger = utility.getLogger("westac")
 
-#FIXME: Consolidate document topic network files
+# FIXME: Consolidate document topic network files
+
 
 def plot_document_topic_network(
     network, layout, scale=1.0, titles=None
@@ -91,8 +93,6 @@ def plot_document_topic_network(
     )
 
     return p
-
-
 
 
 def display_document_topic_network(  # pylint: disable=too-many-locals)
