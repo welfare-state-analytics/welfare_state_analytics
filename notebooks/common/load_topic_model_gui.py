@@ -7,13 +7,13 @@ import ipywidgets as widgets
 import numpy as np
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
-from ipyaggrid.grid import Grid
 from IPython.display import display
 
-from .display_topic_titles import display_as_grid
-
+from notebooks.common.display_topic_titles import DisplayPandasGUI
 from notebooks.common.model_container import TopicModelContainer
 from notebooks.political_in_newspapers.corpus_data import extend_with_document_info
+
+from . import display_topic_titles
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -53,7 +53,7 @@ def load_model(
     model_infos = model_infos or topic_modelling.find_models(corpus_folder)
     model_info = next(x for x in model_infos if x["name"] == model_name)
 
-    inferred_model = topic_modelling.load_model(model_info["folder"])
+    inferred_model = topic_modelling.load_model(model_info["folder"], lazy=True)
     inferred_topics = topic_modelling.InferredTopicsData.load(jj(corpus_folder, model_info["name"]))
 
     inferred_topics = temporary_bug_fixupdate_documents(inferred_topics)
@@ -65,8 +65,10 @@ def load_model(
     #     [dict(selector='td', props=[('text-align', 'left')])]
     # )
 
-    g = display_as_grid(topics)
-    display(g)
+    if topics is None:
+        raise ValueError("bug-check: No topic_token_overview in loaded model!")
+
+    display_topic_titles.display_gui(topics, DisplayPandasGUI)
 
 
 def display_gui(corpus_folder: str, state: TopicModelContainer):
