@@ -54,16 +54,17 @@ class TopicModelContainer:
         return self.inferred_topics.id2word
 
     @property
-    def num_topics(self):
-        model = self.inferred_model.topic_model
-        if model is None:
-            return 0
-        if hasattr(model, 'num_topics'):
-            return model.num_topics
-        if hasattr(model, 'n_topics'):
-            return model.n_topics
+    def num_topics(self) -> int:
+        return int(self.inferred_topics.topic_token_overview.index.max()) + 1
+        # model = self.inferred_model.topic_model
+        # if model is None:
+        #     return 0
+        # if hasattr(model, 'num_topics'):
+        #     return model.num_topics
+        # if hasattr(model, 'n_topics'):
+        #     return model.n_topics
 
-        return 0
+        # return 0
 
     # @property
     # def relevant_topics(self):
