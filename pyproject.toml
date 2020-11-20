@@ -77,9 +77,8 @@ wordcloud = "*"
 xlrd = "*"
 xmltodict = "*"
 ipyfilechooser = "^0.4.0"
+humlab-penelope = {path = "../../penelope"}
 
-humlab-penelope = "^0.2.30"
-# LEAVE THIS COMMENT, edit mode: humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -101,6 +100,7 @@ pytest = "*"
 pytest-cov = "==2.*,>=2.10.1"
 rope = "*"
 yapf = "==0.*,>=0.30.0"
+humlab-penelope = { path = "../../penelope", develop = true}
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
@@ -161,7 +161,7 @@ known_first_party = [ "__paths__" ]
 # https://github.com/nedbat/coveragepy
 
     [tool.coverage.run]
-    source = ["penelope"]
+    source = ["notebooks"]
     branch = true
     omit = ['']
 
