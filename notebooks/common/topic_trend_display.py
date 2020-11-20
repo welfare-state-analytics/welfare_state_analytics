@@ -5,7 +5,9 @@ import bokeh
 import bokeh.plotting
 import numpy as np
 import pandas as pd
+import penelope.notebook.ipyaggrid_utility as ipyaggrid_utility
 import penelope.utility as utility
+from IPython.display import display as IPython_display
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -54,7 +56,8 @@ def display(
     if len(df) == 0:
         print('No data to display for this topic and theshold')
     elif output_format == 'Table':
-        print(df)
+        g = ipyaggrid_utility.display_grid(df)
+        IPython_display(g)
     else:
         p = _plot(df, 'year', aggregate, **figopts)
         bokeh.plotting.show(p)

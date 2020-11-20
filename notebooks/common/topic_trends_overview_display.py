@@ -3,6 +3,7 @@ import warnings
 import bokeh
 import bokeh.plotting
 import bokeh.transform
+import penelope.notebook.ipyaggrid_utility as ipyaggrid_utility
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.utility as utility
 from IPython.display import display
@@ -143,7 +144,8 @@ def display_heatmap(
             bokeh.plotting.show(p)
 
         else:
-            display(weights)
+            g = ipyaggrid_utility.display_grid(weights)
+            display(g)
 
     except Exception as ex:
         # raise
