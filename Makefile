@@ -46,7 +46,9 @@ guard_clean_working_repository:
 	fi
 
 version:
-	@echo $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g")
+	@poetry version
+	@poetry env info -p
+	# @echo $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g")
 
 tools:
 	@pip install --upgrade pip --quiet
@@ -56,8 +58,13 @@ penelope-pypi:
 	@poetry remove humlab-penelope
 	@poetry add humlab-penelope
 
+.ONESHELL: penelope-edit-mode
 penelope-edit-mode:
-	@poetry install --develop ../../penelope
+	@poetry remove humlab-penelope
+	@poetry add ../../penelope
+	@cp -f pyproject.toml pyproject.sav
+	@sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
+	@cp -f /tmp/pyproject.tmp pyproject.toml
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
