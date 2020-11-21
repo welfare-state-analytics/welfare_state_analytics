@@ -70,53 +70,6 @@ def load_meta_text_blocks_as_data_frame(corpus_folder):
     return df_meta
 
 
-def load_documents(corpus_folder, force=False):
-    """ Load documents data, source "dtm1.rds", arrays drm$dimnames[1] """
-
-    processed_filename = os.path.join(corpus_folder, document_processed_filename)
-
-    if not os.path.isfile(processed_filename) or force:
-
-        filename = os.path.join(corpus_folder, document_dataset_filename)
-
-        df_document = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False)
-        df_document.columns = ["doc_id"]
-        df_document.index.name = 'id'
-
-        # Add publication and date
-        df_censured_text = load_censured_text_as_data_frame(corpus_folder)
-        df_document = pd.merge(
-            df_document,
-            df_censured_text[['doc_id', 'publication', 'date']],
-            how='inner',
-            left_on='doc_id',
-            right_on='doc_id',
-        )
-
-        # Add pred_bodytext
-        df_meta = load_meta_text_blocks_as_data_frame(corpus_folder)
-        df_document = pd.merge(df_document, df_meta, how='inner', left_on='doc_id', right_index=True)
-
-        # Add year
-        df_document['date'] = pd.to_datetime(df_document.date)
-        df_document['year'] = df_document.date.dt.year
-        df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
-
-        df_document.to_csv(
-            processed_filename, compression='zip', header=True, sep=',', quotechar='"', index=True, index_label="id"
-        )
-
-    else:
-        # loading cached...
-        df_document = pd.read_csv(
-            processed_filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False, index_col="id"
-        )
-        if 'publication_id' not in df_document.columns:
-            df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
-
-    return df_document
-
-
 def load(corpus_folder):
 
     df_corpus = load_corpus_dtm_as_data_frame(corpus_folder)
@@ -231,3 +184,51 @@ def extend_with_document_info(df, documents):
     """ Adds document meta data to given data frame (must have a document_id) """
     df = df.merge(documents, how='inner', left_on='document_id', right_index=True)
     return df
+
+
+# pylint: skip-file
+def load_documents(corpus_folder, force=False):
+    """ Load documents data, source "dtm1.rds", arrays drm$dimnames[1] """
+
+    processed_filename = os.path.join(corpus_folder, document_processed_filename)
+
+    if not os.path.isfile(processed_filename) or force:
+
+        filename = os.path.join(corpus_folder, document_dataset_filename)
+
+        df_document = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False)
+        df_document.columns = ["doc_id"]
+        df_document.index.name = 'id'
+
+        # Add publication and date
+        df_censured_text = load_censured_text_as_data_frame(corpus_folder)
+        df_document = pd.merge(
+            df_document,
+            df_censured_text[['doc_id', 'publication', 'date']],
+            how='inner',
+            left_on='doc_id',
+            right_on='doc_id',
+        )
+
+        # Add pred_bodytext
+        df_meta = load_meta_text_blocks_as_data_frame(corpus_folder)
+        df_document = pd.merge(df_document, df_meta, how='inner', left_on='doc_id', right_index=True)
+
+        # Add year
+        df_document['date'] = pd.to_datetime(df_document.date)
+        df_document['year'] = df_document.date.dt.year
+        df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+
+        df_document.to_csv(
+            processed_filename, compression='zip', header=True, sep=',', quotechar='"', index=True, index_label="id"
+        )
+
+    else:
+        # loading cached...
+        df_document = pd.read_csv(
+            processed_filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False, index_col="id"
+        )
+        if 'publication_id' not in df_document.columns:
+            df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+
+    return df_document
