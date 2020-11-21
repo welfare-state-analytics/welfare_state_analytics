@@ -24,23 +24,20 @@
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import bokeh.plotting
+import penelope.notebook.topic_modelling as gui
 from IPython.core.interactiveshell import InteractiveShell
 
-import notebooks.common.load_topic_model_gui as load_gui
-import notebooks.common.topic_word_distribution_gui as topic_word_distribution_gui
-import notebooks.common.topic_wordcloud_gui as wordcloud_gui
 import notebooks.political_in_newspapers.notebook_gui.publication_topic_network_gui as publication_topic_network_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_document_texts_gui as texts_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_topic_network_gui as topic_topic_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_trends_overview_gui as overview_gui
-from notebooks.common import TopicModelContainer
 
 InteractiveShell.ast_node_interactivity = "all"
 
 # %matplotlib inline
 
-current_state = TopicModelContainer.singleton
+current_state = gui.TopicModelContainer.singleton
 bokeh.plotting.output_notebook()
 
 # %% [markdown]
@@ -48,7 +45,7 @@ bokeh.plotting.output_notebook()
 
 # %%
 
-load_gui.display_gui('/data/westac/political_in_newspapers', current_state())
+gui.display_load_topic_model_gui('/data/westac/political_in_newspapers', current_state())
 # load_gui.load_model(corpus_folder, current_state(), 'test.4days')
 
 # %% [markdown]
@@ -57,7 +54,7 @@ load_gui.display_gui('/data/westac/political_in_newspapers', current_state())
 # %%
 
 try:
-    wordcloud_gui.display_gui(current_state())
+    gui.display_topic_wordcloud_gui(current_state())
 except Exception as ex:
     print(ex)
 
@@ -68,7 +65,7 @@ except Exception as ex:
 # %%
 
 try:
-    topic_word_distribution_gui.display_gui(current_state())
+    gui.display_topic_word_distribution_gui(current_state())
     # topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
 except Exception as ex:
     print(ex)

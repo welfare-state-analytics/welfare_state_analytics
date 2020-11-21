@@ -13,9 +13,9 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+from penelope.notebook.topic_modelling import TopicModelContainer
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import TopicModelContainer
 
 TEXT_ID = 'nx_pub_topic'
 
@@ -87,6 +87,7 @@ def display_document_topic_network(
     document_topic_weights = state.inferred_topics.document_topic_weights
 
     titles = topic_modelling.get_topic_titles(topic_token_weights)
+    period = period or []
 
     df = document_topic_weights
     if len(period or []) == 2:

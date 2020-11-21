@@ -1,50 +1,77 @@
-import types
 import warnings
+from dataclasses import dataclass
 
 import ipywidgets as widgets
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+from penelope.notebook.topic_modelling import TopicModelContainer, display_topic_trends
 
-import notebooks.common.topic_trend_display as topic_trend_display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+TEXT_ID = 'topic_share_plot'
+
+
+@dataclass
+class GUI:  # pylint: disable=too-many-instance-attributes
+
+    text = widgets_utils.text_widget(TEXT_ID)
+    n_topics = None
+    text_id = TEXT_ID
+
+    publication_id = widgets.Dropdown(
+        description='Publication',
+        options=utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None}),
+        value=None,
+        layout=widgets.Layout(width="200px"),
+    )
+    aggregate = widgets.Dropdown(
+        description='Aggregate',
+        options=[(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS],
+        value='true_mean',
+        layout=widgets.Layout(width="200px"),
+    )
+    normalize = widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px"))
+    topic_id = widgets.IntSlider(description='Topic ID', min=0, max=999, step=1, value=0, continuous_update=False)
+    output_format = widgets.Dropdown(
+        description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")
+    )
+    progress = widgets.IntProgress(min=0, max=4, step=1, value=0)
+    output = widgets.Output()
+    prev_topic_id = None
+    next_topic_id = None
+
+    def layout(self):
+        return widgets.VBox(
+            [
+                widgets.HBox(
+                    [
+                        widgets.VBox(
+                            [
+                                widgets.HBox([self.prev_topic_id, self.next_topic_id]),
+                                self.progress,
+                            ]
+                        ),
+                        widgets.VBox([self.topic_id]),
+                        widgets.VBox([self.publication_id]),
+                        widgets.VBox([self.aggregate, self.output_format]),
+                        widgets.VBox([self.normalize]),
+                    ]
+                ),
+                self.text,
+                self.output,
+            ]
+        )
+
 
 def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disable=unused-argument
 
-    text_id = 'topic_share_plot'
-    publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-
-    weighings = [(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS]
-
-    gui = types.SimpleNamespace(
-        n_topics=state.num_topics,
-        text_id=text_id,
-        text=widgets_utils.text_widget(text_id),
-        publication_id=widgets.Dropdown(
-            description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")
-        ),
-        aggregate=widgets.Dropdown(
-            description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="200px")
-        ),
-        normalize=widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px")),
-        topic_id=widgets.IntSlider(
-            description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
-        ),
-        output_format=widgets.Dropdown(
-            description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")
-        ),
-        progress=widgets.IntProgress(min=0, max=4, step=1, value=0),
-        output=widgets.Output(),
-        prev_topic_id=None,
-        next_topic_id=None,
-    )
-
+    gui = GUI()
+    gui.topic_id.max = state.num_topics - 1
     gui.prev_topic_id = widgets_utils.button_with_previous_callback(gui, 'topic_id', state.num_topics)
     gui.next_topic_id = widgets_utils.button_with_next_callback(gui, 'topic_id', state.num_topics)
 
@@ -82,7 +109,7 @@ def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disab
 
             weights = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
 
-            topic_trend_display.display(
+            display_topic_trends(
                 weight_over_time=weights,
                 topic_id=gui.topic_id.value,
                 year_range=state.inferred_topics.year_period,
@@ -97,27 +124,6 @@ def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disab
     gui.aggregate.observe(update_handler, names='value')
     gui.output_format.observe(update_handler, names='value')
 
-    display(
-        widgets.VBox(
-            [
-                widgets.HBox(
-                    [
-                        widgets.VBox(
-                            [
-                                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
-                                gui.progress,
-                            ]
-                        ),
-                        widgets.VBox([gui.topic_id]),
-                        widgets.VBox([gui.publication_id]),
-                        widgets.VBox([gui.aggregate, gui.output_format]),
-                        widgets.VBox([gui.normalize]),
-                    ]
-                ),
-                gui.text,
-                gui.output,
-            ]
-        )
-    )
+    display(gui.layout)
 
     update_handler()

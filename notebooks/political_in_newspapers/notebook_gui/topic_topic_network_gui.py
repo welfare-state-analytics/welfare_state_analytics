@@ -7,10 +7,9 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+from penelope.notebook.topic_modelling import TopicModelContainer, display_topic_topic_network
 
-import notebooks.common.topic_topic_network_display as topic_topic_network_display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import TopicModelContainer
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -82,7 +81,7 @@ def display_gui(state: TopicModelContainer):
         tick(1)
         with gui.output:
 
-            topic_topic_network_display.display_topic_topic_network(
+            display_topic_topic_network(
                 inferred_topics=state.inferred_topics,
                 filters=dict(publication_id=gui.publication_id.value),
                 period=gui.period.value,

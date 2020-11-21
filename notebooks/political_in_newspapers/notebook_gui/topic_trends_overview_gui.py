@@ -5,10 +5,9 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+from penelope.notebook.topic_modelling import TopicModelContainer, display_topic_trends_heatmap
 
-import notebooks.common.topic_trends_overview_display as topic_trends_overview_display
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import TopicModelContainer
 
 # from beakerx import *
 # from beakerx.object import beakerx
@@ -63,7 +62,7 @@ def display_gui(state: TopicModelContainer):
 
             weights = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
 
-            topic_trends_overview_display.display_heatmap(
+            display_topic_trends_heatmap(
                 weights,
                 titles,
                 flip_axis=gui.flip_axis.value,
