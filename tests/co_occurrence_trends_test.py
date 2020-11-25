@@ -125,7 +125,7 @@ def test_build_layout():
     assert len(gui.children) == 4
 
 
-# from penelope.corpus import AnnotationOpts, TokensTransformOpts
+# from penelope.corpus import ExtractTokensOpts, TokensTransformOpts
 # from penelope.workflows import concept_co_occurrence_workflow
 # import pathlib
 # @pytest.mark.skip("FIXME: improve test fixture")
@@ -148,7 +148,7 @@ def test_build_layout():
 #             "keep_symbols": False,
 #         }
 #     )
-#     annotation_opts = AnnotationOpts(
+#     extract_tokens_opts = ExtractTokensOpts(
 #         pos_includes="|NN|PM|UO|PC|VB|",
 #         pos_excludes="|MAD|MID|PAD|",
 #         passthrough_tokens=["valv"],
@@ -173,7 +173,7 @@ def test_build_layout():
 #         count_threshold=count_threshold,
 #         partition_keys=partition_keys,
 #         filename_field=filename_field,
-#         annotation_opts=annotation_opts,
+#         extract_tokens_opts=extract_tokens_opts,
 #         tokens_transform_opts=tokens_transform_opts,
 #         store_vectorized=False,
 #     )

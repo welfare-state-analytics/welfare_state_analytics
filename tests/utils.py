@@ -1,10 +1,9 @@
 import os
-from typing import Callable
 
 import numpy as np
 import pandas as pd
-from penelope.corpus import TextTransformOpts, TokensTransformOpts
-from penelope.corpus.readers import AnnotationOpts, TextTokenizer
+from penelope.corpus import TokensTransformOpts
+from penelope.corpus.readers import ExtractTokensOpts
 from penelope.corpus.vectorized_corpus import VectorizedCorpus
 from penelope.workflows import vectorize_corpus_workflow
 
@@ -20,32 +19,6 @@ if __file__ in globals():
     this_file = os.path.dirname(__file__)
     this_path = os.path.abspath(this_file)
     TEST_CORPUS_FILENAME = os.path.join(this_path, TEST_CORPUS_FILENAME)
-
-
-def create_text_tokenizer(
-    source_path=TEST_CORPUS_FILENAME,
-    transforms=None,
-    chunk_size: int = None,
-    filename_pattern: str = "*.txt",
-    filename_filter: str = None,
-    filename_fields=None,
-    fix_whitespaces=False,
-    fix_hyphenation=True,
-    as_binary: bool = False,
-    tokenize: Callable = None,
-):
-    kwargs = dict(
-        transforms=transforms,
-        chunk_size=chunk_size,
-        filename_pattern=filename_pattern,
-        filename_filter=filename_filter,
-        as_binary=as_binary,
-        tokenize=tokenize,
-        filename_fields=filename_fields,
-        text_transform_opts=TextTransformOpts(fix_whitespaces=fix_whitespaces, fix_hyphenation=fix_hyphenation),
-    )
-    reader = TextTokenizer(source_path, **kwargs)
-    return reader
 
 
 def create_smaller_vectorized_corpus():
@@ -65,7 +38,7 @@ def create_bigger_vectorized_corpus(
     filename_field = r"year:prot\_(\d{4}).*"
     count_threshold = 5
     output_tag = f"{output_tag}_nnvb_lemma"
-    annotation_opts = AnnotationOpts(
+    extract_tokens_opts = ExtractTokensOpts(
         pos_includes="|NN|PM|UO|PC|VB|",
         pos_excludes="|MAD|MID|PAD|",
         passthrough_tokens=[],
@@ -95,7 +68,7 @@ def create_bigger_vectorized_corpus(
         create_subfolder=True,
         filename_field=filename_field,
         count_threshold=count_threshold,
-        annotation_opts=annotation_opts,
+        extract_tokens_opts=extract_tokens_opts,
         tokens_transform_opts=tokens_transform_opts,
     )
 

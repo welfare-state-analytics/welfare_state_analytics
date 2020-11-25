@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.6.0
+#       jupytext_version: 1.7.1
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -92,7 +92,6 @@ except Exception as ex:
 # %%
 try:
     gui.display_topic_trends_gui(current_state())
-    # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 except Exception as ex:
     logger.exception(ex)
 
@@ -133,3 +132,5 @@ gui.display_topic_document_network_gui(current_state())
 # %%
 bokeh.plotting.output_notebook()
 gui.display_focus_topics_network_gui(current_state())
+
+# %%
