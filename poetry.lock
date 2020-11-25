@@ -118,14 +118,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "beakerx"
-version = "1.4.1"
-description = "BeakerX: Beaker Extensions for Jupyter Notebook"
-category = "main"
-optional = false
-python-versions = ">=3"
-
-[[package]]
 name = "black"
 version = "20.8b1"
 description = "The uncompromising code formatter."
@@ -2617,7 +2609,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.8.5"
-content-hash = "d6e75526e73c4555883f014a62b2927a6a749b7c19a1c001aa3c7009418875f3"
+content-hash = "429a373a9026b0622a8b344bec34664cfb19426bf64da9e4a90a87a47c8986b0"
 
 [metadata.files]
 aiohttp = [
@@ -2712,9 +2704,6 @@ attrs = [
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
-]
-beakerx = [
-    {file = "beakerx-1.4.1.tar.gz", hash = "sha256:f4fcee4bd640a175783bfcf70fdd9f599b528808183bdf1993913e32bd759be7"},
 ]
 black = [
     {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},

@@ -31,9 +31,6 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# from beakerx import *
-# from beakerx.object import beakerx
-
 import os
 import sys
 

@@ -24,7 +24,6 @@ repository = "https://github.com/welfare-state-analytics/welfare_state_analytics
 alive-progress = "^1.6.1"
 appnope = "*"
 attrs = "*"
-beakerx = "==1.4.1"
 bokeh = "*"
 click = "*"
 colorcet = "*"

@@ -9,10 +9,6 @@ from penelope.notebook.topic_modelling import TopicModelContainer, display_topic
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
-# from beakerx import *
-# from beakerx.object import beakerx
-# beakerx.pandas_display_table()
-
 
 def display_gui(state: TopicModelContainer):
 

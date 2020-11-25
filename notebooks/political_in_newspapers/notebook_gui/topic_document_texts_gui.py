@@ -14,9 +14,6 @@ import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.common import to_text
 
 logger = utility.get_logger()
-# from beakerx import *
-# from beakerx.object import beakerx
-# beakerx.pandas_display_table()
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)

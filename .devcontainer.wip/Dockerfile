@@ -91,14 +91,12 @@ RUN python --version \
 
 #    && pip install jupyterhub==${JUPYTERHUB_VERSION} \
 
-# RUN beakerx install
 RUN jupyter labextension install \
          @jupyter-widgets/jupyterlab-manager \
          jupyter-matplotlib@0.7.2 \
          @bokeh/jupyter_bokeh@2.0.2 \
          @jupyterlab/toc \
          @jupyterlab/google-drive \
-         beakerx-jupyterlab \
          jupyter-cytoscape
 
 # Install R https://cran.r-project.org/bin/linux/debian/
