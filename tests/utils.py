@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from penelope.corpus import TokensTransformOpts
-from penelope.corpus.readers import ExtractTokensOpts
+from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.corpus.vectorized_corpus import VectorizedCorpus
 from penelope.workflows import vectorize_corpus_workflow
 
@@ -38,7 +38,7 @@ def create_bigger_vectorized_corpus(
     filename_field = r"year:prot\_(\d{4}).*"
     count_threshold = 5
     output_tag = f"{output_tag}_nnvb_lemma"
-    extract_tokens_opts = ExtractTokensOpts(
+    extract_tokens_opts = ExtractTaggedTokensOpts(
         pos_includes="|NN|PM|UO|PC|VB|",
         pos_excludes="|MAD|MID|PAD|",
         passthrough_tokens=[],

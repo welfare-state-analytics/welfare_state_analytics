@@ -125,7 +125,7 @@ def test_build_layout():
     assert len(gui.children) == 4
 
 
-# from penelope.corpus import ExtractTokensOpts, TokensTransformOpts
+# from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts
 # from penelope.workflows import concept_co_occurrence_workflow
 # import pathlib
 # @pytest.mark.skip("FIXME: improve test fixture")
@@ -148,7 +148,7 @@ def test_build_layout():
 #             "keep_symbols": False,
 #         }
 #     )
-#     extract_tokens_opts = ExtractTokensOpts(
+#     extract_tokens_opts = ExtractTaggedTokensOpts(
 #         pos_includes="|NN|PM|UO|PC|VB|",
 #         pos_excludes="|MAD|MID|PAD|",
 #         passthrough_tokens=["valv"],
