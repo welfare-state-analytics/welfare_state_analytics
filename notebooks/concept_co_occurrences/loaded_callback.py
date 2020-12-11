@@ -6,11 +6,11 @@ import ipywidgets
 import pandas as pd
 import penelope.common.goodness_of_fit as gof
 import penelope.notebook.utility as notebook_utility
-from penelope.co_occurrence.concept_co_occurrence import to_vectorized_corpus
+import penelope.notebook.word_trends as word_trends
+from penelope.co_occurrence import to_vectorized_corpus
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
 from penelope.corpus import VectorizedCorpus
 from penelope.notebook.ipyaggrid_utility import display_grid
-from penelope.notebook.word_trends import word_trends_pick_gui
 from penelope.utility import getLogger
 
 logger = getLogger()
@@ -67,7 +67,7 @@ def compile_data(
 def build_layout(
     data: CoOccurrenceData,  # pylint: disable=redefined-outer-name
 ):
-    tab_trends = word_trends_pick_gui(data.corpus, tokens=data.most_deviating, display_widgets=False)
+    tab_trends = word_trends.word_trends_pick_gui(data.corpus, tokens=data.most_deviating, display_widgets=False)
 
     tab_gof = (
         notebook_utility.OutputsTabExt(["GoF", "GoF (abs)", "Plots", "Slopes"])

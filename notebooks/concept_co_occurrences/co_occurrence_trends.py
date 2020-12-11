@@ -27,17 +27,21 @@
 import importlib
 import warnings
 
-import penelope.notebook.concept_co_occurrences_gui as compute_gui
-import penelope.notebook.load_co_occurrences_gui as load_gui
+import penelope.notebook.co_occurrence.load_co_occurrences_gui as load_gui
+import penelope.notebook.co_occurrence.to_co_occurrence_gui as compute_gui
 from bokeh.plotting import output_notebook
+from IPython.display import display
+from penelope.notebook.co_occurrence.compute_callback_corpus import compute_co_occurrence
 
 import __paths__  # pylint: disable=unused-import
+from notebooks.corpus_data_config import ParliamentarySessions
 
 from .loaded_callback import loaded_callback
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 output_notebook()
+corpus_folder = __paths__.root_folder
 
 # %% [markdown]
 # ### Generate new concept context co-co_occurrences
@@ -45,12 +49,25 @@ output_notebook()
 # This function computes new concept context co-occurrence data and stores the result in a CSV file.
 # Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
 # %%
-importlib.reload(compute_gui)
-compute_gui.display_gui(data_folder=None, corpus_pattern='*sparv4.csv.zip', generated_callback=loaded_callback)
 
+# corpus_folder: str,
+# corpus_config: CorpusConfig,
+# pipeline_factory: Callable[[], CorpusPipeline],
+# done_callback: Callable[[CorpusPipeline, VectorizedCorpus, str, str, widgets.Output], None],
+# compute_callback: Callable = compute_co_occurrence,
+
+importlib.reload(compute_gui)
+gui: compute_gui.GUI = compute_gui.create_gui(
+    corpus_folder=corpus_folder,
+    corpus_config=ParliamentarySessions(corpus_folder=corpus_folder),
+    done_callback=loaded_callback,
+    compute_callback=compute_co_occurrence,
+)
+display(gui.layout())
 # %% [markdown]
 # ### Load saved concept context co-occurrences
 # %%
-load_gui.display_gui(
-    data_folder='/home/roger', filename_suffix="coo_concept_context.csv.zip", loaded_callback=loaded_callback
+lgu: load_gui.GUI = load_gui.create_gui(
+    data_folder=corpus_folder, filename_pattern="*coo_concept_context.csv.zip", loaded_callback=loaded_callback
 )
+display(lgu.layout())

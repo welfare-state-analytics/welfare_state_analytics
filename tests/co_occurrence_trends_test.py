@@ -3,8 +3,10 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
-from penelope.co_occurrence import filter_co_coccurrences_by_global_threshold, load_co_occurrences
-from penelope.co_occurrence.concept_co_occurrence import to_vectorized_corpus
+from penelope.co_occurrence import load_co_occurrences, to_vectorized_corpus
+from penelope.co_occurrence.partitioned import (
+    _filter_co_coccurrences_by_global_threshold as filter_co_coccurrences_by_global_threshold,
+)
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
 
 from notebooks.concept_co_occurrences.loaded_callback import CoOccurrenceData, build_layout, compile_data
@@ -157,7 +159,7 @@ def test_build_layout():
 #     )
 #     input_filename = "./tests/test_data/tranströmer_corpus_export.csv.zip"
 #     output_filename = "./tests/output/valv_concept.csv.zip"
-#     concept_opts = ConceptContextOpts(concept=["valv"], ignore_concept=True, context_width=2)
+#     context_opts = ContextOpts(concept=["valv"], ignore_concept=True, context_width=2)
 #     partition_keys = "year"
 #     count_threshold = None
 #     filename_field = dict(year=r"prot\_(\d{4}).*")
@@ -169,7 +171,7 @@ def test_build_layout():
 #     _ = concept_co_occurrence_workflow(
 #         input_filename=input_filename,
 #         output_filename=output_filename,
-#         concept_opts=concept_opts,
+#         context_opts=context_opts,
 #         count_threshold=count_threshold,
 #         partition_keys=partition_keys,
 #         filename_field=filename_field,
