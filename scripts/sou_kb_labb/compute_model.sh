@@ -6,8 +6,8 @@ function run_task() {
     n_topics=$2
     corpus_filename=$3
     tag=$4
-    max_iter=2000
-    n_workers=4
+    max_iter=3000
+    n_workers=1
     name="$1.topics.$2.$tag"
     #.$random_seed
 
@@ -30,6 +30,6 @@ function run_task() {
     #gzip $target_folder/*.txt
 }
 
-corpus_folder="/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/sou_kb_labb"
+corpus_folder="/home/roger/source/welfare-state-analytics/welfare_state_analytics/data"
 
-run_task "gensim_lda-multicore" 500 "$corpus_folder/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200928211813.zip" "SOU-KB-labb-1945-1989.NN"
+run_task "gensim_mallet-lda" 50 "$corpus_folder/SOU-KB-labb-corpus-1945-1989.sparv.xml_text_20200928211813.zip" "SOU-KB-labb-1945-1989.NN"
