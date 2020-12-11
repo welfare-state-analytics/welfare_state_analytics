@@ -2,10 +2,10 @@ import uuid
 
 import numpy as np
 import pandas as pd
+import penelope.notebook.word_trends as word_trends
 import pytest
 from penelope.common.curve_fit import pchip_spline, rolling_average_smoother
 from penelope.notebook.utility import OutputsTabExt
-from penelope.notebook.word_trends.display_word_trends import build_layout, update_trend_data
 from penelope.notebook.word_trends.displayers._displayer import (
     MultiLineDataMixin,
     PenelopeBugCheck,
@@ -63,7 +63,7 @@ def test_build_layout():
         most_deviating_overview=pd.DataFrame(data={'l2_norm_token': [], 'l2_norm': [], 'abs_l2_norm': []}),
     )
 
-    w: OutputsTabExt = build_layout(data=data)
+    w: OutputsTabExt = word_trends.WordTrendsGUI(word_trend_data=data).layout()
 
     assert w is not None and isinstance(w, OutputsTabExt)
     assert len(w.children) == 2
@@ -74,7 +74,7 @@ def test_vectorize_workflow(bigger_corpus):  # pylint: disable=redefined-outer-n
 
     n_count = 10000
 
-    data = update_trend_data(
+    data = WordTrendData().update(
         corpus=bigger_corpus,
         corpus_folder=OUTPUT_FOLDER,
         corpus_tag="dummy",
