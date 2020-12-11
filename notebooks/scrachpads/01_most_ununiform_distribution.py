@@ -131,6 +131,7 @@
 
 import itertools
 import sys
+from typing import List
 
 import bokeh
 import pandas as pd
@@ -182,14 +183,16 @@ df_fits.sort_values('l2_norm', ascending=False).head()
 # %%
 
 
-def plot_word_distribution(x_corpus, df):  # pylint: disable=too-many-locals
+def plot_word_distribution(
+    x_corpus: vectorized_corpus.VectorizedCorpus, df: pd.DataFrame
+):  # pylint: disable=too-many-locals
 
-    tokens = list(df.token)
+    tokens: List[str] = list(df.token)
 
     colors = itertools.cycle(bokeh.palettes.Dark2[8])
 
-    min_year = x_corpus.documents.year.min()
-    max_year = x_corpus.documents.year.max()
+    min_year: int = x_corpus.document_index.year.min()
+    max_year: int = x_corpus.document_index.year.max()
 
     years = [str(y) for y in range(min_year, max_year + 1)]
 

@@ -29,7 +29,7 @@ sys.path.append(root_folder)
 
 
 # %% [markdown]
-# ## Convert Excel data to yearly documents
+# ## Convert Excel data to a yearly document index
 # This script creates merges the text lines into a single text file for each year and news-paper.
 
 # %%
@@ -45,16 +45,16 @@ target_zip_filename = os.path.join(data_folder, "year+newspaper+text_yearly_docu
 def create_yearly_documents(source_filename, target_name):
 
     df = pd.read_csv(source_filename, sep="\t")
-    documents = df.fillna("").groupby(["year", "newspaper"])["txt"].apply(" ".join).reset_index()
+    document_index = df.fillna("").groupby(["year", "newspaper"])["txt"].apply(" ".join).reset_index()
 
     with zipfile.ZipFile(target_name, "w") as zf:
-        for _, document in documents.iterrows():
+        for _, document in document_index.iterrows():
             store_filename = "{}_{}.txt".format(document["newspaper"], document["year"])
             zf.writestr(store_filename, document["txt"], zipfile.ZIP_DEFLATED)
 
 
 if not os.path.exists(target_zip_filename):
-    print("Creating yearly documents...")
+    print("Creating yearly document index...")
     # excel_to_csv(source_excel_filename, target_text_filename)
     # create_yearly_documents(target_text_filename, target_zip_filename)
 

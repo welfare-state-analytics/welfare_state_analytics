@@ -1,11 +1,11 @@
 import logging
 import types
-from typing import Sequence
+from typing import Mapping, Sequence
 
 import ipywidgets
 import pandas as pd
-import penelope.corpus.vectorized_corpus as vectorized_corpus
 from IPython.display import display
+from penelope.corpus import VectorizedCorpus
 from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -15,13 +15,13 @@ logger = logging.getLogger("westac")
 
 
 def year_range_group_indicies(
-    documents: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None
+    document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None
 ) -> pd.Index:
     """[summary]
 
     Parameters
     ----------
-    documents : pd.DataFrame
+    document_index : pd.DataFrame
         Documents meta data
     period : Sequence[int]
         Year range for group
@@ -33,9 +33,9 @@ def year_range_group_indicies(
     pd.Index[int]
         [description]
     """
-    assert "year" in documents.columns
+    assert "year" in document_index.columns
 
-    docs = documents[documents.year.between(*period)]
+    docs = document_index[document_index.year.between(*period)]
 
     if isinstance(pub_ids, int):
         pub_ids = list(pub_ids)
@@ -47,11 +47,11 @@ def year_range_group_indicies(
     return docs.index
 
 
-def load_vectorized_corpus(corpus_folder, publication_ids):
+def load_vectorized_corpus(corpus_folder: str, publication_ids) -> VectorizedCorpus:
     logger.info("Loading DTM corpus...")
-    bag_term_matrix, documents, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
-    token2id = {v: k for k, v in id2token.items()}
-    v_corpus = vectorized_corpus.VectorizedCorpus(bag_term_matrix, token2id, documents)
+    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
+    token2id: Mapping[str, int] = {v: k for k, v in id2token.items()}
+    v_corpus: VectorizedCorpus = VectorizedCorpus(bag_term_matrix, token2id, document_index)
     return v_corpus
 
 
@@ -70,7 +70,7 @@ def compile_opts(gui):
     )
 
 
-def display_gui(v_corpus, v_documents):
+def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
 
     publications = dict(corpus_data.PUBLICATION2ID)
 
@@ -174,7 +174,7 @@ def display_gui(v_corpus, v_documents):
 
                 logger.info("Slicing corpus...")
 
-                x_corpus = v_corpus.slice_by_df(
+                x_corpus: VectorizedCorpus = v_corpus.slice_by_df(
                     max_df=gui.max_df.value / 100.0,
                     min_df=gui.min_df.value / 100.0,
                     max_n_terms=gui.max_n_terms.value,
@@ -189,12 +189,12 @@ def display_gui(v_corpus, v_documents):
                     top_n_terms=gui.top_n_terms.value,
                     max_n_terms=gui.max_n_terms.value,
                     group1_indices=year_range_group_indicies(
-                        x_corpus.documents,
+                        x_corpus.document_index,
                         gui.period1.value,
                         gui.publication_ids1.value,
                     ),
                     group2_indices=year_range_group_indicies(
-                        x_corpus.documents,
+                        x_corpus.document_index,
                         gui.period2.value,
                         gui.publication_ids2.value,
                     ),

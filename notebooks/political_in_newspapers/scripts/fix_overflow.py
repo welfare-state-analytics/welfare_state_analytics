@@ -31,14 +31,16 @@ def fix_int32_overflow(data_folder, model_name):
     ldaMallet = gensim.models.wrappers.LdaMallet.load(model_filename)
     ldaMallet.prefix = '{}/{}/'.format(data_folder, model_name)
 
-    documents = pd.read_csv(os.path.join(target_folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False)
-    document_topic_weights = compile_mallet_document_topics(ldaMallet, minimum_probability=0.001)
+    document_index: pd.DataFrame = pd.read_csv(
+        os.path.join(target_folder, 'documents.zip'), '\t', header=0, index_col=0, na_filter=False
+    )
+    document_topic_weights: pd.DataFrame = compile_mallet_document_topics(ldaMallet, minimum_probability=0.001)
 
-    document_topic_weights = document_topic_weights.merge(
-        documents[['publication_id', 'year']], how='inner', left_on='document_id', right_index=True
+    document_topic_weights: pd.DataFrame = document_topic_weights.merge(
+        document_index[['publication_id', 'year']], how='inner', left_on='document_id', right_on='document_id'
     )
 
-    target_file = os.path.join(target_folder, 'document_topic_weights.zip')
+    target_file: str = os.path.join(target_folder, 'document_topic_weights.zip')
     document_topic_weights.to_csv(target_file, '\t')
     print(' Stored new version of {}.'.format(target_file))
 

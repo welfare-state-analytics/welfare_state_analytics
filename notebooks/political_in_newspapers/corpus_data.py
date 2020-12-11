@@ -74,7 +74,7 @@ def load(corpus_folder):
 
     df_corpus = load_corpus_dtm_as_data_frame(corpus_folder)
     df_vocabulary = load_vocabulary_file_as_data_frame(corpus_folder)
-    df_document = load_documents(corpus_folder)
+    df_document = load_document_index(corpus_folder)
 
     return df_corpus, df_document, df_vocabulary
 
@@ -116,79 +116,73 @@ def load_as_dtm(corpus_folder):
 
     dtm = load_as_sparse_matrix(corpus_folder)
     id2token = load_vocabulary_file_as_data_frame(corpus_folder)['token'].to_dict()
-    documents = load_documents(corpus_folder)
+    document_index = load_document_index(corpus_folder)
 
-    return dtm, documents, id2token
+    return dtm, document_index, id2token
 
 
 def load_as_dtm2(corpus_folder, publication_ids=None):
 
-    dtm, documents, id2token = load_as_dtm(corpus_folder)
+    dtm, document_index, id2token = load_as_dtm(corpus_folder)
 
     if publication_ids is not None:
 
-        documents = documents[documents.publication_id.isin(publication_ids)]
-        dtm = dtm.tocsr()[documents.index, :]
-        documents = documents.reset_index().drop('id', axis=1)
+        document_index = document_index[document_index.publication_id.isin(publication_ids)]
+        dtm = dtm.tocsr()[document_index.index, :]
+        document_index = document_index.reset_index().drop('id', axis=1)
         token_ids = dtm.sum(axis=0).nonzero()[1]
         dtm = dtm[:, token_ids]
         id2token = {i: id2token[k] for i, k in enumerate(token_ids)}
 
-    return dtm, documents, id2token
+    return dtm, document_index, id2token
 
 
 def load_as_gensim_sparse_corpus(corpus_folder):
-    dtm, documents, id2token = load_as_dtm(corpus_folder)
+    dtm, document_index, id2token = load_as_dtm(corpus_folder)
     corpus = Sparse2Corpus(dtm, documents_columns=False)
-    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
-    return corpus, documents, id2token
+    document_index['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
+    return corpus, document_index, id2token
 
 
 def load_as_gensim_sparse_corpus2(corpus_folder, publication_ids=None):
 
-    dtm, documents, id2token = load_as_dtm(corpus_folder)
+    dtm, document_index, id2token = load_as_dtm(corpus_folder)
 
     if publication_ids is not None:
-        documents = documents[documents.publication_id.isin(publication_ids)]
-        dtm = dtm.tocsr()[documents.index, :]
-        documents = documents.reset_index().drop('id', axis=1)
+        document_index = document_index[document_index.publication_id.isin(publication_ids)]
+        dtm = dtm.tocsr()[document_index.index, :]
+        document_index = document_index.reset_index().drop('id', axis=1)
         token_ids = dtm.sum(axis=0).nonzero()[1]
         dtm = dtm[:, token_ids]
         id2token = {i: id2token[k] for i, k in enumerate(token_ids)}
 
     corpus = Sparse2Corpus(dtm, documents_columns=False)
-    documents['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
-    return corpus, documents, id2token
+    document_index['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)
+    return corpus, document_index, id2token
 
 
 def load_dates_subset_as_dtm(corpus_folder, dates):
-    dtm, documents, id2token = load_as_dtm(corpus_folder)
-    documents = documents[documents.date.isin(dates)]
-    dtm = dtm.tocsr()[documents.index, :]
-    documents = documents.reset_index().drop('id', axis=1)
+    dtm, document_index, id2token = load_as_dtm(corpus_folder)
+    document_index = document_index[document_index.date.isin(dates)]
+    dtm = dtm.tocsr()[document_index.index, :]
+    document_index = document_index.reset_index().drop('id', axis=1)
     token_ids = dtm.sum(axis=0).nonzero()[1]
     dtm = dtm[:, token_ids]
     id2token = {i: id2token[k] for i, k in enumerate(token_ids)}
-    return dtm, documents, id2token
+    return dtm, document_index, id2token
 
 
-def slim_documents(documents):
+def slim_documents(document_index):
 
-    # df = documents[['publication', 'year']].copy()
+    # df = document_index[['publication', 'year']].copy()
     # df['publication_id'] = df.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
     # df = df[['publication_id', 'year']]
-    return documents[['publication_id', 'year']].copy()
-
-
-def extend_with_document_info(df, documents):
-    """ Adds document meta data to given data frame (must have a document_id) """
-    df = df.merge(documents, how='inner', left_on='document_id', right_index=True)
-    return df
+    return document_index[['publication_id', 'year']].copy()
 
 
 # pylint: skip-file
-def load_documents(corpus_folder, force=False):
-    """ Load documents data, source "dtm1.rds", arrays drm$dimnames[1] """
+def load_document_index(corpus_folder, force=False):
+    """ Load document_index data, source "dtm1.rds", arrays drm$dimnames[1] """
 
     processed_filename = os.path.join(corpus_folder, document_processed_filename)
 
@@ -196,14 +190,14 @@ def load_documents(corpus_folder, force=False):
 
         filename = os.path.join(corpus_folder, document_dataset_filename)
 
-        df_document = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False)
-        df_document.columns = ["doc_id"]
-        df_document.index.name = 'id'
+        document_index = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False)
+        document_index.columns = ["doc_id"]
+        document_index.index.name = 'id'
 
         # Add publication and date
         df_censured_text = load_censured_text_as_data_frame(corpus_folder)
-        df_document = pd.merge(
-            df_document,
+        document_index = pd.merge(
+            document_index,
             df_censured_text[['doc_id', 'publication', 'date']],
             how='inner',
             left_on='doc_id',
@@ -212,23 +206,27 @@ def load_documents(corpus_folder, force=False):
 
         # Add pred_bodytext
         df_meta = load_meta_text_blocks_as_data_frame(corpus_folder)
-        df_document = pd.merge(df_document, df_meta, how='inner', left_on='doc_id', right_index=True)
+        document_index = pd.merge(document_index, df_meta, how='inner', left_on='doc_id', right_index=True)
 
         # Add year
-        df_document['date'] = pd.to_datetime(df_document.date)
-        df_document['year'] = df_document.date.dt.year
-        df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+        document_index['date'] = pd.to_datetime(document_index.date)
+        document_index['year'] = document_index.date.dt.year
+        document_index['publication_id'] = document_index.publication.apply(lambda x: PUBLICATION2ID[x]).astype(
+            np.uint16
+        )
 
-        df_document.to_csv(
+        document_index.to_csv(
             processed_filename, compression='zip', header=True, sep=',', quotechar='"', index=True, index_label="id"
         )
 
     else:
         # loading cached...
-        df_document = pd.read_csv(
+        document_index = pd.read_csv(
             processed_filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False, index_col="id"
         )
-        if 'publication_id' not in df_document.columns:
-            df_document['publication_id'] = df_document.publication.apply(lambda x: PUBLICATION2ID[x]).astype(np.uint16)
+        if 'publication_id' not in document_index.columns:
+            document_index['publication_id'] = document_index.publication.apply(lambda x: PUBLICATION2ID[x]).astype(
+                np.uint16
+            )
 
-    return df_document
+    return document_index

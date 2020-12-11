@@ -123,7 +123,7 @@ df_corpus, df_document, df_vocabulary = corpus_data.load(corpus_folder)
 id2token = df_vocabulary["token"].to_dict()
 
 df_tf = df_corpus.groupby(["document_id"]).agg(term_count=("tf", "sum"))
-df_document = df_document.merge(df_tf, how="inner", right_index=True, left_index=True)
+df_document = df_document.merge(df_tf, how="inner", right_index=True, left_on='document_id')
 
 
 # %%
@@ -132,7 +132,7 @@ df_document = df_document.merge(df_tf, how="inner", right_index=True, left_index
 dn68 = df_document[(df_document.publication == 'DAGENS NYHETER') & (df_document.year == 1968)]
 rt = load_reconstructed_text_corpus(corpus_folder)
 
-dn68_text = rt.merge(dn68, how='inner', left_index=True, right_index=True)[
+dn68_text = rt.merge(dn68, how='inner', left_index=True, right_on='document_id')[
     ['document_id', 'year', 'date', 'term_count', 'text']
 ]
 dn68_text.columns = ['document_id', 'year', 'date', 'term_count', 'text']

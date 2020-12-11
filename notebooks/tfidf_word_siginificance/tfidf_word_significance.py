@@ -25,6 +25,7 @@
 import logging
 import os
 import sys
+from typing import Mapping
 
 import ipywidgets
 import numpy as np
@@ -64,7 +65,7 @@ logger = logging.getLogger(__name__)
 #
 # Compute a new TF-IDF weighted corpus
 #
-#  - Group documents by year
+#  - Group document index by year
 #  - Compute mean TF-IDF for each year
 #
 # Some references:
@@ -78,7 +79,7 @@ logger = logging.getLogger(__name__)
 
 # pylint: disable=wrong-import-position
 
-v_corpus = (
+v_corpus: vectorized_corpus.VectorizedCorpus = (
     vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
@@ -105,17 +106,17 @@ def display_top_terms(data):
     display(df)
 
 
-def compute_top_terms(x_corpus, n_top, idx_groups=None):
+def compute_top_terms(x_corpus: vectorized_corpus.VectorizedCorpus, n_top: int, idx_groups=None) -> Mapping:
 
     data = {x["label"]: x_corpus.get_top_n_words(n=n_top, indices=x["indices"]) for x in idx_groups}
     return data
 
 
-def display_gui(x_corpus, x_documents):
+def display_gui(x_corpus: vectorized_corpus.VectorizedCorpus, x_documents_index: pd.DataFrame):
 
     lw = lambda w: ipywidgets.Layout(width=w)
 
-    year_min, year_max = x_documents.year.min(), x_documents.year.max()
+    year_min, year_max = x_documents_index.year.min(), x_documents_index.year.max()
     years = list(range(year_min, year_max + 1))
     decades = [10 * decade for decade in range((year_min // 10), (year_max // 10) + 1)]
     lustrums = [lustrum for lustrum in range(year_min - year_min % 5, year_max - year_max % 5, 5)]
@@ -195,7 +196,7 @@ def display_gui(x_corpus, x_documents):
     w_compute.on_click(compute_callback_handler)
 
 
-display_gui(tf_idf_corpus, tf_idf_corpus.documents)
+display_gui(tf_idf_corpus, tf_idf_corpus.document_index)
 
 
 # %% jupyter={"source_hidden": true}
@@ -203,10 +204,10 @@ display_gui(tf_idf_corpus, tf_idf_corpus.documents)
 # %matplotlib inline
 
 
-def plot_word(x_corpus, word):
+def plot_word(x_corpus: vectorized_corpus.VectorizedCorpus, word: str):
     wv = x_corpus.get_word_vector(word)
 
-    df = pd.DataFrame({"count": wv, "year": x_corpus.documents.year}).set_index("year")
+    df = pd.DataFrame({"count": wv, "year": x_corpus.document_index.year}).set_index("year")
     df.plot()
 
 

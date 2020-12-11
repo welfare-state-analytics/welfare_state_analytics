@@ -122,22 +122,17 @@ def run_model(
 
         dtm = v_corpus.data
         id2token = v_corpus.id2token
-        documents = v_corpus.documents
+        document_index = v_corpus.document_index
         # documents['publication_id'] = 1
 
     # elif corpus_type == 'text':
-
     #     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
-
-    #     for i, (document_name, tokens) in enumerate(reader):
-
     # elif corpus_type == 'sparv-xml':
-
     #     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_name, **opts)
 
     else:
 
-        dtm, documents, id2token = corpus_data.load_as_dtm2(corpus_folder, [1, 3])
+        dtm, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, [1, 3])
 
     target_folder = os.path.join(corpus_folder, name)
     if not os.path.isdir(target_folder):
@@ -147,7 +142,7 @@ def run_model(
         terms=None,
         doc_term_matrix=dtm,
         id2word=id2token,
-        documents=documents,
+        document_index=document_index,
     )
 
     inferred_model = topic_modelling.infer_model(
@@ -161,7 +156,7 @@ def run_model(
     topic_modelling.store_model(inferred_model, target_folder)
 
     inferred_topics = topic_modelling.compile_inferred_topics_data(
-        inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.documents
+        inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.document_index
     )
     inferred_topics.store(target_folder)
 

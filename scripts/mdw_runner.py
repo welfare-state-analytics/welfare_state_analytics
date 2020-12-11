@@ -13,13 +13,13 @@ v_corpus = (
 )
 
 df = compute_most_discriminating_terms(
-    v_corpus, v_corpus.documents, top_n_terms=250, max_n_terms=2000, period1=(1945, 1967), period2=(1968, 1989)
+    v_corpus, v_corpus.document_index, top_n_terms=250, max_n_terms=2000, period1=(1945, 1967), period2=(1968, 1989)
 )
 
 df.to_excel('sou_mdw_45-67_vs_68-89.xlsx')
 
 df = compute_most_discriminating_terms(
-    v_corpus, v_corpus.documents, top_n_terms=250, max_n_terms=2000, period1=(1945, 1967), period2=(1968, 1989)
+    v_corpus, v_corpus.document_index, top_n_terms=250, max_n_terms=2000, period1=(1945, 1967), period2=(1968, 1989)
 )
 
 df.to_excel('sou_mdw_45-67_vs_68-89.xlsx')

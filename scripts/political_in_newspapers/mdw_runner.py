@@ -116,8 +116,8 @@ def mdw_run(
         v_corpus,
         top_n_terms=top_n_terms,
         max_n_terms=max_n_terms,
-        group1_indices=mdw_gui.year_range_group_indicies(v_corpus.documents, period1, pubs_ids1),
-        group2_indices=mdw_gui.year_range_group_indicies(v_corpus.documents, period2, pubs_ids2),
+        group1_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period1, pubs_ids1),
+        group2_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period2, pubs_ids2),
     )
 
     if df is not None:

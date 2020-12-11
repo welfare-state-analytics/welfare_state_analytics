@@ -55,11 +55,11 @@ def get_spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
 
 
 class ComputeTopicModelUserInterface:
-    def __init__(self, data_folder: str, state: TopicModelContainer, documents: pd.DataFrame, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, document_index: pd.DataFrame, **opts):
         self.terms = []
         self.data_folder = data_folder
         self.state = state
-        self.documents = documents
+        self.document_index = document_index
         self.opts = opts
         self.model_widgets, self.widget_boxes = self.prepare_widgets()
 
@@ -167,7 +167,7 @@ class ComputeTopicModelUserInterface:
 
                     train_corpus = topic_modelling.TrainingCorpus(
                         terms=list(self.get_corpus_terms(corpus)),
-                        documents=self.documents,
+                        document_index=self.document_index,
                         vectorizer_args=vectorizer_args,
                     )
 
@@ -176,7 +176,10 @@ class ComputeTopicModelUserInterface:
                     )
 
                     inferred_topics = topic_modelling.compile_inferred_topics_data(
-                        inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.documents
+                        inferred_model.topic_model,
+                        train_corpus.corpus,
+                        train_corpus.id2word,
+                        train_corpus.document_index,
                     )
 
                     inferred_model.topic_model.save(os.path.join(target_folder, 'gensim.model'))
@@ -235,9 +238,9 @@ class ComputeTopicModelUserInterface:
 
 
 class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
-    def __init__(self, data_folder: str, state: TopicModelContainer, documents, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, document_index: pd.DataFrame, **opts):
 
-        super().__init__(data_folder, state, documents, **opts)
+        super().__init__(data_folder, state, document_index, **opts)
 
         self.substitution_filename = self.opts.get('substitution_filename', None)
         self.tagset = self.opts.get('tagset', None)
@@ -388,7 +391,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
 class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
     def __init__(self, data_folder: str, state: TopicModelContainer, fn_doc_index, **opts):
 
-        super().__init__(data_folder, state, documents=None, **opts)
+        super().__init__(data_folder, state, document_index=None, **opts)
 
         self.corpus_widgets, self.corpus_widgets_boxes = self.prepare_source_widgets()
         self.widget_boxes = self.corpus_widgets_boxes + self.widget_boxes
@@ -409,7 +412,7 @@ class PreparedCorpusUserInterface(ComputeTopicModelUserInterface):
         filepath = self.corpus_widgets.filepath.value
         self.corpus = gensim_utility.SimpleExtTextCorpus(filepath)
         doc_terms = [list(terms) for terms in self.corpus.get_texts()]
-        self.documents = self.fn_doc_index(self.corpus)
+        self.document_index = self.fn_doc_index(self.corpus)
         return doc_terms
 
     def display(self, _=None):  # pylint: disable=arguments-differ, unused-argument
