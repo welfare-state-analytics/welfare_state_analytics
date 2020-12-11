@@ -77,8 +77,9 @@ xlrd = "*"
 xmltodict = "*"
 ipyfilechooser = "^0.4.0"
 
-humlab-penelope = "^0.2.33"
-# humlab-penelope = { path = "../../penelope", develop = true}
+#humlab-penelope = "^0.2.33"
+humlab-penelope = { path = "../../penelope", develop = true}
+cutter-ng = "^2.5"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"

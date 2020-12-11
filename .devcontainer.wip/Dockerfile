@@ -97,7 +97,8 @@ RUN jupyter labextension install \
          @bokeh/jupyter_bokeh@2.0.2 \
          @jupyterlab/toc \
          @jupyterlab/google-drive \
-         jupyter-cytoscape
+         jupyter-cytoscape \
+         @jupyter-widgets/jupyterlab-sidecar
 
 # Install R https://cran.r-project.org/bin/linux/debian/
 
