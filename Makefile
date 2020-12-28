@@ -11,7 +11,7 @@ build: penelope-pypi requirements.txt write_to_ipynb
 	@poetry build
 	@echo "Penelope, requirements and ipynb files is now up-to-date"
 
-lint: pylint flake8
+lint: tidy pylint flake8
 
 tidy: black isort
 
@@ -45,14 +45,16 @@ guard_clean_working_repository:
 		exit 65
 	fi
 
+wc:
+	@poetry run time find . -name '*.py' -type f -exec cat \{} \; | tqdm | wc -l
+
 version:
 	@poetry version
 	@poetry env info -p
-	# @echo $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g")
 
 tools:
-	@pip install --upgrade pip --quiet
-	@pip install poetry --upgrade --quiet
+	@poetry run pip install --upgrade pip --quiet
+	@poetry run pip install poetry --upgrade --quiet
 
 penelope-pypi:
 	@poetry remove humlab-penelope
@@ -197,6 +199,7 @@ labextension:
 		ipyaggrid \
 		qgrid2
 
+
 pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
@@ -223,6 +226,7 @@ gh-exists: ; @which gh > /dev/null
 .PHONY: data spacy_data nltk_data
 .PHONY: pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
 .PHONY: labextension
+.PHONY: wc
 
 help:
 	@echo "Higher level recepies: "
