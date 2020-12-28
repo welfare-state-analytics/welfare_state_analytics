@@ -25,7 +25,7 @@
 import os
 import sys
 
-import penelope.corpus.vectorized_corpus as vectorized_corpus
+import penelope.corpus.dtm as vectorized_corpus
 from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
 
 from notebooks.most_discriminating_words.most_discriminating_terms_gui import (

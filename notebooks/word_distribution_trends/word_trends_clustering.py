@@ -35,7 +35,7 @@ import warnings
 import holoviews as hv
 import ipywidgets
 import penelope.common.goodness_of_fit as gof
-import penelope.corpus.vectorized_corpus as vectorized_corpus
+import penelope.corpus.dtm as vectorized_corpus
 import penelope.notebook.cluster_analysis_gui as cluster_analysis_gui
 import penelope.notebook.word_trends as word_trends
 from bokeh.plotting import output_notebook
@@ -165,7 +165,7 @@ display_uniformity_metrics(n_corpus, df_gof, df_most_deviating)
 # %%
 
 tokens = df_most_deviating["l2_norm_token"]
-word_trends.word_trends_pick_gui(n_corpus, tokens)
+word_trends.TrendsWithPickTokensGUI.create(n_corpus, tokens).layout()
 
 
 # %% [markdown]

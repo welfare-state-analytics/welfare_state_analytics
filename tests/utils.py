@@ -3,8 +3,8 @@ import os
 import numpy as np
 import pandas as pd
 from penelope.corpus import TokensTransformOpts
+from penelope.corpus.dtm import VectorizedCorpus
 from penelope.corpus.readers import ExtractTaggedTokensOpts
-from penelope.corpus.vectorized_corpus import VectorizedCorpus
 from penelope.workflows import vectorize_corpus_workflow
 
 TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'

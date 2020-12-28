@@ -4,16 +4,33 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from penelope.co_occurrence import load_co_occurrences, to_vectorized_corpus
+from penelope.co_occurrence.partitioned import ComputeResult
 from penelope.co_occurrence.partitioned import (
     _filter_co_coccurrences_by_global_threshold as filter_co_coccurrences_by_global_threshold,
 )
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
+from penelope.corpus import load_document_index
 
 from notebooks.concept_co_occurrences.loaded_callback import CoOccurrenceData, build_layout, compile_data
 from tests.utils import TEST_DATA_FOLDER
 
 
 def simple_co_occurrences():
+
+    document_index = (
+        pd.DataFrame(
+            data={
+                'document_id': [0, 1],
+                'year': [1976, 1977],
+                'document_name': ["1976", "1977"],
+                'filename': ["1976.coo", "1977.coo"],
+                'n_raw_tokens': [20, 30],
+            }
+        )
+        .set_index('document_id', drop=False)
+        .sort_index()
+        .rename_axis('')
+    )
 
     co_occurrences = pd.DataFrame(
         [
@@ -27,14 +44,14 @@ def simple_co_occurrences():
         columns=['w1', 'w2', 'value', 'value_n_t', 'year'],
         index=[0, 1, 2, 3, 4, 5],
     )
-    return co_occurrences
+    return ComputeResult(co_occurrences=co_occurrences, document_index=document_index)
 
 
 def test_filter_co_coccurrences_by_global_threshold():
-    co_occurrences = simple_co_occurrences()
+    computation = simple_co_occurrences()
     threshold = 4
 
-    result = filter_co_coccurrences_by_global_threshold(co_occurrences, threshold)
+    result = filter_co_coccurrences_by_global_threshold(computation.co_occurrences, threshold)
 
     expected_result = pd.DataFrame(
         [
@@ -65,15 +82,17 @@ def generic_patch(*x, **y):  # pylint: disable=unused-argument
 def test_update_state_with_corpus_passed_succeeds():
 
     filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_data.zip')
+    index_filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_document_index.csv')
     compute_options = {}
     co_occurrences = load_co_occurrences(filename)
-    corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
+    document_index = load_document_index(index_filename, key_column=None, sep='\t')
+    corpus = to_vectorized_corpus(co_occurrences, document_index, 'value')
 
     data = compile_data(
         corpus=corpus,
         corpus_folder=None,
         corpus_tag=None,
-        concept_co_occurrences=co_occurrences,
+        co_occurrences=co_occurrences,
         compute_options=compute_options,
     )
 
@@ -85,26 +104,27 @@ def test_update_state_with_corpus_passed_succeeds():
 @patch('penelope.common.goodness_of_fit.compile_most_deviating_words', generic_patch)
 @patch('penelope.common.goodness_of_fit.get_most_deviating_words', generic_patch)
 def test_update_state_when_only_one_year_should_fail():
-    co_occurrences = simple_co_occurrences().query('year == 1976')
-    corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
+    computation: ComputeResult = simple_co_occurrences()
+    data_1976 = computation.co_occurrences.query('year == 1976')
+    corpus = to_vectorized_corpus(computation.co_occurrences, computation.document_index, 'value')
 
     with pytest.raises(GoodnessOfFitComputeError):
         _ = compile_data(
             corpus=corpus,
             corpus_folder=None,
             corpus_tag=None,
-            concept_co_occurrences=co_occurrences,
+            co_occurrences=data_1976.co_occurrences,
             compute_options=dict(),
         )
 
 
 @patch('penelope.notebook.ipyaggrid_utility.display_grid', generic_patch)
 def test_build_layout():
-    co_occurrences = simple_co_occurrences()
-    corpus = to_vectorized_corpus(co_occurrences, 'value_n_t')
+    computation: ComputeResult = simple_co_occurrences()
+    corpus = to_vectorized_corpus(computation.co_occurrences, computation.document_index, 'value')
     state = CoOccurrenceData(
         corpus=corpus,
-        concept_co_occurrences=co_occurrences,
+        co_occurrences=computation.co_occurrences,
         compute_options={},
         goodness_of_fit=pd.DataFrame(
             data={
@@ -128,10 +148,10 @@ def test_build_layout():
 
 
 # from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts
-# from penelope.workflows import concept_co_occurrence_workflow
+# from penelope.workflows import co_occurrence_workflow
 # import pathlib
 # @pytest.mark.skip("FIXME: improve test fixture")
-# def test_concept_co_occurrence_workflow_():
+# def test_co_occurrence_workflow_():
 
 #     tokens_transform_opts = TokensTransformOpts(
 #         **{
@@ -168,7 +188,7 @@ def test_build_layout():
 
 #     p.unlink(missing_ok=True)
 
-#     _ = concept_co_occurrence_workflow(
+#     _ = co_occurrence_workflow(
 #         input_filename=input_filename,
 #         output_filename=output_filename,
 #         context_opts=context_opts,

@@ -3,7 +3,7 @@ import sys
 from os.path import join as jj
 
 import click
-import penelope.corpus.vectorized_corpus as vectorized_corpus
+import penelope.corpus.dtm as vectorized_corpus
 import penelope.topic_modelling as topic_modelling
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -70,7 +70,7 @@ def compute_topic_model(
         n_topics=n_topics,
         corpus_folder=corpus_folder,
         corpus_type=corpus_type,
-        corpus_name=corpus_name,
+        corpus_tag=corpus_name,
         engine=engine,
         passes=passes,
         random_seed=random_seed,
@@ -86,7 +86,7 @@ def run_model(
     n_topics=50,
     corpus_folder=None,
     corpus_type=None,
-    corpus_name=None,
+    corpus_tag=None,
     engine="gensim_lda-multicore",
     passes=None,
     random_seed=None,
@@ -97,7 +97,7 @@ def run_model(
 ):
     """ runner """
 
-    if corpus_name is None and corpus_folder is None:
+    if corpus_tag is None and corpus_folder is None:
         click.echo("usage: either corpus-folder or corpus filename must be specified")
         sys.exit(1)
     call_arguments = dict(locals())
@@ -113,12 +113,12 @@ def run_model(
 
     if corpus_type == 'vectorized':
 
-        assert corpus_name is not None, 'error: Corpus dump name-tag not specified for vectorized corpus'
+        assert corpus_tag is not None, 'error: Corpus dump name-tag not specified for vectorized corpus'
         assert vectorized_corpus.VectorizedCorpus.dump_exists(
-            tag=corpus_name, folder=corpus_folder
+            tag=corpus_tag, folder=corpus_folder
         ), 'error: no dump for given tag exists'
 
-        v_corpus = vectorized_corpus.VectorizedCorpus.load(tag=corpus_name, folder=corpus_folder)
+        v_corpus = vectorized_corpus.VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
 
         dtm = v_corpus.data
         id2token = v_corpus.id2token
@@ -128,7 +128,7 @@ def run_model(
     # elif corpus_type == 'text':
     #     opts = dict(pos_includes='|NN|', lemmatize=True, chunk_size=None)
     # elif corpus_type == 'sparv-xml':
-    #     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_name, **opts)
+    #     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_tag, **opts)
 
     else:
 

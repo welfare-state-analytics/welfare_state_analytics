@@ -30,7 +30,7 @@ from typing import Mapping
 import ipywidgets
 import numpy as np
 import pandas as pd
-import penelope.corpus.vectorized_corpus as vectorized_corpus
+import penelope.corpus.dtm as vectorized_corpus
 from IPython.display import display
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -85,11 +85,7 @@ v_corpus: vectorized_corpus.VectorizedCorpus = (
     .slice_by_n_top(500000)
 )
 
-tf_idf_corpus = v_corpus.tf_idf().group_by_year2(aggregate_function="mean", dtype=np.float)
-
-# normalized_corpus = v_corpus\
-#    .normalize()\
-#    .group_by_year2(aggregate_function='mean', dtype=np.float)
+tf_idf_corpus = v_corpus.tf_idf().group_by_year(aggregate="mean", fill_gaps=True)
 
 
 # %%

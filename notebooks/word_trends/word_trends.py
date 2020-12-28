@@ -30,9 +30,9 @@ import penelope.notebook.dtm.load_DTM_gui as load_corpus_gui
 import penelope.notebook.dtm.to_DTM_gui as to_DTM_gui
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
-from penelope.corpus.vectorized_corpus import VectorizedCorpus
+from penelope.corpus.dtm import VectorizedCorpus
 from penelope.notebook.dtm.compute_DTM_corpus import compute_document_term_matrix
-from penelope.notebook.word_trends import create_gui as create_word_trends_gui
+from penelope.notebook.word_trends import create_gui as create_trends_gui
 
 from notebooks.corpus_data_config import ParliamentarySessions
 
@@ -43,7 +43,7 @@ data_folder = "."
 
 
 def done_callback(corpus: VectorizedCorpus, corpus_tag: str, corpus_folder: str):
-    gui = create_word_trends_gui(corpus=corpus, corpus_tag=corpus_tag, corpus_folder=corpus_folder)
+    gui = create_trends_gui(corpus=corpus, corpus_tag=corpus_tag, corpus_folder=corpus_folder)
     display(gui.layout())
 
 

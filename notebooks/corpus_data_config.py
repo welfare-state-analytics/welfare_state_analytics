@@ -1,4 +1,5 @@
 from penelope.corpus.readers import TextReaderOpts
+from penelope.corpus.readers.interfaces import TaggedTokensFilterOpts
 from penelope.pipeline import CorpusConfig, CorpusType, PipelinePayload
 
 
@@ -16,6 +17,7 @@ def ParliamentarySessions(*, corpus_folder: str):  # pylint: disable=unused-argu
             filename_pattern="*.csv",
             as_binary=False,
         ),
+        tagged_tokens_filter_opts=TaggedTokensFilterOpts(),
         pipeline_payload=PipelinePayload(
             source=None,
             document_index_source=None,

@@ -45,19 +45,13 @@ corpus_folder = __paths__.root_folder
 
 # %% [markdown]
 # ### Generate new concept context co-co_occurrences
-# For long running tasks, please use the CLI `concept_co_occurrence` instead.
+# For long running tasks, please use the CLI `co_occurrence` instead.
 # This function computes new concept context co-occurrence data and stores the result in a CSV file.
 # Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
 # %%
 
-# corpus_folder: str,
-# corpus_config: CorpusConfig,
-# pipeline_factory: Callable[[], CorpusPipeline],
-# done_callback: Callable[[CorpusPipeline, VectorizedCorpus, str, str, widgets.Output], None],
-# compute_callback: Callable = compute_co_occurrence,
-
 importlib.reload(compute_gui)
-gui: compute_gui.GUI = compute_gui.create_gui(
+gui: compute_gui.ComputeGUI = compute_gui.ComputeGUI.create(
     corpus_folder=corpus_folder,
     corpus_config=ParliamentarySessions(corpus_folder=corpus_folder),
     done_callback=loaded_callback,
@@ -67,7 +61,7 @@ display(gui.layout())
 # %% [markdown]
 # ### Load saved concept context co-occurrences
 # %%
-lgu: load_gui.GUI = load_gui.create_gui(
-    data_folder=corpus_folder, filename_pattern="*coo_concept_context.csv.zip", loaded_callback=loaded_callback
+lgu: load_gui.LoadGUI = load_gui.LoadGUI.create(
+    data_folder=corpus_folder, filename_pattern="*.co_occurrence.csv.zip", loaded_callback=loaded_callback
 )
 display(lgu.layout())
