@@ -36,6 +36,9 @@ test: clean
 init: tools
 	@poetry install
 
+paths:
+	@find notebooks/ -type f -name __paths__.py -exec cp -u -f __paths__.py \{\} \;
+
 .ONESHELL: guard_clean_working_repository
 guard_clean_working_repository:
 	@status="$$(git status --porcelain)"
@@ -46,7 +49,7 @@ guard_clean_working_repository:
 	fi
 
 wc:
-	@poetry run time find . -name '*.py' -type f -exec cat \{} \; | tqdm | wc -l
+	@poetry run time find . -name '*.py' -type f -exec cat \{\} \; | tqdm | wc -l
 
 version:
 	@poetry version
@@ -226,7 +229,7 @@ gh-exists: ; @which gh > /dev/null
 .PHONY: data spacy_data nltk_data
 .PHONY: pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
 .PHONY: labextension
-.PHONY: wc
+.PHONY: wc paths
 
 help:
 	@echo "Higher level recepies: "
@@ -238,6 +241,7 @@ help:
 	@echo " make tidy             Runs black and isort"
 	@echo " make clean            Removes temporary files, caches, build files"
 	@echo " make data             Downloads NLTK and SpaCy data"
+	@echo " make paths            Copies ./__paths__.py to existing ./notebooks/**/_paths__.py  "
 	@echo "  "
 	@echo "Lower level recepies: "
 	@echo " make init             Install development tools and dependencies (dev recepie)"
