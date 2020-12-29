@@ -1,0 +1,33 @@
+corpus_name: riksdagens-protokoll
+corpus_pattern: '*sparv4.csv.zip'
+corpus_type: 3
+language: swedish
+pipeline_payload:
+  document_index_key: null
+  document_index_sep: ;
+  document_index_source: xxxx.csv
+  filenames: null
+  memory_store:
+    lang: se
+    lemma_column: baseform
+    pos_column: pos
+    tagger: Sparv
+    text_column: token
+  pos_schema_name: SUC
+  source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
+tagged_tokens_filter_opts:
+  data:
+    is_alpha: null
+    is_digit: null
+    is_punct: false
+    is_space: false
+    is_stop: null
+text_reader_opts:
+  as_binary: false
+  filename_fields:
+   - year:prot\_(\d{4}).*
+   - year2:prot_\d{4}(\d{2})__*
+   - number:prot_\d+__(\d+).*
+  filename_filter: null
+  filename_pattern: '*.csv'
+  index_field: null
