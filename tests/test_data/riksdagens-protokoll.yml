@@ -30,5 +30,3 @@ text_reader_opts:
   filename_filter: null
   filename_pattern: '*.csv'
   index_field: null
-  sep: \t
-  quoting: \t
