@@ -26,7 +26,7 @@ import os
 
 import pandas as pd
 from penelope.corpus import TokenizedCorpus
-from penelope.corpus.readers import DataFrameTextTokenizer
+from penelope.corpus.readers import PandasCorpusReader
 from penelope.corpus.tokens_transformer import TokensTransformOpts
 
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
@@ -43,7 +43,7 @@ def create_corpus(source_filename: str, periods):
 
     df = pd.read_csv(source_filename, sep="\t")[["year", "txt"]]
 
-    reader = DataFrameTextTokenizer(df, column_filters={"year": periods})
+    reader = PandasCorpusReader(df, column_filters={"year": periods})
 
     tokens_transform_opts = TokensTransformOpts(
         to_lower=True,

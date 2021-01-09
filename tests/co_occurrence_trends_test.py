@@ -85,7 +85,7 @@ def test_update_state_with_corpus_passed_succeeds():
     index_filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_document_index.csv')
     compute_options = {}
     co_occurrences = load_co_occurrences(filename)
-    document_index = load_document_index(index_filename, key_column=None, sep='\t')
+    document_index = load_document_index(index_filename, sep='\t')
     corpus = to_vectorized_corpus(co_occurrences, document_index, 'value')
 
     data = compile_data(
