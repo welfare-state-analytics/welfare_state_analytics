@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 from penelope.co_occurrence import to_co_occurrence_matrix
-from penelope.corpus.readers import dataframe_text_tokenizer
+from penelope.corpus.readers import PandasCorpusReader
 
 # NOTE THIS FILE COMPUTES COUCCURRENCE FROM PREDEFINED WINDOWS READ FROM EXCEL FILE!
 
@@ -43,7 +43,7 @@ def load_text_windows(filename: str):
 
 
 def compute_for_period_newpaper(df, period, newspaper, min_count, options):
-    reader = dataframe_text_tokenizer.PandasCorpusReader(df, year=period, newspaper=newspaper)
+    reader = PandasCorpusReader(df, year=period, newspaper=newspaper)
     df_y = to_co_occurrence_matrix(reader, min_count=min_count, **options)
     df_y['newspaper'] = newspaper
     df_y['period'] = str(period)
