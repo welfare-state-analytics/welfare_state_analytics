@@ -34,9 +34,7 @@ from IPython.display import display
 from penelope.notebook.co_occurrence.compute_callback_corpus import compute_co_occurrence
 
 import __paths__  # pylint: disable=unused-import
-from notebooks.corpus_data_config import ParliamentarySessions
-
-from .loaded_callback import loaded_callback
+from notebooks.concept_co_occurrences.loaded_callback import loaded_callback
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -53,7 +51,7 @@ corpus_folder = __paths__.root_folder
 importlib.reload(compute_gui)
 gui: compute_gui.ComputeGUI = compute_gui.ComputeGUI.create(
     corpus_folder=corpus_folder,
-    corpus_config=ParliamentarySessions(corpus_folder=corpus_folder),
+    corpus_config_name="riksdagens-protokoll",
     done_callback=loaded_callback,
     compute_callback=compute_co_occurrence,
 )
@@ -61,7 +59,7 @@ display(gui.layout())
 # %% [markdown]
 # ### Load saved concept context co-occurrences
 # %%
-lgu: load_gui.LoadGUI = load_gui.LoadGUI.create(
+lgu: load_gui.LoadGUI = load_gui.create_load_gui(
     data_folder=corpus_folder, filename_pattern="*.co_occurrence.csv.zip", loaded_callback=loaded_callback
 )
 display(lgu.layout())
