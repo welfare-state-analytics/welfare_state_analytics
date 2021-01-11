@@ -15,6 +15,7 @@ def setup_pandas():
 def to_text(document: List[Tuple[int, int]], id2token: Dict[int, str]):
     return ' '.join(flatten([f * [id2token[token_id]] for token_id, f in document]))
 
+
 # from zipfile import ZipFile, ZipInfo
 
 # class ZipFileExt(ZipFile):
@@ -37,4 +38,3 @@ def to_text(document: List[Tuple[int, int]], id2token: Dict[int, str]):
 
 #     def __iter__(self):
 #         return self.ZipFileIterator(self)
-
