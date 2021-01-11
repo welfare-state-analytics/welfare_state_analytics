@@ -13,7 +13,7 @@ pipeline_payload:
     tagger: Sparv
     text_column: token
   pos_schema_name: SUC
-  source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
+  source: proto.2files.2sentences.sparv4.csv.zip
 tagged_tokens_filter_opts:
   data:
     is_alpha: null
