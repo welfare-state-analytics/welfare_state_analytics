@@ -22,37 +22,26 @@
 
 # pylint: disable=wrong-import-position
 
-import os
-import sys
-
-import penelope.corpus.dtm as vectorized_corpus
+import penelope.corpus.dtm as dtm
+from IPython.core.display import display
 from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
 
+import __paths__
 from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
     display_gui,
     display_most_discriminating_terms,
 )
 
-root_folder = os.path.join(os.getcwd().split("welfare_state_analytics")[0], "welfare_state_analytics")
-
-sys.path = list(set(sys.path + [root_folder]))
-
-
-corpus_folder = os.path.join(root_folder, "output")
-
-# %%
-v_corpus: vectorized_corpus.VectorizedCorpus = (
-    vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
+corpus: dtm.VectorizedCorpus = (
+    dtm.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=__paths__.output_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )
 
-
-# %%
-
-display_gui(
-    v_corpus,
-    v_corpus.document_index,
+gui = display_gui(
+    corpus,
+    corpus.document_index,
     compute_callback=compute_most_discriminating_terms,
     display_callback=display_most_discriminating_terms,
 )
+display(gui.layout())
