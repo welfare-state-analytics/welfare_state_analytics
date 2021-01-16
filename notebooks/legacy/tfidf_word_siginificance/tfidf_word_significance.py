@@ -46,17 +46,7 @@ logger = logging.getLogger(__name__)
 
 # %% [markdown]
 # ## Load previously vectorized corpus
-#
-# The corpus was created using the following settings:
-#  - Tokens were converted to lower case.
-#  - Only tokens that contains at least one alphanumeric character (only_alphanumeric).
-#  - Accents are ot removed (remove_accents)
-#  - Min token length 2 (min_len)
-#  - Max length not set (max_len)
-#  - Numerals are removed (keep_numerals, -N)
-#  - Symbols are removed (keep_symbols, -S)
-#
-# Use the `corpus_vectorizer` module to create a new corpus with different settings.
+## Use the `corpus_vectorizer` module to create a new corpus with different settings.
 #
 # The loaded corpus is processed in the following ways:
 #

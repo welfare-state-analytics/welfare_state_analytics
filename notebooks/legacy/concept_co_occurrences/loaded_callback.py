@@ -1,21 +1,18 @@
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping
+from typing import Dict
 
-import ipywidgets
 import pandas as pd
 import penelope.common.goodness_of_fit as gof
 import penelope.notebook.utility as notebook_utility
 import penelope.notebook.word_trends as word_trends
-from penelope.co_occurrence import to_vectorized_corpus
+from penelope import co_occurrence
 from penelope.common.goodness_of_fit import GoodnessOfFitComputeError
 from penelope.corpus import VectorizedCorpus
 from penelope.notebook.ipyaggrid_utility import display_grid
 from penelope.utility import getLogger
 
 logger = getLogger()
-
-# FIXME: Consolidate with penelope!!!!
 
 
 @dataclass
@@ -31,43 +28,37 @@ class CoOccurrenceData:  # pylint: disable=too-many-instance-attributes
     most_deviating: pd.DataFrame = None
 
 
-def compile_data(
-    *,
-    corpus: VectorizedCorpus = None,
-    corpus_folder: str = None,
-    corpus_tag: str = None,
-    n_count: int = 10000,
-    co_occurrences: pd.DataFrame = None,
-    compute_options: Mapping[str, Any] = None,
-) -> CoOccurrenceData:
+def compile_data(bundle: co_occurrence.Bundle) -> CoOccurrenceData:
 
-    data = CoOccurrenceData()
+    data = CoOccurrenceData(
+        corpus=bundle.corpus,
+        corpus_folder=bundle.corpus_folder,
+        corpus_tag=bundle.corpus_tag,
+        co_occurrences=bundle.co_occurrences,
+        compute_options=bundle.compute_options,
+    )
 
-    data.corpus = corpus
-    data.corpus_folder = corpus_folder
-    data.corpus_tag = corpus_tag
-    data.co_occurrences = co_occurrences
-    data.compute_options = compute_options
-
-    if corpus is None:
+    if data.corpus is None:
 
         if data.co_occurrences is None:
             raise ValueError("Both corpus and co_occurrences cannot be None")
 
-        data.corpus = to_vectorized_corpus(co_occurrences=data.co_occurrences, value_column='value_n_t').group_by_year()
+        data.corpus = co_occurrence.to_vectorized_corpus(
+            co_occurrences=data.co_occurrences,
+            document_index=data.corpus.document_index if data.corpus else None,
+            value_column='value_n_t',
+        ).group_by_year()
 
     data.goodness_of_fit = gof.compute_goddness_of_fits_to_uniform(data.corpus, None, verbose=False)
-    data.most_deviating_overview = gof.compile_most_deviating_words(data.goodness_of_fit, n_count=n_count)
+    data.most_deviating_overview = gof.compile_most_deviating_words(data.goodness_of_fit, n_count=bundle.n_count)
     data.most_deviating = gof.get_most_deviating_words(
-        data.goodness_of_fit, 'l2_norm', n_count=n_count, ascending=False, abs_value=True
+        data.goodness_of_fit, 'l2_norm', n_count=bundle.n_count, ascending=False, abs_value=True
     )
 
     return data
 
 
-def build_layout(
-    data: CoOccurrenceData,  # pylint: disable=redefined-outer-name
-):
+def build_layout(data: CoOccurrenceData):  # pylint: disable=redefined-outer-name
     trends_with_pick_gui: word_trends.TrendsWithPickTokensGUI = word_trends.TrendsWithPickTokensGUI.create(
         data.corpus, tokens=data.most_deviating
     )
@@ -93,36 +84,15 @@ def build_layout(
     return layout
 
 
-def loaded_callback(
-    *,
-    output: ipywidgets.Output,
-    corpus: VectorizedCorpus = None,
-    corpus_folder: str = None,
-    corpus_tag: str = None,
-    n_count: int = 10000,
-    **kwargs,
-):
+def loaded_callback(bundle: co_occurrence.Bundle, *_, **__):
+    try:
+        if os.environ.get('VSCODE_LOGS', None) is not None:
+            logger.error("bug-check: vscode detected, aborting plot...")
+            return
 
-    with output:
-        try:
-
-            output.clear_output()
-
-            if os.environ.get('VSCODE_LOGS', None) is not None:
-                logger.error("bug-check: vscode detected, aborting plot...")
-                return
-
-            data = compile_data(
-                corpus=corpus,
-                corpus_folder=corpus_folder,
-                corpus_tag=corpus_tag,
-                n_count=n_count,
-                **kwargs,
-            )
-
-            build_layout(data).display()
-
-        except GoodnessOfFitComputeError as ex:
-            logger.info(f"Unable to compute GoF: {str(ex)}")
-        except Exception as ex:
-            logger.exception(ex)
+        data = compile_data(bundle=bundle)
+        build_layout(data).display()
+    except GoodnessOfFitComputeError as ex:
+        logger.info(f"Unable to compute GoF: {str(ex)}")
+    except Exception as ex:
+        logger.exception(ex)

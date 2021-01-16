@@ -25,16 +25,17 @@
 # pylint: disable=too-many-instance-attributes, unused-argument
 
 import importlib
+from typing import Optional
 import warnings
 
+from penelope import pipeline, co_occurrence, workflows
 import penelope.notebook.co_occurrence.load_co_occurrences_gui as load_gui
 import penelope.notebook.co_occurrence.to_co_occurrence_gui as compute_gui
+from penelope.notebook.interface import ComputeOpts
 from bokeh.plotting import output_notebook
 from IPython.display import display
-from penelope.notebook.co_occurrence.compute_callback_corpus import compute_co_occurrence
-
+from .loaded_callback import loaded_callback
 import __paths__  # pylint: disable=unused-import
-from notebooks.concept_co_occurrences.loaded_callback import loaded_callback
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -43,17 +44,28 @@ corpus_folder = __paths__.root_folder
 
 # %% [markdown]
 # ### Generate new concept context co-co_occurrences
-# For long running tasks, please use the CLI `co_occurrence` instead.
-# This function computes new concept context co-occurrence data and stores the result in a CSV file.
-# Optionally, the co-occurrence data can be transformed to a vectorized corpus to enable word trend exploration.
 # %%
+
+
+def compute_co_occurrence_callback(
+    corpus_config: pipeline.CorpusConfig,
+    args: ComputeOpts,
+    checkpoint_file: Optional[str] = None,
+) -> co_occurrence.ComputeResult:
+    compute_result = workflows.co_occurrence.compute(
+        args=args,
+        corpus_config=corpus_config,
+        checkpoint_file=checkpoint_file,
+    )
+    return compute_result
+
 
 importlib.reload(compute_gui)
 gui: compute_gui.ComputeGUI = compute_gui.ComputeGUI.create(
     corpus_folder=corpus_folder,
-    corpus_config_name="riksdagens-protokoll",
+    corpus_config="riksdagens-protokoll",
     done_callback=loaded_callback,
-    compute_callback=compute_co_occurrence,
+    compute_callback=compute_co_occurrence_callback,
 )
 display(gui.layout())
 # %% [markdown]
