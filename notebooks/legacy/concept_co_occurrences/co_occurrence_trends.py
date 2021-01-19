@@ -61,7 +61,7 @@ def compute_co_occurrence_callback(
 
 
 importlib.reload(compute_gui)
-gui: compute_gui.ComputeGUI = compute_gui.ComputeGUI.create(
+gui: compute_gui.ComputeGUI = compute_gui.create_compute_gui(
     corpus_folder=corpus_folder,
     corpus_config="riksdagens-protokoll",
     done_callback=loaded_callback,
