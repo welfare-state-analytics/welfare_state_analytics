@@ -26,6 +26,7 @@
 
 # %%
 
+from typing import Any
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
 from penelope import pipeline, workflows
@@ -40,12 +41,12 @@ output_notebook()
 # %% tags=[] vscode={"end_execution_time": "2020-08-31T18:34:55.995Z", "start_execution_time": "2020-08-31T18:34:55.854Z"}
 
 
-def done_callback(corpus: dtm.VectorizedCorpus, args: interface.ComputeOpts):
+def done_callback(corpus: dtm.VectorizedCorpus, corpus_folder: str, corpus_tag: str):
 
     trends_data: word_trends.TrendsData = word_trends.TrendsData(
         corpus=corpus,
-        corpus_folder=args.corpus_folder,
-        corpus_tag=args.corpus_tag,
+        corpus_folder=corpus_folder,
+        corpus_tag=corpus_tag,
         n_count=25000,
     ).update()
 
@@ -57,6 +58,9 @@ def done_callback(corpus: dtm.VectorizedCorpus, args: interface.ComputeOpts):
     display(gui.layout())
     gui.display(trends_data=trends_data)
 
+def compute_done_callback(corpus: dtm.VectorizedCorpus, opts: interface.ComputeOpts):
+    done_callback(corpus=corpus, corpus_folder=opts.target_folder, corpus_tag=opts.corpus_tag)
+
 def compute_callback(args: interface.ComputeOpts, corpus_config: pipeline.CorpusConfig) -> dtm.VectorizedCorpus:
     corpus: dtm.VectorizedCorpus = workflows.document_term_matrix.compute(args=args, corpus_config=corpus_config)
     return corpus
@@ -65,7 +69,7 @@ compute_gui: to_dtm_gui.ComputeGUI = to_dtm_gui.create_compute_gui(
     corpus_folder=__paths__.data_folder,
     corpus_config="riksdagens-protokoll",
     compute_callback=compute_callback,
-    done_callback=done_callback,
+    done_callback=compute_done_callback,
 )
 display(compute_gui.layout())
 
