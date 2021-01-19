@@ -167,7 +167,6 @@ known_first_party = [ "__paths__" ]
     omit = [
         '**/__init__.py',
         '**/__paths__.py'
-
     ]
 
     [tool.coverage.report]
