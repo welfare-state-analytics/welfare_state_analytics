@@ -2,9 +2,18 @@ corpus_name: riksdagens-protokoll
 corpus_pattern: '*sparv4.csv.zip'
 corpus_type: 3
 language: swedish
+content_deserialize_opts:
+    content_type_code: 1
+    sep: \t
+    quoting: 3
+    document_index_name: null
+    document_index_sep: null
+pipelines:
+  tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:
-  document_index_sep: \t
+  source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
   document_index_source: null
+  document_index_sep: \t
   filenames: null
   memory_store:
     lang: se
@@ -13,7 +22,6 @@ pipeline_payload:
     tagger: Sparv
     text_column: token
   pos_schema_name: SUC
-  source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
 tagged_tokens_filter_opts:
   data:
     is_alpha: null
