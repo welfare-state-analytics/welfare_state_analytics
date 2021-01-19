@@ -103,12 +103,14 @@
 # %%
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
+from penelope.notebook.co_occurrence import MainGUI
 
-import __paths__  # pylint: disable=unused-import
-from notebooks.co_occurrence import co_occurrence_gui
+import __paths__
 
 output_notebook()
-gui = co_occurrence_gui.MainGUI(corpus_config_name="riksdagens-protokoll")
+gui = MainGUI(
+    corpus_config="riksdagens-protokoll",
+    corpus_folder=__paths__.data_folder,
+    resources_folder=__paths__.resources_folder,
+)
 display(gui.layout())
-
-# %%
