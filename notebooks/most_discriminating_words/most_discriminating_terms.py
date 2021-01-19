@@ -21,27 +21,56 @@
 # %autoreload 2
 
 # pylint: disable=wrong-import-position
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.6.0
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-import penelope.corpus.dtm as dtm
-from IPython.core.display import display
-from penelope.common.most_discriminating_terms import compute_most_discriminating_terms
+# %% [markdown]
+# ## Most Discriminating Terms
+
+# %%
+# %load_ext autoreload
+# %autoreload 2
+
+# pylint: disable=wrong-import-position,unused-argument
+
+from IPython.display import display
+from ipywidgets import Output, VBox
+from penelope.corpus import dtm
+from penelope.notebook import ipyaggrid_utility
+from penelope.notebook.dtm import load_dtm_gui
+from penelope.notebook.mdw import create_mdw_gui
 
 import __paths__
-from notebooks.most_discriminating_words.most_discriminating_terms_gui import (
-    display_gui,
-    display_most_discriminating_terms,
-)
 
-corpus: dtm.VectorizedCorpus = (
-    dtm.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=__paths__.output_folder)
-    .slice_by_n_count(10)
-    .slice_by_n_top(500000)
-)
+view_display, view_gui = Output(), Output()
 
-gui = display_gui(
-    corpus,
-    corpus.document_index,
-    compute_callback=compute_most_discriminating_terms,
-    display_callback=display_most_discriminating_terms,
-)
+@view_display.capture(clear_output=True)
+def display_mdw(corpus: dtm.VectorizedCorpus, df_mdw):
+    g = ipyaggrid_utility.display_grid(df_mdw)
+    display(g)
+
+
+@view_gui.capture(clear_output=True)
+def loaded_callback(corpus: dtm.VectorizedCorpus, corpus_folder: str, corpus_tag: str):
+    mdw_gui = create_mdw_gui(corpus, done_callback=display_mdw)
+    display(mdw_gui.layout())
+
+
+gui = load_dtm_gui.create_load_gui(corpus_folder=__paths__.data_folder, loaded_callback=loaded_callback)
+
 display(gui.layout())
+display(VBox([view_gui, view_display]))
+
+# %%
