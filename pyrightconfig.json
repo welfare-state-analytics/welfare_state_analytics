@@ -6,7 +6,11 @@
     ],
     "exclude": [
         "**/deprecated",
-        "**/.ipynb_checkpoints"
+        "**/.ipynb_checkpoints",
+        "**/__pycache__",
+        "**/.pytest_cache",
+        "**/__init__.py",
+        "**/__paths__.py"
     ],
     "reportMissingImports": true,
     "reportMissingTypeStubs": false,
