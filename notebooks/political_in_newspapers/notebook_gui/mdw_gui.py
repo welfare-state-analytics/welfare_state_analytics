@@ -6,7 +6,7 @@ import ipywidgets
 import pandas as pd
 from IPython.display import display
 from penelope.corpus import VectorizedCorpus
-from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
+from penelope.vendor.textacy import compute_most_discriminating_terms
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
@@ -186,8 +186,6 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
 
                 df = compute_most_discriminating_terms(
                     x_corpus,
-                    top_n_terms=gui.top_n_terms.value,
-                    max_n_terms=gui.max_n_terms.value,
                     group1_indices=year_range_group_indicies(
                         x_corpus.document_index,
                         gui.period1.value,
@@ -198,6 +196,8 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
                         gui.period2.value,
                         gui.publication_ids2.value,
                     ),
+                    top_n_terms=gui.top_n_terms.value,
+                    max_n_terms=gui.max_n_terms.value,
                 )
                 if df is not None:
                     display(df)
