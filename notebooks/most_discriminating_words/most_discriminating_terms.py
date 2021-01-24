@@ -56,6 +56,7 @@ import __paths__
 
 view_display, view_gui = Output(), Output()
 
+
 @view_display.capture(clear_output=True)
 def display_mdw(corpus: dtm.VectorizedCorpus, df_mdw):
     g = ipyaggrid_utility.display_grid(df_mdw)
