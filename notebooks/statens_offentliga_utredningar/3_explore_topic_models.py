@@ -23,23 +23,46 @@
 
 import bokeh.plotting
 import penelope.notebook.topic_modelling as gui
-from penelope.utility import get_logger
+from penelope.utility import get_logger, pandas_utils
 
 import __paths__  # pylint: disable=unused-import
-from notebooks.common import setup_pandas
 
 logger = get_logger()
 
 bokeh.plotting.output_notebook()
-setup_pandas()
+pandas_utils.set_default_options()
 current_state: gui.TopicModelContainer = gui.TopicModelContainer.singleton
-corpus_folder = "/data/westac/sou_kb_labb"
+corpus_folder: str = "/data/westac/sou_kb_labb"
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
 gui.display_load_topic_model_gui(corpus_folder, current_state())
+
+# FIXME: Add to load display:
+# import pandas as pd
+# from penelope.notebook.ipyaggrid_utility import display_grid
+
+# def compute_topic_proportions(document_topic_weights: pd.DataFrame):
+#     doc_topic_dists = document_topic_weights[['document_id', 'topic_id', 'weight', 'n_raw_tokens']]
+#     # compute sum of (topic weight x document lengths)
+#     topic_freqs = doc_topic_dists.assign(t_weight=lambda df: df.weight * df.n_raw_tokens).groupby('topic_id')['t_weight'].sum()
+#     # normalize on total sum
+#     topic_proportion = (topic_freqs / topic_freqs.sum()).sort_values(ascending=False)
+#     # return global topic proportion
+#     topic_proportion = pd.DataFrame(data={'topic_proportion': 100.0 * topic_proportion})
+#     return topic_proportion
+
+# document_topic_weights = current_state().inferred_topics.document_topic_weights
+# topic_token_overview = current_state().inferred_topics.topic_token_overview
+
+# topic_proportions = compute_topic_proportions(document_topic_weights)
+# topic_proportions = topic_proportion.merge(topic_token_overview, left_index=True, right_index=True)
+# #topic_proportion = current_state().inferred_topics.topic_token_overview
+# #display(display_grid(topic_proportion))
+# topic_proportions.to_excel('mallet-500.xlsx')
+# #display(current_state().inferred_topics.topic_token_overview)
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Find topics by token<span style='color: red; float: right'>TRY IT</span>
