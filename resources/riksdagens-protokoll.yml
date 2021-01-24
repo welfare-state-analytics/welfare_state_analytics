@@ -4,23 +4,25 @@ corpus_type: 3
 language: swedish
 content_deserialize_opts:
     content_type_code: 1
-    sep: \t
+    sep: "\t"
     quoting: 3
     document_index_name: null
     document_index_sep: null
+    custom_serializer_classname: penelope.pipeline.sparv.convert.SparvCsvSerializer
 pipelines:
   tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:
   source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
   document_index_source: null
-  document_index_sep: \t
+  document_index_sep: "\t"
   filenames: null
   memory_store:
     lang: se
+    tagger: Sparv
+    sparv_version: 4
+    text_column: token
     lemma_column: baseform
     pos_column: pos
-    tagger: Sparv
-    text_column: token
   pos_schema_name: SUC
 tagged_tokens_filter_opts:
   data:
@@ -31,11 +33,11 @@ tagged_tokens_filter_opts:
 text_reader_opts:
   as_binary: false
   filename_fields:
-   - year:prot\_(\d{4}).*
-   - year2:prot_\d{4}(\d{2})__*
-   - number:prot_\d+__(\d+).*
+   - "year:prot\\_(\\d{4}).*"
+   - "year2:prot_\\d{4}(\\d{2})__*"
+   - "number:prot_\\d+[afk_]{0,4}__(\\d+).*"
   filename_filter: null
   filename_pattern: '*.csv'
   index_field: null
-  sep: \t
-  quoting: \t
+  sep: "\t"
+  quoting: 3
