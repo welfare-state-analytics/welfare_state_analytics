@@ -73,7 +73,6 @@ def create_bigger_vectorized_corpus(
         create_subfolder=True,
         persist=True,
     )
-    corpus_config: pipeline.CorpusConfig
     corpus: dtm.VectorizedCorpus = workflows.document_term_matrix.compute(args=args, corpus_config=None)
 
     return corpus
