@@ -1,8 +1,9 @@
 import logging
 import os
+from typing import Any
 
 import click
-from penelope.vendor.textacy.mdw_modified import compute_most_discriminating_terms
+from penelope.vendor.textacy import mdw_modified
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
@@ -74,14 +75,14 @@ pubs2ids = lambda pubs: [corpus_data.PUB2ID[x] for x in pubs]
     type=click.Tuple([str, click.IntRange(1945, 1989), click.IntRange(1945, 1989)]),
 )
 def mdw_run(
-    corpus_folder,
-    max_n_terms,
-    min_df,
-    max_df,
-    min_abs_df,
-    max_abs_df,
-    top_n_terms,
-    group,
+    corpus_folder: str,
+    max_n_terms: int,
+    min_df: float,
+    max_df: float,
+    min_abs_df: int,
+    max_abs_df: int,
+    top_n_terms: int,
+    group: Any,
 ):
 
     if len(group) != 2:
@@ -106,18 +107,18 @@ def mdw_run(
     logger.info("Reading corpus...")
 
     # TODO: #92 Implement VectorizedCorpus.slice_by_df
-    v_corpus = mdw_gui.load_vectorized_corpus(corpus_folder, pubs2ids(PUB_IDS)).slice_by_document_frequency(
+    corpus = mdw_gui.load_vectorized_corpus(corpus_folder, pubs2ids(PUB_IDS)).slice_by_document_frequency(
         max_df=max_df, min_df=min_df, max_n_terms=max_n_terms
     )
 
-    logger.info("Corpus size after DF trim %s x %s.", *v_corpus.data.shape)
+    logger.info("Corpus size after DF trim %s x %s.", *corpus.data.shape)
 
-    df = compute_most_discriminating_terms(
-        v_corpus,
+    df = mdw_modified.compute_most_discriminating_terms(
+        corpus,
+        group1_indices=mdw_gui.year_range_group_indicies(corpus.document_index, period1, pubs_ids1),
+        group2_indices=mdw_gui.year_range_group_indicies(corpus.document_index, period2, pubs_ids2),
         top_n_terms=top_n_terms,
         max_n_terms=max_n_terms,
-        group1_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period1, pubs_ids1),
-        group2_indices=mdw_gui.year_range_group_indicies(v_corpus.document_index, period2, pubs_ids2),
     )
 
     if df is not None:
