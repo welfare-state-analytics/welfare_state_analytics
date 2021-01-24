@@ -26,7 +26,6 @@
 
 # %%
 
-from typing import Any
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
 from penelope import pipeline, workflows
@@ -58,12 +57,15 @@ def done_callback(corpus: dtm.VectorizedCorpus, corpus_folder: str, corpus_tag: 
     display(gui.layout())
     gui.display(trends_data=trends_data)
 
+
 def compute_done_callback(corpus: dtm.VectorizedCorpus, opts: interface.ComputeOpts):
     done_callback(corpus=corpus, corpus_folder=opts.target_folder, corpus_tag=opts.corpus_tag)
+
 
 def compute_callback(args: interface.ComputeOpts, corpus_config: pipeline.CorpusConfig) -> dtm.VectorizedCorpus:
     corpus: dtm.VectorizedCorpus = workflows.document_term_matrix.compute(args=args, corpus_config=corpus_config)
     return corpus
+
 
 compute_gui: to_dtm_gui.ComputeGUI = to_dtm_gui.create_compute_gui(
     corpus_folder=__paths__.data_folder,

@@ -25,17 +25,19 @@
 # pylint: disable=too-many-instance-attributes, unused-argument
 
 import importlib
-from typing import Optional
 import warnings
+from typing import Optional
 
-from penelope import pipeline, co_occurrence, workflows
 import penelope.notebook.co_occurrence.load_co_occurrences_gui as load_gui
 import penelope.notebook.co_occurrence.to_co_occurrence_gui as compute_gui
-from penelope.notebook.interface import ComputeOpts
 from bokeh.plotting import output_notebook
 from IPython.display import display
-from .loaded_callback import loaded_callback
+from penelope import co_occurrence, pipeline, workflows
+from penelope.notebook.interface import ComputeOpts
+
 import __paths__  # pylint: disable=unused-import
+
+from .loaded_callback import loaded_callback
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
