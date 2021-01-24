@@ -8,10 +8,10 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
+from penelope.corpus import bow_to_text
 from penelope.notebook.topic_modelling import TopicModelContainer, filter_document_topic_weights
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
-from notebooks.common import to_text
 
 logger = utility.get_logger()
 
@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def reconstitue_texts_for_topic(df: pd.DataFrame, corpus, id2token, n_top=500):
 
-    df['text'] = df.document_id.apply(lambda x: to_text(corpus[x], id2token))
+    df['text'] = df.document_id.apply(lambda x: bow_to_text(corpus[x], id2token))
     df['pub'] = df.publication_id.apply(lambda x: corpus_data.ID2PUB[x])
     df = df.drop(['topic_id', 'year', 'publication_id'], axis=1).set_index('document_id')
     df.index.name = 'id'
