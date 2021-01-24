@@ -16,8 +16,8 @@
     "reportMissingTypeStubs": false,
     "reportUntypedFunctionDecorator": false,
     "reportUntypedClassDecorator": true,
-    "reportOptionalSubscript": true,
-    "reportOptionalMemberAccess": true,
-    "reportOptionalCall": true,
+    "reportOptionalSubscript": false,
+    "reportOptionalMemberAccess": false,
+    "reportOptionalCall": false,
     "pythonVersion": "3.8"
 }
