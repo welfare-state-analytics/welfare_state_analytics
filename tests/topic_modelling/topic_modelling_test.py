@@ -257,7 +257,9 @@ def test_load_inferred_topics_data(opts):
     target_folder = jj(OUTPUT_FOLDER, f"{uuid.uuid1()}")
     test_inferred_topics_data.store(target_folder)
     # Act
-    inferred_topics_data: InferredTopicsData = topic_modelling.InferredTopicsData.load(folder=target_folder, filename_fields=None)
+    inferred_topics_data: InferredTopicsData = topic_modelling.InferredTopicsData.load(
+        folder=target_folder, filename_fields=None
+    )
 
     # Assert
     assert inferred_topics_data is not None
@@ -310,3 +312,22 @@ def test_run_cli():
     assert os.path.isfile(jj(target_folder, 'model_options.json'))
 
     shutil.rmtree(target_folder)
+
+
+# corpus_folder = '/data/westac/sou_kb_labb'
+# state = current_state()
+# model_name = 'gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn'
+# model_infos = [
+#     {
+#         'folder': '/data/westac/sou_kb_labb/gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn',
+#         'name': 'gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn',
+#         'options': {
+#             'method': 'gensim_mallet-lda',
+#             'perplexity_score': None,
+#             'coherence_score': -0.5392711665948583,
+#             'engine_options': {'n_topics': 50, 'alpha': 'asymmetric', 'workers': 1, 'max_iter': 2500},
+#             'extra_options': {'tfidf_weiging': False},
+#         },
+#     }
+# ]
+# load_model(corpus_config, corpus_folder, state, model_name, model_infos)
