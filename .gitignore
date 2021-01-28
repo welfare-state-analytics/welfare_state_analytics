@@ -50,3 +50,4 @@ deprecated
 htmlcov
 coverage.xml
 dist
+/stopwords
