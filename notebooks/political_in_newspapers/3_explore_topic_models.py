@@ -26,6 +26,7 @@ import __paths__  # isort:skip pylint: disable=import-error, unused-import
 import bokeh.plotting
 import penelope.notebook.topic_modelling as gui
 from IPython.core.interactiveshell import InteractiveShell
+from IPython.display import display
 
 import notebooks.political_in_newspapers.notebook_gui.publication_topic_network_gui as publication_topic_network_gui
 import notebooks.political_in_newspapers.notebook_gui.topic_document_texts_gui as texts_gui
@@ -45,8 +46,10 @@ bokeh.plotting.output_notebook()
 
 # %%
 
-gui.display_load_topic_model_gui('/data/westac/political_in_newspapers', current_state())
-# load_gui.load_model(corpus_folder, current_state(), 'test.4days')
+load_gui = gui.create_load_topic_model_gui(
+    corpus_config=None, corpus_folder='/data/westac/political_in_newspapers', state=current_state()
+)
+display(load_gui.layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
