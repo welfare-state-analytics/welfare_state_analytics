@@ -101,14 +101,15 @@
 # The "words" in this case are co-occurrence pairs and to find instances matching "information" you could enter ```information*```, ```*information``` or ```*information*``` to match pairs starting with information, ending with information or containing information respectively.
 
 # %%
+
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
-from penelope.notebook.co_occurrence import MainGUI
+from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
 
 output_notebook()
-gui = MainGUI(
+gui = main_gui.MainGUI(
     corpus_config="riksdagens-protokoll",
     corpus_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
