@@ -21,48 +21,31 @@
 # %%
 # %%capture
 
+import os
+from typing import List
+
 import bokeh.plotting
+import pandas as pd
 import penelope.notebook.topic_modelling as gui
-from penelope.utility import get_logger, pandas_utils
+from IPython.display import display
+from penelope.pipeline.config import CorpusConfig
+from penelope.utility import pandas_utils
 
 import __paths__  # pylint: disable=unused-import
 
-logger = get_logger()
-
 bokeh.plotting.output_notebook()
 pandas_utils.set_default_options()
+
 current_state: gui.TopicModelContainer = gui.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
+corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-gui.display_load_topic_model_gui(corpus_folder, current_state())
-
-# FIXME: Add to load display:
-# import pandas as pd
-# from penelope.notebook.ipyaggrid_utility import display_grid
-
-# def compute_topic_proportions(document_topic_weights: pd.DataFrame):
-#     doc_topic_dists = document_topic_weights[['document_id', 'topic_id', 'weight', 'n_raw_tokens']]
-#     # compute sum of (topic weight x document lengths)
-#     topic_freqs = doc_topic_dists.assign(t_weight=lambda df: df.weight * df.n_raw_tokens).groupby('topic_id')['t_weight'].sum()
-#     # normalize on total sum
-#     topic_proportion = (topic_freqs / topic_freqs.sum()).sort_values(ascending=False)
-#     # return global topic proportion
-#     topic_proportion = pd.DataFrame(data={'topic_proportion': 100.0 * topic_proportion})
-#     return topic_proportion
-
-# document_topic_weights = current_state().inferred_topics.document_topic_weights
-# topic_token_overview = current_state().inferred_topics.topic_token_overview
-
-# topic_proportions = compute_topic_proportions(document_topic_weights)
-# topic_proportions = topic_proportion.merge(topic_token_overview, left_index=True, right_index=True)
-# #topic_proportion = current_state().inferred_topics.topic_token_overview
-# #display(display_grid(topic_proportion))
-# topic_proportions.to_excel('mallet-500.xlsx')
-# #display(current_state().inferred_topics.topic_token_overview)
+load_gui = gui.create_load_topic_model_gui(corpus_config, corpus_folder, current_state())
+display(load_gui.layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Find topics by token<span style='color: red; float: right'>TRY IT</span>
@@ -70,12 +53,9 @@ gui.display_load_topic_model_gui(corpus_folder, current_state())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-try:
-    gui.find_topic_documents_gui(
-        current_state().inferred_topics.document_topic_weights, current_state().inferred_topics.topic_token_overview
-    )
-except Exception as ex:
-    logger.exception(ex)
+gui.find_topic_documents_gui(
+    current_state().inferred_topics.document_topic_weights, current_state().inferred_topics.topic_token_overview
+)
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -83,40 +63,26 @@ except Exception as ex:
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-try:
-    gui.display_topic_documents_gui(current_state())
-except Exception as ex:
-    logger.exception(ex)
+gui.display_topic_documents_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-bokeh.plotting.output_notebook()
-try:
-    gui.display_topic_wordcloud_gui(current_state())
-except Exception as ex:
-    logger.exception(ex)
+gui.display_topic_wordcloud_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-try:
-    gui.display_topic_word_distribution_gui(current_state())
-    # topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
-except Exception as ex:
-    logger.exception(ex)
+gui.display_topic_word_distribution_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-try:
-    gui.display_topic_trends_gui(current_state())
-except Exception as ex:
-    logger.exception(ex)
+gui.display_topic_trends_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -125,11 +91,7 @@ except Exception as ex:
 # - [Stanford’s Termite software](http://vis.stanford.edu/papers/termite) uses a similar visualization.
 
 # %%
-bokeh.plotting.output_notebook()
-try:
-    gui.display_topic_trends_overview_gui(current_state())
-except ValueError as ex:
-    logger.exception(ex)
+gui.display_topic_trends_overview_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -137,7 +99,6 @@ except ValueError as ex:
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %% code_folding=[0]
-bokeh.plotting.output_notebook()
 gui.display_topic_topic_network_gui(current_state())
 
 # %% [markdown]
@@ -145,15 +106,43 @@ gui.display_topic_topic_network_gui(current_state())
 #
 
 # %%
-bokeh.plotting.output_notebook()
-gui.display_topic_document_network_gui(current_state())
+gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-bokeh.plotting.output_notebook()
-gui.display_focus_topics_network_gui(current_state())
+gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state=current_state())
 
 # %%
+
+
+topic_token_weights = current_state().inferred_topics.topic_token_weights
+dictionary = current_state().inferred_topics.dictionary
+
+
+def nlargest_topic_token_weights(topic_token_weights: pd.DataFrame, n_count: int) -> pd.DataFrame:
+    nlargest = topic_token_weights.groupby(['topic_id'])['topic_id', 'token_id', 'weight'].apply(
+        lambda x: x.nlargest(n_count, columns=['weight'])
+    )
+    return nlargest
+
+
+largest = nlargest_topic_token_weights(topic_token_weights, 10).set_index('topic_id')
+
+id2token = dictionary.to_dict()['token']
+
+
+def tokens_in_common(id2token: dict, largest: pd.DataFrame, topic_id_x: int, topic_id_y: int) -> List[str]:
+
+    x_largest = largest[largest.index == topic_id_x].token_id.tolist()
+    y_largest = largest[largest.index == topic_id_y].token_id.tolist()
+
+    common_tokens = [id2token[x] for x in x_largest if x in y_largest]
+    return common_tokens
+
+
+#
+
+tokens_in_common(id2token, largest, 0, 1)
