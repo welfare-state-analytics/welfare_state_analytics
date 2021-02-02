@@ -290,16 +290,18 @@ def test_run_cli():
 
     kwargs = {
         'name': f"{uuid.uuid1()}",
-        'n_topics': 5,
         'corpus_folder': './tests/output',
         'corpus_filename': './tests/test_data/test_corpus.zip',
         'engine': 'gensim_lda-multicore',
-        # 'passes': None,
-        # 'random_seed': None,
-        'alpha': 'asymmetric',
-        # 'workers': None,
-        # 'max_iter': None,
-        # 'prefix': None,
+        'topic_modeling_opts': {
+            # 'passes': None,
+            # 'random_seed': None,
+            'n_topics': 5,
+            'alpha': 'asymmetric',
+            # 'workers': None,
+            # 'max_iter': None,
+            # 'prefix': None,
+        },
         'filename_field': ('year:_:1', 'sequence_id:_:2'),
     }
 
