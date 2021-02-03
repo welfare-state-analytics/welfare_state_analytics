@@ -1,11 +1,12 @@
-from unittest.mock import patch
 import io
+from unittest.mock import patch
+
+import ipycytoscape
 import pandas as pd
 import pytest
 from penelope.topic_modelling.container import InferredTopicsData
 
 from notebooks.topics_token_network import topics_token_network_gui as ttn_gui
-import ipycytoscape
 
 INFERRED_TOPICS_DATA_FOLDER = './tests/test_data/tranströmer_inferred_model'
 
@@ -47,17 +48,17 @@ def test_view_model(inferred_topics_data: InferredTopicsData):
 
     model.top_count = n_top_count
     model.inferred_topics_data = inferred_topics_data
-    assert model._inferred_topics_data is inferred_topics_data
-    assert model.largest_topic_token_weights is not None
-    assert len(model.largest_topic_token_weights) == n_top_count * inferred_topics_data.num_topics
+    assert model._topics_data is inferred_topics_data
+    assert model.top_topic_tokens is not None
+    assert len(model.top_topic_tokens) == n_top_count * inferred_topics_data.num_topics
 
     n_top_count = 1
     model.top_count = n_top_count
-    assert len(model.largest_topic_token_weights) == n_top_count * inferred_topics_data.num_topics
+    assert len(model.top_topic_tokens) == n_top_count * inferred_topics_data.num_topics
 
     n_top_count = 3
     model.top_count = n_top_count
-    assert len(model.largest_topic_token_weights) == n_top_count * inferred_topics_data.num_topics
+    assert len(model.top_topic_tokens) == n_top_count * inferred_topics_data.num_topics
 
     topic_ids = [0]
     topic_tokens = model.get_topics_tokens(topic_ids)
