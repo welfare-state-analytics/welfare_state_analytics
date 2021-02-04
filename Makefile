@@ -63,13 +63,13 @@ penelope-pypi:
 	@poetry remove humlab-penelope
 	@poetry add humlab-penelope
 
-.ONESHELL: penelope-edit-mode
-penelope-edit-mode:
-	@poetry remove humlab-penelope
-	@poetry add ../../penelope
-	@cp -f pyproject.toml pyproject.sav
-	@sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
-	@cp -f /tmp/pyproject.tmp pyproject.toml
+# .ONESHELL: penelope-edit-mode
+# penelope-edit-mode:
+# 	@poetry remove humlab-penelope
+# 	@poetry add ../../penelope
+# 	@cp -f pyproject.toml pyproject.sav
+# 	@sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
+# 	@cp -f /tmp/pyproject.tmp pyproject.toml
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
