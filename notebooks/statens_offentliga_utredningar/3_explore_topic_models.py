@@ -19,13 +19,9 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-# %%capture
-
 import os
-from typing import List
 
 import bokeh.plotting
-import pandas as pd
 import penelope.notebook.topic_modelling as gui
 from IPython.display import display
 from penelope.pipeline.config import CorpusConfig
@@ -115,34 +111,10 @@ gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=cur
 # %%
 gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state=current_state())
 
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
+#
 # %%
 
-
-topic_token_weights = current_state().inferred_topics.topic_token_weights
-dictionary = current_state().inferred_topics.dictionary
-
-
-def nlargest_topic_token_weights(topic_token_weights: pd.DataFrame, n_count: int) -> pd.DataFrame:
-    nlargest = topic_token_weights.groupby(['topic_id'])['topic_id', 'token_id', 'weight'].apply(
-        lambda x: x.nlargest(n_count, columns=['weight'])
-    )
-    return nlargest
-
-
-largest = nlargest_topic_token_weights(topic_token_weights, 10).set_index('topic_id')
-
-id2token = dictionary.to_dict()['token']
-
-
-def tokens_in_common(id2token: dict, largest: pd.DataFrame, topic_id_x: int, topic_id_y: int) -> List[str]:
-
-    x_largest = largest[largest.index == topic_id_x].token_id.tolist()
-    y_largest = largest[largest.index == topic_id_y].token_id.tolist()
-
-    common_tokens = [id2token[x] for x in x_largest if x in y_largest]
-    return common_tokens
-
-
-#
-
-tokens_in_common(id2token, largest, 0, 1)
+display(gui.create_topics_token_network_gui(data_folder=__paths__.data_folder).layout())
