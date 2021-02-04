@@ -117,4 +117,7 @@ gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state
 #
 # %%
 
-display(gui.create_topics_token_network_gui(data_folder=__paths__.data_folder).layout())
+try:
+    display(gui.create_topics_token_network_gui(data_folder=corpus_folder).layout())
+except Exception as ex:
+    print(ex)
