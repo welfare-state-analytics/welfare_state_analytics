@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "humlab-westac"
-version = "0.2.4"
+version = "0.2.5"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
 packages = [
@@ -102,12 +102,13 @@ pytest = "*"
 pytest-cov = "==2.*,>=2.10.1"
 rope = "*"
 yapf = "==0.*,>=0.30.0"
-debugpy = "^1.2.1"
+debugpy = "==1.*,>=1.2.1"
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
 # concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
+
 
 
 
