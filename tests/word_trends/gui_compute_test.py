@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+import pytest
 from penelope import workflows
 from penelope.notebook.dtm import ComputeGUI, create_compute_gui
 
@@ -39,6 +40,7 @@ def test_compute_gui_compute_dry_run():
     # display(compute_gui.layout())
 
 
+@pytest.mark.skip('long running')
 def test_compute_gui_compute_hot_run():
 
     corpus_tag = 'CERES'
