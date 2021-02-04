@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 # %% [markdown]
 # ## Load previously vectorized corpus
-## Use the `corpus_vectorizer` module to create a new corpus with different settings.
+# # Use the `corpus_vectorizer` module to create a new corpus with different settings.
 #
 # The loaded corpus is processed in the following ways:
 #
