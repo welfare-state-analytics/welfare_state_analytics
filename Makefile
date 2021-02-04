@@ -194,11 +194,12 @@ write_to_ipynb2:
 
 labextension:
 	@poetry run jupyter labextension install \
-		@jupyter-widgets/jupyterlab-manager \
+		@jupyter-widgets/jupyterlab-manager@2.0 \
 		@bokeh/jupyter_bokeh \
 		@jupyter-widgets/jupyterlab-sidecar \
 		jupyter-matplotlib \
 		jupyterlab-jupytext \
+		jupyter-cytoscape==1.1.0
 		ipyaggrid \
 		qgrid2
 
