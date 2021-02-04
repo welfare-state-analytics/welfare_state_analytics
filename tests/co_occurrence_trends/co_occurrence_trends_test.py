@@ -82,7 +82,7 @@ def generic_patch(*x, **y):  # pylint: disable=unused-argument
 def test_update_state_with_corpus_passed_succeeds():
 
     filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_data.zip')
-    index_filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_document_index.csv')
+    index_filename = jj(TEST_DATA_FOLDER, 'partitioned_concept_co_occurrences_data_document_index.csv')
 
     co_occurrences = co_occurrence.load_co_occurrences(filename)
     document_index = load_document_index(index_filename, sep='\t')
@@ -107,10 +107,12 @@ def test_update_state_with_corpus_passed_succeeds():
 @patch('penelope.common.goodness_of_fit.get_most_deviating_words', generic_patch)
 def test_update_state_when_only_one_year_should_fail():
     result: ComputeResult = simple_co_occurrences()
-    corpus = co_occurrence.to_vectorized_corpus(result.co_occurrences, result.document_index, 'value')
+    co_occurrences = result.co_occurrences.query('year == 1976')
+    document_index = result.document_index[result.document_index.year == 1976]
+    corpus = co_occurrence.to_vectorized_corpus(co_occurrences, document_index, 'value').group_by_year()
 
     bundle = co_occurrence.Bundle(
-        co_occurrences=result.co_occurrences.query('year == 1976'),
+        co_occurrences=co_occurrences,
         corpus=corpus,
         co_occurrences_filename='dummy.zip',
         compute_options={},
