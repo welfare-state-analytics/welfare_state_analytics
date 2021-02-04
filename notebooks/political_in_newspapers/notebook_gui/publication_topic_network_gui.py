@@ -6,13 +6,13 @@ import bokeh
 import bokeh.plotting
 import ipywidgets as widgets
 import numpy as np
-import penelope.network.metrics as network_metrics
-import penelope.network.plot_utility as plot_utility
-import penelope.network.utility as network_utility
-import penelope.notebook.widgets_utils as widgets_utils
-import penelope.topic_modelling as topic_modelling
-import penelope.utility as utility
 from IPython.display import display
+from penelope import topic_modelling, utility
+from penelope.network import layout_source
+from penelope.network import metrics as network_metrics
+from penelope.network import plot_utility
+from penelope.network.networkx import utility as network_utility
+from penelope.notebook import widgets_utils
 from penelope.notebook.topic_modelling import TopicModelContainer
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -25,9 +25,9 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
     source_nodes, target_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
-    source_source = network_utility.get_node_subset_source(network, layout, source_nodes)
-    target_source = network_utility.get_node_subset_source(network, layout, target_nodes)
-    lines_source = network_utility.get_edges_source(network, layout, scale=6.0, normalize=False)
+    source_source = layout_source.create_nodes_subset_data_source(network, layout, source_nodes)
+    target_source = layout_source.create_nodes_subset_data_source(network, layout, target_nodes)
+    lines_source = layout_source.create_edges_layout_data_source(network, layout, scale=6.0, normalize=False)
 
     edges_alphas = network_metrics.compute_alpha_vector(lines_source.data['weights'])
 
