@@ -28,7 +28,7 @@ class CoOccurrenceData:  # pylint: disable=too-many-instance-attributes
     most_deviating: pd.DataFrame = None
 
 
-def compile_data(bundle: co_occurrence.Bundle) -> CoOccurrenceData:
+def compile_data(bundle: co_occurrence.Bundle, n_count: int = 5000) -> CoOccurrenceData:
 
     data = CoOccurrenceData(
         corpus=bundle.corpus,
@@ -50,9 +50,9 @@ def compile_data(bundle: co_occurrence.Bundle) -> CoOccurrenceData:
         ).group_by_year()
 
     data.goodness_of_fit = gof.compute_goddness_of_fits_to_uniform(data.corpus, None, verbose=False)
-    data.most_deviating_overview = gof.compile_most_deviating_words(data.goodness_of_fit, n_count=bundle.n_count)
+    data.most_deviating_overview = gof.compile_most_deviating_words(data.goodness_of_fit, n_count=n_count)
     data.most_deviating = gof.get_most_deviating_words(
-        data.goodness_of_fit, 'l2_norm', n_count=bundle.n_count, ascending=False, abs_value=True
+        data.goodness_of_fit, 'l2_norm', n_count=n_count, ascending=False, abs_value=True
     )
 
     return data
