@@ -221,9 +221,9 @@ holoviews==1.13.5; python_version >= "2.7" \
 humanfriendly==8.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0") \
     --hash=sha256:e78960b31198511f45fd455534ae7645a6207d33e512d2e842c766d15d9c8080 \
     --hash=sha256:bf52ec91244819c780341a3438d5d7b09f431d3f113a475147ac9b7b167a3d12
-humlab-penelope==0.3.5; python_full_version >= "3.8.0" and python_full_version < "4.0.0" \
-    --hash=sha256:0a2760a3d947ace18c9daae93bde8627c6ccd0462bb896c4c06aee0db17e3b89 \
-    --hash=sha256:303aac6c28c5f9cee401c2557273027b66b4420626045ca407d6aa08ec1ac9b3
+humlab-penelope==0.3.8; python_full_version >= "3.8.0" and python_full_version < "4.0.0" \
+    --hash=sha256:c0f79e8c1d1ddc1cbbbfa23c6c9abe9abbfb948a36a46721d20584df04cd9621 \
+    --hash=sha256:64826874225a3b3c090a414063ce30dda39d97170178df1464ce43ac7ee525d7
 idna==2.10; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" \
     --hash=sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0 \
     --hash=sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6
@@ -242,6 +242,9 @@ ipykernel==5.3.4; python_version >= "3.5" \
 ipympl==0.5.8 \
     --hash=sha256:d510a3eb5ecc707fd3ab553fdfcda0ef0f7229e0f97341584161f1da7604287a \
     --hash=sha256:0e2f2e540a2dfea61524b7993fc8552c9236b1aaa3826e1f382c75cb2fa5c382
+ipyregulartable==0.2.0 \
+    --hash=sha256:ce84ee1005ccd37c8c24364ca4a64cad42195d6214608cd618ace879b289438c \
+    --hash=sha256:4efe0428c76baefd549274db29697dd3ec520280f90fde67654b103d92cce5da
 ipython-genutils==0.2.0; python_version >= "3.5" \
     --hash=sha256:72dd37233799e619666c9f639a9da83c34013a73e8bbc79a7a6348d93c61fab8 \
     --hash=sha256:eb2e116e75ecef9d4d228fdc66af54269afa26ab4463042e33785b887c628ba8

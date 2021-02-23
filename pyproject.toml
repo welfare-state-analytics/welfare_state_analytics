@@ -75,11 +75,10 @@ xlrd = "*"
 xmltodict = "*"
 ipyfilechooser = "^0.4.0"
 
-#humlab-penelope = "^0.2.33"
 cutter-ng = "^2.5"
 matplotlib-venn = "^0.11.6"
 ipycytoscape = "1.1.0"
-humlab-penelope = "^0.3.5"
+humlab-penelope = "^0.3.8"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -107,13 +106,6 @@ debugpy = "==1.*,>=1.2.1"
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
 # concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
-
-
-
-
-
-
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
