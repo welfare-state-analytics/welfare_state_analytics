@@ -1,4 +1,4 @@
-# The Welfare State Analytics Text Analysis Repository
+## The Welfare State Analytics Text Analysis Repository
 
 ## About the Project
 
