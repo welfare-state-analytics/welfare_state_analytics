@@ -19,6 +19,7 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
+
 import os
 
 import bokeh.plotting
@@ -35,6 +36,7 @@ pandas_utils.set_default_options()
 current_state: gui.TopicModelContainer = gui.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
 corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
+
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
@@ -111,13 +113,14 @@ gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=cur
 # %%
 gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state=current_state())
 
-
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
-#
+
 # %%
 
-try:
-    display(gui.create_topics_token_network_gui(data_folder=corpus_folder).layout())
-except Exception as ex:
-    print(ex)
+corpus_folder: str = "/data/westac/sou_kb_labb"
+custom_styles = {'edges': {'curve-style': 'haystack'}}
+w = gui.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
+display(w.layout())
+
+# %%
