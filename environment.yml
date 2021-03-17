@@ -1,0 +1,80 @@
+name: humlab-westac
+channels:
+- defaults
+dependencies:
+- alive-progress ==1.*,>=1.6.1
+- appnope
+- attrs
+- black ==20.*,>=20.8.0.b1
+- bokeh
+- click
+- colorcet
+- coverage
+- cutter-ng ==2.*,>=2.5.0
+- cython
+- cytoolz
+- debugpy ==1.*,>=1.2.1
+- decorator
+- dephell
+- flake8 ==3.*,>=3.8.4
+- flake8-black ==0.*,>=0.2.1
+- flake8-pytest-style ==1.*,>=1.3.0
+- ftfy
+- gensim
+- holoviews
+- humanfriendly
+- humlab-penelope ==0.*,>=0.3.8
+- invoke
+- ipyaggrid ==0.2.1
+- ipycytoscape ==1.1.0
+- ipyfilechooser ==0.*,>=0.4.0
+- ipykernel
+- ipympl
+- ipywidgets ==7.5.1
+- isort ==5.*,>=5.5.4
+- joblib
+- jupyter-bokeh
+- jupyterlab ==2.2.9
+- jupytext
+- lxml
+- markdown
+- matplotlib
+- matplotlib-venn ==0.*,>=0.11.6
+- memoization
+- more-itertools
+- mypy ==0.*,>=0.782.0
+- nbstripout
+- networkx
+- nltk
+- numpy
+- openpyxl
+- pandas
+- pandas-bokeh
+- pep8-naming ==0.*,>=0.11.1
+- pre-commit
+- py4j
+- pycodestyle ==2.*,>=2.6.0
+- pydotplus
+- pyemd
+- pyflakes ==2.*,>=2.2.0
+- pylint
+- pytest
+- pytest-cov ==2.*,>=2.10.1
+- python-dotenv
+- python-louvain
+- qgrid ==1.*,>=1.3.1
+- rope
+- scattertext
+- scikit-learn
+- scipy
+- seaborn
+- sklearn
+- spacy ==2.3.2
+- statsmodels
+- textacy ==0.10.1
+- tqdm
+- traitlets ==4.3.3
+- wordcloud
+- xlrd
+- xmltodict
+- yapf ==0.*,>=0.30.0
