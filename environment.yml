@@ -21,7 +21,6 @@ dependencies:
 - gensim
 - holoviews
 - humanfriendly
-- humlab-penelope ==0.*,>=0.3.8
 - invoke
 - ipycytoscape ==1.1.0
 - ipyfilechooser ==0.*,>=0.4.0
@@ -45,7 +44,6 @@ dependencies:
 - numpy
 - openpyxl
 - pandas
-- pandas-bokeh
 - pep8-naming ==0.*,>=0.11.1
 - pre-commit
 - py4j
@@ -81,3 +79,5 @@ dependencies:
   - ipyaggrid
   - jupyter-bokeh
   - sklearn
+  - pandas-bokeh
+  - humlab-penelope>=0.3.8
