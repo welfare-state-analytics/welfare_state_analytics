@@ -11,22 +11,22 @@ dependencies:
 - click
 - colorcet
 - coverage
-- cutter-ng ==2.*,>=2.5.0
+- cutter-ng
 - cython
 - cytoolz
 - debugpy ==1.*,>=1.2.1
 - decorator
 - dephell
-- flake8 ==3.*,>=3.8.4
-- flake8-black ==0.*,>=0.2.1
-- flake8-pytest-style ==1.*,>=1.3.0
+- flake8
+- flake8-black
+- flake8-pytest-style
 - ftfy
 - gensim
 - holoviews
 - humanfriendly
 - humlab-penelope ==0.*,>=0.3.8
 - invoke
-- ipyaggrid ==0.2.1
+- ipyaggrid
 - ipycytoscape ==1.1.0
 - ipyfilechooser ==0.*,>=0.4.0
 - ipykernel
@@ -72,9 +72,9 @@ dependencies:
 - sklearn
 - spacy ==2.3.2
 - statsmodels
-- textacy ==0.10.1
+- textacy
 - tqdm
-- traitlets ==4.3.3
+- traitlets
 - wordcloud
 - xlrd
 - xmltodict
