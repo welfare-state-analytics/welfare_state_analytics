@@ -1,5 +1,6 @@
 name: humlab-westac
 channels:
+- conda-forge
 - defaults
 dependencies:
 - alive-progress ==1.*,>=1.6.1
