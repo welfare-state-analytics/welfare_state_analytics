@@ -11,22 +11,18 @@ dependencies:
 - click
 - colorcet
 - coverage
-- cutter-ng
 - cython
 - cytoolz
 - debugpy ==1.*,>=1.2.1
 - decorator
-- dephell
 - flake8
 - flake8-black
-- flake8-pytest-style
 - ftfy
 - gensim
 - holoviews
 - humanfriendly
 - humlab-penelope ==0.*,>=0.3.8
 - invoke
-- ipyaggrid
 - ipycytoscape ==1.1.0
 - ipyfilechooser ==0.*,>=0.4.0
 - ipykernel
@@ -34,7 +30,6 @@ dependencies:
 - ipywidgets ==7.5.1
 - isort ==5.*,>=5.5.4
 - joblib
-- jupyter-bokeh
 - jupyterlab ==2.2.9
 - jupytext
 - lxml
@@ -69,7 +64,6 @@ dependencies:
 - scikit-learn
 - scipy
 - seaborn
-- sklearn
 - spacy ==2.3.2
 - statsmodels
 - textacy
@@ -79,3 +73,11 @@ dependencies:
 - xlrd
 - xmltodict
 - yapf ==0.*,>=0.30.0
+- pip
+- pip:
+  - cutter-ng
+  - dephell
+  - flake8-pytest-style
+  - ipyaggrid
+  - jupyter-bokeh
+  - sklearn
