@@ -4,7 +4,6 @@ channels:
 - defaults
 dependencies:
 - alive-progress ==1.*,>=1.6.1
-# - appnope
 - attrs
 - black
 - bokeh
@@ -22,11 +21,11 @@ dependencies:
 - holoviews
 - humanfriendly
 - invoke
-- ipycytoscape ==1.1.0
+- ipycytoscape # ==1.1.0
 - ipyfilechooser ==0.*,>=0.4.0
 - ipykernel
 - ipympl
-- ipywidgets ==7.5.1
+- ipywidgets # ==7.5.1
 - isort ==5.*,>=5.5.4
 - joblib
 - jupyterlab ==2.2.9
@@ -73,11 +72,12 @@ dependencies:
 - yapf ==0.*,>=0.30.0
 - pip
 - pip:
+  - appnope
   - cutter-ng
   - dephell
   - flake8-pytest-style
+  - humlab-penelope
   - ipyaggrid
   - jupyter-bokeh
-  - sklearn
   - pandas-bokeh
-  - humlab-penelope>=0.3.8
+  - sklearn
