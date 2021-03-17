@@ -4,9 +4,9 @@ channels:
 - defaults
 dependencies:
 - alive-progress ==1.*,>=1.6.1
-- appnope
+# - appnope
 - attrs
-- black ==20.*,>=20.8.0.b1
+- black
 - bokeh
 - click
 - colorcet
