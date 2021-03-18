@@ -209,7 +209,7 @@ pre_commit_ipynb:
 	@chmod u+x .git/hooks/pre-commit
 
 requirements.txt: poetry.lock
-	@poetry export -f requirements.txt --output requirements.txt
+	@poetry export --without-hashes -f requirements.txt --output requirements.txt
 
 gh:
 	@sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
