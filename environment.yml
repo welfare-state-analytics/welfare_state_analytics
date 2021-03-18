@@ -1,0 +1,87 @@
+# Environment file for use to turn repo into notebooks (mybinder)
+name: humlab-westac
+channels:
+- conda-forge
+- defaults
+dependencies:
+- python=3.8
+- alive-progress ==1.*,>=1.6.1
+- attrs
+- bokeh
+- click
+- colorcet
+- cython
+- cytoolz
+- decorator
+- ftfy
+- gensim
+- holoviews
+- humanfriendly
+- ipycytoscape # ==1.1.0
+- ipyfilechooser ==0.*,>=0.4.0
+- ipykernel
+- ipympl
+- ipywidgets # ==7.5.1
+- joblib
+- jupyterlab ==2.2.9
+- jupytext
+- lxml
+- markdown
+- matplotlib
+- matplotlib-venn ==0.*,>=0.11.6
+- memoization
+- more-itertools
+- mypy ==0.*,>=0.782.0
+- networkx
+- nltk
+- numpy
+- openpyxl
+- py4j
+- pandas
+- pydotplus
+- pyemd
+- python-dotenv
+- python-louvain
+- qgrid ==1.*,>=1.3.1
+- scattertext
+- scikit-learn
+- scipy
+- seaborn
+- spacy ==2.3.2
+- statsmodels
+- textacy
+- tqdm
+- traitlets
+- wordcloud
+- xlrd
+- xmltodict
+# Development dependencies
+# - black
+# - coverage
+# - debugpy ==1.*,>=1.2.1
+# - flake8
+# - flake8-black
+# - invoke
+# - isort ==5.*,>=5.5.4
+# - nbstripout
+# - pep8-naming ==0.*,>=0.11.1
+# - pre-commit
+# - pycodestyle ==2.*,>=2.6.0
+# - pyflakes ==2.*,>=2.2.0
+# - pylint
+# - pytest
+# - pytest-cov ==2.*,>=2.10.1
+# - rope
+# - yapf ==0.*,>=0.30.0
+- pip
+- pip:
+  - appnope
+  - cutter-ng
+  - humlab-penelope
+  - ipyaggrid
+  - jupyter-bokeh
+  - pandas-bokeh
+  - sklearn
+# Development dependencies
+ #  - dephell
+ #  - flake8-pytest-style
