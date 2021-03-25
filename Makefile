@@ -195,14 +195,13 @@ write_to_ipynb2:
 labextension:
 	@poetry run jupyter labextension install \
 		@jupyter-widgets/jupyterlab-manager@2.0 \
-		@bokeh/jupyter_bokeh \
-		@jupyter-widgets/jupyterlab-sidecar \
-		jupyter-matplotlib \
-		jupyterlab-jupytext \
-		jupyter-cytoscape==1.1.0
+		@bokeh/jupyter_bokeh@2.0.4 \
+		jupyter-matplotlib@0.9.0 \
+		jupyter-cytoscape@1.1.0 \
 		ipyaggrid \
 		qgrid2
 
+# jupyterlab-jupytext
 
 pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
