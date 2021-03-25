@@ -148,9 +148,15 @@ PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 pair_ipynb: $(PY_FILES)
 	@echo "hello"
 
-$(PY_FILES):%.py:%.ipynb
-	@echo target is $@, source is $<
-	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
+# $(PY_FILES):%.py:%.ipynb
+# 	@echo target is $@, source is $<
+# 	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
+
+write_to_ipynb: $(IPYNB_FILES)
+	poetry run jupytext --to notebook $^
+
+# %.ipynb: %.py
+# 	poetry run jupytext --to notebook $<
 
 # The same, but using a bash-loop:
 # pair_ipynb:
@@ -180,11 +186,11 @@ sync_ipynb:
 	# done
 
 # Forces overwrite of ìpynb` using `--to notebook`
-write_to_ipynb:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-		py_filepath=$${ipynb_path%.*}.py ;\
-		poetry run jupytext --to notebook $$py_filepath
-	done
+# write_to_ipynb:
+# 	for ipynb_path in $(IPYNB_FILES) ; do \
+# 		py_filepath=$${ipynb_path%.*}.py ;\
+# 		poetry run jupytext --to notebook $$py_filepath
+# 	done
 
 write_to_ipynb2:
 	for ipynb_path in $(IPYNB_FILES) ; do \
