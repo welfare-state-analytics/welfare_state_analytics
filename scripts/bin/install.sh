@@ -6,13 +6,10 @@ if [ "$NLTK_DATA" == "" ]; then
 fi
 
 poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
+# Using Ubuntu
+#curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+#sudo apt-get install -y nodejs
 
-poetry run jupyter labextension install \
-    @jupyter-widgets/jupyterlab-manager \
-    @bokeh/jupyter_bokeh \
-    @jupyter-widgets/jupyterlab-sidecar \
-    jupyter-matplotlib \
-    jupyterlab-jupytext \
-    ipyaggrid \
-    qgrid2
+
+make labextension
 
