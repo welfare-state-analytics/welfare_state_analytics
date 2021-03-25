@@ -51,3 +51,4 @@ htmlcov
 coverage.xml
 dist
 /stopwords
+export
