@@ -87,17 +87,21 @@
 #
 #
 # %%
+
+
+import penelope.notebook.word_trends.main_gui as main_gui
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
-from penelope.notebook.word_trends import main_gui
 
 import __paths__
 
 output_notebook()
-
+main_gui.CLEAR_OUTPUT = True
 gui = main_gui.create_to_dtm_gui(
     corpus_folder=__paths__.data_folder,
     corpus_config="riksdagens-protokoll",
     resources_folder=__paths__.resources_folder,
 )
 display(gui)
+
+# %%
