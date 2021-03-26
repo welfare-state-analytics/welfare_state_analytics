@@ -7,9 +7,10 @@ release: ready guard_clean_working_repository bump.patch tag
 
 ready: tools clean tidy test lint build
 
-build: penelope-pypi requirements.txt write_to_ipynb
+# build: penelope-pypi requirements.txt write_to_ipynb
+
+build: requirements.txt write_to_ipynb
 	@poetry build
-	@echo "Penelope, requirements and ipynb files is now up-to-date"
 
 lint: tidy pylint flake8
 
@@ -134,6 +135,13 @@ data: nltk_data spacy_data
 update:
 	@poetry update
 
+recreate_env:
+	-poetry remove humlab-penelope
+	-poetry run pip uninstall humlab-penelope
+	-poetry env remove `poetry run which python`
+	@poetry install
+	@poetry add ../../penelope
+
 nltk_data:
 	@mkdir -p $(NLTK_DATA)
 	@poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
@@ -141,12 +149,15 @@ nltk_data:
 spacy_data:
 	@poetry run python -m spacy download en
 
+requirements.txt: poetry.lock
+	@poetry export --without-hashes -f requirements.txt --output requirements.txt
+
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
 # Create a paired `py` file for all `ipynb` that doesn't have a corresponding `py` file
-pair_ipynb: $(PY_FILES)
-	@echo "hello"
+# pair_ipynb: $(PY_FILES)
+# 	@echo "hello"
 
 # $(PY_FILES):%.py:%.ipynb
 # 	@echo target is $@, source is $<
@@ -212,9 +223,6 @@ labextension:
 pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
-
-requirements.txt: poetry.lock
-	@poetry export --without-hashes -f requirements.txt --output requirements.txt
 
 gh:
 	@sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
