@@ -19,5 +19,4 @@ if root_folder not in sys.path:
 ROOT_FOLDER = root_folder
 
 data_folder = os.path.join(root_folder, "data")
-work_folder = os.path.join(root_folder, "data")
 resources_folder = os.path.join(root_folder, "resources")
