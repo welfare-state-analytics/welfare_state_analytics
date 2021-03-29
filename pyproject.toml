@@ -165,10 +165,10 @@ known_first_party = [ "__paths__" ]
     omit = [
         '**/__init__.py',
         '**/__paths__.py',
+        'notebooks/legacy/**/*.py',
         'notebooks/co_occurrence/co_occurrence_trends.py',
         'notebooks/pos_statistics/pos_statistics.py',
         'notebooks/word_trends/word_trends.py'
-
     ]
 
     [tool.coverage.report]
