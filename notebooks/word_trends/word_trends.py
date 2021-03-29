@@ -98,8 +98,9 @@ import __paths__
 output_notebook()
 main_gui.CLEAR_OUTPUT = True
 gui = main_gui.create_to_dtm_gui(
-    corpus_folder=__paths__.data_folder,
     corpus_config="riksdagens-protokoll",
+    corpus_folder=__paths__.corpus_folder,
+    data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
 )
 display(gui)

@@ -68,8 +68,9 @@ def compute_callback(args: interface.ComputeOpts, corpus_config: pipeline.Corpus
 
 
 compute_gui: to_dtm_gui.ComputeGUI = to_dtm_gui.create_compute_gui(
-    corpus_folder=__paths__.data_folder,
     corpus_config="riksdagens-protokoll",
+    corpus_folder=__paths__.corpus_folder,
+    data_folder=__paths__.data_folder,
     compute_callback=compute_callback,
     done_callback=compute_done_callback,
 )
@@ -77,6 +78,7 @@ display(compute_gui.layout())
 
 # %%
 load_gui: load_dtm_gui.LoadGUI = load_dtm_gui.create_load_gui(
-    corpus_folder=__paths__.data_folder, loaded_callback=done_callback
+    corpus_folder=__paths__.data_folder,
+    loaded_callback=done_callback,
 )
 display(load_gui.layout())

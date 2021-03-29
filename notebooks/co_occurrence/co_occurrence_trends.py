@@ -111,7 +111,8 @@ import __paths__
 output_notebook()
 gui = main_gui.MainGUI(
     corpus_config="riksdagens-protokoll",
-    corpus_folder=__paths__.data_folder,
+    corpus_folder=__paths__.corpus_folder,
+    data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
 )
 display(gui.layout())
