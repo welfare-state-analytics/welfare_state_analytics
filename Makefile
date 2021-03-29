@@ -65,9 +65,11 @@ penelope-production-mode:
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode:
-	@poetry pip uninstall humlab-penelope
+	@poetry run pip uninstall humlab-penelope
 	@poetry remove humlab-penelope
 	@poetry add ../../penelope
+
+	
 	# @cp -f pyproject.toml pyproject.sav
 	# @sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
 	# @cp -f /tmp/pyproject.tmp pyproject.toml
