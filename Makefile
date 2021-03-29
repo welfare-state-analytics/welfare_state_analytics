@@ -197,16 +197,12 @@ sync_ipynb:
 
 # Forces overwrite of ìpynb` using `--to notebook`
 write_to_ipynb:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-		py_filepath=$${ipynb_path%.*}.py ;\
-		poetry run jupytext --to notebook $$py_filepath
-	done
+	echo "warning: write_to_ipynb is disabled in Makefile!"
 
-write_to_ipynb2:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-		py_filepath=$${ipynb_path%.*}.py ;\
-		jupytext --to notebook $$py_filepath
-	done
+# for ipynb_path in $(IPYNB_FILES) ; do \
+# 	py_filepath=$${ipynb_path%.*}.py ;\
+# 	poetry run jupytext --to notebook $$py_filepath
+# done
 
 labextension:
 	@poetry run jupyter labextension install \
