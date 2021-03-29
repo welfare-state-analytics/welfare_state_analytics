@@ -761,7 +761,7 @@ pyreadline = {version = "*", markers = "sys_platform == \"win32\""}
 
 [[package]]
 name = "humlab-penelope"
-version = "0.3.11"
+version = "0.3.12"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
