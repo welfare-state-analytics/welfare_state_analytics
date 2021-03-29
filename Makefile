@@ -9,7 +9,6 @@ ready: tools clean tidy test lint build
 
 build: penelope-production-mode requirements.txt write_to_ipynb
 	@poetry build
-	@make penelope-edit-mode
 
 lint: tidy pylint flake8
 
@@ -65,11 +64,11 @@ penelope-production-mode:
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode:
-	@poetry run pip uninstall humlab-penelope
+	@poetry run pip uninstall humlab-penelope --yes
 	@poetry remove humlab-penelope
 	@poetry add ../../penelope
 
-	
+
 	# @cp -f pyproject.toml pyproject.sav
 	# @sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
 	# @cp -f /tmp/pyproject.tmp pyproject.toml
