@@ -7,10 +7,9 @@ release: ready guard_clean_working_repository bump.patch tag
 
 ready: tools clean tidy test lint build
 
-# build: penelope-pypi requirements.txt write_to_ipynb
-
-build: requirements.txt write_to_ipynb
+build: penelope-production-mode requirements.txt write_to_ipynb
 	@poetry build
+	@make penelope-edit-mode
 
 lint: tidy pylint flake8
 
@@ -60,17 +59,18 @@ tools:
 	@poetry run pip install --upgrade pip --quiet
 	@poetry run pip install poetry --upgrade --quiet
 
-penelope-pypi:
+penelope-production-mode:
 	@poetry remove humlab-penelope
 	@poetry add humlab-penelope
 
-# .ONESHELL: penelope-edit-mode
-# penelope-edit-mode:
-# 	@poetry remove humlab-penelope
-# 	@poetry add ../../penelope
-# 	@cp -f pyproject.toml pyproject.sav
-# 	@sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
-# 	@cp -f /tmp/pyproject.tmp pyproject.toml
+.ONESHELL: penelope-edit-mode
+penelope-edit-mode:
+	@poetry pip uninstall humlab-penelope
+	@poetry remove humlab-penelope
+	@poetry add ../../penelope
+	# @cp -f pyproject.toml pyproject.sav
+	# @sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
+	# @cp -f /tmp/pyproject.tmp pyproject.toml
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
@@ -136,10 +136,9 @@ update:
 	@poetry update
 
 recreate_env:
-	-poetry remove humlab-penelope
-	-poetry run pip uninstall humlab-penelope
-	-poetry env remove `poetry run which python`
-	@poetry install
+	@poetry remove humlab-penelope
+	@poetry run pip uninstall humlab-penelope
+	@poetry env remove `poetry run which python`
 	@poetry add ../../penelope
 
 nltk_data:
@@ -163,8 +162,8 @@ PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 # 	@echo target is $@, source is $<
 # 	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
 
-write_to_ipynb: $(IPYNB_FILES)
-	poetry run jupytext --to notebook $^
+# write_to_ipynb: $(IPYNB_FILES)
+# 	poetry run jupytext --to notebook $^
 
 # %.ipynb: %.py
 # 	poetry run jupytext --to notebook $<
@@ -197,11 +196,11 @@ sync_ipynb:
 	# done
 
 # Forces overwrite of ìpynb` using `--to notebook`
-# write_to_ipynb:
-# 	for ipynb_path in $(IPYNB_FILES) ; do \
-# 		py_filepath=$${ipynb_path%.*}.py ;\
-# 		poetry run jupytext --to notebook $$py_filepath
-# 	done
+write_to_ipynb:
+	for ipynb_path in $(IPYNB_FILES) ; do \
+		py_filepath=$${ipynb_path%.*}.py ;\
+		poetry run jupytext --to notebook $$py_filepath
+	done
 
 write_to_ipynb2:
 	for ipynb_path in $(IPYNB_FILES) ; do \
