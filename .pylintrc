@@ -20,7 +20,8 @@ disable=invalid-name,
         unnecessary-comprehension,
         # misplaced-comparison-constant,
         broad-except,
-        wrong-import-order
+        wrong-import-order,
+        duplicate-code
 
 
 [REPORTS]

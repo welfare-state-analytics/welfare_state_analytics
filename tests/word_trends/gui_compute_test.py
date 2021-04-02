@@ -23,8 +23,9 @@ def test_compute_gui_compute_dry_run():
         compute_called = True
 
     gui: ComputeGUI = create_compute_gui(
-        corpus_folder=TEST_DATA_FOLDER,
         corpus_config="riksdagens-protokoll",
+        data_folder=TEST_DATA_FOLDER,
+        corpus_folder=TEST_DATA_FOLDER,
         compute_callback=compute_patch,
         done_callback=monkey_patch,
     )
@@ -45,8 +46,9 @@ def test_compute_gui_compute_hot_run():
 
     corpus_tag = 'CERES'
     gui: ComputeGUI = create_compute_gui(
-        corpus_folder=TEST_DATA_FOLDER,
         corpus_config="riksdagens-protokoll",
+        data_folder=TEST_DATA_FOLDER,
+        corpus_folder=TEST_DATA_FOLDER,
         compute_callback=workflows.document_term_matrix.compute,
         done_callback=monkey_patch,
     )

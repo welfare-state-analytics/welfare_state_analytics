@@ -42,7 +42,6 @@ from .loaded_callback import loaded_callback
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 output_notebook()
-corpus_folder = __paths__.root_folder
 
 # %% [markdown]
 # ### Generate new concept context co-co_occurrences
@@ -64,8 +63,9 @@ def compute_co_occurrence_callback(
 
 importlib.reload(compute_gui)
 gui: compute_gui.ComputeGUI = compute_gui.create_compute_gui(
-    corpus_folder=corpus_folder,
     corpus_config="riksdagens-protokoll",
+    corpus_folder=__paths__.corpus_folder,
+    data_folder=__paths__.data_folder,
     done_callback=loaded_callback,
     compute_callback=compute_co_occurrence_callback,
 )
@@ -74,6 +74,6 @@ display(gui.layout())
 # ### Load saved concept context co-occurrences
 # %%
 lgu: load_gui.LoadGUI = load_gui.create_load_gui(
-    data_folder=corpus_folder, filename_pattern="*.co_occurrence.csv.zip", loaded_callback=loaded_callback
+    data_folder=__paths__.data_folder, filename_pattern="*.co_occurrence.csv.zip", loaded_callback=loaded_callback
 )
 display(lgu.layout())

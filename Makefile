@@ -7,9 +7,8 @@ release: ready guard_clean_working_repository bump.patch tag
 
 ready: tools clean tidy test lint build
 
-build: penelope-pypi requirements.txt write_to_ipynb
+build: penelope-production-mode requirements.txt write_to_ipynb
 	@poetry build
-	@echo "Penelope, requirements and ipynb files is now up-to-date"
 
 lint: tidy pylint flake8
 
@@ -59,17 +58,20 @@ tools:
 	@poetry run pip install --upgrade pip --quiet
 	@poetry run pip install poetry --upgrade --quiet
 
-penelope-pypi:
+penelope-production-mode:
 	@poetry remove humlab-penelope
 	@poetry add humlab-penelope
 
-# .ONESHELL: penelope-edit-mode
-# penelope-edit-mode:
-# 	@poetry remove humlab-penelope
-# 	@poetry add ../../penelope
-# 	@cp -f pyproject.toml pyproject.sav
-# 	@sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
-# 	@cp -f /tmp/pyproject.tmp pyproject.toml
+.ONESHELL: penelope-edit-mode
+penelope-edit-mode:
+	@poetry run pip uninstall humlab-penelope --yes
+	@poetry remove humlab-penelope
+	@poetry add ../../penelope
+
+
+	# @cp -f pyproject.toml pyproject.sav
+	# @sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
+	# @cp -f /tmp/pyproject.tmp pyproject.toml
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
@@ -134,6 +136,12 @@ data: nltk_data spacy_data
 update:
 	@poetry update
 
+recreate_env:
+	@poetry remove humlab-penelope
+	@poetry run pip uninstall humlab-penelope
+	@poetry env remove `poetry run which python`
+	@poetry add ../../penelope
+
 nltk_data:
 	@mkdir -p $(NLTK_DATA)
 	@poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
@@ -141,16 +149,25 @@ nltk_data:
 spacy_data:
 	@poetry run python -m spacy download en
 
+requirements.txt: poetry.lock
+	@poetry export --without-hashes -f requirements.txt --output requirements.txt
+
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
 # Create a paired `py` file for all `ipynb` that doesn't have a corresponding `py` file
-pair_ipynb: $(PY_FILES)
-	@echo "hello"
+# pair_ipynb: $(PY_FILES)
+# 	@echo "hello"
 
-$(PY_FILES):%.py:%.ipynb
-	@echo target is $@, source is $<
-	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
+# $(PY_FILES):%.py:%.ipynb
+# 	@echo target is $@, source is $<
+# 	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
+
+# write_to_ipynb: $(IPYNB_FILES)
+# 	poetry run jupytext --to notebook $^
+
+# %.ipynb: %.py
+# 	poetry run jupytext --to notebook $<
 
 # The same, but using a bash-loop:
 # pair_ipynb:
@@ -181,16 +198,12 @@ sync_ipynb:
 
 # Forces overwrite of ìpynb` using `--to notebook`
 write_to_ipynb:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-		py_filepath=$${ipynb_path%.*}.py ;\
-		poetry run jupytext --to notebook $$py_filepath
-	done
+	echo "warning: write_to_ipynb is disabled in Makefile!"
 
-write_to_ipynb2:
-	for ipynb_path in $(IPYNB_FILES) ; do \
-		py_filepath=$${ipynb_path%.*}.py ;\
-		jupytext --to notebook $$py_filepath
-	done
+# for ipynb_path in $(IPYNB_FILES) ; do \
+# 	py_filepath=$${ipynb_path%.*}.py ;\
+# 	poetry run jupytext --to notebook $$py_filepath
+# done
 
 labextension:
 	@poetry run jupyter labextension install \
@@ -206,9 +219,6 @@ labextension:
 pre_commit_ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
-
-requirements.txt: poetry.lock
-	@poetry export --without-hashes -f requirements.txt --output requirements.txt
 
 gh:
 	@sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
