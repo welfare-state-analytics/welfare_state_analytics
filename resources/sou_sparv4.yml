@@ -2,7 +2,7 @@ corpus_name: sou_sparv4
 corpus_pattern: '*.sparv.xml.zip'
 corpus_type: 6
 language: swedish
-# content_deserialize_opts:
+# checkpoint_opts:
 #     content_type_code: 1
 #     sep: "\t"
 #     quoting: 3
