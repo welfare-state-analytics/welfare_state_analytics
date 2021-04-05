@@ -77,7 +77,8 @@ ipyfilechooser = "^0.4.0"
 cutter-ng = "^2.5"
 matplotlib-venn = "^0.11.6"
 ipycytoscape = "1.1.0"
-humlab-penelope = "^0.3.12"
+humlab-penelope = {path = "../../penelope", develop=true}
+# humlab-penelope = {path = "../../penelope", develop=true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -127,7 +128,8 @@ python_files = "*_test.py"
 python_functions = "test_*"
 filterwarnings = [
 #   "ignore",
-  "ignore::_pytest.warning_types.PytestCollectionWarning"
+  "ignore::_pytest.warning_types.PytestCollectionWarning",
+  "ignore::DeprecationWarning",
 ]
 
 [tool.dephell.main]
