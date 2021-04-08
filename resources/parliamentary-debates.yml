@@ -13,6 +13,7 @@ checkpoint_opts:
     lemma_column: lemma
     pos_column: pos
     extra_columns: []
+    index_column: null
 pipelines:
   tagged_frame_pipeline: westac.parliamentary_debates.to_tagged_frame_pipeline
 pipeline_payload:

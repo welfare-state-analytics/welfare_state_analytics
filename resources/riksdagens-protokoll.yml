@@ -8,12 +8,12 @@ checkpoint_opts:
     quoting: 3
     document_index_name: null
     document_index_sep: null
-    columns:
     text_column: token
     lemma_column: baseform
     pos_column: pos
     extra_columns: []
     custom_serializer_classname: penelope.pipeline.sparv.convert.SparvCsvSerializer
+    index_column: null
 pipelines:
   tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:

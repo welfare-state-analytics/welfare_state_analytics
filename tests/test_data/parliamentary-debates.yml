@@ -11,7 +11,8 @@ checkpoint_opts:
     text_column: text
     lemma_column: lemma
     pos_column: pos
-    custom_serializer_classname: westac.parliamentary_debates.StanzaCsvSerializer
+    custom_serializer_classname: None
+    index_column: null
 pipelines:
   tagged_frame_pipeline: westac.parliamentary_debates.to_tagged_frame_pipeline
 pipeline_payload:
