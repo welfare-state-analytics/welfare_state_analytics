@@ -103,15 +103,12 @@ rope = "*"
 yapf = "==0.*,>=0.30.0"
 debugpy = "==1.*,>=1.2.1"
 jupytext = "==1.7.1"
+pyinstrument = "^3.4.1"
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
 # concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
-
-
-
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -158,14 +155,14 @@ profile = "black"
 line_length = 120
 py_version = "auto"
 float_to_top = true
-src_paths = [ "notebooks", "tests" ]
+src_paths = [ "notebooks", "westac", "tests" ]
 known_first_party = [ "__paths__" ]
 
 [tool.coverage]
 # https://github.com/nedbat/coveragepy
 
     [tool.coverage.run]
-    source = ["notebooks"]
+    source = ["notebooks", "westac"]
     branch = true
     omit = [
         '**/__init__.py',
