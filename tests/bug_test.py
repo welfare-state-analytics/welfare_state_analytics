@@ -12,7 +12,7 @@ CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
 
 
-@pytest.skip(reason="Long running")
+@pytest.mark.skip(reason="Long running")
 def test_bug():
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
