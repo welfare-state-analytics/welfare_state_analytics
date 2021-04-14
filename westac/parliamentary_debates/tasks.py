@@ -87,7 +87,7 @@ class ToTaggedFrame(CountTokensMixIn, DefaultResolveMixIn, ITask):
         self.in_content_type = ContentType.TAGGED_FRAME
         self.out_content_type = ContentType.TAGGED_FRAME
 
-    def outstream(self) -> Iterable[DocumentPayload]:
+    def process_stream(self) -> Iterable[DocumentPayload]:
 
         for checkpoint in load_checkpoints(
             self.source_folder,
