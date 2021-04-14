@@ -1,27 +1,21 @@
+# pylint: disable=too-many-arguments, too-many-locals, unused-import
+
 import os
-import sys
 
 import click
-import loguru
 import penelope.notebook.interface as interface
 import westac.parliamentary_debates.pipelines as pipe
+from loguru import logger
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
-from penelope.pipeline import CorpusConfig, Token2Id
+from penelope.pipeline import CorpusConfig  # , Token2Id
 from penelope.pipeline.pipelines import CorpusPipeline
-from westac.parliamentary_debates.members import ParliamentaryMembers
 
-logger = loguru.logger
+# import sys
 
- # pylint: disable=to-many-arguments
 
-@click.command()
-@click.pass_context
-def profile_vectorize(ctx: click.Context):
-    input_folder = '/data/riksdagen_corpus_data/annotated'
-    config = './resources/parliamentary-debates.yml'
-    output_folder = './tmp'
-    output_tag = 'ZYGON'
-    _ = ctx.invoke(vectorize, content=ctx.forward(input_folder, output_folder, config=config, output_tag=output_tag))
+# from westac.parliamentary_debates.members import ParliamentaryMembers
+
+# pylint: disable=too-many-arguments
 
 
 @click.command()
@@ -68,7 +62,7 @@ def profile_vectorize(ctx: click.Context):
     is_flag=True,
     help='Keep tokens with at least one alphanumeric char',
 )
-def vectorize(
+def subset(
     input_folder: str = None,
     output_folder: str = None,
     config: str = None,
@@ -128,8 +122,7 @@ def vectorize(
         )
 
         # parliament_data = ParliamentaryMembers.load()
-        # token2id = Token2Id()
-        pipeline: CorpusPipeline = (
+        _: CorpusPipeline = (
             pipe.to_tagged_frame_pipeline(
                 source_folder=input_folder,
                 corpus_config=corpus_config,
@@ -137,16 +130,13 @@ def vectorize(
                 filename_filter=None,
                 filename_pattern=None,
                 show_progress=True,
-                # lemmatize=True,
-                # token2id=token2id,
             )
-            # .tagged_frame_to_tokens(
-            #     extract_opts=args.extract_tagged_tokens_opts,
-            #     filter_opts=args.tagged_tokens_filter_opts,
-            # )
-            .take(10000)
+            .filter_tagged_frame(
+                extract_opts=args.extract_tagged_tokens_opts,
+                filter_opts=args.tagged_tokens_filter_opts,
+            )
+            .exhaust(100)
         )
-        print(len(pipeline))
         # for payload in pipeline.take(1000): pass
 
         # pipeline.payload.document_index.to_csv('./parliamentary_debates_document_index.csv', sep='\t')
@@ -154,9 +144,9 @@ def vectorize(
 
     except Exception as ex:
         raise ex
-        click.echo(ex)
-        sys.exit(1)
+        # click.echo(ex)
+        # sys.exit(1)
 
 
 if __name__ == '__main__':
-    vectorize()  # pylint: disable=no-value-for-parameter
+    subset()  # pylint: disable=no-value-for-parameter
