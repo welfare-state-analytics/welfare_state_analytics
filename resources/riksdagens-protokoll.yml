@@ -13,11 +13,12 @@ checkpoint_opts:
     pos_column: pos
     extra_columns: []
     custom_serializer_classname: penelope.pipeline.sparv.convert.SparvCsvSerializer
+    deserialize_in_parallel: true
     index_column: null
 pipelines:
   tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:
-  source: corpus/riksdagens-protokoll.1920-2019.sparv4.csv.zip
+  source: riksdagens-protokoll.1920-2019.sparv4.csv.zip
   document_index_source: null
   document_index_sep: "\t"
   filenames: null
@@ -30,11 +31,6 @@ pipeline_payload:
     pos_column: pos
   pos_schema_name: SUC
 tagged_tokens_filter_opts:
-  data:
-    is_alpha: null
-    is_digit: null
-    is_punct: false
-    is_stop: null
 text_reader_opts:
   as_binary: false
   filename_fields:
