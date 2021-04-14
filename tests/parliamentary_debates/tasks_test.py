@@ -1,11 +1,11 @@
 import os
 from typing import Iterator, List, Set
 from unittest.mock import Mock
-from penelope.corpus.document_index import DocumentIndex
-import pandas as pd
 
+import pandas as pd
 import pytest
 from penelope.corpus import TextReaderOpts
+from penelope.corpus.document_index import DocumentIndex
 from penelope.pipeline import ContentType, CorpusConfig, CorpusPipeline, checkpoint, interfaces
 from westac.parliamentary_debates import tasks
 
@@ -89,7 +89,9 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
         nonlocal filenames_to_load
         return os.path.basename(path) in filenames_to_load
 
-    stream: Iterator[checkpoint.CheckpointData] = tasks.load_checkpoints(source_folder, file_pattern, checkpoint_opts, predicate_filter)
+    stream: Iterator[checkpoint.CheckpointData] = tasks.load_checkpoints(
+        source_folder, file_pattern, checkpoint_opts, predicate_filter
+    )
 
     loaded_filenames: Set[str] = {cp.source_name for cp in stream}
 
@@ -128,7 +130,4 @@ def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: chec
         == 'Eder majestat ! herr talman ! ärad ledamot av Sverige riksdag ! Sverige'
     )
 
-    assert (
-        ' '.join(payload.content.head(13).pos)
-        == 'PM NN MID NN NN MID PC NN PP PM NN MID PM'
-    )
+    assert ' '.join(payload.content.head(13).pos) == 'PM NN MID NN NN MID PC NN PP PM NN MID PM'
