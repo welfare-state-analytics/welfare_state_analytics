@@ -8,8 +8,7 @@ from typing import Callable, Iterable, List, Tuple
 import pandas as pd
 from loguru import logger
 from penelope.corpus import TextReaderOpts
-from penelope.pipeline import CheckpointOpts, DocumentPayload, IContentSerializer
-from penelope.pipeline import checkpoint as cp
+from penelope.pipeline import DocumentPayload, checkpoint as cp
 from tqdm.auto import tqdm
 
 
@@ -24,11 +23,11 @@ def process_document_file(args: List[Tuple]) -> DocumentPayload:
 
 
 def parallell_deserialized_payload_stream(
-    source_name: str, checkpoint_opts: CheckpointOpts, filenames: List[str]
+    source_name: str, checkpoint_opts: cp.CheckpointOpts, filenames: List[str]
 ) -> Iterable[DocumentPayload]:
     """Yields a deserialized payload stream read from given source"""
 
-    serializer: IContentSerializer = IContentSerializer.create(checkpoint_opts)
+    serializer: cp.IContentSerializer = cp.create_serializer(checkpoint_opts)
 
     with zipfile.ZipFile(source_name, mode="r") as zf:
         args: str = [
@@ -43,11 +42,11 @@ def parallell_deserialized_payload_stream(
             yield payload
 
 
-class ParlaCsvContentSerializer(IContentSerializer):
-    def serialize(self, content: pd.DataFrame, options: CheckpointOpts) -> str:
+class ParlaCsvContentSerializer(cp.IContentSerializer):
+    def serialize(self, content: pd.DataFrame, options: cp.CheckpointOpts) -> str:
         return content.to_csv(sep=options.sep, header=True)
 
-    def deserialize(self, content: str, options: CheckpointOpts) -> pd.DataFrame:
+    def deserialize(self, content: str, options: cp.CheckpointOpts) -> pd.DataFrame:
         data: pd.DataFrame = pd.read_csv(
             StringIO(content),
             sep=options.sep,
@@ -67,7 +66,7 @@ class ParlaCsvContentSerializer(IContentSerializer):
 def load_checkpoints(
     source_folder: str,
     file_pattern: str,
-    checkpoint_opts: CheckpointOpts,
+    checkpoint_opts: cp.CheckpointOpts,
     checkpoint_filter: Callable[[str], bool] = None,
     reader_opts: TextReaderOpts = None,
     show_progress: bool = False,
@@ -102,7 +101,7 @@ def load_checkpoints(
                 logger.warning(f"skipping {path} (not a ZIP file)")
             continue
 
-        checkpoint: cp.CheckpointData = cp.load_checkpoint(
+        checkpoint: cp.CheckpointDat = cp.load_checkpoint(
             path,
             checkpoint_opts=checkpoint_opts,
             reader_opts=reader_opts,
