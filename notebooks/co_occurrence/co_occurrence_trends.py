@@ -116,3 +116,5 @@ gui = main_gui.MainGUI(
     resources_folder=__paths__.resources_folder,
 )
 display(gui.layout())
+
+# %%
