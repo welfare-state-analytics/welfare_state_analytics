@@ -7,11 +7,11 @@ import loguru
 import penelope.notebook.interface as interface
 import westac.parliamentary_debates.pipelines as pipe
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
-from penelope.pipeline import CorpusConfig, CorpusPipeline  # ,  Token2Id
-
+from penelope.pipeline import CorpusConfig, CorpusPipeline #,  Token2Id
 # from westac.parliamentary_debates.members import ParliamentaryMembers
 
 logger = loguru.logger
+
 
 
 @click.command()
