@@ -68,8 +68,9 @@ def subset(
     config: str = None,
     output_tag: str = None,
     create_subfolder: bool = True,
-    pos_includes: str = '|NOUN|',
+    pos_includes: str = '|NN|',
     pos_excludes: str = '|MAD|MID|PAD|',
+    pos_paddings: str = None,
     to_lowercase: bool = True,
     lemmatize: bool = True,
     remove_stopwords: str = None,
@@ -112,6 +113,7 @@ def subset(
             extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
                 pos_includes=pos_includes,
                 pos_excludes=pos_excludes,
+                pos_paddings=pos_paddings,
                 lemmatize=lemmatize,
             ),
             tagged_tokens_filter_opts=None,
@@ -131,10 +133,10 @@ def subset(
                 filename_pattern=None,
                 show_progress=True,
             )
-            .filter_tagged_frame(
-                extract_opts=args.extract_tagged_tokens_opts,
-                filter_opts=args.tagged_tokens_filter_opts,
-            )
+            # .filter_tagged_frame(
+            #     extract_opts=args.extract_tagged_tokens_opts,
+            #     filter_opts=args.tagged_tokens_filter_opts,
+            # )
             .exhaust(100)
         )
         # for payload in pipeline.take(1000): pass

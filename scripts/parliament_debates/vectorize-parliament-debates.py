@@ -7,11 +7,11 @@ import loguru
 import penelope.notebook.interface as interface
 import westac.parliamentary_debates.pipelines as pipe
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
-from penelope.pipeline import CorpusConfig, CorpusPipeline #,  Token2Id
+from penelope.pipeline import CorpusConfig, CorpusPipeline  # ,  Token2Id
+
 # from westac.parliamentary_debates.members import ParliamentaryMembers
 
 logger = loguru.logger
-
 
 
 @click.command()
@@ -74,8 +74,9 @@ def vectorize(
     config: str = None,
     output_tag: str = None,
     create_subfolder: bool = True,
-    pos_includes: str = '|NOUN|',
+    pos_includes: str = '|NN|',
     pos_excludes: str = '|MAD|MID|PAD|',
+    pos_paddings: str = None,
     to_lowercase: bool = True,
     lemmatize: bool = True,
     remove_stopwords: str = None,
@@ -118,6 +119,7 @@ def vectorize(
             extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
                 pos_includes=pos_includes,
                 pos_excludes=pos_excludes,
+                pos_paddings=pos_paddings,
                 lemmatize=lemmatize,
             ),
             tagged_tokens_filter_opts=None,
