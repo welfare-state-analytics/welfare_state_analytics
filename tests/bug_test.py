@@ -1,3 +1,7 @@
+#    13  sudo vi /usr/local/lib/python3.8/site-packages/penelope/pipeline/sparv/pipelines.py
+#    24  resources/riksdagens-protokoll.yml
+import penelope.co_occurrence as co_occurrence
+import penelope.notebook.co_occurrence as co_occurrence_gui
 import pytest
 from penelope import workflows
 from penelope.co_occurrence.interface import ContextOpts
@@ -13,14 +17,15 @@ CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
 
 
-@pytest.mark.skip(reason="Long running")
+# @pytest.mark.skip(reason="Long running")
 def test_bug():
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
-
+    # corpus_filename = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.sparv4.csv.zip'
+    corpus_filename = './tests/test_data/prot_1975__59.zip'
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.sparv4.csv.zip',
+        corpus_filename=corpus_filename,
         target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
         corpus_tag='APA',
         tokens_transform_opts=TokensTransformOpts(
@@ -54,8 +59,9 @@ def test_bug():
         extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
             lemmatize=True,
             target_override=None,
-            pos_includes='|NN|PM|UO|PC|VB|',
+            pos_includes='|VB|',
             pos_excludes='|MAD|MID|PAD|',
+            pos_paddings='|JJ|',
             passthrough_tokens=[],
             append_pos=False,
         ),
@@ -63,10 +69,10 @@ def test_bug():
         vectorize_opts=VectorizeOpts(
             already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
         ),
-        count_threshold=10,
+        count_threshold=1,
         create_subfolder=True,
         persist=True,
-        context_opts=ContextOpts(context_width=2, concept={'information'}, ignore_concept=False),
+        context_opts=ContextOpts(context_width=1, concept={'information'}, ignore_concept=False),
         partition_keys=['year'],
         force=False,
     )
@@ -83,22 +89,19 @@ def test_bug():
 
     assert bundle is not None
 
+
 def test_checkpoint_feather():
-
-    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
-
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='/data/westac/data/riksdagens-protokoll.1920-2019.test.sparv4.csv.zip',
-        #corpus_filename='./tests/test_data/riksdagens-protokoll.1920-2019.test.2files.zip',
-        target_folder='./tests/output/APA',
-        corpus_tag='APA',
+        corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.test.sparv4.csv.zip',
+        target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/PROPAGANDA',
+        corpus_tag='PROPAGANDA',
         tokens_transform_opts=TokensTransformOpts(
             only_alphabetic=False,
-            only_any_alphanumeric=False,
+            only_any_alphanumeric=True,
             to_lower=True,
             to_upper=False,
-            min_len=1,
+            min_len=2,
             max_len=None,
             remove_accents=False,
             remove_stopwords=True,
@@ -124,22 +127,34 @@ def test_checkpoint_feather():
         extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
             lemmatize=True,
             target_override=None,
-            pos_includes="|NN|PM|UO|",
+            pos_includes='|NN|PM|VB|',
             pos_excludes='|MAD|MID|PAD|',
+            pos_paddings=None,
             passthrough_tokens=[],
             append_pos=False,
         ),
         tagged_tokens_filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
-            already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
+            already_tokenized=True,
+            lowercase=False,
+            stop_words=None,
+            max_df=1.0,
+            min_df=1,
+            verbose=False,
         ),
-        count_threshold=10,
+        count_threshold=1,
         create_subfolder=True,
         persist=True,
-        context_opts=ContextOpts(context_width=11, concept={'information'}, ignore_concept=False),
-        partition_keys=['year'],
         force=False,
+        context_opts=ContextOpts(
+            context_width=2,
+            concept={'propaganda'},
+            ignore_concept=False,
+        ),
+        partition_keys=['year'],
     )
+
+    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
 
     corpus_config.pipeline_payload.files(
         source=compute_opts.corpus_filename,
@@ -152,3 +167,18 @@ def test_checkpoint_feather():
     )
 
     assert bundle is not None
+
+
+def test_load_co_occurrence_bundle():
+
+    filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/information_w3_NNPM_lemma_no_stops_NEW_co-occurrence.csv.zip'
+
+    bundle = co_occurrence.load_bundle(filename)
+
+    assert bundle is not None
+
+    trends_data = co_occurrence.to_trends_data(bundle).update()
+
+    assert trends_data is not None
+
+    co_occurrence_gui.ExploreGUI().setup().display(trends_data=trends_data)
