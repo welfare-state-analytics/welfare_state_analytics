@@ -5,7 +5,7 @@ PACKAGE_FOLDER=notebooks
 
 faster-release: bump.patch tag
 
-fast_release: clean build guard_clean_working_repository bump.patch tag publish
+fast_release: clean requirements.txt write_to_ipynb guard_clean_working_repository bump.patch tag publish
 
 release: ready guard_clean_working_repository bump.patch tag
 
