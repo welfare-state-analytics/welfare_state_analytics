@@ -60,13 +60,15 @@ tools:
 
 penelope-production-mode:
 	@poetry remove humlab-penelope
+	@poetry run pip uninstall humlab-penelope
 	@poetry add humlab-penelope
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode:
 	@poetry run pip uninstall humlab-penelope --yes
 	@poetry remove humlab-penelope
-	@poetry add ../../penelope
+	@-poetry run pip uninstall humlab-penelope
+	@poetry add --editable ../../penelope
 
 
 	# @cp -f pyproject.toml pyproject.sav
