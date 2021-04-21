@@ -90,7 +90,7 @@ def test_bug():
 def test_checkpoint_feather():
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.test.sparv4.csv.zip',
+        corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
         target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         tokens_transform_opts=TokensTransformOpts(
