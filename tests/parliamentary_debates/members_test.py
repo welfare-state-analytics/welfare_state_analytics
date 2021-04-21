@@ -1,3 +1,4 @@
+import pytest
 import tqdm
 from penelope.pipeline import CorpusPipeline
 from penelope.pipeline.config import CorpusConfig
@@ -12,6 +13,7 @@ def test_load_members():
     assert parliament_data is not None
 
 
+@pytest.mark.skip(reason="long running")
 def test_run_through_entire_corpus():
 
     corpus_config: CorpusConfig = CorpusConfig.load('./tests/test_data/parliamentary-debates.yml')
