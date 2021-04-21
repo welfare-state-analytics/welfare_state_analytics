@@ -18,7 +18,7 @@ def test_load_corpus_config_returns_correctly_escaped_values():
 
 def test_pipeline_can_load_pos_tagged_checkpoint():
 
-    corpus_filename: str = './tests/test_data/riksdagens-protokoll.1920-2019.test.sparv4.csv.zip'
+    corpus_filename: str = './tests/test_data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip'
     config: CorpusConfig = CorpusConfig.load(path='./tests/test_data/riksdagens-protokoll.yml')
     checkpoint_opts: CheckpointOpts = config.checkpoint_opts.as_type(ContentType.TAGGED_FRAME)
     pipeline = CorpusPipeline(config=config).load_tagged_frame(
@@ -27,6 +27,6 @@ def test_pipeline_can_load_pos_tagged_checkpoint():
 
     payloads: List[DocumentPayload] = pipeline.to_list()
 
-    assert len(payloads) == 158
-    assert len(pipeline.payload.document_index) == 158
+    assert len(payloads) == 9
+    assert len(pipeline.payload.document_index) == 9
     assert isinstance(pipeline.payload.document_index, pd.DataFrame)
