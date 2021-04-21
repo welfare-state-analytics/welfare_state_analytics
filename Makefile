@@ -3,6 +3,10 @@ SHELL := /bin/bash
 SOURCE_FOLDERS=notebooks scripts tests
 PACKAGE_FOLDER=notebooks
 
+faster-release: bump.patch tag
+
+fast_release: clean build guard_clean_working_repository bump.patch tag
+
 release: ready guard_clean_working_repository bump.patch tag
 
 ready: tools clean tidy test lint build
