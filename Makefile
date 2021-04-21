@@ -152,7 +152,7 @@ spacy_data:
 requirements.txt: poetry.lock
 	@poetry export --without-hashes -f requirements.txt --output requirements.txt
 
-IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f \( ! -name "*checkpoint*" \) -print)
+IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
 # Create a paired `py` file for all `ipynb` that doesn't have a corresponding `py` file
@@ -169,17 +169,6 @@ PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 # %.ipynb: %.py
 # 	poetry run jupytext --to notebook $<
 
-# The same, but using a bash-loop:
-# pair_ipynb:
-# 	for ipynb_path in $(IPYNB_FILES) ; do \
-# 		ipynb_basepath="$${ipynb_path%.*}" ;\
-# 		py_filepath=$${ipynb_basepath}.py ;\
-# 		if [ ! -f $$py_filepath ] ; then \
-# 			echo "info: pairing $$ipynb_path with formats ipynb,py..." ;\
-# 			poetry run jupytext --quiet --set-formats ipynb,py:percent $$ipynb_path ;\
-# 		fi \
-# 	done
-
 unpair_ipynb:
 	@for ipynb_path in $(IPYNB_FILES) ; do \
         echo "info: unpairing $$ipynb_path..." ;\
@@ -192,18 +181,17 @@ unpair_ipynb:
 # The `sync` command updates paired file types based on latest timestamp
 sync_ipynb:
 	@echo "Syncing of PY <=> IPYNB is TURNED OFF. Only one-way write of PY => IPYNB is allowed"
-	# for ipynb_path in $(IPYNB_FILES) ; do \
-    #     poetry run jupytext --sync $$ipynb_path ;\
-	# done
+    # poetry run jupytext --sync $(IPYNB_FILES)
 
-# Forces overwrite of ìpynb` using `--to notebook`
 write_to_ipynb:
 	echo "warning: write_to_ipynb is disabled in Makefile!"
+# 	poetry run jupytext --to notebook $(PY_FILES)
 
-# for ipynb_path in $(IPYNB_FILES) ; do \
-# 	py_filepath=$${ipynb_path%.*}.py ;\
-# 	poetry run jupytext --to notebook $$py_filepath
-# done
+.PHONY: git_ipynb
+git_ipynb:
+	@poetry run jupytext --quiet --to notebook $(PY_FILES) &> /dev/null
+	@git add $(IPYNB_FILES)
+	@git commit -m "make git_ipynb"
 
 labextension:
 	@poetry run jupyter labextension install \
@@ -212,7 +200,8 @@ labextension:
 		jupyter-matplotlib@0.9.0 \
 		jupyter-cytoscape@1.1.0 \
 		ipyaggrid \
-		qgrid2
+		qgrid2 \
+        @finos/perspective-jupyterlab
 
 # jupyterlab-jupytext
 
