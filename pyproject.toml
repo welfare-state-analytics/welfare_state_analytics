@@ -81,7 +81,7 @@ loguru = "^0.5.3"
 pyarrow = "3.0.0"
 ipyregulartable = "^0.2.0"
 perspective-python = "0.6.2"
-humlab-penelope = "^0.3.13"
+humlab-penelope = "^0.3.15"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
