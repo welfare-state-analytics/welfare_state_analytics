@@ -197,11 +197,14 @@ write_to_ipynb:
 # 	poetry run jupytext --to notebook $(PY_FILES)
 
 .PHONY: git_ipynb
-git_ipynb:
+git_ipynb: guard_clean_working_repository
 	@poetry run jupytext --quiet --to notebook $(PY_FILES) &> /dev/null
-	@git add $(IPYNB_FILES)
-	@git commit -m "make git_ipynb"
-
+	@status="$$(git status --porcelain)"
+	@if [[ "$$status" != "" ]]; then
+		@git add .
+		@git commit -m "make git_ipynb"
+		@git push
+	fi
 labextension:
 	@poetry run jupyter labextension install \
 		@jupyter-widgets/jupyterlab-manager@2.0 \
