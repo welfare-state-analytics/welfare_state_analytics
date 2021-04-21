@@ -133,10 +133,10 @@ def subset(
                 filename_pattern=None,
                 show_progress=True,
             )
-            # .filter_tagged_frame(
-            #     extract_opts=args.extract_tagged_tokens_opts,
-            #     filter_opts=args.tagged_tokens_filter_opts,
-            # )
+            .filter_tagged_frame(
+                extract_opts=args.extract_tagged_tokens_opts,
+                filter_opts=args.tagged_tokens_filter_opts,
+            )
             .exhaust(100)
         )
         # for payload in pipeline.take(1000): pass
