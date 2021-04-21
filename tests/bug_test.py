@@ -1,8 +1,5 @@
-#    13  sudo vi /usr/local/lib/python3.8/site-packages/penelope/pipeline/sparv/pipelines.py
-#    24  resources/riksdagens-protokoll.yml
 import penelope.co_occurrence as co_occurrence
 import penelope.notebook.co_occurrence as co_occurrence_gui
-import pytest
 from penelope import workflows
 from penelope.co_occurrence.interface import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts
