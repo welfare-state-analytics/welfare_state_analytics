@@ -77,7 +77,11 @@ ipyfilechooser = "^0.4.0"
 cutter-ng = "^2.5"
 matplotlib-venn = "^0.11.6"
 ipycytoscape = "1.1.0"
-humlab-penelope = "^0.3.12"
+loguru = "^0.5.3"
+pyarrow = "3.0.0"
+ipyregulartable = "^0.2.0"
+perspective-python = "0.6.2"
+humlab-penelope = "^0.3.13"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -101,15 +105,12 @@ rope = "*"
 yapf = "==0.*,>=0.30.0"
 debugpy = "==1.*,>=1.2.1"
 jupytext = "==1.7.1"
+pyinstrument = "^3.4.1"
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
 # concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
-
-
-
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -127,7 +128,8 @@ python_files = "*_test.py"
 python_functions = "test_*"
 filterwarnings = [
 #   "ignore",
-  "ignore::_pytest.warning_types.PytestCollectionWarning"
+  "ignore::_pytest.warning_types.PytestCollectionWarning",
+  "ignore::DeprecationWarning",
 ]
 
 [tool.dephell.main]
@@ -155,14 +157,14 @@ profile = "black"
 line_length = 120
 py_version = "auto"
 float_to_top = true
-src_paths = [ "notebooks", "tests" ]
+src_paths = [ "notebooks", "westac", "tests" ]
 known_first_party = [ "__paths__" ]
 
 [tool.coverage]
 # https://github.com/nedbat/coveragepy
 
     [tool.coverage.run]
-    source = ["notebooks"]
+    source = ["notebooks", "westac"]
     branch = true
     omit = [
         '**/__init__.py',

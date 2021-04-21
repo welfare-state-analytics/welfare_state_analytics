@@ -63,8 +63,9 @@ def create_bigger_vectorized_corpus(
             as_binary=False,
         ),
         extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
-            pos_includes="|NN|PM|UO|PC|VB|",
+            pos_includes="|NN|PM|VB|",
             pos_excludes="|MAD|MID|PAD|",
+            pos_paddings=None,
             passthrough_tokens=[],
             lemmatize=True,
             append_pos=False,

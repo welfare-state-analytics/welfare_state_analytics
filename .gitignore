@@ -26,7 +26,7 @@ output.xml
 .ipynb_checkpoints/
 .vscode/
 .spyproject/
-.coverage
+.coverage*
 desktop.ini
 nohup.out
 clone/
@@ -52,3 +52,5 @@ coverage.xml
 dist
 /stopwords
 export
+*.feather
+*.feathering

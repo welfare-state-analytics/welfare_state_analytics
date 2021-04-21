@@ -114,5 +114,8 @@ gui = main_gui.MainGUI(
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
+    global_count_threshold=250,
 )
 display(gui.layout())
+
+# %%
