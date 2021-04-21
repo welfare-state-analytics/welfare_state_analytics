@@ -101,7 +101,7 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
 def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
     source_folder: str = "tests/test_data/annotated"
-    reader_opts: TextReaderOpts = TextReaderOpts()
+    reader_opts: TextReaderOpts = TextReaderOpts(filename_pattern="*.csv")
 
     pipeline: CorpusPipeline = Mock(spec=CorpusPipeline)
 
