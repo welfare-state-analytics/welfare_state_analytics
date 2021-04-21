@@ -3,15 +3,14 @@
 import os
 
 import click
-import penelope.notebook.interface as interface
+
+# import penelope.notebook.interface as interface
 import westac.parliamentary_debates.pipelines as pipe
 from loguru import logger
-from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
+
+# from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
 from penelope.pipeline import CorpusConfig  # , Token2Id
 from penelope.pipeline.pipelines import CorpusPipeline
-
-# import sys
-
 
 # from westac.parliamentary_debates.members import ParliamentaryMembers
 
@@ -89,39 +88,39 @@ def subset(
         if not os.path.isdir(input_folder):
             raise FileNotFoundError(input_folder)
 
-        args: interface.ComputeOpts = interface.ComputeOpts(
-            corpus_type=corpus_config.corpus_type,
-            corpus_filename=input_folder,
-            target_folder=output_folder,
-            corpus_tag=output_tag,
-            tokens_transform_opts=TokensTransformOpts(
-                to_lower=to_lowercase,
-                to_upper=False,
-                min_len=min_word_length,
-                max_len=max_word_length,
-                remove_accents=False,
-                remove_stopwords=(remove_stopwords is not None),
-                stopwords=None,
-                extra_stopwords=None,
-                language=remove_stopwords,
-                keep_numerals=keep_numerals,
-                keep_symbols=keep_symbols,
-                only_alphabetic=only_alphabetic,
-                only_any_alphanumeric=only_any_alphanumeric,
-            ),
-            text_reader_opts=corpus_config.text_reader_opts,
-            extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
-                pos_includes=pos_includes,
-                pos_excludes=pos_excludes,
-                pos_paddings=pos_paddings,
-                lemmatize=lemmatize,
-            ),
-            tagged_tokens_filter_opts=None,
-            vectorize_opts=VectorizeOpts(already_tokenized=True),
-            count_threshold=count_threshold,
-            create_subfolder=create_subfolder,
-            persist=True,
-        )
+        # args: interface.ComputeOpts = interface.ComputeOpts(
+        #     corpus_type=corpus_config.corpus_type,
+        #     corpus_filename=input_folder,
+        #     target_folder=output_folder,
+        #     corpus_tag=output_tag,
+        #     tokens_transform_opts=TokensTransformOpts(
+        #         to_lower=to_lowercase,
+        #         to_upper=False,
+        #         min_len=min_word_length,
+        #         max_len=max_word_length,
+        #         remove_accents=False,
+        #         remove_stopwords=(remove_stopwords is not None),
+        #         stopwords=None,
+        #         extra_stopwords=None,
+        #         language=remove_stopwords,
+        #         keep_numerals=keep_numerals,
+        #         keep_symbols=keep_symbols,
+        #         only_alphabetic=only_alphabetic,
+        #         only_any_alphanumeric=only_any_alphanumeric,
+        #     ),
+        #     text_reader_opts=corpus_config.text_reader_opts,
+        #     extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
+        #         pos_includes=pos_includes,
+        #         pos_excludes=pos_excludes,
+        #         pos_paddings=pos_paddings,
+        #         lemmatize=lemmatize,
+        #     ),
+        #     tagged_tokens_filter_opts=None,
+        #     vectorize_opts=VectorizeOpts(already_tokenized=True),
+        #     count_threshold=count_threshold,
+        #     create_subfolder=create_subfolder,
+        #     persist=True,
+        # )
 
         # parliament_data = ParliamentaryMembers.load()
         _: CorpusPipeline = (
@@ -133,10 +132,10 @@ def subset(
                 filename_pattern=None,
                 show_progress=True,
             )
-            .filter_tagged_frame(
-                extract_opts=args.extract_tagged_tokens_opts,
-                filter_opts=args.tagged_tokens_filter_opts,
-            )
+            # .filter_tagged_frame(
+            #     extract_opts=args.extract_tagged_tokens_opts,
+            #     filter_opts=args.tagged_tokens_filter_opts,
+            # )
             .exhaust(100)
         )
         # for payload in pipeline.take(1000): pass
