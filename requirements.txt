@@ -50,7 +50,7 @@ future==0.18.2; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
 gensim==3.8.3
 holoviews==1.14.3; python_version >= "2.7"
 humanfriendly==9.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
-humlab-penelope==0.3.16; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
+humlab-penelope==0.3.18; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
 idna==2.10; python_full_version >= "3.8.0" and python_full_version < "4.0.0" and python_version >= "3.6"
 ipyaggrid==0.2.1
 ipycytoscape==1.1.0
