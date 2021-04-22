@@ -139,6 +139,7 @@ clean:
 
 clean_cache:
 	@poetry cache clear pypi --all
+	@poetry install --remove-untracked
 
 data: nltk_data spacy_data
 
