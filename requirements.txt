@@ -9,8 +9,8 @@ backcall==0.2.0; python_version >= "3.7"
 bleach==3.3.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 blis==0.4.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 bokeh==2.2.3; python_version >= "3.6"
-boto3==1.17.54; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
-botocore==1.20.54; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
+boto3==1.17.55; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
+botocore==1.20.55; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
 cachetools==4.2.1; python_version >= "3.6" and python_version < "4.0" and python_full_version >= "3.8.0" and python_full_version < "4.0.0"
 catalogue==1.0.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 cerberus==1.3.3; python_full_version >= "3.8.0" and python_full_version < "4.0.0" and python_version >= "3.6"
@@ -50,7 +50,7 @@ future==0.18.2; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
 gensim==3.8.3
 holoviews==1.14.3; python_version >= "2.7"
 humanfriendly==9.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
-humlab-penelope==0.3.15; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
+humlab-penelope==0.3.16; python_full_version >= "3.8.0" and python_full_version < "4.0.0"
 idna==2.10; python_full_version >= "3.8.0" and python_full_version < "4.0.0" and python_version >= "3.6"
 ipyaggrid==0.2.1
 ipycytoscape==1.1.0
@@ -140,7 +140,7 @@ regex==2021.4.4; python_full_version >= "3.8.0" and python_full_version < "4.0.0
 requests==2.25.1; python_full_version >= "3.8.0" and python_version >= "3.6" and python_full_version < "4.0.0" and (python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.5") and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6")
 ruamel.yaml.clib==0.2.2; platform_python_implementation == "CPython" and python_version < "3.10" and python_full_version >= "3.8.0" and python_full_version < "4.0.0" and python_version >= "3.6"
 ruamel.yaml==0.17.4; python_full_version >= "3.8.0" and python_full_version < "4.0.0" and python_version >= "3.6"
-s3transfer==0.4.0; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
+s3transfer==0.4.1; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
 scattertext==0.1.2
 scikit-learn==0.23.2; python_version >= "3.6"
 scipy==1.6.2; python_version >= "3.7" and python_version < "3.10"
