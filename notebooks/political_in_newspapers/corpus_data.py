@@ -102,7 +102,6 @@ def load_reconstructed_text_corpus(corpus_folder):
         df_reconstructed_text_corpus = (df_corpus.groupby('document_id')).apply(
             lambda x: ' '.join(flatten(x['tf'] * (x['token_id'].apply(lambda y: [id2token[y]]))))
         )
-        # FIXME Is extra index written? Is headers written? Might be that first row is ignored???
         df_reconstructed_text_corpus.to_csv(filename, compression='zip', header=0, sep=',', quotechar='"')
     else:
         df_reconstructed_text_corpus = pd.read_csv(filename, compression='zip', header=None, sep=',', quotechar='"')

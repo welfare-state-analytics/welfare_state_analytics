@@ -10,8 +10,6 @@ import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 # pylint: disable=unused-argument, too-many-locals, too-many-arguments
 
-# FIXME: Move to penelope, pssoibly by merging with penelop.scripts.compute_topic_modelling
-
 ENGINE_OPTIONS = [
     ('MALLET LDA', 'gensim_mallet-lda'),
     ('gensim LDA', 'gensim_lda'),
