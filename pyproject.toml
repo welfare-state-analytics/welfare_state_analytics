@@ -81,7 +81,7 @@ loguru = "^0.5.3"
 pyarrow = "3.0.0"
 ipyregulartable = "^0.2.0"
 perspective-python = "0.6.2"
-humlab-penelope = "0.3.18"
+humlab-penelope = {path = "../../penelope", develop=true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -110,13 +110,6 @@ pyinstrument = "==3.*,>=3.4.1"
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
-# concept_cooccurrence = "penelope.scripts.concept_co_occurrence:main"
-
-
-
-
-
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
