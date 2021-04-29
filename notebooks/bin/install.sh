@@ -13,6 +13,5 @@ poetry run jupyter labextension install \
     @jupyter-widgets/jupyterlab-sidecar \
     jupyter-matplotlib \
     jupyterlab-jupytext \
-    ipyaggrid \
-    qgrid2
+    ipyaggrid
 
