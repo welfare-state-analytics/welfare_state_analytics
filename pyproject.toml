@@ -54,7 +54,6 @@ xlrd = "*"
 ipyfilechooser = "^0.4.0"
 ipycytoscape = "1.1.0"
 loguru = "^0.5.3"
-perspective-python = "0.6.2"
 humlab-penelope = {path = "../../penelope", develop=true}
 
 [tool.poetry.dev-dependencies]
