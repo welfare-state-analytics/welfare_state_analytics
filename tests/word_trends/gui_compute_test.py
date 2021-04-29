@@ -35,11 +35,11 @@ def test_compute_gui_compute_dry_run():
     gui._target_folder._apply_selection()
     gui._corpus_filename.reset(path=TEST_DATA_FOLDER, filename='proto.2files.2sentences.sparv4.csv.zip')
     gui._corpus_filename._apply_selection()
-    gui._vectorize_button.click()
+    gui._compute_button.click()
+    gui._cli_button.click()
 
     assert compute_called
     # display(compute_gui.layout())
-
 
 @pytest.mark.skip('long running')
 def test_compute_gui_compute_hot_run():
