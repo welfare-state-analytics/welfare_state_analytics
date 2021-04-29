@@ -5,13 +5,13 @@ PACKAGE_FOLDER=notebooks
 
 faster-release: bump.patch tag
 
-fast_release: clean git_ipynb requirements.txt guard_clean_working_repository bump.patch tag publish
+fast-release: clean git-ipynb requirements.txt guard-clean-working-repository bump.patch tag publish
 
-release: ready guard_clean_working_repository bump.patch tag
+release: ready guard-clean-working-repository bump.patch tag
 
 ready: tools clean tidy test lint build
 
-build: penelope-production-mode requirements.txt write_to_ipynb
+build: penelope-production-mode requirements.txt
 	@poetry build
 
 publish:
@@ -21,7 +21,7 @@ lint: tidy pylint flake8
 
 tidy: black isort
 
-tidy-to-git: guard_clean_working_repository tidy
+tidy-to-git: guard-clean-working-repository tidy
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
@@ -43,10 +43,10 @@ init: tools
 	@poetry install
 
 paths:
-	@find notebooks/ -type f -name __paths__.py -exec cp -u -f __paths__.py \{\} \;
+	@find notebooks/ -type f -name __paths__.py -exec ln -s __paths__.py \{\} \;
 
-.ONESHELL: guard_clean_working_repository
-guard_clean_working_repository:
+.ONESHELL: guard-clean-working-repository
+guard-clean-working-repository:
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		echo "error: changes exists, please commit or stash them: "
@@ -131,26 +131,26 @@ clean:
 	@find . -type d -name '.mypy_cache' -exec rm -rf {} +
 	@rm -rf tests/output
 
-clean_cache:
+clean-cache:
 	@poetry cache clear pypi --all
 	@poetry install --remove-untracked
 
-data: nltk_data spacy_data
+data: nltk-data spacy-data
 
 update:
 	@poetry update
 
-recreate_env:
+re-create-env:
 	@poetry remove humlab-penelope
 	@poetry run pip uninstall humlab-penelope
 	@poetry env remove `poetry run which python`
 	@poetry add ../../penelope
 
-nltk_data:
+nltk-data:
 	@mkdir -p $(NLTK_DATA)
 	@poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
 
-spacy_data:
+spacy-data:
 	@poetry run python -m spacy download en
 
 requirements.txt: poetry.lock
@@ -159,21 +159,7 @@ requirements.txt: poetry.lock
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
-# Create a paired `py` file for all `ipynb` that doesn't have a corresponding `py` file
-# pair_ipynb: $(PY_FILES)
-# 	@echo "hello"
-
-# $(PY_FILES):%.py:%.ipynb
-# 	@echo target is $@, source is $<
-# 	@poetry run jupytext --quiet --set-formats ipynb,py:percent $<
-
-# write_to_ipynb: $(IPYNB_FILES)
-# 	poetry run jupytext --to notebook $^
-
-# %.ipynb: %.py
-# 	poetry run jupytext --to notebook $<
-
-unpair_ipynb:
+unpair-ipynb:
 	@for ipynb_path in $(IPYNB_FILES) ; do \
         echo "info: unpairing $$ipynb_path..." ;\
 		ipynb_basepath="$${ipynb_path%.*}" ;\
@@ -183,16 +169,16 @@ unpair_ipynb:
 	done
 
 # The `sync` command updates paired file types based on latest timestamp
-sync_ipynb:
+sync-ipynb:
 	@echo "Syncing of PY <=> IPYNB is TURNED OFF. Only one-way write of PY => IPYNB is allowed"
     # poetry run jupytext --sync $(IPYNB_FILES)
 
-write_to_ipynb:
-	echo "warning: write_to_ipynb is disabled in Makefile!"
+write-to-ipynb:
+	echo "warning: write-to-ipynb is disabled in Makefile!"
 # 	poetry run jupytext --to notebook $(PY_FILES)
 
-.PHONY: git_ipynb
-git_ipynb: guard_clean_working_repository
+.PHONY: git-ipynb
+git-ipynb: guard-clean-working-repository
 	@poetry run jupytext --quiet --to notebook $(PY_FILES) &> /dev/null
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
@@ -200,18 +186,11 @@ git_ipynb: guard_clean_working_repository
 		@git commit -m "make git_ipynb"
 		@git push
 	fi
+
 labextension:
-	@poetry run jupyter labextension install \
-		@jupyter-widgets/jupyterlab-manager@2.0 \
-		@bokeh/jupyter_bokeh@2.0.4 \
-		jupyter-matplotlib@0.9.0 \
-		jupyter-cytoscape@1.1.0 \
-		ipyaggrid \
-        @finos/perspective-jupyterlab
+	@poetry run jupyter labextension install ipyaggrid @finos/perspective-jupyterlab
 
-# jupyterlab-jupytext
-
-pre_commit_ipynb:
+pre-commit-ipynb:
 	@poetry run jupytext --sync --pre-commit
 	@chmod u+x .git/hooks/pre-commit
 
@@ -223,16 +202,16 @@ gh:
 check-gh: gh-exists
 gh-exists: ; @which gh > /dev/null
 
-.ONESHELL: pair_ipynb unpair_ipynb sync_ipynb update_ipynb
+.ONESHELL: pair-ipynb unpair-ipynb sync-ipynb update-ipynb
 
 .PHONY: help check init version
 .PHONY: lint flake8 pylint pylint2 yapf black isort tidy tidy-to-git
 .PHONY: test test-coverage pytest
 .PHONY: ready build tag bump.patch release
-.PHONY: clean clean_cache update
-.PHONY: install_graphtool gh check-gh gh-exists tools
-.PHONY: data spacy_data nltk_data
-.PHONY: pair_ipynb unpair_ipynb sync_ipynb update_ipynb write_to_ipynb
+.PHONY: clean clean-cache update
+.PHONY: install-graphtool gh check-gh gh-exists tools
+.PHONY: data spacy-data nltk-data
+.PHONY: pair-ipynb unpair-ipynb sync-ipynb update-ipynb write-to-ipynb
 .PHONY: labextension
 .PHONY: wc paths
 
@@ -246,7 +225,7 @@ help:
 	@echo " make tidy             Runs black and isort"
 	@echo " make clean            Removes temporary files, caches, build files"
 	@echo " make data             Downloads NLTK and SpaCy data"
-	@echo " make paths            Copies ./__paths__.py to existing ./notebooks/**/_paths__.py  "
+	@echo " make paths            Copies ./__paths__.py to existing ./notebooks/**/__paths__.py  "
 	@echo "  "
 	@echo "Lower level recepies: "
 	@echo " make init             Install development tools and dependencies (dev recepie)"
@@ -263,5 +242,6 @@ help:
 	@echo " make update           Updates dependencies"
 	@echo "  "
 	@echo "Notebook recepies: "
-	@echo " make write_to_ipynb   Write .py in %percent format to .ipynb"
-	@echo " make pair_ipynb       Adds Jupytext pairing to *.ipynb"
+	@echo " make write-to-ipynb   Write .py in %percent format to .ipynb"
+	@echo " make git-ipynb        Write .py in %percent format to .ipynb and git commit results"
+	@echo " make pair-ipynb       Adds Jupytext pairing to *.ipynb"
