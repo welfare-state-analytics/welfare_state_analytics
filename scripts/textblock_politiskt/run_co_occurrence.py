@@ -4,8 +4,6 @@ import penelope.vendor.nltk as nltk_utility
 
 from notebooks.textblock_politiskt.pandas_co_occurrence import compute_co_occurrence_for_periods
 
-stopwords = nltk_utility.extended_stopwords()
-
 # pylint: disable=too-many-function-args
 
 
@@ -23,7 +21,7 @@ def run():
         keep_numerals=False,
         keep_symbols=False,
         filter_stopwords=False,
-        stopwords=stopwords,
+        stopwords=nltk_utility.extended_stopwords(),
     )
     source_filename = './data/year+newspaper+text_2019-10-16.txt'
     target_filename = './output/political_co_occurrence_{}.csv'.format(time.strftime("%Y%m%d_%H%M%S"))
