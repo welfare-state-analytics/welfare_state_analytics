@@ -96,7 +96,6 @@ from IPython.core.display import display
 import __paths__
 
 output_notebook()
-main_gui.CLEAR_OUTPUT = True
 gui = main_gui.create_to_dtm_gui(
     corpus_config="riksdagens-protokoll",
     corpus_folder=__paths__.corpus_folder,
