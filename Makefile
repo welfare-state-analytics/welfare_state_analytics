@@ -74,13 +74,7 @@ penelope-production-mode:
 penelope-edit-mode:
 	@poetry run pip uninstall humlab-penelope --yes
 	@poetry remove humlab-penelope
-	@-poetry run pip uninstall humlab-penelope
-	@poetry add --editable ../../penelope
-
-
-	# @cp -f pyproject.toml pyproject.sav
-	# @sed -r 's/(path\W=\W\"[\.\/]+penelope\")\}/\1, develop \= true\}/g' pyproject.toml > /tmp/pyproject.tmp
-	# @cp -f /tmp/pyproject.tmp pyproject.toml
+	@poetry@3940 add --editable ../../penelope
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
@@ -213,7 +207,6 @@ labextension:
 		jupyter-matplotlib@0.9.0 \
 		jupyter-cytoscape@1.1.0 \
 		ipyaggrid \
-		qgrid2 \
         @finos/perspective-jupyterlab
 
 # jupyterlab-jupytext
