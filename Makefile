@@ -5,13 +5,13 @@ PACKAGE_FOLDER=notebooks
 
 faster-release: bump.patch tag
 
-fast-release: clean git-ipynb requirements.txt guard-clean-working-repository bump.patch tag publish
+fast-release: clean git-ipynb requirements.txt-to-git guard-clean-working-repository bump.patch tag publish
 
 release: ready guard-clean-working-repository bump.patch tag
 
 ready: tools clean tidy test lint requirements.txt build
 
-build: penelope-production-mode requirements.txt
+build: penelope-production-mode requirements.txt-to-git
 	@poetry build
 
 publish:
