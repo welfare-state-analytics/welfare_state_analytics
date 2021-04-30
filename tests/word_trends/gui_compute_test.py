@@ -41,6 +41,7 @@ def test_compute_gui_compute_dry_run():
     assert compute_called
     # display(compute_gui.layout())
 
+
 @pytest.mark.skip('long running')
 def test_compute_gui_compute_hot_run():
 
