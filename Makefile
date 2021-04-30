@@ -9,7 +9,7 @@ fast-release: clean git-ipynb requirements.txt guard-clean-working-repository bu
 
 release: ready guard-clean-working-repository bump.patch tag
 
-ready: tools clean tidy test lint build
+ready: tools clean tidy test lint requirements.txt build
 
 build: penelope-production-mode requirements.txt
 	@poetry build
@@ -25,7 +25,7 @@ tidy-to-git: guard-clean-working-repository tidy
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
-		@git commit -m "make tidy"
+		@git commit -m "📌make tidy"
 		@git push
 	fi
 
@@ -79,7 +79,7 @@ penelope-edit-mode:
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
 	@git add pyproject.toml requirements.txt
-	@git commit -m "Bump version patch"
+	@git commit -m "📌bump version patch"
 	@git push
 
 tag:
@@ -183,7 +183,7 @@ git-ipynb: guard-clean-working-repository
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
-		@git commit -m "make git_ipynb"
+		@git commit -m "📌make git-ipynb"
 		@git push
 	fi
 
