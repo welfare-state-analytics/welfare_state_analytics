@@ -156,6 +156,11 @@ spacy-data:
 requirements.txt: poetry.lock
 	@poetry export --without-hashes -f requirements.txt --output requirements.txt
 
+requirements.txt-to-git: requirements.txt
+	@git add requirements.txt
+	@git commit -m "📌updated requirements.txt"
+	@git push
+
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
