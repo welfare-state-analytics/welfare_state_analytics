@@ -70,7 +70,7 @@ penelope-production-mode: penelope-uninstall
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode: penelope-uninstall
-	@poetry add --editable ../../penelope
+	@poetry@3940 add --editable ../../penelope
 
 penelope-uninstall:
 	@poetry remove humlab-penelope
