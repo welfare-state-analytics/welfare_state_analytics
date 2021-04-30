@@ -65,16 +65,16 @@ tools:
 	@poetry run pip install --upgrade pip --quiet
 	@poetry run pip install poetry --upgrade --quiet
 
-penelope-production-mode:
-	@poetry remove humlab-penelope
-	@poetry run pip uninstall humlab-penelope
+penelope-production-mode: penelope-uninstall
 	@poetry add humlab-penelope
 
 .ONESHELL: penelope-edit-mode
-penelope-edit-mode:
-	@poetry run pip uninstall humlab-penelope --yes
+penelope-edit-mode: penelope-uninstall
+	@poetry add --editable ../../penelope
+
+penelope-uninstall:
 	@poetry remove humlab-penelope
-	@poetry@3940 add --editable ../../penelope
+	@poetry run pip uninstall humlab-penelope --yes
 
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
