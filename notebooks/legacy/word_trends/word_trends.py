@@ -50,9 +50,7 @@ def done_callback(corpus: dtm.VectorizedCorpus, corpus_folder: str, corpus_tag: 
     ).update()
 
     gui = word_trends.GofTrendsGUI(
-        gofs_gui=word_trends.GoFsGUI().setup(),
-        trends_gui=word_trends.TrendsGUI().setup(),
-        displayers=[]
+        gofs_gui=word_trends.GoFsGUI().setup(), trends_gui=word_trends.TrendsGUI().setup(), displayers=[]
     )
 
     display(gui.layout())
