@@ -49,7 +49,6 @@ tqdm = "*"
 traitlets = "==4.3.3"
 xlrd = "*"
 loguru = "^0.5.3"
-humlab-penelope = {path = "../../penelope", develop=true}
 
 jupyter-bokeh = "*"
 jupyterlab = "*"
@@ -60,6 +59,7 @@ ipycytoscape = "*"
 # jupyter-bokeh = "*"
 # jupyterlab = "==2.2.9"
 # ipywidgets = "==7.5.1"
+humlab-penelope = "^0.4.1"
 # ipyfilechooser = "^0.4.0"
 # ipycytoscape = "1.1.0"
 
