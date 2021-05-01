@@ -59,6 +59,7 @@ ipycytoscape = "*"
 # jupyter-bokeh = "*"
 # jupyterlab = "==2.2.9"
 # ipywidgets = "==7.5.1"
+humlab-penelope = {path = "../../penelope", develop = true}
 # ipyfilechooser = "^0.4.0"
 # ipycytoscape = "1.1.0"
 
