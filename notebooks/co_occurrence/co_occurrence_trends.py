@@ -108,13 +108,15 @@ from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
 
+# FIXME #138 Co-occurrence: No data is downloaded when "Download data" is pressed
+# FIXME UI action results in repeated (multiple) outputs
+
 output_notebook()
 gui = main_gui.MainGUI(
     corpus_config="riksdagens-protokoll",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
-    global_count_threshold=1,
 )
 display(gui.layout())
 
