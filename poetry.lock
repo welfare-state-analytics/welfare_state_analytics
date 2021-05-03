@@ -825,51 +825,46 @@ unit_tests = ["ipython (>=5.4.0)", "notebook", "matplotlib (>=2.2)", "bokeh (>=1
 
 [[package]]
 name = "humlab-penelope"
-version = "0.4.1"
+version = "0.4.2"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = "==3.8.5"
-develop = true
+python-versions = ">=3.8,<3.9"
 
 [package.dependencies]
-alive-progress = "^1.6.1"
+alive-progress = ">=1.6.1,<2.0.0"
 bokeh = "*"
-click = "^7.1.2"
-ftfy = "^5.8"
-gensim = "^3.8.3"
-holoviews = "^1.13.5"
+click = ">=7.1.2,<8.0.0"
+ftfy = ">=5.8,<6.0"
+gensim = ">=3.8.3,<4.0.0"
+holoviews = ">=1.13.5,<2.0.0"
 ipyaggrid = "*"
 ipycytoscape = "*"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
-loguru = "^0.5.3"
-lxml = "^4.5.2"
-memoization = "^0.3.1"
-more_itertools = "^8.5.0"
-nltk = "^3.5"
-numpy = "==1.19.3"
-openpyxl = "^3.0.5"
-pandas = "^1.1.2"
+loguru = ">=0.5.3,<0.6.0"
+lxml = ">=4.5.2,<5.0.0"
+memoization = ">=0.3.1,<0.4.0"
+more_itertools = ">=8.5.0,<9.0.0"
+nltk = ">=3.5,<4.0"
+numpy = "1.19.3"
+openpyxl = ">=3.0.5,<4.0.0"
+pandas = ">=1.1.2,<2.0.0"
 perspective-python = "*"
-pyarrow = "^3.0.0"
-pydotplus = "^2.0.2"
-python-louvain = "^0.14"
-PyYAML = "^5.3.1"
-requests = "^2.24.0"
-scipy = "^1.5.2"
+pyarrow = ">=3.0.0,<4.0.0"
+pydotplus = ">=2.0.2,<3.0.0"
+python-louvain = ">=0.14,<0.15"
+PyYAML = ">=5.3.1,<6.0.0"
+requests = ">=2.24.0,<3.0.0"
+scipy = ">=1.5.2,<2.0.0"
 sklearn = "*"
-smart_open = "^2.2.1"
-spacy = "^2.3.2"
-statsmodels = "^0.12.0"
-textacy = "^0.10.1"
-toml = "^0.10.2"
-wordcloud = "^1.8.0"
-
-[package.source]
-type = "directory"
-url = "../../penelope"
+smart_open = ">=2.2.1,<3.0.0"
+spacy = ">=2.3.2,<3.0.0"
+statsmodels = ">=0.12.0,<0.13.0"
+textacy = ">=0.10.1,<0.11.0"
+toml = ">=0.10.2,<0.11.0"
+wordcloud = ">=1.8.0,<2.0.0"
 
 [[package]]
 name = "identify"
@@ -2872,8 +2867,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "==3.8.5"
-content-hash = "8549043ef87162c382435ca3add67ee9d78f8b571c4150f8d58fab354df49705"
+python-versions = "==3.8"
+content-hash = "3f8dd0400f78d8d3e530e90a5754b6b005db7a69ed08be3cfef430edc77f07d6"
 
 [metadata.files]
 aiohttp = [
@@ -3422,7 +3417,10 @@ holoviews = [
     {file = "holoviews-1.14.3-py2.py3-none-any.whl", hash = "sha256:994424c7c6d407d66347ccbe59943268b679f01c086c590039aa0823835c6ab3"},
     {file = "holoviews-1.14.3.tar.gz", hash = "sha256:c3de3c9af9a123ac3591aca781d2ccba3fb3688462e0a50ab74a11aecc05b45e"},
 ]
-humlab-penelope = []
+humlab-penelope = [
+    {file = "humlab-penelope-0.4.2.tar.gz", hash = "sha256:b151898ac498cc9383742b39d7b366af16be9e1b73f48bd7427f745c6c273c79"},
+    {file = "humlab_penelope-0.4.2-py3-none-any.whl", hash = "sha256:ad713bcb6a7ea91365b0219072cddd08e3e5e7b72548fbc12e0db26403979c95"},
+]
 identify = [
     {file = "identify-2.2.4-py2.py3-none-any.whl", hash = "sha256:ad9f3fa0c2316618dc4d840f627d474ab6de106392a4f00221820200f490f5a8"},
     {file = "identify-2.2.4.tar.gz", hash = "sha256:9bcc312d4e2fa96c7abebcdfb1119563b511b5e3985ac52f60d9116277865b2e"},
