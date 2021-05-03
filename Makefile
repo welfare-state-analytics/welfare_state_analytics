@@ -2,6 +2,7 @@
 SHELL := /bin/bash
 SOURCE_FOLDERS=notebooks scripts tests
 PACKAGE_FOLDER=notebooks
+SPACY_MODEL=en_core_web_sm
 
 faster-release: bump.patch tag
 
@@ -25,7 +26,7 @@ tidy-to-git: guard-clean-working-repository tidy
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
-		@git commit -m "📌make tidy"
+		@git commit -m "📌 make tidy"
 		@git push
 	fi
 
@@ -42,8 +43,15 @@ test: clean
 init: tools
 	@poetry install
 
+.ONESHELL: paths
 paths:
-	@find notebooks/ -type f -name __paths__.py -exec ln -s __paths__.py \{\} \;
+	@for folder in `find . -type f -name "*.ipynb" | xargs dirname | grep -v ".ipynb_checkpoints" | sort | uniq | xargs` ; do \
+		pushd .  > /dev/null ; \
+		cd $$folder ; \
+		rm -f __paths__.py ; \
+		ln -s ../../__paths__.py __paths__.py ; \
+		popd  > /dev/null ; \
+	done
 
 .ONESHELL: guard-clean-working-repository
 guard-clean-working-repository:
@@ -151,7 +159,8 @@ nltk-data:
 	@poetry run python -m nltk.downloader -d $(NLTK_DATA) stopwords punkt sentiwordnet
 
 spacy-data:
-	@poetry run python -m spacy download en
+	@poetry run python -m spacy download $(SPACY_MODEL)
+	@poetry run python -m spacy link $(SPACY_MODEL) en --force
 
 requirements.txt: poetry.lock
 	@poetry export --without-hashes -f requirements.txt --output requirements.txt
@@ -193,7 +202,11 @@ git-ipynb: guard-clean-working-repository
 	fi
 
 labextension:
-	@poetry run jupyter labextension install ipyaggrid @finos/perspective-jupyterlab
+	@poetry run jupyter labextension install \
+		ipyaggrid \
+		@finos/perspective-jupyterlab \
+		@jupyter-widgets/jupyterlab-manager
+
 
 pre-commit-ipynb:
 	@poetry run jupytext --sync --pre-commit
@@ -206,6 +219,19 @@ gh:
 
 check-gh: gh-exists
 gh-exists: ; @which gh > /dev/null
+
+.PHONY: issues issue pr prs
+issues:
+	gh issue list
+
+issue:
+	gh issue create
+
+prs:
+	gh pr list
+
+pr:
+	gh pr create
 
 .ONESHELL: pair-ipynb unpair-ipynb sync-ipynb update-ipynb
 
