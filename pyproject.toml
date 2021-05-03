@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "humlab-westac"
-version = "0.3.1"
+version = "0.3.2"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
 packages = [
@@ -90,6 +90,7 @@ jupytext = "==1.*,>=1.11.1"
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
+
 
 
 [tool.pytest.ini_options]
