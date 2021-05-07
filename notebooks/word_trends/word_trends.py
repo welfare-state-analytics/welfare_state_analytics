@@ -22,10 +22,10 @@
 # | 🔽 | Building block | Arguments | Description | Configuration
 # | -- | :------------- | :------------- | :------------- | :------------- |
 # | ⚙ | <b>SetTagger</b>SpacyModel | 'en' | Set PoS tagger | spaCy
-# | 📜| <b>LoadText</b> | reader_opts, transform_opts | Text stream provider | config.yaml
+# | 📜| <b>LoadText</b> | reader_opts, transform_opts | Text stream provider | config.yml
 # | 🔎 | <b>Tqdm</b> | ⚪ | Progress indicator | ⚪
 # | ⌛ | <b>Passthrough</b> | ⚪ | Passthrough | ⚪
-# | 🔨 | <b>ToTaggedFrame</b> | ⚪ Spacy | PoS tagging | config.yaml
+# | 🔨 | <b>ToTaggedFrame</b> | ⚪ Spacy | PoS tagging | config.yml
 # | 💾 | <b>Checkpoint</b> | checkpoint_filename | Checkpoint (tagged frames) to file | ⚪
 # | 🔨 | TaggedFrame<b>ToTokens</b> | extract_tagged_tokens_opts, filter_opts | Tokens extractor | User specified
 # | 🔨 | <b>TokensTransform</b> | tokens_transform_opts | Tokens transformer | User specified
@@ -64,7 +64,7 @@
 # | | Filename fields | Specifies attribute values to be extracted from filenames
 #
 # N.B. Note that PoS schema (e.g. SUC, Universal, ON5 Penn Treebank tag sets) and language must be set for each corpus.
-#  This, and other options, is specified in the _corpus configuration file_. For an example, please see _SSI.yaml_ inf the `resources` folder.
+#  This, and other options, is specified in the _corpus configuration file_. For an example, please see _SSI.yml_ inf the `resources` folder.
 #
 # #### Load a DTM corpus
 #

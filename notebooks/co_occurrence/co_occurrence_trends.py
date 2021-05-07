@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.1
+#       jupytext_version: 1.11.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -27,7 +27,7 @@
 # | | Building block | Arguments | Description | Configuration
 # | -- | :------------- | :------------- | :------------- | :------------- |
 # | ⚙ | <b>SetTagger</b>~~SpacyModel~~ | tagger | Set PoS tagger | spaCy
-# | 📜| <b>LoadText</b> | reader_opts, transform_opts | Load text stream | config.yaml
+# | 📜| <b>LoadText</b> | reader_opts, transform_opts | Load text stream | config.yml
 # | 🔎 | <b>Tqdm</b> | ⚪ | Progress indicator | ⚪
 # | ⌛ | <b>Passthrough</b> | ⚪ | Passthrough  | ⚪
 # | 🔨 | Spacy<b>ToTaggedFrame</b> | tagger service | PoS tagging |
@@ -76,7 +76,7 @@
 # | | Smooth | Smooth curve using PCHIP interpolations.
 #
 #
-# N.B. Note that PoS schema (e.g. SUC, Universal, ON5 Penn Treebank tag sets) and language must be set for each corpus. This, and other options, is specified in the _corpus configuration file_. For an example, please see _SSI.yaml_ inf the `resources` folder.
+# N.B. Note that PoS schema (e.g. SUC, Universal, ON5 Penn Treebank tag sets) and language must be set for each corpus. This, and other options, is specified in the _corpus configuration file_. For an example, please see _SSI.yml_ inf the `resources` folder.
 #
 #
 # ### Concept co-occurrence
