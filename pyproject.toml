@@ -24,39 +24,24 @@ repository = "https://github.com/welfare-state-analytics/welfare_state_analytics
 [tool.poetry.dependencies]
 bokeh = "*"
 click = "*"
-cython = "*"
-decorator = "*"
 gensim = "*"
 holoviews = "*"
-ipykernel = "*"
-ipympl = "*"
-markdown = "*"
 matplotlib = "*"
-more-itertools = "*"
 nltk = "*"
-numpy = "*"
-openpyxl = "*"
 pandas = "*"
 pandas-bokeh = "*"
 python = "==3.8.*"
-python-dotenv = "*"
-python-louvain = "*"
 scikit-learn = "*"
 scipy = "*"
 sklearn = "*"
 textacy = "==0.10.1"
 tqdm = "*"
-traitlets = "*"
-xlrd = "*"
 loguru = "^0.5.3"
-
+humlab-penelope = { path = "../../penelope", develop = true}
 jupyter-bokeh = "*"
 jupyterlab = "*"
 ipywidgets = "*"
-ipyfilechooser = "*"
-ipycytoscape = "*"
 
-humlab-penelope = "^0.4.2"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -103,7 +88,6 @@ norecursedirs = ['notebooks', '.git', 'data', 'output', 'deprecated', '__pycache
 python_files = "*_test.py"
 python_functions = "test_*"
 filterwarnings = [
-#   "ignore",
   "ignore::_pytest.warning_types.PytestCollectionWarning",
   "ignore::DeprecationWarning",
 ]
