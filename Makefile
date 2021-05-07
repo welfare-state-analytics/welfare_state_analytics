@@ -10,7 +10,7 @@ fast-release: clean git-ipynb requirements.txt-to-git guard-clean-working-reposi
 
 release: ready guard-clean-working-repository bump.patch tag
 
-ready: tools clean tidy test lint requirements.txt build
+ready: tools paths clean tidy test lint requirements.txt build
 
 build: penelope-production-mode requirements.txt-to-git
 	@poetry build
