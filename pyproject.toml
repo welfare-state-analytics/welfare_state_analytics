@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "humlab-westac"
-version = "0.3.2"
+version = "0.3.3"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
 packages = [
@@ -37,7 +37,7 @@ sklearn = "*"
 textacy = "==0.10.1"
 tqdm = "*"
 loguru = "^0.5.3"
-humlab-penelope = { path = "../../penelope", develop = false}
+humlab-penelope = {path = "/home/roger/source/penelope", version = "*"}
 jupyter-bokeh = "*"
 jupyterlab = "*"
 ipywidgets = "*"
@@ -66,11 +66,11 @@ yapf = "==0.*,>=0.30.0"
 debugpy = "==1.*,>=1.2.1"
 pyinstrument = "==3.*,>=3.4.1"
 jupytext = "==1.*,>=1.11.1"
-humlab-penelope = { path = "../../penelope", develop = true}
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
+
 
 
 
