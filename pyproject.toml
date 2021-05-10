@@ -37,10 +37,10 @@ sklearn = "*"
 textacy = "==0.10.1"
 tqdm = "*"
 loguru = "^0.5.3"
-humlab-penelope = {path = "/home/roger/source/penelope", version = "*"}
 jupyter-bokeh = "*"
 jupyterlab = "*"
 ipywidgets = "*"
+humlab-penelope = "^0.4.7"
 
 
 [tool.poetry.dev-dependencies]
