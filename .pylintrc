@@ -1,6 +1,7 @@
 [MASTER]
 init-hook='import sys, os; sys.path.append((lambda d: os.path.join(os.getcwd().split(d)[0], d))("welfare_state_analytics"))'
 jobs=0
+ignore=.ipynb_checkpoints,.git,data,test_data,deprecated,.pytest_cache,__pycache__,bin
 
 [MESSAGES CONTROL]
 

@@ -37,7 +37,7 @@ sklearn = "*"
 textacy = "==0.10.1"
 tqdm = "*"
 loguru = "^0.5.3"
-humlab-penelope = { path = "../../penelope", develop = true}
+humlab-penelope = { path = "../../penelope", develop = false}
 jupyter-bokeh = "*"
 jupyterlab = "*"
 ipywidgets = "*"
@@ -66,6 +66,7 @@ yapf = "==0.*,>=0.30.0"
 debugpy = "==1.*,>=1.2.1"
 pyinstrument = "==3.*,>=3.4.1"
 jupytext = "==1.*,>=1.11.1"
+humlab-penelope = { path = "../../penelope", develop = true}
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
