@@ -1,5 +1,4 @@
 import warnings
-from dataclasses import dataclass
 
 import ipywidgets as widgets
 import penelope.notebook.widgets_utils as widgets_utils
@@ -16,34 +15,34 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 TEXT_ID = 'topic_share_plot'
 
 
-@dataclass
 class GUI:  # pylint: disable=too-many-instance-attributes
 
-    text = widgets_utils.text_widget(TEXT_ID)
-    n_topics = None
-    text_id = TEXT_ID
+    def __init__(self):
+        self.text = widgets_utils.text_widget(TEXT_ID)
+        self.n_topics = None
+        self.text_id = TEXT_ID
 
-    publication_id = widgets.Dropdown(
-        description='Publication',
-        options=utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None}),
-        value=None,
-        layout=widgets.Layout(width="200px"),
-    )
-    aggregate = widgets.Dropdown(
-        description='Aggregate',
-        options=[(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS],
-        value='true_mean',
-        layout=widgets.Layout(width="200px"),
-    )
-    normalize = widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px"))
-    topic_id = widgets.IntSlider(description='Topic ID', min=0, max=999, step=1, value=0, continuous_update=False)
-    output_format = widgets.Dropdown(
-        description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")
-    )
-    progress = widgets.IntProgress(min=0, max=4, step=1, value=0)
-    output = widgets.Output()
-    prev_topic_id = None
-    next_topic_id = None
+        self.publication_id = widgets.Dropdown(
+            description='Publication',
+            options=utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None}),
+            value=None,
+            layout=widgets.Layout(width="200px"),
+        )
+        self.aggregate = widgets.Dropdown(
+            description='Aggregate',
+            options=[(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS],
+            value='true_mean',
+            layout=widgets.Layout(width="200px"),
+        )
+        self.normalize = widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px"))
+        self.topic_id = widgets.IntSlider(description='Topic ID', min=0, max=999, step=1, value=0, continuous_update=False)
+        self.output_format = widgets.Dropdown(
+            description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")
+        )
+        self.progress = widgets.IntProgress(min=0, max=4, step=1, value=0)
+        self.output = widgets.Output()
+        self.prev_topic_id = None
+        self.next_topic_id = None
 
     def layout(self):
         return widgets.VBox(
