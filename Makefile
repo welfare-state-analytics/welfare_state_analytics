@@ -87,7 +87,7 @@ penelope-uninstall:
 bump.patch: requirements.txt
 	@poetry run dephell project bump patch
 	@git add pyproject.toml requirements.txt
-	@git commit -m "📌bump version patch"
+	@git commit -m "📌 bump version patch"
 	@git push
 
 tag:
@@ -167,7 +167,7 @@ requirements.txt: poetry.lock
 
 requirements.txt-to-git: requirements.txt
 	@git add requirements.txt
-	@git commit -m "📌updated requirements.txt"
+	@git commit -m "📌 updated requirements.txt"
 	@git push
 
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
@@ -197,7 +197,7 @@ git-ipynb: guard-clean-working-repository
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
-		@git commit -m "📌make git-ipynb"
+		@git commit -m "📌 make git-ipynb"
 		@git push
 	fi
 
