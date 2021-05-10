@@ -16,7 +16,6 @@ TEXT_ID = 'topic_share_plot'
 
 
 class GUI:  # pylint: disable=too-many-instance-attributes
-
     def __init__(self):
         self.text = widgets_utils.text_widget(TEXT_ID)
         self.n_topics = None
@@ -35,7 +34,9 @@ class GUI:  # pylint: disable=too-many-instance-attributes
             layout=widgets.Layout(width="200px"),
         )
         self.normalize = widgets.ToggleButton(description='Normalize', value=True, layout=widgets.Layout(width="120px"))
-        self.topic_id = widgets.IntSlider(description='Topic ID', min=0, max=999, step=1, value=0, continuous_update=False)
+        self.topic_id = widgets.IntSlider(
+            description='Topic ID', min=0, max=999, step=1, value=0, continuous_update=False
+        )
         self.output_format = widgets.Dropdown(
             description='Format', options=['Chart', 'Table'], value='Chart', layout=widgets.Layout(width="200px")
         )
