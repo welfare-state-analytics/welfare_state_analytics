@@ -20,7 +20,7 @@ compute_opts = ComputeOpts(
     corpus_filename=corpus_filename,
     target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
     corpus_tag='APA',
-    tokens_transform_opts=corpora.TokensTransformOpts(
+    transform_opts=corpora.TokensTransformOpts(
         only_alphabetic=False,
         only_any_alphanumeric=False,
         to_lower=True,
@@ -48,7 +48,7 @@ compute_opts = ComputeOpts(
         sep='\t',
         quoting=3,
     ),
-    extract_tagged_tokens_opts=corpora.ExtractTaggedTokensOpts(
+    extract_opts=corpora.ExtractTaggedTokensOpts(
         lemmatize=True,
         target_override=None,
         pos_includes=POS_TARGETS,
@@ -57,15 +57,19 @@ compute_opts = ComputeOpts(
         passthrough_tokens=[],
         append_pos=False,
     ),
-    tagged_tokens_filter_opts=utility.PropertyValueMaskingOpts(),
+    filter_opts=utility.PropertyValueMaskingOpts(),
     vectorize_opts=corpora.VectorizeOpts(
         already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
     ),
     count_threshold=1,
     create_subfolder=True,
     persist=True,
-    context_opts=ContextOpts(context_width=1, concept=CONCEPT, ignore_concept=False),
-    partition_keys=['year'],
+    context_opts=ContextOpts(
+        context_width=1,
+        concept=CONCEPT,
+        ignore_concept=False,
+        partition_keys=['year'],
+    ),
     force=False,
 )
 
@@ -73,7 +77,7 @@ corpus_config.pipeline_payload.files(
     source=compute_opts.corpus_filename,
     document_index_source=None,
 )
-bundle = workflows.co_occurrence.compute(
+bundle = workflows.co_occurrence.compute_partitioned_by_key(
     args=compute_opts,
     corpus_config=corpus_config,
     checkpoint_file='./tests/output/test.zip',

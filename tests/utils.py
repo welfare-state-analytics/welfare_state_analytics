@@ -41,7 +41,7 @@ def create_bigger_vectorized_corpus(
         corpus_filename=corpus_filename,
         target_folder=output_folder,
         corpus_tag=f"{output_tag}_nnvb_lemma",
-        tokens_transform_opts=TokensTransformOpts(
+        transform_opts=TokensTransformOpts(
             only_alphabetic=False,
             only_any_alphanumeric=False,
             to_lower=True,
@@ -62,7 +62,7 @@ def create_bigger_vectorized_corpus(
             index_field=None,  # use filename
             as_binary=False,
         ),
-        extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
+        extract_opts=ExtractTaggedTokensOpts(
             pos_includes="|NN|PM|VB|",
             pos_excludes="|MAD|MID|PAD|",
             pos_paddings=None,

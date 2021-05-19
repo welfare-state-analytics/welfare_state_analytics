@@ -25,7 +25,7 @@ def test_bug():
         corpus_filename=corpus_filename,
         target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
         corpus_tag='APA',
-        tokens_transform_opts=TokensTransformOpts(
+        transform_opts=TokensTransformOpts(
             only_alphabetic=False,
             only_any_alphanumeric=False,
             to_lower=True,
@@ -53,7 +53,7 @@ def test_bug():
             sep='\t',
             quoting=3,
         ),
-        extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
+        extract_opts=ExtractTaggedTokensOpts(
             lemmatize=True,
             target_override=None,
             pos_includes='|VB|',
@@ -62,15 +62,19 @@ def test_bug():
             passthrough_tokens=[],
             append_pos=False,
         ),
-        tagged_tokens_filter_opts=PropertyValueMaskingOpts(),
+        filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
             already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
         ),
         count_threshold=1,
         create_subfolder=True,
         persist=True,
-        context_opts=ContextOpts(context_width=1, concept={'information'}, ignore_concept=False),
-        partition_keys=['year'],
+        context_opts=ContextOpts(
+            context_width=1,
+            concept={'information'},
+            ignore_concept=False,
+            partition_keys=['year'],
+        ),
         force=False,
     )
 
@@ -78,7 +82,7 @@ def test_bug():
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute(
+    bundle = workflows.co_occurrence.compute_partitioned_by_key(
         args=compute_opts,
         corpus_config=corpus_config,
         checkpoint_file='./tests/output/test.zip',
@@ -93,7 +97,7 @@ def test_checkpoint_feather():
         corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
         target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/PROPAGANDA',
         corpus_tag='PROPAGANDA',
-        tokens_transform_opts=TokensTransformOpts(
+        transform_opts=TokensTransformOpts(
             only_alphabetic=False,
             only_any_alphanumeric=True,
             to_lower=True,
@@ -121,7 +125,7 @@ def test_checkpoint_feather():
             sep='\t',
             quoting=3,
         ),
-        extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
+        extract_opts=ExtractTaggedTokensOpts(
             lemmatize=True,
             target_override=None,
             pos_includes='|NN|PM|VB|',
@@ -130,7 +134,7 @@ def test_checkpoint_feather():
             passthrough_tokens=[],
             append_pos=False,
         ),
-        tagged_tokens_filter_opts=PropertyValueMaskingOpts(),
+        filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
             already_tokenized=True,
             lowercase=False,
@@ -147,8 +151,8 @@ def test_checkpoint_feather():
             context_width=2,
             concept={'propaganda'},
             ignore_concept=False,
+            partition_keys=['year'],
         ),
-        partition_keys=['year'],
     )
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
@@ -157,7 +161,7 @@ def test_checkpoint_feather():
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute(
+    bundle = workflows.co_occurrence.compute_partitioned_by_key(
         args=compute_opts,
         corpus_config=corpus_config,
         checkpoint_file='./tests/output/test.zip',
@@ -170,7 +174,7 @@ def test_load_co_occurrence_bundle():
 
     filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/information_w3_NNPM_lemma_no_stops_NEW_co-occurrence.csv.zip'
 
-    bundle = co_occurrence.load_bundle(filename)
+    bundle: co_occurrence.Bundle = co_occurrence.Bundle.load(filename)
 
     assert bundle is not None
 

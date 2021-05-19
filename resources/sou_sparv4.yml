@@ -26,7 +26,7 @@ pipeline_payload:
     # lemma_column: baseform
     # pos_column: pos
   pos_schema_name: SUC
-tagged_tokens_filter_opts:
+filter_opts:
 text_reader_opts:
   as_binary: true
   filename_fields:
