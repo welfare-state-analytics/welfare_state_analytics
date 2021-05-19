@@ -101,7 +101,7 @@ def load_checkpoints(
                 logger.warning(f"skipping {path} (not a ZIP file)")
             continue
 
-        checkpoint: cp.CheckpointDat = cp.load_checkpoint(
+        checkpoint: cp.CheckpointData = cp.load_checkpoint(
             path,
             checkpoint_opts=checkpoint_opts,
             reader_opts=reader_opts,
