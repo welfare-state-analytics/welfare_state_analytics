@@ -25,4 +25,5 @@ def test_vectorize():
         merge_speeches=True,
     )
 
+
 test_vectorize()

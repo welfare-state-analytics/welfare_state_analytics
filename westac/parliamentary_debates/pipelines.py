@@ -11,7 +11,8 @@ def to_tagged_frame_pipeline(
     filename_filter: Optional[FilenameOrCallableOrSequenceFilter] = None,
     filename_pattern: str = None,
     show_progress: bool = False,
-     ** _,
+    merge_speeches: bool=False,
+    **_,
 ):
     """Loads multiple checkpoint files from `source_folder` into a single sequential payload stream.
 
@@ -28,18 +29,21 @@ def to_tagged_frame_pipeline(
     """
     p: pipelines.CorpusPipeline = pipelines.CorpusPipeline(config=corpus_config)
     reader_opts: TextReaderOpts = corpus_config.text_reader_opts.copy(
-        filename_filter=filename_filter, filename_pattern=filename_pattern,
+        filename_filter=filename_filter,
+        filename_pattern=filename_pattern,
     )
-    task: interfaces.ITask = tasks.ToTaggedFrame(
+    task: interfaces.ITask = tasks.ToIdTaggedFrame(
         source_folder=(source_folder or corpus_config.pipeline_payload.source),
         checkpoint_filter=checkpoint_filter,
         checkpoint_opts=corpus_config.checkpoint_opts,
         reader_opts=reader_opts,
         show_progress=show_progress,
+        merge_speeches=merge_speeches,
     )
 
     p.add(task)
     return p
+
 
 def to_id_tagged_frame_pipeline(
     corpus_config: config.CorpusConfig,
@@ -50,7 +54,7 @@ def to_id_tagged_frame_pipeline(
     token2id: interfaces.Token2Id = None,
     lemmatize: bool = False,
     show_progress: bool = False,
-     ** _,
+    **_,
 ):
     """Loads multiple checkpoint files from `source_folder` into a single sequential payload stream.
     The tokens are mapped to integer values using Token2Id class.
@@ -69,7 +73,8 @@ def to_id_tagged_frame_pipeline(
 
     p: pipelines.CorpusPipeline = pipelines.CorpusPipeline(config=corpus_config)
     reader_opts: TextReaderOpts = corpus_config.text_reader_opts.copy(
-        filename_filter=filename_filter, filename_pattern=filename_pattern,
+        filename_filter=filename_filter,
+        filename_pattern=filename_pattern,
     )
     task: interfaces.ITask = tasks.ToIdTaggedFrame(
         source_folder=(source_folder or corpus_config.pipeline_payload.source),
