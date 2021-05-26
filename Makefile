@@ -188,8 +188,8 @@ sync-ipynb:
     # poetry run jupytext --sync $(IPYNB_FILES)
 
 write-to-ipynb:
-	echo "warning: write-to-ipynb is disabled in Makefile!"
-# 	poetry run jupytext --to notebook $(PY_FILES)
+	@echo "warning: write-to-ipynb is disabled in Makefile!"
+	poetry run jupytext --to notebook $(PY_FILES)
 
 .PHONY: git-ipynb
 git-ipynb: guard-clean-working-repository
