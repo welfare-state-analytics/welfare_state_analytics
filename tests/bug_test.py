@@ -73,7 +73,6 @@ def test_bug():
             context_width=1,
             concept={'information'},
             ignore_concept=False,
-            partition_keys=['year'],
         ),
         force=False,
     )
@@ -82,7 +81,7 @@ def test_bug():
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute_partitioned_by_key(
+    bundle = workflows.co_occurrence.compute(
         args=compute_opts,
         corpus_config=corpus_config,
         checkpoint_file='./tests/output/test.zip',
@@ -161,7 +160,7 @@ def test_checkpoint_feather():
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute_partitioned_by_key(
+    bundle = workflows.co_occurrence.compute(
         args=compute_opts,
         corpus_config=corpus_config,
         checkpoint_file='./tests/output/test.zip',
@@ -182,4 +181,4 @@ def test_load_co_occurrence_bundle():
 
     assert trends_data is not None
 
-    co_occurrence_gui.ExploreGUI().setup().display(trends_data=trends_data)
+    co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)
