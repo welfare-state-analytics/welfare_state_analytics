@@ -207,7 +207,9 @@ def display_gui(state: TopicModelContainer):
             children=[
                 widgets.HBox(
                     children=[
-                        widgets.VBox(children=[gui.layout, gui.document_threshold, gui.mean_threshold, gui.scale, gui.period]),
+                        widgets.VBox(
+                            children=[gui.layout, gui.document_threshold, gui.mean_threshold, gui.scale, gui.period]
+                        ),
                         widgets.VBox(children=[gui.ignores]),
                         widgets.VBox(children=[gui.output_format, gui.progress]),
                     ]

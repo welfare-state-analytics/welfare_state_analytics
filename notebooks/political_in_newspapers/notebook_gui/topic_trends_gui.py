@@ -1,5 +1,5 @@
-from typing import Optional
 import warnings
+from typing import Optional
 
 import ipywidgets as widgets
 import pandas as pd
@@ -109,15 +109,17 @@ def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disab
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            weights: pd.DataFrame = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
+            weights: pd.DataFrame = weight_over_time(
+                state.inferred_topics.document_topic_weights, gui.publication_id.value
+            )
 
             display_topic_trends(
                 weight_over_time=weights,
                 topic_id=gui.topic_id.value,
                 year_range=state.inferred_topics.year_period,
-                aggregate=gui.aggregate.value, # type: ignore
+                aggregate=gui.aggregate.value,  # type: ignore
                 normalize=gui.normalize.value,
-                output_format=gui.output_format.value, # type: ignore
+                output_format=gui.output_format.value,  # type: ignore
             )
 
     gui.topic_id.observe(update_handler, names='value')

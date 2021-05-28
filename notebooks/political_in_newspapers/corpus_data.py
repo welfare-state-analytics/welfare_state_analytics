@@ -40,7 +40,9 @@ def load_vocabulary_file_as_data_frame(corpus_folder: str) -> pd.DataFrame:
 
     filename: str = os.path.join(corpus_folder, vocabulary_dataset_filename)
 
-    df_vocabulary: pd.DataFrame = pd.read_csv(filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False)
+    df_vocabulary: pd.DataFrame = pd.read_csv(
+        filename, compression='zip', header=0, sep=',', quotechar='"', na_filter=False
+    )
     df_vocabulary.columns = ["token"]
 
     return df_vocabulary

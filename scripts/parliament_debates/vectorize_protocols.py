@@ -6,10 +6,9 @@ from typing import Optional
 import click
 import loguru
 import penelope.notebook.interface as interface
-from penelope.pipeline import CorpusPipelineBase
 import westac.parliamentary_debates.pipelines as rp_pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
-from penelope.pipeline import CorpusConfig, CorpusPipeline  # ,  Token2Id
+from penelope.pipeline import CorpusConfig, CorpusPipeline, CorpusPipelineBase  # ,  Token2Id
 
 # from westac.parliamentary_debates.members import ParliamentaryMembers
 
@@ -23,7 +22,7 @@ def profile_vectorize(ctx: click.Context):
     config = './resources/parliamentary-debates.yml'
     output_folder = './tmp'
     output_tag = 'ZYGON'
-    _ = ctx.invoke(vectorize, content=ctx.forward(input_folder, output_folder, config=config, output_tag=output_tag))  #type: ignore
+    _ = ctx.invoke(vectorize, content=ctx.forward(input_folder, output_folder, config=config, output_tag=output_tag))  # type: ignore
 
 
 @click.command()

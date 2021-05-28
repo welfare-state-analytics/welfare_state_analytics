@@ -2,18 +2,18 @@ import glob
 import logging
 import os
 import types
-from typing import Optional
 import uuid
+from typing import Optional
 
 import ipywidgets as widgets
 import pandas as pd
 import penelope.topic_modelling as topic_modelling
-from penelope.topic_modelling.container import InferredModel, InferredTopicsData
 import penelope.utility as utility
 import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
 from penelope.notebook.topic_modelling import TopicModelContainer
+from penelope.topic_modelling.container import InferredModel, InferredTopicsData
 
 # from . topic_model_compute import compute_topic_model
 

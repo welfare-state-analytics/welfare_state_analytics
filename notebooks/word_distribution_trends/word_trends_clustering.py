@@ -26,7 +26,7 @@
 # %autoreload 2
 
 # pylint: disable=wrong-import-position, import-error
- # type: ignore
+# type: ignore
 
 import __paths__  # isort: skip
 

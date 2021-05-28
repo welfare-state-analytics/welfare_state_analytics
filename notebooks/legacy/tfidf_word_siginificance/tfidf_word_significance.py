@@ -151,7 +151,11 @@ def display_gui(x_corpus: vectorized_corpus.VectorizedCorpus, x_documents_index:
     boxes = ipywidgets.VBox(
         children=[
             ipywidgets.HBox(
-                children=(w_n_top, w_groups, w_compute,),
+                children=(
+                    w_n_top,
+                    w_groups,
+                    w_compute,
+                ),
                 layout=ipywidgets.Layout(align_items="flex-end"),
             ),
             w_output,

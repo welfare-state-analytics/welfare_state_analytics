@@ -16,7 +16,7 @@ def compile_mallet_document_topics(model, minimum_probability=0.001):
                 yield (document_id, topic_id, weight)
 
     data: Iterable[Tuple[int, int, float]] = document_topics_iter(model, minimum_probability)
-    df_doc_topics: pd.DataFrame = pd.DataFrame([ x for x in data], columns=['document_id', 'topic_id', 'weight'])
+    df_doc_topics: pd.DataFrame = pd.DataFrame([x for x in data], columns=['document_id', 'topic_id', 'weight'])
     df_doc_topics['document_id'] = df_doc_topics.document_id.astype(np.uint32)
     df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.uint16)
 

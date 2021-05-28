@@ -30,6 +30,7 @@ def create_smaller_vectorized_corpus():
     v_corpus = dtm.VectorizedCorpus(bag_term_matrix, token2id, document_index)
     return v_corpus
 
+
 def create_bigger_vectorized_corpus(
     corpus_filename: str,
     output_tag: str = "xyz_nnvb_lemma",
