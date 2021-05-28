@@ -26,7 +26,7 @@ def test_compute_gui_compute_dry_run():
         corpus_config="riksdagens-protokoll",
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
-        compute_callback=compute_patch,
+        compute_callback=compute_patch,  # type: ignore
         done_callback=monkey_patch,
     )
 
@@ -51,7 +51,7 @@ def test_compute_gui_compute_hot_run():
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
         compute_callback=workflows.document_term_matrix.compute,
-        done_callback=monkey_patch,
+        done_callback=monkey_patch,  # type: ignore
     )
 
     gui._corpus_tag.value = corpus_tag
@@ -59,7 +59,7 @@ def test_compute_gui_compute_hot_run():
     gui._target_folder._apply_selection()
     gui._corpus_filename.reset(path=TEST_DATA_FOLDER, filename='proto.2files.2sentences.sparv4.csv.zip')
     gui._corpus_filename._apply_selection()
-    gui._compute_handler({})
+    gui._compute_handler(gui._compute_button)
 
     assert os.path.isfile(os.path.join(OUTPUT_FOLDER, corpus_tag, f'{corpus_tag}_vectorizer_data.pickle'))
 

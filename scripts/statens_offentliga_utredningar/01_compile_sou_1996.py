@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 import zipfile
 
@@ -12,7 +14,7 @@ def read_file(path, filename):
     return content
 
 
-def read_file_index(index_name, year):
+def read_file_index(index_name: str, year: int):
     df = pd.read_csv(index_name, header=None)[[1, 2, 3, 7]]
     df.columns = ['key_id', 'year', 'sou_id', 'part_id']
     df = df.fillna('d1')

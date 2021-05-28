@@ -1,6 +1,8 @@
+from typing import Optional
 import warnings
 
 import ipywidgets as widgets
+import pandas as pd
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
@@ -18,7 +20,7 @@ TEXT_ID = 'topic_share_plot'
 class GUI:  # pylint: disable=too-many-instance-attributes
     def __init__(self):
         self.text = widgets_utils.text_widget(TEXT_ID)
-        self.n_topics = None
+        self.n_topics: Optional[int] = None
         self.text_id = TEXT_ID
 
         self.publication_id = widgets.Dropdown(
@@ -42,24 +44,24 @@ class GUI:  # pylint: disable=too-many-instance-attributes
         )
         self.progress = widgets.IntProgress(min=0, max=4, step=1, value=0)
         self.output = widgets.Output()
-        self.prev_topic_id = None
-        self.next_topic_id = None
+        self.prev_topic_id: Optional[widgets.Button] = None
+        self.next_topic_id: Optional[widgets.Button] = None
 
     def layout(self):
         return widgets.VBox(
-            [
+            children=[
                 widgets.HBox(
-                    [
+                    children=[
                         widgets.VBox(
-                            [
-                                widgets.HBox([self.prev_topic_id, self.next_topic_id]),
+                            children=[
+                                widgets.HBox(children=[self.prev_topic_id, self.next_topic_id]),
                                 self.progress,
                             ]
                         ),
-                        widgets.VBox([self.topic_id]),
-                        widgets.VBox([self.publication_id]),
-                        widgets.VBox([self.aggregate, self.output_format]),
-                        widgets.VBox([self.normalize]),
+                        widgets.VBox(children=[self.topic_id]),
+                        widgets.VBox(children=[self.publication_id]),
+                        widgets.VBox(children=[self.aggregate, self.output_format]),
+                        widgets.VBox(children=[self.normalize]),
                     ]
                 ),
                 self.text,
@@ -88,16 +90,16 @@ def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disab
 
     _current_weight_over_time = dict(publication_id=-1, weights=None)
 
-    def weight_over_time(document_topic_weights, publication_id):
+    def weight_over_time(document_topic_weights, publication_id) -> pd.DataFrame:
         """Cache weight over time due to the large number of ocuments"""
         if _current_weight_over_time["publication_id"] != publication_id:
             _current_weight_over_time["publication_id"] = publication_id
             df = document_topic_weights
             if publication_id is not None:
                 df = df[df.publication_id == publication_id]
-            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)
+            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)  # type: ignore
 
-        return _current_weight_over_time["weights"]
+        return _current_weight_over_time["weights"]  # type: ignore
 
     def update_handler(*_):
 
@@ -107,15 +109,15 @@ def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disab
 
             on_topic_change_update_gui(gui.topic_id.value)
 
-            weights = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
+            weights: pd.DataFrame = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
 
             display_topic_trends(
                 weight_over_time=weights,
                 topic_id=gui.topic_id.value,
                 year_range=state.inferred_topics.year_period,
-                aggregate=gui.aggregate.value,
+                aggregate=gui.aggregate.value, # type: ignore
                 normalize=gui.normalize.value,
-                output_format=gui.output_format.value,
+                output_format=gui.output_format.value, # type: ignore
             )
 
     gui.topic_id.observe(update_handler, names='value')

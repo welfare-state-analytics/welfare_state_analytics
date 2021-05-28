@@ -29,7 +29,7 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
     target_source = layout_source.create_nodes_subset_data_source(network, layout, target_nodes)
     lines_source = layout_source.create_edges_layout_data_source(network, layout, scale=6.0, normalize=False)
 
-    edges_alphas = network_metrics.compute_alpha_vector(lines_source.data['weights'])
+    edges_alphas = network_metrics.compute_alpha_vector(lines_source.data['weights'])  # type: ignore
 
     lines_source.add(edges_alphas, 'alphas')
 
@@ -43,7 +43,7 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
     r_topics = p.circle(x='x', y='y', size=25, source=target_source, color='skyblue', alpha=1.0)
 
     p.add_tools(
-        bokeh.models.HoverTool(
+        bokeh.models.HoverTool(  # type: ignore
             renderers=[r_topics],
             tooltips=None,
             callback=widgets_utils.glyph_hover_callback2(
@@ -55,12 +55,12 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
     text_opts = dict(x='x', y='y', text='name', level='overlay', x_offset=0, y_offset=0, text_font_size='8pt')
 
     p.add_layout(
-        bokeh.models.LabelSet(
+        bokeh.models.LabelSet(  # type: ignore
             source=source_source, text_color='black', text_align='center', text_baseline='middle', **text_opts
         )
     )
     p.add_layout(
-        bokeh.models.LabelSet(
+        bokeh.models.LabelSet(  # type: ignore
             source=target_source, text_color='black', text_align='center', text_baseline='middle', **text_opts
         )
     )
@@ -96,7 +96,7 @@ def display_document_topic_network(
     if len(ignores or []) > 0:
         df = df[~df.topic_id.isin(ignores)]
 
-    df = df[(df['weight'] >= document_threshold)]
+    df = df[(df['weight'] >= document_threshold)]  # type: ignore
 
     df = df.groupby(['publication_id', 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
     df.columns = ['publication_id', 'topic_id', 'mean', 'max']
@@ -107,7 +107,7 @@ def display_document_topic_network(
         print('No data! Please change selection.')
         return
 
-    df[aggregate] = utility.clamp_values(list(df[aggregate]), (0.1, 1.0))
+    df[aggregate] = utility.clamp_values(list(df[aggregate]), (0.1, 1.0))  # type: ignore
 
     df['publication'] = df.publication_id.apply(lambda x: corpus_data.ID2PUBLICATION[x])
     df['weight'] = df[aggregate]
@@ -178,7 +178,7 @@ def display_gui(state: TopicModelContainer):
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
         ignores=widgets.SelectMultiple(
             description='Ignore',
-            options=[('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)],
+            options=[('', None)] + [(f'Topic #{i}', i) for i in range(0, n_topics)],  # type: ignore
             value=[],
             rows=8,
             layout=lw('240px'),
@@ -191,7 +191,7 @@ def display_gui(state: TopicModelContainer):
     iw = widgets.interactive(
         display_document_topic_network,
         layout_algorithm=gui.layout,
-        state=widgets.fixed(state),
+        state=widgets.fixed(state),  # type: ignore
         document_threshold=gui.document_threshold,
         mean_threshold=gui.mean_threshold,
         period=gui.period,
@@ -199,17 +199,17 @@ def display_gui(state: TopicModelContainer):
         scale=gui.scale,
         aggregate=gui.aggregate,
         output_format=gui.output_format,
-        tick=widgets.fixed(tick),
+        tick=widgets.fixed(tick),  # type: ignore
     )
 
     display(
         widgets.VBox(
-            [
+            children=[
                 widgets.HBox(
-                    [
-                        widgets.VBox([gui.layout, gui.document_threshold, gui.mean_threshold, gui.scale, gui.period]),
-                        widgets.VBox([gui.ignores]),
-                        widgets.VBox([gui.output_format, gui.progress]),
+                    children=[
+                        widgets.VBox(children=[gui.layout, gui.document_threshold, gui.mean_threshold, gui.scale, gui.period]),
+                        widgets.VBox(children=[gui.ignores]),
+                        widgets.VBox(children=[gui.output_format, gui.progress]),
                     ]
                 ),
                 iw.children[-1],

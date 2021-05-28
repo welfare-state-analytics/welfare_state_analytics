@@ -1,3 +1,5 @@
+# type: ignore
+
 from penelope import corpus as corpora
 from penelope import pipeline, utility, workflows
 from penelope.co_occurrence import ContextOpts

@@ -55,17 +55,17 @@ def load_meta_text_blocks_as_data_frame(folder):
 
 
 def load_reconstructed_text_corpus(folder):
-    filename = os.path.join(folder, corpus_data.reconstructed_text_corpus_file)
+    filename: str = os.path.join(folder, corpus_data.reconstructed_text_corpus_file)
     if not os.path.isfile(filename):
-        df_corpus = corpus_data.load_corpus_dtm_as_data_frame(folder)
-        df_vocabulary = corpus_data.load_vocabulary_file_as_data_frame(folder)
+        df_corpus: pd.DataFrame = corpus_data.load_corpus_dtm_as_data_frame(folder)
+        df_vocabulary: pd.DataFrame = corpus_data.load_vocabulary_file_as_data_frame(folder)
         id2token = df_vocabulary["token"].to_dict()
-        df_reconstructed_text_corpus = (df_corpus.groupby("document_id")).apply(
+        df_reconstructed_text_corpus: pd.DataFrame = (df_corpus.groupby("document_id")).apply(
             lambda x: " ".join(flatten(x["tf"] * (x["token_id"].apply(lambda y: [id2token[y]]))))
         )
-        df_reconstructed_text_corpus.to_csv(filename, compression="zip", header=0, sep=",", quotechar='"')
+        df_reconstructed_text_corpus.to_csv(filename, compression="zip", header=0, sep=",", quotechar='"')  # type: ignore
     else:
-        df_reconstructed_text_corpus = pd.read_csv(filename, compression="zip", header=None, sep=",", quotechar='"')
+        df_reconstructed_text_corpus: pd.DataFrame = pd.read_csv(filename, compression="zip", header=None, sep=",", quotechar='"')  # type: ignore
         df_reconstructed_text_corpus.columns = ["document_id", "text"]
         df_reconstructed_text_corpus.set_index("document_id")
 
@@ -122,7 +122,7 @@ def mean_tokens_per_year(df_document):
 df_corpus, df_document, df_vocabulary = corpus_data.load(corpus_folder)
 id2token = df_vocabulary["token"].to_dict()
 
-df_tf = df_corpus.groupby(["document_id"]).agg(term_count=("tf", "sum"))
+df_tf = df_corpus.groupby(["document_id"]).agg({'term_count': ("tf", "sum")})
 df_document = df_document.merge(df_tf, how="inner", right_index=True, left_on='document_id')
 
 
@@ -145,7 +145,7 @@ with zipfile.ZipFile('dn68.zip', 'w', zipfile.ZIP_DEFLATED) as out:
     for index, row in dn68_text.iterrows():
         i += 1
         filename = 'dn_{}_{}_{}.txt'.format(row['date'], index, 1)
-        text = row['text']
+        text = str(row['text'])
         out.writestr(filename, text, zipfile.ZIP_DEFLATED)
 
 # %% [markdown]

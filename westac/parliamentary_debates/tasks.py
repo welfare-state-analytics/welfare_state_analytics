@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterable, List, Tuple
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 import pandas as pd
 
 from penelope.corpus import TextReaderOpts, Token2Id
@@ -102,14 +102,14 @@ def _create_merged_document_info(checkpoint: CheckpointData, i: int = 0) -> dict
 class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     """Loads parliamentary debates protocols stored as Sparv CSV into pipeline """
 
-    source_folder: str = None
-    checkpoint_opts: CheckpointOpts = None
-    checkpoint_filter: Callable[[str], bool] = None
-    reader_opts: TextReaderOpts = None
+    source_folder: str = ""
+    checkpoint_opts: Optional[CheckpointOpts] = None
+    checkpoint_filter: Optional[Callable[[str], bool]] = None
+    reader_opts: Optional[TextReaderOpts] = None
 
     # Not used or not implemented:
-    attribute_value_filters: Dict[str, Any] = None
-    attributes: List[str] = None
+    attribute_value_filters: Optional[Dict[str, Any]] = None
+    attributes: Optional[List[str]] = None
 
     file_pattern: str = "*.zip"
     show_progress: bool = False
@@ -172,7 +172,7 @@ class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
             DocumentPayload: returned Payload
         """
 
-        merged_content: pd.DataFrame = pd.concat([payload.content for payload in checkpoint.payload_stream])
+        merged_content: pd.Series = pd.concat([payload.content for payload in checkpoint.payload_stream])
 
         payload: DocumentPayload = DocumentPayload(
             ContentType.TAGGED_FRAME,
@@ -205,7 +205,7 @@ class ToIdTaggedFrame(ToTaggedFrame):
     Resulting data frame will have columns `token_id` and `pos_id`
     """
 
-    token2id: Token2Id = None
+    token2id: Token2Id = field(default=Token2Id(lowercase=True))
     lemmatize: bool = False
 
     def __post_init__(self):
@@ -244,7 +244,7 @@ def codify_tagged_frame(
     pos_column: str,
 ) -> pd.DataFrame:
 
-    token2id.ingest(tagged_frame[token_column])
+    token2id.ingest(tagged_frame[token_column])  # type: ignore
 
     tagged_frame = tagged_frame.assign(
         token_id=tagged_frame[token_column].map(token2id),

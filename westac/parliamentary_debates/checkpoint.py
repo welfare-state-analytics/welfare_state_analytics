@@ -3,16 +3,17 @@ import zipfile
 from io import StringIO
 from multiprocessing import Pool
 from pathlib import Path
-from typing import Callable, Iterable, List, Tuple
+from typing import Callable, Iterable, List, Optional, Tuple, Union
 
 import pandas as pd
 from loguru import logger
 from penelope.corpus import TextReaderOpts
 from penelope.pipeline import DocumentPayload, checkpoint as cp
+from penelope.pipeline.checkpoint.interface import CheckpointOpts
 from tqdm.auto import tqdm
 
 
-def process_document_file(args: List[Tuple]) -> DocumentPayload:
+def process_document_file(args: Tuple[str, str, cp.IContentSerializer, CheckpointOpts]) -> DocumentPayload:
 
     filename, content, serializer, checkpoint_opts = args
     return DocumentPayload(
@@ -30,7 +31,7 @@ def parallell_deserialized_payload_stream(
     serializer: cp.IContentSerializer = cp.create_serializer(checkpoint_opts)
 
     with zipfile.ZipFile(source_name, mode="r") as zf:
-        args: str = [
+        args: List[Tuple[str, str, cp.IContentSerializer, CheckpointOpts]] = [
             (filename, zf.read(filename).decode(encoding='utf-8'), serializer, checkpoint_opts)
             for filename in filenames
         ]
@@ -56,7 +57,7 @@ class ParlaCsvContentSerializer(cp.IContentSerializer):
             dtype=str,
             engine="c",
             usecols=[0, 1, 2],
-        )
+        ) # type: ignore
         data.fillna("", inplace=True)
         if any(x not in data.columns for x in options.columns):
             raise ValueError(f"missing columns: {', '.join([x for x in options.columns if x not in data.columns])}")
@@ -66,9 +67,9 @@ class ParlaCsvContentSerializer(cp.IContentSerializer):
 def load_checkpoints(
     source_folder: str,
     file_pattern: str,
-    checkpoint_opts: cp.CheckpointOpts,
-    checkpoint_filter: Callable[[str], bool] = None,
-    reader_opts: TextReaderOpts = None,
+    checkpoint_opts: Optional[cp.CheckpointOpts],
+    checkpoint_filter: Optional[Callable[[str], bool]] = None,
+    reader_opts: Optional[TextReaderOpts] = None,
     show_progress: bool = False,
 ) -> Iterable[cp.CheckpointData]:
     """Returns a CheckpointData stream of files (recursively) in `source_folder` that matches `file_pattern`
@@ -85,10 +86,12 @@ def load_checkpoints(
         Iterable[cp.CheckpointData]: Stream of Checkpoints
 
     """
-    filenames: Iterable[str] = sorted(Path(source_folder).rglob(file_pattern))
+
+    filenames: List[Union[str, Path]] = sorted(Path(source_folder).rglob(file_pattern)) # type: ignore
+
     if show_progress:
         filenames: List[str] = list(filenames)
-        filenames = tqdm(filenames, total=len(filenames))
+        filenames = tqdm(filenames, total=len(filenames))  # type: ignore
 
     for path in filenames:
 

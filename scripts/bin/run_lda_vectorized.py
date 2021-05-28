@@ -139,7 +139,7 @@ def run_model(
     train_corpus = topic_modelling.TrainingCorpus(
         terms=None,
         doc_term_matrix=dtm,
-        id2word=id2token,
+        id2word=id2token,  # type: ignore
         document_index=document_index,
     )
 

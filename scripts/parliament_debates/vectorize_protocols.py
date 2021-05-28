@@ -1,10 +1,12 @@
 # pylint: disable=too-many-arguments, too-many-locals, unused-import
 
 import os
+from typing import Optional
 
 import click
 import loguru
 import penelope.notebook.interface as interface
+from penelope.pipeline import CorpusPipelineBase
 import westac.parliamentary_debates.pipelines as rp_pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
 from penelope.pipeline import CorpusConfig, CorpusPipeline  # ,  Token2Id
@@ -21,7 +23,7 @@ def profile_vectorize(ctx: click.Context):
     config = './resources/parliamentary-debates.yml'
     output_folder = './tmp'
     output_tag = 'ZYGON'
-    _ = ctx.invoke(vectorize, content=ctx.forward(input_folder, output_folder, config=config, output_tag=output_tag))
+    _ = ctx.invoke(vectorize, content=ctx.forward(input_folder, output_folder, config=config, output_tag=output_tag))  #type: ignore
 
 
 @click.command()
@@ -82,9 +84,9 @@ def profile_vectorize(ctx: click.Context):
     help='Merge speeches in each protocol into a single document',
 )
 def _vectorize(
-    input_folder: str = None,
+    input_folder: str = "",
     output_folder: str = None,
-    config: str = None,
+    config: str = "",
     output_tag: str = None,
     create_subfolder: bool = True,
     pos_includes: str = '|NN|',
@@ -127,9 +129,9 @@ def _vectorize(
 
 
 def vectorize(
-    input_folder: str = None,
+    input_folder: str = "",
     output_folder: str = None,
-    config: str = None,
+    config: str = "",
     output_tag: str = None,
     create_subfolder: bool = True,
     pos_includes: str = '|NN|',
@@ -188,7 +190,7 @@ def vectorize(
             persist=True,
         )
         # parliament_data = ParliamentaryMembers.load()
-        _: CorpusPipeline = (
+        _: CorpusPipelineBase = (
             rp_pipeline.to_tagged_frame_pipeline(
                 source_folder=input_folder,
                 corpus_config=corpus_config,
@@ -201,6 +203,7 @@ def vectorize(
             .tagged_frame_to_tokens(
                 extract_opts=args.extract_opts,
                 filter_opts=args.filter_opts,
+                transform_opts=None,
             )
             .exhaust(100)
         )

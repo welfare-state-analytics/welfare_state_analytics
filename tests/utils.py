@@ -1,3 +1,5 @@
+# type: ignore
+
 import os
 
 import numpy as np
@@ -27,7 +29,6 @@ def create_smaller_vectorized_corpus():
     document_index = pd.DataFrame({'year': [2013, 2013, 2014, 2014, 2014]})
     v_corpus = dtm.VectorizedCorpus(bag_term_matrix, token2id, document_index)
     return v_corpus
-
 
 def create_bigger_vectorized_corpus(
     corpus_filename: str,

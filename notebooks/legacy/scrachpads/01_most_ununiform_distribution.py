@@ -128,6 +128,7 @@
 # %autoreload 2
 
 # pylint: disable=wrong-import-position
+# type: ignore
 
 import itertools
 import sys
@@ -189,7 +190,7 @@ def plot_word_distribution(
 
     tokens: List[str] = list(df.token)
 
-    colors = itertools.cycle(bokeh.palettes.Dark2[8])
+    colors = itertools.cycle(bokeh.palettes.Dark2[8]) # type: ignore
 
     min_year: int = x_corpus.document_index.year.min()
     max_year: int = x_corpus.document_index.year.max()
@@ -201,7 +202,7 @@ def plot_word_distribution(
     tokens_data['year'] = years
     tokens_data['current'] = tokens_data[tokens[0]]
 
-    source = bokeh.models.ColumnDataSource(tokens_data)
+    source = bokeh.models.ColumnDataSource(tokens_data) # type: ignore
 
     # for token in tokens:
     #    color = next(colors)

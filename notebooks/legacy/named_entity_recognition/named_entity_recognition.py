@@ -44,7 +44,7 @@ target_zip_filename = os.path.join(data_folder, "year+newspaper+text_yearly_docu
 
 def create_yearly_documents(source_filename, target_name):
 
-    df = pd.read_csv(source_filename, sep="\t")
+    df: pd.DataFrame = pd.read_csv(source_filename, sep="\t")  # type: ignore
     document_index = df.fillna("").groupby(["year", "newspaper"])["txt"].apply(" ".join).reset_index()
 
     with zipfile.ZipFile(target_name, "w") as zf:
@@ -76,7 +76,7 @@ print("OK!")
 
 def read_conll_ner_tag(filename, only_ner_tags=True):
 
-    df = pd.read_csv(filename, sep="\t", header=None, index_col=0, skip_blank_lines=True, quoting=3)
+    df = pd.read_csv(filename, sep="\t", header=None, index_col=0, skip_blank_lines=True, quoting=3)  # type: ignore
     df.columns = [
         "token",
         "lemma",

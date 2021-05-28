@@ -1,19 +1,20 @@
 from typing import Callable, Optional
 from penelope.corpus.readers.interfaces import FilenameOrCallableOrSequenceFilter, TextReaderOpts
+from penelope.corpus.token2id import Token2Id
 from penelope.pipeline import config, interfaces, pipelines
 from . import tasks
 
 
 def to_tagged_frame_pipeline(
     corpus_config: config.CorpusConfig,
-    source_folder: str = None,
-    checkpoint_filter: Callable[[str], bool] = None,
+    source_folder: Optional[str] = None,
+    checkpoint_filter: Optional[Callable[[str], bool]] = None,
     filename_filter: Optional[FilenameOrCallableOrSequenceFilter] = None,
-    filename_pattern: str = None,
+    filename_pattern: Optional[str] = None,
     show_progress: bool = False,
     merge_speeches: bool=False,
     **_,
-):
+) -> pipelines.CorpusPipeline:
     """Loads multiple checkpoint files from `source_folder` into a single sequential payload stream.
 
     The checkpoints can be filtered by callable `checkpoint_filter` that takes the filename as argument.
@@ -33,7 +34,7 @@ def to_tagged_frame_pipeline(
         filename_pattern=filename_pattern,
     )
     task: interfaces.ITask = tasks.ToIdTaggedFrame(
-        source_folder=(source_folder or corpus_config.pipeline_payload.source),
+        source_folder=str(source_folder or corpus_config.pipeline_payload.source),
         checkpoint_filter=checkpoint_filter,
         checkpoint_opts=corpus_config.checkpoint_opts,
         reader_opts=reader_opts,
@@ -77,11 +78,11 @@ def to_id_tagged_frame_pipeline(
         filename_pattern=filename_pattern,
     )
     task: interfaces.ITask = tasks.ToIdTaggedFrame(
-        source_folder=(source_folder or corpus_config.pipeline_payload.source),
+        source_folder=str(source_folder or corpus_config.pipeline_payload.source),
         checkpoint_filter=checkpoint_filter,
         checkpoint_opts=corpus_config.checkpoint_opts,
         reader_opts=reader_opts,
-        token2id=token2id,
+        token2id=token2id or Token2Id(lowercase=True),
         lemmatize=lemmatize,
         show_progress=show_progress,
     )

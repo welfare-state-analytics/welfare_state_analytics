@@ -50,7 +50,7 @@ def create_corpus(source_filename: str, periods):
         min_len=1,
         max_len=None,
         keep_numerals=False,
-        only_alphanumeric=False,
+        only_any_alphanumeric=False,
     )
     corpus = TokenizedCorpus(reader, transform_opts=transform_opts)
     return corpus

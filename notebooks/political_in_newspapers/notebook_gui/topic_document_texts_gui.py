@@ -127,18 +127,18 @@ def display_gui(state: TopicModelContainer):
 
     display(
         widgets.VBox(
-            [
+            children=[
                 widgets.HBox(
-                    [
+                    children=[
                         widgets.VBox(
-                            [
-                                widgets.HBox([gui.prev_topic_id, gui.next_topic_id]),
+                            children=[
+                                widgets.HBox(children=[gui.prev_topic_id, gui.next_topic_id]),
                                 gui.progress,
                             ]
                         ),
-                        widgets.VBox([gui.topic_id, gui.threshold, gui.n_top]),
-                        widgets.VBox([gui.publication_id, gui.year]),
-                        widgets.VBox([gui.output_format]),
+                        widgets.VBox(children=[gui.topic_id, gui.threshold, gui.n_top]),
+                        widgets.VBox(children=[gui.publication_id, gui.year]),
+                        widgets.VBox(children=[gui.output_format]),
                     ]
                 ),
                 gui.text,

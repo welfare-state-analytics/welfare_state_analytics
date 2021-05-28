@@ -1,3 +1,5 @@
+# type: ignore
+
 import penelope.co_occurrence as co_occurrence
 import penelope.notebook.co_occurrence as co_occurrence_gui
 from penelope import workflows
@@ -184,6 +186,7 @@ def test_load_co_occurrence_bundle():
         corpus_folder=bundle.folder,
         corpus_tag=bundle.tag,
         n_count=25000,
+        category_column_name='category',
     ).update()
     assert trends_data is not None
 
