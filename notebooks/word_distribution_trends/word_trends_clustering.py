@@ -36,7 +36,7 @@ import warnings
 import holoviews as hv
 import ipywidgets
 import penelope.common.goodness_of_fit as gof
-import penelope.corpus.dtm as vectorized_corpus
+from penelope.corpus import VectorizedCorpus, load_corpus
 import penelope.notebook.cluster_analysis.cluster_analysis_gui as cluster_analysis_gui
 import penelope.notebook.word_trends as word_trends
 from bokeh.plotting import output_notebook
@@ -78,7 +78,7 @@ hv.extension("bokeh")
 
 # %% tags=[]
 
-y_corpus = vectorized_corpus.load_corpus(
+y_corpus = load_corpus(
     tag="SOU_test_L0_+N_+S",
     folder=os.path.join(root_folder, "output"),
     n_count=5000,

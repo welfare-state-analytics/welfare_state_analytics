@@ -30,7 +30,7 @@ from typing import Mapping
 import ipywidgets
 import numpy as np
 import pandas as pd
-import penelope.corpus.dtm as vectorized_corpus
+from penelope.corpus import VectorizedCorpus, IVectorizedCorpus
 from IPython.display import display
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -70,8 +70,8 @@ logger = logging.getLogger(__name__)
 # pylint: disable=wrong-import-position
 # type: ignore
 
-v_corpus: vectorized_corpus.IVectorizedCorpus = (
-    vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
+v_corpus: IVectorizedCorpus = (
+    VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )
@@ -93,13 +93,13 @@ def display_top_terms(data):
     display(df)
 
 
-def compute_top_terms(x_corpus: vectorized_corpus.VectorizedCorpus, n_top: int, idx_groups=None) -> Mapping:
+def compute_top_terms(x_corpus: VectorizedCorpus, n_top: int, idx_groups=None) -> Mapping:
 
     data = {x["label"]: x_corpus.get_top_n_words(n=n_top, indices=x["indices"]) for x in idx_groups}
     return data
 
 
-def display_gui(x_corpus: vectorized_corpus.VectorizedCorpus, x_documents_index: pd.DataFrame):
+def display_gui(x_corpus: VectorizedCorpus, x_documents_index: pd.DataFrame):
 
     lw = lambda w: ipywidgets.Layout(width=w)
 
@@ -195,7 +195,7 @@ display_gui(tf_idf_corpus, tf_idf_corpus.document_index)
 # %matplotlib inline
 
 
-def plot_word(x_corpus: vectorized_corpus.VectorizedCorpus, word: str):
+def plot_word(x_corpus: VectorizedCorpus, word: str):
     wv = x_corpus.get_word_vector(word)
 
     df = pd.DataFrame({"count": wv, "year": x_corpus.document_index.year}).set_index("year")

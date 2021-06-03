@@ -3,10 +3,10 @@
 import penelope.co_occurrence as co_occurrence
 import penelope.notebook.co_occurrence as co_occurrence_gui
 from penelope import workflows
-from penelope.co_occurrence.interface import ContextOpts
+from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts
-from penelope.corpus.dtm.vectorizer import VectorizeOpts
-from penelope.corpus.readers.interfaces import ExtractTaggedTokensOpts
+from penelope.corpus import VectorizeOpts
+from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.interface import ComputeOpts
 from penelope.notebook.word_trends import TrendsData
 from penelope.pipeline import CorpusConfig, CorpusType

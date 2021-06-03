@@ -136,11 +136,11 @@ from typing import List
 
 import bokeh
 import pandas as pd
-import penelope.corpus.dtm as vectorized_corpus
 import penelope.utility as utility
 from bokeh.io import output_file, output_notebook, show
 from bokeh.plotting import figure
 from penelope.common import goodness_of_fit as gof
+from penelope.corpus import VectorizedCorpus
 
 sys.path = ['/home/roger/source/welfare_state_analytics'] + sys.path
 
@@ -151,7 +151,7 @@ output_notebook()
 # %%
 
 v_y_corpus = (
-    vectorized_corpus.VectorizedCorpus.load(
+    VectorizedCorpus.load(
         tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output'
     )
     .group_by_year()
@@ -185,7 +185,7 @@ df_fits.sort_values('l2_norm', ascending=False).head()
 
 
 def plot_word_distribution(
-    x_corpus: vectorized_corpus.VectorizedCorpus, df: pd.DataFrame
+    x_corpus: dtm.VectorizedCorpus, df: pd.DataFrame
 ):  # pylint: disable=too-many-locals
 
     tokens: List[str] = list(df.token)

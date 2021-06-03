@@ -3,7 +3,7 @@ import sys
 from os.path import join as jj
 
 import click
-import penelope.corpus.dtm as vectorized_corpus
+from penelope.corpus import VectorizedCorpus
 import penelope.topic_modelling as topic_modelling
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
@@ -112,11 +112,11 @@ def run_model(
     if corpus_type == 'vectorized':
 
         assert corpus_tag is not None, 'error: Corpus dump name-tag not specified for vectorized corpus'
-        assert vectorized_corpus.VectorizedCorpus.dump_exists(
+        assert VectorizedCorpus.dump_exists(
             tag=corpus_tag, folder=corpus_folder
         ), 'error: no dump for given tag exists'
 
-        v_corpus = vectorized_corpus.VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
+        v_corpus = VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
 
         dtm = v_corpus.data
         id2token = v_corpus.id2token
