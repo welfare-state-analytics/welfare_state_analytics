@@ -30,8 +30,8 @@ from typing import Mapping
 import ipywidgets
 import numpy as np
 import pandas as pd
-from penelope.corpus import VectorizedCorpus, IVectorizedCorpus
 from IPython.display import display
+from penelope.corpus import IVectorizedCorpus, VectorizedCorpus
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 root_folder = os.path.abspath(os.path.join(globals()["_dh"][-1], "../.."))

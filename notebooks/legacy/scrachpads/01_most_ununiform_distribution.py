@@ -151,9 +151,7 @@ output_notebook()
 # %%
 
 v_y_corpus = (
-    VectorizedCorpus.load(
-        tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output'
-    )
+    VectorizedCorpus.load(tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output')
     .group_by_year()
     .slice_by_n_count(10000)
     .slice_by_n_top(100000)
@@ -184,9 +182,7 @@ df_fits.sort_values('l2_norm', ascending=False).head()
 # %%
 
 
-def plot_word_distribution(
-    x_corpus: dtm.VectorizedCorpus, df: pd.DataFrame
-):  # pylint: disable=too-many-locals
+def plot_word_distribution(x_corpus: VectorizedCorpus, df: pd.DataFrame):  # pylint: disable=too-many-locals
 
     tokens: List[str] = list(df.token)
 

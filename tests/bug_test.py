@@ -4,8 +4,7 @@ import penelope.co_occurrence as co_occurrence
 import penelope.notebook.co_occurrence as co_occurrence_gui
 from penelope import workflows
 from penelope.co_occurrence import ContextOpts
-from penelope.corpus import TextReaderOpts, TokensTransformOpts
-from penelope.corpus import VectorizeOpts
+from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.interface import ComputeOpts
 from penelope.notebook.word_trends import TrendsData
@@ -26,7 +25,7 @@ def test_bug():
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
         corpus_filename=corpus_filename,
-        target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
+        target_folder='./tests/output',
         corpus_tag='APA',
         transform_opts=TokensTransformOpts(
             only_alphabetic=False,

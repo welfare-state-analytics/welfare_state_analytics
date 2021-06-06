@@ -14,7 +14,7 @@
 #     name: python3
 # ---
 
-# %% [markdown]
+# %% [markdown] tags=[]
 # ### Overview
 #
 # This notebook implements a processing pipeline from computes word co-occurrences from plain text. The term-term co-occurrence matrix is transformed into a DTM corpus that has a vocabulary consisting of token-pairs. The co-occurring word trends can hence be xxplored using the ordinary word trends analysis tools.
@@ -104,7 +104,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# %%
+# %% tags=[]
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
 from penelope.notebook.co_occurrence import main_gui

@@ -3,8 +3,8 @@ import os
 import types
 
 import ipywidgets as widgets
-from penelope.corpus import VectorizedCorpus
 from IPython.display import display
+from penelope.corpus import VectorizedCorpus
 from penelope.utility import get_logger
 
 logger = get_logger()
