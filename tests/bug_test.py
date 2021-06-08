@@ -179,14 +179,7 @@ def test_load_co_occurrence_bundle():
 
     assert bundle is not None
 
-    trends_data: TrendsData = TrendsData(
-        compute_options=bundle.compute_options,
-        corpus=bundle.corpus,
-        corpus_folder=bundle.folder,
-        corpus_tag=bundle.tag,
-        n_count=25000,
-        category_column_name='category',
-    ).update()
+    trends_data: TrendsData = TrendsData(bundle=bundle).update()
     assert trends_data is not None
 
     co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)

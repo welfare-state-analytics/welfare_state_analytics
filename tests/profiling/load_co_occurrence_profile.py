@@ -6,12 +6,6 @@ filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/info
 
 bundle: co_occurrence.Bundle = co_occurrence.Bundle.load(filename)
 
-trends_data: TrendsData = TrendsData(
-    compute_options=bundle.compute_options,
-    corpus=bundle.corpus,
-    corpus_folder=bundle.folder,
-    corpus_tag=bundle.tag,
-    n_count=25000,
-).update()
+trends_data: TrendsData = TrendsData(bundle=bundle)
 
 co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)
