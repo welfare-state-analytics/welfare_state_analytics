@@ -68,6 +68,7 @@ def create_bigger_vectorized_corpus(
             pos_excludes="|MAD|MID|PAD|",
             pos_paddings=None,
             passthrough_tokens=[],
+            block_tokens=[],
             lemmatize=True,
             append_pos=False,
         ),

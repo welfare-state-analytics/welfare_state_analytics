@@ -7,7 +7,7 @@ from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.interface import ComputeOpts
-from penelope.notebook.word_trends import TrendsData
+from penelope.notebook.word_trends import BundleTrendsData
 from penelope.pipeline import CorpusConfig, CorpusType
 from penelope.utility import PropertyValueMaskingOpts
 
@@ -62,6 +62,7 @@ def test_bug():
             pos_excludes='|MAD|MID|PAD|',
             pos_paddings='|JJ|',
             passthrough_tokens=[],
+            block_tokens=['/'],
             append_pos=False,
         ),
         filter_opts=PropertyValueMaskingOpts(),
@@ -133,6 +134,7 @@ def test_checkpoint_feather():
             pos_excludes='|MAD|MID|PAD|',
             pos_paddings=None,
             passthrough_tokens=[],
+            block_tokens=['/'],
             append_pos=False,
         ),
         filter_opts=PropertyValueMaskingOpts(),
@@ -179,7 +181,7 @@ def test_load_co_occurrence_bundle():
 
     assert bundle is not None
 
-    trends_data: TrendsData = TrendsData(bundle=bundle).update()
+    trends_data: BundleTrendsData = BundleTrendsData(bundle=bundle)
     assert trends_data is not None
 
     co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)
