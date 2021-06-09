@@ -85,7 +85,7 @@ penelope-uninstall:
 	@poetry run pip uninstall humlab-penelope --yes
 
 bump.patch: requirements.txt
-	@poetry run dephell project bump patch
+	@poetry version patch
 	@git add pyproject.toml requirements.txt
 	@git commit -m "📌 bump version patch"
 	@git push
