@@ -65,6 +65,7 @@ debugpy = "==1.*,>=1.2.1"
 pyinstrument = "==3.*,>=3.4.1"
 jupytext = "==1.*,>=1.11.1"
 xeus-python = "^0.12.4"
+tomlkit = "^0.7.2"
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
