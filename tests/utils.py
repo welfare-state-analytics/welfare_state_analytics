@@ -34,7 +34,8 @@ def create_bigger_vectorized_corpus(
     corpus_filename: str,
     output_tag: str = "xyz_nnvb_lemma",
     output_folder: str = "./tests/output",
-    count_threshold: int = 5,
+    tf_threshold: int = 5,
+    tf_threshold_mask: bool = False,
 ):
 
     args: interface.ComputeOpts = interface.ComputeOpts(
@@ -71,8 +72,11 @@ def create_bigger_vectorized_corpus(
             block_tokens=[],
             lemmatize=True,
             append_pos=False,
+            global_tf_threshold=tf_threshold,
+            global_tf_threshold_mask=tf_threshold_mask
         ),
-        count_threshold=count_threshold,
+        tf_threshold=tf_threshold,
+        tf_threshold_mask=tf_threshold_mask,
         create_subfolder=True,
         persist=True,
     )

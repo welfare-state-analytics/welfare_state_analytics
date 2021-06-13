@@ -1,7 +1,6 @@
 # type: ignore
 
-import penelope.co_occurrence as co_occurrence
-import penelope.notebook.co_occurrence as co_occurrence_gui
+import pytest
 from penelope import workflows
 from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
@@ -16,7 +15,7 @@ CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
 
 
-# @pytest.mark.skip(reason="Long running")
+@pytest.mark.long_running
 def test_bug():
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
@@ -62,14 +61,17 @@ def test_bug():
             pos_excludes='|MAD|MID|PAD|',
             pos_paddings='|JJ|',
             passthrough_tokens=[],
-            block_tokens=['/'],
+            block_tokens=[],
             append_pos=False,
+            global_tf_threshold=1,
+            global_tf_threshold_mask=False
         ),
+        tf_threshold=1,
+        tf_threshold_mask=False,
         filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
             already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
         ),
-        count_threshold=1,
         create_subfolder=True,
         persist=True,
         context_opts=ContextOpts(
@@ -94,7 +96,7 @@ def test_bug():
 
 
 def test_checkpoint_feather():
-    compute_opts = ComputeOpts(
+    compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
         corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
         target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/PROPAGANDA',
@@ -134,8 +136,10 @@ def test_checkpoint_feather():
             pos_excludes='|MAD|MID|PAD|',
             pos_paddings=None,
             passthrough_tokens=[],
-            block_tokens=['/'],
+            block_tokens=[],
             append_pos=False,
+            global_tf_threshold=1,
+            global_tf_threshold_mask=False,
         ),
         filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
@@ -146,7 +150,8 @@ def test_checkpoint_feather():
             min_df=1,
             verbose=False,
         ),
-        count_threshold=1,
+        tf_threshold=1,
+        tf_threshold_mask=False,
         create_subfolder=True,
         persist=True,
         force=False,
@@ -173,15 +178,15 @@ def test_checkpoint_feather():
     assert bundle is not None
 
 
-def test_load_co_occurrence_bundle():
+# def test_load_co_occurrence_bundle():
 
-    filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/information_w3_NNPM_lemma_no_stops_NEW_co-occurrence.csv.zip'
+#     filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/information_w3_NNPM_lemma_no_stops_NEW_co-occurrence.csv.zip'
 
-    bundle: co_occurrence.Bundle = co_occurrence.Bundle.load(filename)
+#     bundle: co_occurrence.Bundle = co_occurrence.Bundle.load(filename)
 
-    assert bundle is not None
+#     assert bundle is not None
 
-    trends_data: BundleTrendsData = BundleTrendsData(bundle=bundle)
-    assert trends_data is not None
+#     trends_data: BundleTrendsData = BundleTrendsData(bundle=bundle)
+#     assert trends_data is not None
 
-    co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)
+#     co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)

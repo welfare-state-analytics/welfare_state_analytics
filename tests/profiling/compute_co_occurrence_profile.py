@@ -8,7 +8,7 @@ from penelope.notebook.interface import ComputeOpts
 RESOURCE_FOLDER = "./resources/"
 CONFIG_FILENAME = "riksdagens-protokoll.yml"
 DATA_FOLDER = "./tests/test_data"
-CONCEPT = {}  # {'information'}
+CONCEPT = set()  # {'information'}
 
 SUC_SCHEMA: utility.PoS_Tag_Scheme = utility.PoS_Tag_Schemes.SUC
 POS_TARGETS: str = 'NN|PM'
@@ -59,12 +59,15 @@ compute_opts = ComputeOpts(
         passthrough_tokens=[],
         block_tokens=[],
         append_pos=False,
+        global_tf_threshold=1,
+        global_tf_threshold_mask=False,
     ),
     filter_opts=utility.PropertyValueMaskingOpts(),
     vectorize_opts=corpora.VectorizeOpts(
         already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
     ),
-    count_threshold=1,
+    tf_threshold=1,
+    tf_threshold_mask=False,
     create_subfolder=True,
     persist=True,
     context_opts=ContextOpts(
