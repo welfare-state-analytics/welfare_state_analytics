@@ -1,19 +1,19 @@
 # pylint: disable=too-many-arguments, too-many-locals, unused-import
 
 import os
-from typing import Optional
 
 import click
 import loguru
 import penelope.notebook.interface as interface
 import westac.parliamentary_debates.pipelines as rp_pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
-from penelope.pipeline import CorpusConfig, CorpusPipeline, CorpusPipelineBase  # ,  Token2Id
+from penelope.pipeline import CorpusConfig, CorpusPipelineBase  # ,  Token2Id
 
 # from westac.parliamentary_debates.members import ParliamentaryMembers
 
 logger = loguru.logger
 
+# FIXME Align with changes in penelope scripts (diff)
 
 @click.command()
 @click.pass_context
@@ -30,6 +30,18 @@ def profile_vectorize(ctx: click.Context):
 @click.argument('output_folder', type=click.STRING)
 @click.option('-c', '--config', type=click.STRING, required=True)
 @click.option('-t', '--output-tag', type=click.STRING, required=True)
+@click.option(
+    '--tf-threshold',
+    default=1,
+    type=click.IntRange(1, 99),
+    help='Globoal TF threshold filter (words below filtered out)',
+)
+@click.option(
+    '--tf-threshold-mask',
+    default=False,
+    is_flag=True,
+    help='If true, then low TF words are kept, but masked as "__low_tf__"',
+)
 @click.option(
     '-i',
     '--pos-includes',
@@ -100,7 +112,8 @@ def _vectorize(
     keep_numerals: bool = False,
     only_any_alphanumeric: bool = False,
     only_alphabetic: bool = False,
-    count_threshold: int = None,
+    tf_threshold: int = None,
+    tf_threshold_mask: bool = None,
     merge_speeches: bool = False,
 ):
 
@@ -122,7 +135,8 @@ def _vectorize(
         keep_numerals=keep_numerals,
         only_any_alphanumeric=only_any_alphanumeric,
         only_alphabetic=only_alphabetic,
-        count_threshold=count_threshold,
+        tf_threshold=tf_threshold,
+        tf_threshold_mask=tf_threshold_mask,
         merge_speeches=merge_speeches,
     )
 
@@ -145,7 +159,8 @@ def vectorize(
     keep_numerals: bool = False,
     only_any_alphanumeric: bool = False,
     only_alphabetic: bool = False,
-    count_threshold: int = None,
+    tf_threshold: int = None,
+    tf_threshold_mask: bool = False,
     merge_speeches: bool = False,
 ):
 
@@ -181,10 +196,13 @@ def vectorize(
                 pos_excludes=pos_excludes,
                 pos_paddings=pos_paddings,
                 lemmatize=lemmatize,
+                tf_threshold=tf_threshold,
+                tf_threshold_mask=tf_threshold_mask,
             ),
             filter_opts=None,
             vectorize_opts=VectorizeOpts(already_tokenized=True),
-            count_threshold=count_threshold,
+            tf_threshold=tf_threshold,
+            tf_threshold_mask=tf_threshold_mask,
             create_subfolder=create_subfolder,
             persist=True,
         )
