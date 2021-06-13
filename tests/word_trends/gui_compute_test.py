@@ -42,7 +42,7 @@ def test_compute_gui_compute_dry_run():
     # display(compute_gui.layout())
 
 
-@pytest.mark.skip('long running')
+@pytest.mark.long_running
 def test_compute_gui_compute_hot_run():
 
     corpus_tag = 'CERES'

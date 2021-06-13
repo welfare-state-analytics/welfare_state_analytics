@@ -13,7 +13,7 @@ def test_load_members():
     assert parliament_data is not None
 
 
-@pytest.mark.skip(reason="long running")
+@pytest.mark.long_running
 def test_run_through_entire_corpus():
 
     corpus_config: CorpusConfig = CorpusConfig.load('./tests/test_data/parliamentary-debates.yml')
