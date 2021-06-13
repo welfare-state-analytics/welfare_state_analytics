@@ -21,7 +21,7 @@ def test_vectorize():
         keep_numerals=True,
         only_any_alphanumeric=False,
         only_alphabetic=False,
-        count_threshold=None,
+        tf_threshold=None,
         merge_speeches=True,
     )
 
