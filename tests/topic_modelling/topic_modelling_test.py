@@ -265,7 +265,7 @@ def test_load_inferred_topics_data(opts):
     # Assert
     assert inferred_topics_data is not None
     assert inferred_topics_data.dictionary.equals(test_inferred_topics_data.dictionary)
-    assert inferred_topics_data.document_index.equals(test_inferred_topics_data.document_index)
+    assert (inferred_topics_data.document_index == test_inferred_topics_data.document_index).all().all()
     assert inferred_topics_data.topic_token_overview.round(5).equals(
         test_inferred_topics_data.topic_token_overview.round(5)
     )
