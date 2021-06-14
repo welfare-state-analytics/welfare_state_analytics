@@ -199,56 +199,56 @@ class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     #         raise
 
 
-@dataclass
-class ToIdTaggedFrame(ToTaggedFrame):
-    """Loads parliamentary debates protocols using id-word mappings
-    Resulting data frame will have columns `token_id` and `pos_id`
-    """
+# @dataclass
+# class ToIdTaggedFrame(ToTaggedFrame):
+#     """Loads parliamentary debates protocols using id-word mappings
+#     Resulting data frame will have columns `token_id` and `pos_id`
+#     """
 
-    token2id: Token2Id = field(default=Token2Id(lowercase=True))
-    lemmatize: bool = False
+#     token2id: Token2Id = field(default=Token2Id())
+#     lemmatize: bool = False
 
-    def __post_init__(self):
-        super().__post_init__()
-        self.out_content_type = ContentType.TAGGED_ID_FRAME
+#     def __post_init__(self):
+#         super().__post_init__()
+#         self.out_content_type = ContentType.TAGGED_ID_FRAME
 
-    def setup(self) -> ITask:
-        super().setup()
-        self.token2id = self.token2id or Token2Id(lowercase=True)
-        return self
+#     def setup(self) -> ITask:
+#         super().setup()
+#         self.token2id = self.token2id or Token2Id()
+#         return self
 
-    def process_payload(self, payload: DocumentPayload) -> DocumentPayload:
+#     def process_payload(self, payload: DocumentPayload) -> DocumentPayload:
 
-        tagged_frame: TaggedFrame = payload.content
+#         tagged_frame: TaggedFrame = payload.content
 
-        pos_schema = self.pipeline.config.pipeline_payload.pos_schema
-        token_column = self.checkpoint_opts.text_column_name(self.lemmatize)
-        pos_column = self.checkpoint_opts.pos_column
+#         pos_schema = self.pipeline.config.pipeline_payload.pos_schema
+#         token_column = self.checkpoint_opts.text_column_name(self.lemmatize)
+#         pos_column = self.checkpoint_opts.pos_column
 
-        tagged_frame: TaggedFrame = codify_tagged_frame(
-            tagged_frame,
-            token2id=self.token2id,
-            pos_schema=pos_schema,
-            token_column=token_column,
-            pos_column=pos_column,
-        )
+#         tagged_frame: TaggedFrame = codify_tagged_frame(
+#             tagged_frame,
+#             token2id=self.token2id,
+#             pos_schema=pos_schema,
+#             token_column=token_column,
+#             pos_column=pos_column,
+#         )
 
-        return payload.update(ContentType.TAGGED_ID_FRAME, tagged_frame)
+#         return payload.update(ContentType.TAGGED_ID_FRAME, tagged_frame)
 
 
-def codify_tagged_frame(
-    tagged_frame: pd.DataFrame,
-    token2id: Token2Id,
-    pos_schema: PoS_Tag_Scheme,
-    token_column: str,
-    pos_column: str,
-) -> pd.DataFrame:
+# def codify_tagged_frame(
+#     tagged_frame: pd.DataFrame,
+#     token2id: Token2Id,
+#     pos_schema: PoS_Tag_Scheme,
+#     token_column: str,
+#     pos_column: str,
+# ) -> pd.DataFrame:
 
-    token2id.ingest(tagged_frame[token_column])  # type: ignore
+#     token2id.ingest(tagged_frame[token_column])  # type: ignore
 
-    tagged_frame = tagged_frame.assign(
-        token_id=tagged_frame[token_column].map(token2id),
-        pos_id=tagged_frame[pos_column].map(pos_schema.pos_to_id),
-    )
+#     tagged_frame = tagged_frame.assign(
+#         token_id=tagged_frame[token_column].map(token2id),
+#         pos_id=tagged_frame[pos_column].map(pos_schema.pos_to_id),
+#     )
 
-    return tagged_frame
+#     return tagged_frame
