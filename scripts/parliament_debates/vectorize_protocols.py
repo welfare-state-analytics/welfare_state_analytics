@@ -15,6 +15,7 @@ logger = loguru.logger
 
 # FIXME Align with changes in penelope scripts (diff)
 
+
 @click.command()
 @click.pass_context
 def profile_vectorize(ctx: click.Context):

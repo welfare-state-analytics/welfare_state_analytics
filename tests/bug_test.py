@@ -64,7 +64,7 @@ def test_bug():
             block_tokens=[],
             append_pos=False,
             global_tf_threshold=1,
-            global_tf_threshold_mask=False
+            global_tf_threshold_mask=False,
         ),
         tf_threshold=1,
         tf_threshold_mask=False,

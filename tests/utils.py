@@ -73,7 +73,7 @@ def create_bigger_vectorized_corpus(
             lemmatize=True,
             append_pos=False,
             global_tf_threshold=tf_threshold,
-            global_tf_threshold_mask=tf_threshold_mask
+            global_tf_threshold_mask=tf_threshold_mask,
         ),
         tf_threshold=tf_threshold,
         tf_threshold_mask=tf_threshold_mask,
