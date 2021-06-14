@@ -6,7 +6,6 @@ from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.interface import ComputeOpts
-from penelope.notebook.word_trends import BundleTrendsData
 from penelope.pipeline import CorpusConfig, CorpusType
 from penelope.utility import PropertyValueMaskingOpts
 
