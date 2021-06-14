@@ -183,20 +183,20 @@ typing_extensions = ">=3.7.4"
 
 [[package]]
 name = "boto3"
-version = "1.17.90"
+version = "1.17.91"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
-botocore = ">=1.20.90,<1.21.0"
+botocore = ">=1.20.91,<1.21.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.4.0,<0.5.0"
 
 [[package]]
 name = "botocore"
-version = "1.20.90"
+version = "1.20.91"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -531,7 +531,7 @@ unit_tests = ["ipython (>=5.4.0)", "notebook", "matplotlib (>=3)", "bokeh (>=1.1
 
 [[package]]
 name = "humlab-penelope"
-version = "0.5.2"
+version = "0.5.4"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
@@ -961,14 +961,14 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "jupytext"
-version = "1.11.2"
+version = "1.11.3"
 description = "Jupyter notebooks as Markdown documents, Julia, Python or R scripts"
 category = "dev"
 optional = false
 python-versions = "~=3.6"
 
 [package.dependencies]
-markdown-it-py = {version = ">=1.0.0b3,<2.0.0", extras = ["plugins"]}
+markdown-it-py = {version = ">=1.0,<2.0", extras = ["plugins"]}
 nbformat = "*"
 pyyaml = "*"
 toml = "*"
@@ -1852,7 +1852,7 @@ python-versions = "*"
 
 [[package]]
 name = "pyviz-comms"
-version = "2.0.1"
+version = "2.0.2"
 description = "Bidirectional communication for the HoloViz ecosystem."
 category = "main"
 optional = false
@@ -1862,8 +1862,8 @@ python-versions = "*"
 param = "*"
 
 [package.extras]
-all = ["flake8", "jupyter-packaging (>=0.7.9,<0.8.0)", "jupyterlab (>=3.0,<4.0)", "nose", "setuptools"]
-build = ["setuptools", "jupyterlab (>=3.0,<4.0)", "jupyter-packaging (>=0.7.9,<0.8.0)"]
+all = ["flake8", "jupyter-packaging (>=0.7.9,<0.8.0)", "jupyterlab (>=3.0,<4.0)", "keyring", "nose", "rfc3986", "setuptools", "twine"]
+build = ["setuptools", "jupyterlab (>=3.0,<4.0)", "jupyter-packaging (>=0.7.9,<0.8.0)", "twine", "rfc3986", "keyring"]
 tests = ["flake8", "nose"]
 
 [[package]]
@@ -2343,7 +2343,7 @@ python-versions = "*"
 
 [[package]]
 name = "websocket-client"
-version = "1.0.1"
+version = "1.1.0"
 description = "WebSocket client for Python with low level API options"
 category = "main"
 optional = false
@@ -2505,12 +2505,12 @@ bokeh = [
     {file = "bokeh-2.3.2.tar.gz", hash = "sha256:fcc0d0a3129ae457cdb0a4f503843a4d13d1f5d07af7748424ea8c7ddfc321f1"},
 ]
 boto3 = [
-    {file = "boto3-1.17.90-py2.py3-none-any.whl", hash = "sha256:2ade860f66fa6b9a9886d7ff2e5118e5efebc4807b863ef735d358ef730234ed"},
-    {file = "boto3-1.17.90.tar.gz", hash = "sha256:bbf727d770a9844834bfbf3f811db1d3438320897f67cfb21cdca5bb8fc23c13"},
+    {file = "boto3-1.17.91-py2.py3-none-any.whl", hash = "sha256:b0808a58c54c595b6cc6271cbc14a09bb89f0951ca9e8b105d1e94bef3ed24a0"},
+    {file = "boto3-1.17.91.tar.gz", hash = "sha256:4cfab400cd9ca9b27b7dffb43f5675525ea5d36c81223d64d15542fdb16cdf7e"},
 ]
 botocore = [
-    {file = "botocore-1.20.90-py2.py3-none-any.whl", hash = "sha256:6ae4ff3405cc4fc69ff3673a8dd234bf869aa556ae1e0da050d7f2aa3c3edab6"},
-    {file = "botocore-1.20.90.tar.gz", hash = "sha256:b301810c4bd6cab1b6eaf6bfd9f25abb27959b586c2e1689bbce035b3fb8ae66"},
+    {file = "botocore-1.20.91-py2.py3-none-any.whl", hash = "sha256:cbd0d5d57ec96319f8629347631b00cde72a9ae8826d36ad172c2ab61b299cb1"},
+    {file = "botocore-1.20.91.tar.gz", hash = "sha256:462e75419e6537efb2709b7eb5b8c7ade007d30209416f0476bd7c51a2ddc78d"},
 ]
 cachetools = [
     {file = "cachetools-4.2.2-py3-none-any.whl", hash = "sha256:2cc0b89715337ab6dbba85b5b50effe2b0c74e035d83ee8ed637cf52f12ae001"},
@@ -2948,8 +2948,8 @@ jupyterlab-widgets = [
     {file = "jupyterlab_widgets-1.0.0.tar.gz", hash = "sha256:5c1a29a84d3069208cb506b10609175b249b6486d6b1cbae8fcde2a11584fb78"},
 ]
 jupytext = [
-    {file = "jupytext-1.11.2-py3-none-any.whl", hash = "sha256:184e44c2ea91a85f323d8190bd13d9dfb3b73e8d2a92d239cf5e489c98ca3605"},
-    {file = "jupytext-1.11.2.tar.gz", hash = "sha256:7a32aa9edbc430653de3149de79c4ff4ee33ded2119b41ed476b5c93c9f6aff1"},
+    {file = "jupytext-1.11.3-py3-none-any.whl", hash = "sha256:b7c23075151694079c0c84fe73f3fea4899bf0c800e6cd1daf16c76ac701587a"},
+    {file = "jupytext-1.11.3.tar.gz", hash = "sha256:8dd68be6ab205097908289a187d8973a28fa6c86d438d9bfa41a01c8b2fd34a8"},
 ]
 kiwisolver = [
     {file = "kiwisolver-1.3.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:fd34fbbfbc40628200730bc1febe30631347103fc8d3d4fa012c21ab9c11eca9"},
@@ -3595,8 +3595,8 @@ pytz = [
     {file = "pytz-2021.1.tar.gz", hash = "sha256:83a4a90894bf38e243cf052c8b58f381bfe9a7a483f6a9cab140bc7f702ac4da"},
 ]
 pyviz-comms = [
-    {file = "pyviz_comms-2.0.1-py2.py3-none-any.whl", hash = "sha256:cb464384d3ee130169f2eb52c262c8377615a46c92ce3f2a620394d92c2dbc9b"},
-    {file = "pyviz_comms-2.0.1.tar.gz", hash = "sha256:be63957a49772895ddebeac02c697e1675e0bdf1515824f60fcc261914f23624"},
+    {file = "pyviz_comms-2.0.2-py2.py3-none-any.whl", hash = "sha256:0ed42ffd0dd2182edc7a331100c72d9923a027120f4225dbbc33663eadddba8e"},
+    {file = "pyviz_comms-2.0.2.tar.gz", hash = "sha256:cdb4daa3605880035c68f630fb95257376ecce09c0a7ea845031fd21ee1c0635"},
 ]
 pywin32 = [
     {file = "pywin32-301-cp35-cp35m-win32.whl", hash = "sha256:93367c96e3a76dfe5003d8291ae16454ca7d84bb24d721e0b74a07610b7be4a7"},
@@ -4049,8 +4049,8 @@ webencodings = [
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
 ]
 websocket-client = [
-    {file = "websocket-client-1.0.1.tar.gz", hash = "sha256:3e2bf58191d4619b161389a95bdce84ce9e0b24eb8107e7e590db682c2d0ca81"},
-    {file = "websocket_client-1.0.1-py2.py3-none-any.whl", hash = "sha256:abf306dc6351dcef07f4d40453037e51cc5d9da2ef60d0fc5d0fe3bcda255372"},
+    {file = "websocket-client-1.1.0.tar.gz", hash = "sha256:b68e4959d704768fa20e35c9d508c8dc2bbc041fd8d267c0d7345cffe2824568"},
+    {file = "websocket_client-1.1.0-py2.py3-none-any.whl", hash = "sha256:e5c333bfa9fa739538b652b6f8c8fc2559f1d364243c8a689d7c0e1d41c2e611"},
 ]
 widgetsnbextension = [
     {file = "widgetsnbextension-3.5.1-py2.py3-none-any.whl", hash = "sha256:bd314f8ceb488571a5ffea6cc5b9fc6cba0adaf88a9d2386b93a489751938bcd"},
