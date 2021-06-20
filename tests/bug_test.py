@@ -78,7 +78,8 @@ def test_bug():
             concept={'information'},
             ignore_concept=False,
         ),
-        force=False,
+        enable_checkpoint=True,
+        force_checkpoint=False,
     )
 
     corpus_config.pipeline_payload.files(
@@ -153,7 +154,8 @@ def test_checkpoint_feather():
         tf_threshold_mask=False,
         create_subfolder=True,
         persist=True,
-        force=False,
+        enable_checkpoint=True,
+        force_checkpoint=False,
         context_opts=ContextOpts(
             context_width=2,
             concept={'propaganda'},
