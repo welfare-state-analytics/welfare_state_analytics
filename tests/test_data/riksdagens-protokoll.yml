@@ -10,14 +10,14 @@ checkpoint_opts:
     document_index_sep: "\t"
     text_column: token
     lemma_column: baseform
-    pos_column: pospe.pipeline.sparv.pipelines.to_tagged_frame_pipeline
+    pos_column: pos
     extra_columns: []
     custom_serializer_classname: penelope.pipeline.sparv.convert.SparvCsvSerializer
     index_column: null
 pipelines:
-  tagged_frame_pipeline: penelo.1920-2019.test.sparv4.csv.zip
+  tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:
-  source: riksdagens-protokoll
+  source: riksdagens-protokoll.1920-2019.test.sparv4.csv.zip
   document_index_source: null
   document_index_sep: "\t"
   filenames: null
