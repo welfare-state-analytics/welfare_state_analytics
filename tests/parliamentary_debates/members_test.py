@@ -1,5 +1,5 @@
 import pytest
-import tqdm
+from tqdm.auto import tqdm
 from penelope.pipeline import CorpusPipeline
 from penelope.pipeline.config import CorpusConfig
 from westac.parliamentary_debates.members import GITHUB_DATA_URL, ParliamentaryMembers
@@ -30,5 +30,5 @@ def test_run_through_entire_corpus():
         filename_pattern=None,
     )
 
-    for _ in tqdm.tqdm(pipeline.resolve(), total=11100):
+    for _ in tqdm(pipeline.resolve(), total=11100):
         pass
