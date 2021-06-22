@@ -1,7 +1,7 @@
 import pytest
-from tqdm.auto import tqdm
 from penelope.pipeline import CorpusPipeline
 from penelope.pipeline.config import CorpusConfig
+from tqdm.auto import tqdm
 from westac.parliamentary_debates.members import GITHUB_DATA_URL, ParliamentaryMembers
 from westac.parliamentary_debates.pipelines import to_tagged_frame_pipeline
 
@@ -13,6 +13,7 @@ def test_load_members():
     assert parliament_data is not None
 
 
+@pytest.mark.skip("long running")
 @pytest.mark.long_running
 def test_run_through_entire_corpus():
 
