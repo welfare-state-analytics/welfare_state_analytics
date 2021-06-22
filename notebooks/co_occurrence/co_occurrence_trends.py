@@ -112,9 +112,6 @@ from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
 
-# FIXME #138 Co-occurrence: No data is downloaded when "Download data" is pressed
-# FIXME UI action results in repeated (multiple) outputs
-
 utility.CLEAR_OUTPUT = False
 
 output_notebook()
@@ -125,7 +122,5 @@ gui = main_gui.MainGUI(
     resources_folder=__paths__.resources_folder,
 )
 display(gui.layout())
-
-# %%
 
 # %%
