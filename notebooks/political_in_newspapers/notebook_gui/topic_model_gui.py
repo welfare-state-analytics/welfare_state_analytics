@@ -3,6 +3,7 @@ import logging
 import os
 import types
 import uuid
+from typing import Optional
 
 import ipywidgets as widgets
 import pandas as pd
@@ -12,6 +13,7 @@ import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
 from penelope.notebook.topic_modelling import TopicModelContainer
+from penelope.topic_modelling.container import InferredModel, InferredTopicsData
 
 # from . topic_model_compute import compute_topic_model
 
@@ -55,7 +57,7 @@ def get_spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
 
 
 class ComputeTopicModelUserInterface:
-    def __init__(self, data_folder: str, state: TopicModelContainer, document_index: pd.DataFrame, **opts):
+    def __init__(self, data_folder: str, state: TopicModelContainer, document_index: Optional[pd.DataFrame], **opts):
         self.terms = []
         self.data_folder = data_folder
         self.state = state
@@ -108,7 +110,7 @@ class ComputeTopicModelUserInterface:
 
         boxes = [
             widgets.VBox(
-                [
+                children=[
                     gui.method,
                     gui.n_topics,
                     gui.max_iter,
@@ -116,7 +118,7 @@ class ComputeTopicModelUserInterface:
                 layout=widgets.Layout(margin='0px 0px 0px 0px'),
             ),
             widgets.VBox(
-                [
+                children=[
                     gui.apply_idf,
                     gui.show_trace,
                     gui.compute,
@@ -150,7 +152,7 @@ class ComputeTopicModelUserInterface:
                 try:
 
                     # FIXME: Generate folder name based on corpus filename and options
-                    name = uuid.uuid1()
+                    name: str = str(uuid.uuid1())
 
                     target_folder = os.path.join(self.data_folder, name)
 
@@ -171,11 +173,11 @@ class ComputeTopicModelUserInterface:
                         vectorizer_args=vectorizer_args,
                     )
 
-                    inferred_model = topic_modelling.infer_model(
+                    inferred_model: InferredModel = topic_modelling.infer_model(
                         train_corpus=train_corpus, method=method, engine_args=topic_modeller_args
                     )
 
-                    inferred_topics = topic_modelling.compile_inferred_topics_data(
+                    inferred_topics: InferredTopicsData = topic_modelling.compile_inferred_topics_data(
                         inferred_model.topic_model,
                         train_corpus.corpus,
                         train_corpus.id2word,
@@ -190,18 +192,16 @@ class ComputeTopicModelUserInterface:
                         self.state.topic_model,
                         n_tokens=100,
                         id2term=self.state.id2term,
-                        topic_ids=self.state.relevant_topics,
+                        topic_ids=self.state.inferred_topics.topic_ids,
                     )
 
-                    self.state.inferred_model = inferred_model
-                    self.state.inferred_topics = inferred_model
-                    self.state.inferred_model = inferred_model
+                    self.state.set_data(inferred_model, inferred_topics)
 
                     display(topics)
 
                 except Exception as ex:
                     logger.error(ex)
-                    self.state.data = None
+                    self.state.set_data(None, None)
                     raise
                 finally:
                     buzy(False)
@@ -234,7 +234,7 @@ class ComputeTopicModelUserInterface:
 
         method_change_handler()
 
-        display(widgets.VBox([widgets.HBox(self.widget_boxes), self.model_widgets.output]))
+        display(widgets.VBox(children=[widgets.HBox(children=self.widget_boxes), self.model_widgets.output]))
 
 
 class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
@@ -366,7 +366,7 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         )
         boxes = [
             widgets.VBox(
-                [
+                children=[
                     gui.min_freq,
                     gui.max_doc_freq,
                     gui.normalize,
@@ -374,15 +374,15 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
                 ]
             ),
             widgets.VBox(
-                [gui.filter_stops, gui.substitute_terms],
+                children=[gui.filter_stops, gui.substitute_terms],
                 layout=widgets.Layout(margin='0px 0px 0px 10px'),
             ),
             widgets.HBox(
-                [widgets.Label(value='POS', layout=widgets.Layout(width='40px')), gui.include_pos],
+                children=[widgets.Label(value='POS', layout=widgets.Layout(width='40px')), gui.include_pos],
                 layout=widgets.Layout(margin='0px 0px 0px 10px'),
             ),
             widgets.HBox(
-                [widgets.Label(value='STOP'), gui.stop_words], layout=widgets.Layout(margin='0px 0px 0px 10px')
+                children=[widgets.Label(value='STOP'), gui.stop_words], layout=widgets.Layout(margin='0px 0px 0px 10px')
             ),
         ]
         return gui, boxes

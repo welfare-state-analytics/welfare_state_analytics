@@ -30,8 +30,8 @@ from typing import Mapping
 import ipywidgets
 import numpy as np
 import pandas as pd
-import penelope.corpus.dtm as vectorized_corpus
 from IPython.display import display
+from penelope.corpus import IVectorizedCorpus, VectorizedCorpus
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 root_folder = os.path.abspath(os.path.join(globals()["_dh"][-1], "../.."))
@@ -68,14 +68,15 @@ logger = logging.getLogger(__name__)
 # %%
 
 # pylint: disable=wrong-import-position
+# type: ignore
 
-v_corpus: vectorized_corpus.VectorizedCorpus = (
-    vectorized_corpus.VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
+v_corpus: IVectorizedCorpus = (
+    VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
     .slice_by_n_count(10)
     .slice_by_n_top(500000)
 )
 
-tf_idf_corpus = v_corpus.tf_idf().group_by_year(aggregate="mean", fill_gaps=True)
+tf_idf_corpus = v_corpus.tf_idf().group_by_year(aggregate="mean", fill_gaps=True)  # type: ignore
 
 
 # %%
@@ -92,13 +93,13 @@ def display_top_terms(data):
     display(df)
 
 
-def compute_top_terms(x_corpus: vectorized_corpus.VectorizedCorpus, n_top: int, idx_groups=None) -> Mapping:
+def compute_top_terms(x_corpus: VectorizedCorpus, n_top: int, idx_groups=None) -> Mapping:
 
     data = {x["label"]: x_corpus.get_top_n_words(n=n_top, indices=x["indices"]) for x in idx_groups}
     return data
 
 
-def display_gui(x_corpus: vectorized_corpus.VectorizedCorpus, x_documents_index: pd.DataFrame):
+def display_gui(x_corpus: VectorizedCorpus, x_documents_index: pd.DataFrame):
 
     lw = lambda w: ipywidgets.Layout(width=w)
 
@@ -148,9 +149,13 @@ def display_gui(x_corpus: vectorized_corpus.VectorizedCorpus, x_documents_index:
     w_groups = ipywidgets.Dropdown(options=groups, value=groups[0][1], description="Groups:")
 
     boxes = ipywidgets.VBox(
-        [
+        children=[
             ipywidgets.HBox(
-                [w_n_top, w_groups, w_compute],
+                children=(
+                    w_n_top,
+                    w_groups,
+                    w_compute,
+                ),
                 layout=ipywidgets.Layout(align_items="flex-end"),
             ),
             w_output,
@@ -190,14 +195,14 @@ display_gui(tf_idf_corpus, tf_idf_corpus.document_index)
 # %matplotlib inline
 
 
-def plot_word(x_corpus: vectorized_corpus.VectorizedCorpus, word: str):
+def plot_word(x_corpus: VectorizedCorpus, word: str):
     wv = x_corpus.get_word_vector(word)
 
     df = pd.DataFrame({"count": wv, "year": x_corpus.document_index.year}).set_index("year")
     df.plot()
 
 
-plot_word(v_corpus, "arbete")
+plot_word(v_corpus, "arbete")  # type: ignore
 plot_word(tf_idf_corpus, "arbete")
 # plot_word(yearly_tf_idf_corpus, "arbete")
 
@@ -218,15 +223,15 @@ docs = [
 tfidf_vectorizer = TfidfVectorizer(use_idf=True)
 tfidf_vectorizer_vectors = tfidf_vectorizer.fit_transform(docs)
 
-tfidf = tfidf_vectorizer_vectors.todense()
+tfidf = tfidf_vectorizer_vectors.todense()  # type: ignore
 # TFIDF of words not in the doc will be 0, so replace them with nan
 tfidf[tfidf == 0] = np.nan
 # Use nanmean of numpy which will ignore nan while calculating the mean
 means = np.nansum(tfidf, axis=0)
 # convert it into a dictionary for later lookup
-means = dict(zip(tfidf_vectorizer.get_feature_names(), means.tolist()[0]))
+means = dict(zip(tfidf_vectorizer.get_feature_names(), means.tolist()[0]))  # type: ignore
 
-tfidf = tfidf_vectorizer_vectors.todense()
+tfidf = tfidf_vectorizer_vectors.todense()  # type: ignore
 # Argsort the full TFIDF dense vector
 ordered = np.argsort(tfidf * -1)
 words = tfidf_vectorizer.get_feature_names()

@@ -21,6 +21,7 @@
 # %%
 
 import os
+from typing import Callable
 
 import bokeh.plotting
 import penelope.notebook.topic_modelling as gui
@@ -33,7 +34,7 @@ import __paths__  # pylint: disable=unused-import
 bokeh.plotting.output_notebook()
 pandas_utils.set_default_options()
 
-current_state: gui.TopicModelContainer = gui.TopicModelContainer.singleton
+current_state: Callable[[], gui.TopicModelContainer] = gui.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
 corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
 
@@ -104,7 +105,7 @@ gui.display_topic_topic_network_gui(current_state())
 #
 
 # %%
-gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=current_state())
+gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=current_state())  # type: ignore
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>

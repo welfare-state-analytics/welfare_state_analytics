@@ -1,5 +1,5 @@
 import os
-from typing import Iterator, List, Set
+from typing import Iterable, List, Set
 from unittest.mock import Mock
 
 import pandas as pd
@@ -44,7 +44,7 @@ def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkp
     file_pattern: str = "*.zip"
     source_folder: str = "tests/test_data/annotated"
 
-    stream: Iterator[checkpoint.CheckpointData] = tasks.load_checkpoints(source_folder, file_pattern, checkpoint_opts)
+    stream: Iterable[checkpoint.CheckpointData] = tasks.load_checkpoints(source_folder, file_pattern, checkpoint_opts)
 
     cps: List[checkpoint.CheckpointData] = [cp for cp in stream]
 
@@ -89,7 +89,7 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
         nonlocal filenames_to_load
         return os.path.basename(path) in filenames_to_load
 
-    stream: Iterator[checkpoint.CheckpointData] = tasks.load_checkpoints(
+    stream: Iterable[checkpoint.CheckpointData] = tasks.load_checkpoints(
         source_folder, file_pattern, checkpoint_opts, predicate_filter
     )
 

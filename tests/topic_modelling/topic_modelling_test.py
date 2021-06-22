@@ -53,7 +53,7 @@ class TranströmerCorpus(SimpleTextLinesCorpus):
         super().__init__(
             filename='./tests/test_data/tranströmer.txt',
             fields={'filename': 0, 'title': 1, 'text': 2},
-            filename_fields=["year:_:1", "year_serial_id:_:2"],
+            filename_fields=["year:_:1", "year_serial_id:_:2"],  # type: ignore
         )
 
 
@@ -90,7 +90,7 @@ def test_infer_model(opts):
     assert inferred_model.method == opts['method']
     assert isinstance(inferred_model.topic_model, opts['class'])
     assert isinstance(inferred_model.train_corpus.document_index, pd.DataFrame)
-    assert len(inferred_model.train_corpus.corpus) == len(inferred_model.train_corpus.document_index)
+    assert len(inferred_model.train_corpus.corpus) == len(inferred_model.train_corpus.document_index)  # type: ignore
     assert len(inferred_model.train_corpus.document_index) == 5
     assert len(inferred_model.train_corpus.document_index.columns) == 7
     assert 'n_terms' in inferred_model.train_corpus.document_index.columns
@@ -265,7 +265,7 @@ def test_load_inferred_topics_data(opts):
     # Assert
     assert inferred_topics_data is not None
     assert inferred_topics_data.dictionary.equals(test_inferred_topics_data.dictionary)
-    assert inferred_topics_data.document_index.equals(test_inferred_topics_data.document_index)
+    assert (inferred_topics_data.document_index == test_inferred_topics_data.document_index).all().all()
     assert inferred_topics_data.topic_token_overview.round(5).equals(
         test_inferred_topics_data.topic_token_overview.round(5)
     )

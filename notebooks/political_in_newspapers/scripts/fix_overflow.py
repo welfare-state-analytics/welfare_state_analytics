@@ -1,4 +1,5 @@
 import os
+from typing import Iterable, Tuple
 
 import gensim
 import numpy as np
@@ -6,7 +7,7 @@ import pandas as pd
 
 
 def compile_mallet_document_topics(model, minimum_probability=0.001):
-    def document_topics_iter(model, minimum_probability=0.0):
+    def document_topics_iter(model, minimum_probability=0.0) -> Iterable[Tuple[int, int, float]]:
         data_iter = enumerate(model.load_document_topics())
         for document_id, topic_weights in data_iter:
             for (topic_id, weight) in (
@@ -14,8 +15,8 @@ def compile_mallet_document_topics(model, minimum_probability=0.001):
             ):
                 yield (document_id, topic_id, weight)
 
-    data = document_topics_iter(model, minimum_probability)
-    df_doc_topics = pd.DataFrame(data, columns=['document_id', 'topic_id', 'weight'])
+    data: Iterable[Tuple[int, int, float]] = document_topics_iter(model, minimum_probability)
+    df_doc_topics: pd.DataFrame = pd.DataFrame([x for x in data], columns=['document_id', 'topic_id', 'weight'])
     df_doc_topics['document_id'] = df_doc_topics.document_id.astype(np.uint32)
     df_doc_topics['topic_id'] = df_doc_topics.topic_id.astype(np.uint16)
 

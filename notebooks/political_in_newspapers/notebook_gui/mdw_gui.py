@@ -141,13 +141,13 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
     )
 
     boxes = ipywidgets.VBox(
-        [
+        children=[
             ipywidgets.HBox(
-                [
-                    ipywidgets.VBox([gui.period1, gui.publication_ids1]),
-                    ipywidgets.VBox([gui.period2, gui.publication_ids2]),
+                children=[
+                    ipywidgets.VBox(children=[gui.period1, gui.publication_ids1]),
+                    ipywidgets.VBox(children=[gui.period2, gui.publication_ids2]),
                     ipywidgets.VBox(
-                        [
+                        children=[
                             gui.top_n_terms,
                             gui.max_n_terms,
                             gui.min_df,
@@ -155,7 +155,7 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
                         ],
                         layout=ipywidgets.Layout(align_items="flex-end"),
                     ),
-                    ipywidgets.VBox([gui.compute]),
+                    ipywidgets.VBox(children=[gui.compute]),
                 ]
             ),
             gui.output,
@@ -174,7 +174,7 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
 
                 logger.info("Slicing corpus...")
 
-                x_corpus: VectorizedCorpus = v_corpus.slice_by_df(
+                x_corpus: VectorizedCorpus = v_corpus.slice_by_df(  # type: ignore
                     max_df=gui.max_df.value / 100.0,
                     min_df=gui.min_df.value / 100.0,
                     max_n_terms=gui.max_n_terms.value,
@@ -190,12 +190,12 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
                         x_corpus.document_index,
                         gui.period1.value,
                         gui.publication_ids1.value,
-                    ),
+                    ),  # type: ignore
                     group2_indices=year_range_group_indicies(
                         x_corpus.document_index,
                         gui.period2.value,
                         gui.publication_ids2.value,
-                    ),
+                    ),  # type: ignore
                     top_n_terms=gui.top_n_terms.value,
                     max_n_terms=gui.max_n_terms.value,
                 )

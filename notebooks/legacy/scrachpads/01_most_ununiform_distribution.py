@@ -128,6 +128,7 @@
 # %autoreload 2
 
 # pylint: disable=wrong-import-position
+# type: ignore
 
 import itertools
 import sys
@@ -135,11 +136,11 @@ from typing import List
 
 import bokeh
 import pandas as pd
-import penelope.corpus.dtm as vectorized_corpus
 import penelope.utility as utility
 from bokeh.io import output_file, output_notebook, show
 from bokeh.plotting import figure
 from penelope.common import goodness_of_fit as gof
+from penelope.corpus import VectorizedCorpus
 
 sys.path = ['/home/roger/source/welfare_state_analytics'] + sys.path
 
@@ -150,9 +151,7 @@ output_notebook()
 # %%
 
 v_y_corpus = (
-    vectorized_corpus.VectorizedCorpus.load(
-        tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output'
-    )
+    VectorizedCorpus.load(tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output')
     .group_by_year()
     .slice_by_n_count(10000)
     .slice_by_n_top(100000)
@@ -183,13 +182,11 @@ df_fits.sort_values('l2_norm', ascending=False).head()
 # %%
 
 
-def plot_word_distribution(
-    x_corpus: vectorized_corpus.VectorizedCorpus, df: pd.DataFrame
-):  # pylint: disable=too-many-locals
+def plot_word_distribution(x_corpus: VectorizedCorpus, df: pd.DataFrame):  # pylint: disable=too-many-locals
 
     tokens: List[str] = list(df.token)
 
-    colors = itertools.cycle(bokeh.palettes.Dark2[8])
+    colors = itertools.cycle(bokeh.palettes.Dark2[8])  # type: ignore
 
     min_year: int = x_corpus.document_index.year.min()
     max_year: int = x_corpus.document_index.year.max()
@@ -201,7 +198,7 @@ def plot_word_distribution(
     tokens_data['year'] = years
     tokens_data['current'] = tokens_data[tokens[0]]
 
-    source = bokeh.models.ColumnDataSource(tokens_data)
+    source = bokeh.models.ColumnDataSource(tokens_data)  # type: ignore
 
     # for token in tokens:
     #    color = next(colors)

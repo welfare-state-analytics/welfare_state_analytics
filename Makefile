@@ -85,9 +85,9 @@ penelope-uninstall:
 	@poetry run pip uninstall humlab-penelope --yes
 
 bump.patch: requirements.txt
-	@poetry run dephell project bump patch
+	@poetry version patch
 	@git add pyproject.toml requirements.txt
-	@git commit -m "📌bump version patch"
+	@git commit -m "📌 bump version patch"
 	@git push
 
 tag:
@@ -167,7 +167,7 @@ requirements.txt: poetry.lock
 
 requirements.txt-to-git: requirements.txt
 	@git add requirements.txt
-	@git commit -m "📌updated requirements.txt"
+	@git commit -m "📌 updated requirements.txt"
 	@git push
 
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
@@ -188,8 +188,8 @@ sync-ipynb:
     # poetry run jupytext --sync $(IPYNB_FILES)
 
 write-to-ipynb:
-	echo "warning: write-to-ipynb is disabled in Makefile!"
-# 	poetry run jupytext --to notebook $(PY_FILES)
+	@echo "warning: write-to-ipynb is disabled in Makefile!"
+	poetry run jupytext --to notebook $(PY_FILES)
 
 .PHONY: git-ipynb
 git-ipynb: guard-clean-working-repository
@@ -197,7 +197,7 @@ git-ipynb: guard-clean-working-repository
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
 		@git add .
-		@git commit -m "📌make git-ipynb"
+		@git commit -m "📌 make git-ipynb"
 		@git push
 	fi
 

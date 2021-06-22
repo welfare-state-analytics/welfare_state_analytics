@@ -1,6 +1,7 @@
 import types
 
 import ipywidgets as widgets
+import pandas as pd
 import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
@@ -14,7 +15,7 @@ def display_gui(state: TopicModelContainer):
 
     lw = lambda w: widgets.Layout(width=w)
 
-    text_id = 'topic_relevance'
+    text_id: str = 'topic_relevance'
 
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
     titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights, n_tokens=100)
@@ -38,16 +39,16 @@ def display_gui(state: TopicModelContainer):
 
     _current_weight_over_time = dict(publication_id=-1, weights=None)
 
-    def weight_over_time(document_topic_weights, publication_id):
+    def weight_over_time(document_topic_weights: pd.DataFrame, publication_id: int) -> pd.DataFrame:
         """Cache weight over time due to the large number of ocuments"""
         if _current_weight_over_time["publication_id"] != publication_id:
             _current_weight_over_time["publication_id"] = publication_id
-            df = document_topic_weights
+            df: pd.DataFrame = document_topic_weights
             if publication_id is not None:
-                df = df[df.publication_id == publication_id]
-            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)
+                df = df[df.publication_id == publication_id]  # type: ignore
+            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)  # type: ignore
 
-        return _current_weight_over_time["weights"]
+        return _current_weight_over_time["weights"]  # type: ignore
 
     def update_handler(*_):
 
@@ -74,9 +75,9 @@ def display_gui(state: TopicModelContainer):
 
     display(
         widgets.VBox(
-            [
-                widgets.HBox([gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis]),
-                widgets.HBox([gui.output]),
+            children=[
+                widgets.HBox(children=[gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis]),
+                widgets.HBox(children=[gui.output]),
                 gui.text,
             ]
         )

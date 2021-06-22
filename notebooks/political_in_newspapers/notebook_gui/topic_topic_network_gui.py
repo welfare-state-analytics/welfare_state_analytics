@@ -26,7 +26,7 @@ def display_gui(state: TopicModelContainer):
     publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
     layout_options = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
     output_options = {'Network': 'network', 'Table': 'table', 'Excel': 'excel', 'CSV': 'csv'}
-    ignore_options = [('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)]
+    ignore_options = [('', None)] + [('Topic #' + str(i), i) for i in range(0, n_topics)]  # type: ignore
     year_min, year_max = state.inferred_topics.year_period
 
     topic_proportions = state.inferred_topics.compute_topic_proportions()
@@ -112,13 +112,13 @@ def display_gui(state: TopicModelContainer):
 
     display(
         widgets.VBox(
-            [
+            children=[
                 widgets.HBox(
-                    [
-                        widgets.VBox([gui.layout, gui.threshold, gui.n_docs, gui.period]),
-                        widgets.VBox([gui.publication_id, gui.ignores]),
-                        widgets.VBox([gui.node_range, gui.edge_range, gui.scale]),
-                        widgets.VBox([widgets.HBox([gui.output_format]), gui.progress]),
+                    children=[
+                        widgets.VBox(children=[gui.layout, gui.threshold, gui.n_docs, gui.period]),
+                        widgets.VBox(children=[gui.publication_id, gui.ignores]),
+                        widgets.VBox(children=[gui.node_range, gui.edge_range, gui.scale]),
+                        widgets.VBox(children=[widgets.HBox(children=[gui.output_format]), gui.progress]),
                     ]
                 ),
                 gui.output,

@@ -93,7 +93,7 @@
 #         #     corpus_filename=input_folder,
 #         #     target_folder=output_folder,
 #         #     corpus_tag=output_tag,
-#         #     tokens_transform_opts=TokensTransformOpts(
+#         #     transform_opts=TokensTransformOpts(
 #         #         to_lower=to_lowercase,
 #         #         to_upper=False,
 #         #         min_len=min_word_length,
@@ -109,13 +109,13 @@
 #         #         only_any_alphanumeric=only_any_alphanumeric,
 #         #     ),
 #         #     text_reader_opts=corpus_config.text_reader_opts,
-#         #     extract_tagged_tokens_opts=ExtractTaggedTokensOpts(
+#         #     extract_opts=ExtractTaggedTokensOpts(
 #         #         pos_includes=pos_includes,
 #         #         pos_excludes=pos_excludes,
 #         #         pos_paddings=pos_paddings,
 #         #         lemmatize=lemmatize,
 #         #     ),
-#         #     tagged_tokens_filter_opts=None,
+#         #     filter_opts=None,
 #         #     vectorize_opts=VectorizeOpts(already_tokenized=True),
 #         #     count_threshold=count_threshold,
 #         #     create_subfolder=create_subfolder,
@@ -133,8 +133,8 @@
 #                 show_progress=True,
 #             )
 #             # .filter_tagged_frame(
-#             #     extract_opts=args.extract_tagged_tokens_opts,
-#             #     filter_opts=args.tagged_tokens_filter_opts,
+#             #     extract_opts=args.extract_opts,
+#             #     filter_opts=args.filter_opts,
 #             # )
 #             .exhaust(100)
 #         )

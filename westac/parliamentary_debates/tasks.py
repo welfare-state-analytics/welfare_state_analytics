@@ -1,19 +1,20 @@
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterable, List
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+import pandas as pd
 
-from penelope.corpus import TextReaderOpts
+from penelope.corpus import TextReaderOpts, Token2Id
 from penelope.corpus.document_index import DocumentIndex
 from penelope.pipeline import (
     CheckpointOpts,
+    CheckpointData,
     ContentType,
-    CountTokensMixIn,
+    CountTaggedTokensMixIn,
     DefaultResolveMixIn,
     DocumentPayload,
     ITask,
     TaggedFrame,
-    Token2Id,
 )
-from penelope.utility.filename_utils import strip_extensions
+from penelope.utility import strip_extensions, strip_path_and_extension, PoS_Tag_Scheme
 
 from .checkpoint import load_checkpoints
 
@@ -49,6 +50,7 @@ Reminder:
 
 ProtocolDict = dict
 
+# FIXME: #141 Remove when Parla-CLARIN source data has been re-processed
 def temporary_update_document_index(document_index: DocumentIndex) -> DocumentIndex:
 
     document_index = (
@@ -63,21 +65,55 @@ def temporary_update_document_index(document_index: DocumentIndex) -> DocumentIn
     return document_index
 
 
+def _create_empty_merged_document_index() -> pd.DataFrame:
+    _document_index: pd.DataFrame = pd.DataFrame(
+        {
+            'document_name': pd.Series([], 'str'),
+            'filename': pd.Series([], 'str'),
+            'year': pd.Series([], 'int'),
+            'document_date': pd.Series([], 'str'),
+            'num_tokens': pd.Series([], 'int'),
+            'num_words': pd.Series([], 'int'),
+            'document_id': pd.Series([], 'int'),
+        }
+    ).set_index('document_name', drop=False)
+    return _document_index
+
+
+def _create_merged_document_info(checkpoint: CheckpointData, i: int = 0) -> dict:
+
+    document_name: str = strip_path_and_extension(checkpoint.source_name)
+    date: str = str(checkpoint.document_index.speech_date.min())
+    year = int(date[:4]) if len(date) >= 4 else None
+
+    data: dict = {
+        'document_name': document_name,
+        'filename': f"{document_name}.csv",
+        'year': year,
+        'document_date': date,
+        'num_tokens': checkpoint.document_index.num_tokens.sum(),
+        'num_words': checkpoint.document_index.num_words.sum(),
+        'document_id': i,
+    }
+    return data
+
+
 @dataclass
-class ToTaggedFrame(CountTokensMixIn, DefaultResolveMixIn, ITask):
+class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     """Loads parliamentary debates protocols stored as Sparv CSV into pipeline """
 
-    source_folder: str = None
-    checkpoint_opts: CheckpointOpts = None
-    checkpoint_filter: Callable[[str], bool] = None
-    reader_opts: TextReaderOpts = None
+    source_folder: str = ""
+    checkpoint_opts: Optional[CheckpointOpts] = None
+    checkpoint_filter: Optional[Callable[[str], bool]] = None
+    reader_opts: Optional[TextReaderOpts] = None
 
     # Not used or not implemented:
-    attribute_value_filters: Dict[str, Any] = None
-    attributes: List[str] = None
+    attribute_value_filters: Optional[Dict[str, Any]] = None
+    attributes: Optional[List[str]] = None
 
     file_pattern: str = "*.zip"
     show_progress: bool = False
+    merge_speeches: bool = False
 
     def setup(self) -> ITask:
         self.pipeline.put("tagged_attributes", self.attributes)
@@ -89,22 +125,64 @@ class ToTaggedFrame(CountTokensMixIn, DefaultResolveMixIn, ITask):
 
     def process_stream(self) -> Iterable[DocumentPayload]:
 
-        for checkpoint in load_checkpoints(
-            self.source_folder,
-            file_pattern=self.file_pattern,
-            checkpoint_opts=self.checkpoint_opts,
-            checkpoint_filter=self.checkpoint_filter,
-            reader_opts=self.reader_opts,
-            show_progress=self.show_progress,
+        for i, checkpoint in enumerate(
+            load_checkpoints(
+                self.source_folder,
+                file_pattern=self.file_pattern,
+                checkpoint_opts=self.checkpoint_opts,
+                checkpoint_filter=self.checkpoint_filter,
+                reader_opts=self.reader_opts,
+                show_progress=self.show_progress,
+            )
         ):
             # FIXME: Updates faulty index caused by old bug where document_index was set to constant "1"
             checkpoint.document_index = temporary_update_document_index(checkpoint.document_index)
 
-            self.pipeline.payload.extend_document_index(checkpoint.document_index)
-            for payload in checkpoint.payload_stream:
+            if self.merge_speeches:
+
+                """Return each protocol as a single document"""
+
+                if self.pipeline.payload.effective_document_index is None:
+                    self.pipeline.payload.effective_document_index = _create_empty_merged_document_index()
+
+                payload, document_info = self.merge_checkpoint(checkpoint, i)
+
+                self.pipeline.payload.effective_document_index.loc[document_info['document_name']] = document_info
+
                 payload = self.process_payload(payload)
-                payload.property_bag.update(checkpoint.document_index.loc[payload.document_name].to_dict())
                 yield payload
+
+            else:
+
+                """Return each speech as a single document"""
+
+                self.pipeline.payload.extend_document_index(checkpoint.document_index)
+                for payload in checkpoint.create_stream():
+                    payload = self.process_payload(payload)
+                    payload.property_bag.update(checkpoint.document_index.loc[payload.document_name].to_dict())
+                    yield payload
+
+    def merge_checkpoint(self, checkpoint: CheckpointData, i: int) -> Tuple[DocumentPayload, dict]:
+        """Merges speeches in a CheckpointData into a single document.
+
+        Args:
+            checkpoint (CheckpointData): A single protocol split into speeches stored as a checkpoint
+
+        Returns:
+            DocumentPayload: returned Payload
+        """
+
+        merged_content: pd.Series = pd.concat([payload.content for payload in checkpoint.payload_stream])
+
+        payload: DocumentPayload = DocumentPayload(
+            ContentType.TAGGED_FRAME,
+            content=merged_content,
+            filename=checkpoint.source_name,
+        )
+
+        document_info = _create_merged_document_info(checkpoint=checkpoint, i=i)
+
+        return payload, document_info
 
     # def register_document(self, payload: DocumentPayload, protocol: dict, speech: dict) -> DocumentPayload:
     #     """Add document to document index with computed token counts from the tagged frame"""
@@ -127,7 +205,7 @@ class ToIdTaggedFrame(ToTaggedFrame):
     Resulting data frame will have columns `token_id` and `pos_id`
     """
 
-    token2id: Token2Id = None
+    token2id: Token2Id = field(default=Token2Id())
     lemmatize: bool = False
 
     def __post_init__(self):
@@ -147,13 +225,30 @@ class ToIdTaggedFrame(ToTaggedFrame):
         token_column = self.checkpoint_opts.text_column_name(self.lemmatize)
         pos_column = self.checkpoint_opts.pos_column
 
-        self.token2id.ingest(tagged_frame[token_column])
+        tagged_frame: TaggedFrame = codify_tagged_frame(
+            tagged_frame,
+            token2id=self.token2id,
+            pos_schema=pos_schema,
+            token_column=token_column,
+            pos_column=pos_column,
+        )
 
-        tagged_frame = tagged_frame.assign(
-            token_id=tagged_frame[token_column].map(self.token2id),
-            pos_id=tagged_frame[pos_column].map(pos_schema.pos_to_id),
-        )
-        return payload.update(
-            self.out_content_type,
-            content=tagged_frame,
-        )
+        return payload.update(ContentType.TAGGED_ID_FRAME, tagged_frame)
+
+
+def codify_tagged_frame(
+    tagged_frame: pd.DataFrame,
+    token2id: Token2Id,
+    pos_schema: PoS_Tag_Scheme,
+    token_column: str,
+    pos_column: str,
+) -> pd.DataFrame:
+
+    token2id.ingest(tagged_frame[token_column])  # type: ignore
+
+    tagged_frame = tagged_frame.assign(
+        token_id=tagged_frame[token_column].map(token2id),
+        pos_id=tagged_frame[pos_column].map(pos_schema.pos_to_id),
+    )
+
+    return tagged_frame

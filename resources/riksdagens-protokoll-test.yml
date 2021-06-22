@@ -6,13 +6,16 @@ checkpoint_opts:
     content_type_code: 1
     sep: "\t"
     quoting: 3
-    document_index_name: document_index.csv
-    document_index_sep: "\t"
+    document_index_name: null
+    document_index_sep: null
     text_column: token
     lemma_column: baseform
     pos_column: pos
     extra_columns: []
     custom_serializer_classname: penelope.pipeline.sparv.convert.SparvCsvSerializer
+    deserialize_in_parallel: true
+    deserialize_processes: 6
+    deserialize_chunksize: 4
     index_column: null
 pipelines:
   tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
@@ -30,11 +33,6 @@ pipeline_payload:
     pos_column: pos
   pos_schema_name: SUC
 filter_opts:
-  data:
-    is_alpha: null
-    is_digit: null
-    is_punct: false
-    is_stop: null
 text_reader_opts:
   as_binary: false
   filename_fields:

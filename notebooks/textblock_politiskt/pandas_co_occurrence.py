@@ -42,26 +42,26 @@ def load_text_windows(filename: str):
     return df
 
 
-def compute_for_period_newpaper(df, period, newspaper, min_count, options):
+def compute_for_period_newpaper(df, period, newspaper, options):
     reader = PandasCorpusReader(df, year=period, newspaper=newspaper)
-    df_y = to_co_occurrence_matrix(reader, min_count=min_count, **options)
+    df_y = to_co_occurrence_matrix(reader, **options)
     df_y['newspaper'] = newspaper
     df_y['period'] = str(period)
     return df_y
 
 
-def compute_co_occurrence_for_periods(source_filename, newspapers, periods, target_filename, min_count=1, **options):
+def compute_co_occurrence_for_periods(source_filename, newspapers, periods, target_filename, **options):
 
     columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
-    df = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]
+    df = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]  # type: ignore
     df_r = pd.DataFrame(columns=columns)
 
     n_documents = 0
     for newspaper in newspapers:
         for period in periods:
             print("Processing: {} {}...".format(newspaper, period))
-            df_y = compute_for_period_newpaper(df, period, newspaper, min_count, options)
+            df_y = compute_for_period_newpaper(df, period, newspaper, options)
             df_r = df_r.append(df_y[columns], ignore_index=True)
             n_documents += len(df_y)
 

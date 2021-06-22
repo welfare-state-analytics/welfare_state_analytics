@@ -7,14 +7,14 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.11.3
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
 
-# %% [markdown]
+# %% [markdown] tags=[]
 # ### Overview
 #
 # This notebook implements a processing pipeline from computes word co-occurrences from plain text. The term-term co-occurrence matrix is transformed into a DTM corpus that has a vocabulary consisting of token-pairs. The co-occurring word trends can hence be xxplored using the ordinary word trends analysis tools.
@@ -32,11 +32,11 @@
 # | ⌛ | <b>Passthrough</b> | ⚪ | Passthrough  | ⚪
 # | 🔨 | Spacy<b>ToTaggedFrame</b> | tagger service | PoS tagging |
 # | 💾 | <b>Checkpoint</b> | checkpoint_filename | Checkpoint (tagged frames) to file |
-# | 🔨 | TaggedFrame<b>ToTokens</b> | extract_tagged_tokens_opts, filter_opts | Tokens extractor | User
-# | 🔨 | <b>TokensTransform</b> | tokens_transform_opts | Tokens transformer | User
+# | 🔨 | TaggedFrame<b>ToTokens</b> | extract_opts, filter_opts | Tokens extractor | User
+# | 🔨 | <b>TokensTransform</b> | transform_opts | Tokens transformer | User
 # | 🔨 | <b>Vocabulary</b> | ⚪ | Generate a token to integer ID mapping | ⚪
 # | 🔨 | <b>ToDocumentContentTuple</b> | ⚪ | API adapter| ⚪
-# | 🔨 | <i>Partition</i> | ⚪ | Partition corpus into subsets based on predicate | 'year'
+# | 🔨 | <i>Partition</i> | ⚪ | Partition corpus into subsets based on predicate | 'year|document_id'
 # | 🔎 | <i>ToTTM</i> | ⚪ | Transform each partition to TTM matrices | User
 # | 🔨 | <b>ToCoOccurrence</b> | ⚪| Transform TTM into data frame with normalized values | ⚪
 # | 💾 | <i>Checkpoint</i> | checkpoint_filename| Store co-occurrence data frame | ⚪
@@ -101,9 +101,13 @@
 # The "words" in this case are co-occurrence pairs and to find instances matching "information" you could enter ```information*```, ```*information``` or ```*information*``` to match pairs starting with information, ending with information or containing information respectively.
 
 # %%
+# %load_ext autoreload
+# %autoreload 2
 
+# %% tags=[]
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
+from penelope.notebook import utility
 from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
@@ -111,13 +115,17 @@ import __paths__
 # FIXME #138 Co-occurrence: No data is downloaded when "Download data" is pressed
 # FIXME UI action results in repeated (multiple) outputs
 
+utility.CLEAR_OUTPUT = False
+
 output_notebook()
 gui = main_gui.MainGUI(
-    corpus_config="riksdagens-protokoll",
+    corpus_config="riksdagens-protokoll-test",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
 )
 display(gui.layout())
+
+# %%
 
 # %%
