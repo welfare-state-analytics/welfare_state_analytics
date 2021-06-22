@@ -31,7 +31,7 @@ ftfy==5.9; python_full_version >= "3.8.0" and python_full_version < "3.9.0" and 
 future==0.18.2; python_full_version >= "3.8.0" and python_full_version < "3.9.0"
 gensim==3.8.3
 holoviews==1.14.4; python_version >= "2.7"
-humlab-penelope==0.5.12; python_full_version >= "3.8.0" and python_full_version < "3.9.0"
+humlab-penelope==0.5.13; python_full_version >= "3.8.0" and python_full_version < "3.9.0"
 idna==2.10; python_full_version >= "3.6.2" and python_version >= "3.6"
 ipyaggrid==0.2.1; python_full_version >= "3.8.0" and python_full_version < "3.9.0"
 ipycytoscape==1.2.2; python_full_version >= "3.8.0" and python_full_version < "3.9.0"
@@ -79,7 +79,7 @@ numpy==1.19.3; python_full_version >= "3.8.0" and python_version >= "3.7" and py
 openpyxl==3.0.7; python_full_version >= "3.8.0" and python_full_version < "3.9.0" and python_version >= "3.6"
 packaging==20.9; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 pandas-bokeh==0.5.5; python_version >= "3.6"
-pandas==1.2.4; python_full_version >= "3.7.1"
+pandas==1.2.5; python_full_version >= "3.7.1"
 pandocfilters==1.4.3; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
 panel==0.11.3; python_full_version >= "3.8.0" and python_full_version < "3.9.0" and python_version >= "3.6"
 param==1.10.1; python_full_version >= "3.8.0" and python_full_version < "3.9.0" and python_version >= "3.6"
