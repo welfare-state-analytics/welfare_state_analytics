@@ -54,6 +54,7 @@ def test_compute_gui_compute_hot_run():
         done_callback=monkey_patch,  # type: ignore
     )
 
+    gui._tf_threshold.value = 1
     gui._corpus_tag.value = corpus_tag
     gui._target_folder.reset(path=OUTPUT_FOLDER)  # , filename='output.txt')
     gui._target_folder._apply_selection()

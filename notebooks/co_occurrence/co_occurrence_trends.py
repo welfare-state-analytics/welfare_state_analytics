@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.11.3
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -107,6 +107,7 @@
 # %% tags=[]
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
+from penelope.notebook import utility
 from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
@@ -114,13 +115,17 @@ import __paths__
 # FIXME #138 Co-occurrence: No data is downloaded when "Download data" is pressed
 # FIXME UI action results in repeated (multiple) outputs
 
+utility.CLEAR_OUTPUT = False
+
 output_notebook()
 gui = main_gui.MainGUI(
-    corpus_config="riksdagens-protokoll",
+    corpus_config="riksdagens-protokoll-test",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
 )
 display(gui.layout())
+
+# %%
 
 # %%
