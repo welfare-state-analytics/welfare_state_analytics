@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "humlab-westac"
-version = "0.5.1"
+version = "0.5.2"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
 packages = [
