@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("westac")
 
 
-def year_range_group_indicies(
+def year_range_group_indices(
     document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None
 ) -> pd.Index:
     """[summary]
@@ -186,12 +186,12 @@ def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
 
                 df = compute_most_discriminating_terms(
                     x_corpus,
-                    group1_indices=year_range_group_indicies(
+                    group1_indices=year_range_group_indices(
                         x_corpus.document_index,
                         gui.period1.value,
                         gui.publication_ids1.value,
                     ),  # type: ignore
-                    group2_indices=year_range_group_indicies(
+                    group2_indices=year_range_group_indices(
                         x_corpus.document_index,
                         gui.period2.value,
                         gui.publication_ids2.value,

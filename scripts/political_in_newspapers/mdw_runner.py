@@ -115,8 +115,8 @@ def mdw_run(
 
     df = mdw_modified.compute_most_discriminating_terms(
         corpus,
-        group1_indices=mdw_gui.year_range_group_indicies(corpus.document_index, period1, pubs_ids1),  # type: ignore
-        group2_indices=mdw_gui.year_range_group_indicies(corpus.document_index, period2, pubs_ids2),  # type: ignore
+        group1_indices=mdw_gui.year_range_group_indices(corpus.document_index, period1, pubs_ids1),  # type: ignore
+        group2_indices=mdw_gui.year_range_group_indices(corpus.document_index, period2, pubs_ids2),  # type: ignore
         top_n_terms=top_n_terms,
         max_n_terms=max_n_terms,
     )

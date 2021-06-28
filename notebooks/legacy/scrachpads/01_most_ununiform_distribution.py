@@ -150,10 +150,10 @@ output_notebook()
 
 # %%
 
-v_y_corpus = (
+v_y_corpus: VectorizedCorpus = (
     VectorizedCorpus.load(tag='SOU_1945-1989_L0_+N_+S', folder='/home/roger/source/welfare_state_analytics/output')
     .group_by_year()
-    .slice_by_n_count(10000)
+    .slice_by_tf(10000)
     .slice_by_n_top(100000)
 )
 

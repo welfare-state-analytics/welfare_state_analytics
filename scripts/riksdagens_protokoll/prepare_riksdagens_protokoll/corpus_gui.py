@@ -25,7 +25,7 @@ def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_
             VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
             .filter(year_filter)
             .group_by_year()  # type: ignore
-            .slice_by_n_count(n_count)
+            .slice_by_tf(n_count)
             .slice_by_n_top(n_top)
         )
 

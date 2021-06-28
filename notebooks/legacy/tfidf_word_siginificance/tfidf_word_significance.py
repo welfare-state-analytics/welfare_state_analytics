@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 
 v_corpus: IVectorizedCorpus = (
     VectorizedCorpus.load(tag="SOU_1945-1989_NN+VB+JJ_lemma_L0_+N_+S", folder=corpus_folder)
-    .slice_by_n_count(10)
+    .slice_by_tf(10)
     .slice_by_n_top(500000)
 )
 
