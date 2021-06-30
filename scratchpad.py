@@ -68,7 +68,7 @@ print(nbytes(B))
 
 B[:,bundle.concept_corpus.data.nonzero()[0]] = 0
 print(B.shape)
-https://stackoverflow.com/questions/41505416/efficient-way-to-set-elements-to-zero-where-mask-is-true-on-scipy-sparse-matrix
+# https://stackoverflow.com/questions/41505416/efficient-way-to-set-elements-to-zero-where-mask-is-true-on-scipy-sparse-matrix
 # %%
 mask = bundle.concept_corpus.data > 0
 B = bundle.corpus.data - bundle.corpus.data.multiply(mask)
