@@ -77,8 +77,15 @@ penelope-production-mode: penelope-uninstall
 	@poetry add humlab-penelope
 
 .ONESHELL: penelope-edit-mode
-penelope-edit-mode: penelope-uninstall
-	@poetry@3940 add --editable ../../penelope
+penelope-edit-mode:
+	@cp -f pyproject.toml pyproject.tmp
+	@sed -i '/humlab-penelope/c\humlab-penelope = {path = "../../penelope", develop = true}' pyproject.tmp
+	@poetry remove humlab-penelope
+	@poetry run pip uninstall humlab-penelope --yes
+	@mv -f pyproject.tmp pyproject.toml
+	@poetry update humlab-penelope
+
+# @poetry@3940 add --editable ../../penelope
 
 penelope-uninstall:
 	@poetry remove humlab-penelope
