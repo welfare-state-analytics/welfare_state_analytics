@@ -70,7 +70,7 @@
 #     pos_includes: str = '|NN|',
 #     pos_excludes: str = '|MAD|MID|PAD|',
 #     pos_paddings: str = None,
-#     to_lowercase: bool = True,
+#     to_lower: bool = True,
 #     lemmatize: bool = True,
 #     remove_stopwords: str = None,
 #     min_word_length: int = 2,
@@ -94,7 +94,7 @@
 #         #     target_folder=output_folder,
 #         #     corpus_tag=output_tag,
 #         #     transform_opts=TokensTransformOpts(
-#         #         to_lower=to_lowercase,
+#         #         to_lower=to_lower,
 #         #         to_upper=False,
 #         #         min_len=min_word_length,
 #         #         max_len=max_word_length,

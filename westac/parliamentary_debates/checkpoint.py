@@ -3,13 +3,14 @@ import zipfile
 from io import StringIO
 from multiprocessing import Pool
 from pathlib import Path
-from typing import Callable, Iterable, List, Optional, Tuple, Union
+from typing import Callable, Iterable, List, Optional, Sequence, Tuple, Union
 
 import pandas as pd
 from loguru import logger
 from penelope.corpus import TextReaderOpts
 from penelope.pipeline import DocumentPayload, checkpoint as cp
-from penelope.pipeline.checkpoint.interface import CheckpointOpts
+from penelope.pipeline.checkpoint.interface import CheckpointOpts, SerializableContent
+from penelope.utility import term_frequency
 from tqdm.auto import tqdm
 
 
@@ -43,7 +44,7 @@ def parallell_deserialized_payload_stream(
             yield payload
 
 
-class ParlaCsvContentSerializer(cp.IContentSerializer):
+class ParlaCsvContentSerializer(cp.CsvContentSerializer):
     def serialize(self, content: pd.DataFrame, options: cp.CheckpointOpts) -> str:
         return content.to_csv(sep=options.sep, header=True)
 
@@ -61,6 +62,11 @@ class ParlaCsvContentSerializer(cp.IContentSerializer):
         data.fillna("", inplace=True)
         if any(x not in data.columns for x in options.columns):
             raise ValueError(f"missing columns: {', '.join([x for x in options.columns if x not in data.columns])}")
+
+        if options.lower_lemma:
+            tokens: Sequence[str] = data[options.lemma_column]
+            data[options.lemma_column] = pd.Series([x.lower() for x in tokens])
+
         return data[options.columns]
 
 

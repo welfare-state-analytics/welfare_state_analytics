@@ -12,7 +12,7 @@ def test_vectorize():
         pos_includes='NN|PM|VB',
         pos_excludes='MAD|MID|PAD',
         pos_paddings="AB|DT|HA|HD|HP|HS|IE|IN|JJ|KN|PC|PL|PN|PP|PS|RG|RO|SN|UO",
-        to_lowercase=True,
+        to_lower=True,
         lemmatize=True,
         remove_stopwords=None,
         min_word_length=1,

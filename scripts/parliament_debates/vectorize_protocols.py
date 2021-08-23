@@ -65,7 +65,7 @@ def profile_vectorize(ctx: click.Context):
     type=click.STRING,
 )
 @click.option('-b', '--lemmatize/--no-lemmatize', default=True, is_flag=True, help='Use word baseforms')
-@click.option('-l', '--to-lowercase/--no-to-lowercase', default=True, is_flag=True, help='Lowercase words')
+@click.option('-l', '--to-lower/--no-to-lower', default=True, is_flag=True, help='Lowercase words')
 @click.option(
     '-r',
     '--remove-stopwords',
@@ -104,7 +104,7 @@ def _vectorize(
     pos_includes: str = '|NN|',
     pos_excludes: str = '|MAD|MID|PAD|',
     pos_paddings: str = None,
-    to_lowercase: bool = True,
+    to_lower: bool = True,
     lemmatize: bool = True,
     remove_stopwords: str = None,
     min_word_length: int = 2,
@@ -127,7 +127,7 @@ def _vectorize(
         pos_includes=pos_includes,
         pos_excludes=pos_excludes,
         pos_paddings=pos_paddings,
-        to_lowercase=to_lowercase,
+        to_lower=to_lower,
         lemmatize=lemmatize,
         remove_stopwords=remove_stopwords,
         min_word_length=min_word_length,
@@ -151,7 +151,7 @@ def vectorize(
     pos_includes: str = '|NN|',
     pos_excludes: str = '|MAD|MID|PAD|',
     pos_paddings: str = None,
-    to_lowercase: bool = True,
+    to_lower: bool = True,
     lemmatize: bool = True,
     remove_stopwords: str = None,
     min_word_length: int = 2,
@@ -177,7 +177,7 @@ def vectorize(
             target_folder=output_folder,
             corpus_tag=output_tag,
             transform_opts=TokensTransformOpts(
-                to_lower=to_lowercase,
+                to_lower=to_lower,
                 to_upper=False,
                 min_len=min_word_length,
                 max_len=max_word_length,

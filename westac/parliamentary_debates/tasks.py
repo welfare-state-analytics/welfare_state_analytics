@@ -1,20 +1,20 @@
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
-import pandas as pd
 
+import pandas as pd
 from penelope.corpus import TextReaderOpts, Token2Id
 from penelope.corpus.document_index import DocumentIndex
 from penelope.pipeline import (
-    CheckpointOpts,
     CheckpointData,
+    CheckpointOpts,
     ContentType,
     CountTaggedTokensMixIn,
     DefaultResolveMixIn,
     DocumentPayload,
     ITask,
-    TaggedFrame,
 )
-from penelope.utility import strip_extensions, strip_path_and_extension, PoS_Tag_Scheme
+from penelope.type_alias import TaggedFrame
+from penelope.utility import PoS_Tag_Scheme, strip_extensions, strip_path_and_extension
 
 from .checkpoint import load_checkpoints
 
@@ -187,7 +187,7 @@ class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     # def register_document(self, payload: DocumentPayload, protocol: dict, speech: dict) -> DocumentPayload:
     #     """Add document to document index with computed token counts from the tagged frame"""
     #     try:
-    #         token_counts = convert.tagged_frame_to_token_counts(
+    #         token_counts = convert.tagged_frame_to_PoS_group_counts(
     #             tagged_frame=payload.content,
     #             pos_schema=self.pipeline.payload.pos_schema,
     #             pos_column=self.pipeline.payload.get('pos_column'),
