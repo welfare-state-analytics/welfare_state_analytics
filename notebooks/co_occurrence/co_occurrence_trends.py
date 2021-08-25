@@ -100,13 +100,12 @@
 #
 # The "words" in this case are co-occurrence pairs and to find instances matching "information" you could enter ```information*```, ```*information``` or ```*information*``` to match pairs starting with information, ending with information or containing information respectively.
 # %% tags=[]
+
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
+from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
-
-from penelope.notebook import utility
-from penelope.notebook.co_occurrence import main_gui
 
 # utility.CLEAR_OUTPUT = False
 
