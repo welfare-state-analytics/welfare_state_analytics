@@ -99,24 +99,20 @@
 # To match all words starting with `info`you can enter ```|^info.*|``` where ```^``` specifies the start of the word.
 #
 # The "words" in this case are co-occurrence pairs and to find instances matching "information" you could enter ```information*```, ```*information``` or ```*information*``` to match pairs starting with information, ending with information or containing information respectively.
-
-# %%
-# %load_ext autoreload
-# %autoreload 2
-
 # %% tags=[]
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
-from penelope.notebook import utility
-from penelope.notebook.co_occurrence import main_gui
 
 import __paths__
 
-utility.CLEAR_OUTPUT = False
+from penelope.notebook import utility
+from penelope.notebook.co_occurrence import main_gui
+
+# utility.CLEAR_OUTPUT = False
 
 output_notebook()
 gui = main_gui.MainGUI(
-    corpus_config="riksdagens-protokoll-test",
+    corpus_config="riksdagens-protokoll",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
     resources_folder=__paths__.resources_folder,
