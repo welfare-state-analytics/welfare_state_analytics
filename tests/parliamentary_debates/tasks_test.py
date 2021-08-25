@@ -51,7 +51,7 @@ def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkp
     assert cps and len(cps) == 5
     assert all(isinstance(x, checkpoint.CheckpointData) for x in cps)
 
-    source_names = {x.source_name for x in cps}
+    source_names = {os.path.basename(x.source_name) for x in cps}
     assert source_names == {
         'prot-197879--18.zip',
         'prot-1960--fk--3.zip',
@@ -93,7 +93,7 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
         source_folder, file_pattern, checkpoint_opts, predicate_filter
     )
 
-    loaded_filenames: Set[str] = {cp.source_name for cp in stream}
+    loaded_filenames: Set[str] = {os.path.basename(cp.source_name) for cp in stream}
 
     assert loaded_filenames == filenames_to_load
 
@@ -127,7 +127,7 @@ def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: chec
 
     assert (
         ' '.join(payload.content.head(13).lemma)
-        == 'Eder majestat ! herr talman ! ärad ledamot av Sverige riksdag ! Sverige'
+        == 'eder majestat ! herr talman ! ärad ledamot av sverige riksdag ! sverige'
     )
 
     assert ' '.join(payload.content.head(13).pos) == 'PM NN MID NN NN MID PC NN PP PM NN MID PM'

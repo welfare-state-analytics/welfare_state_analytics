@@ -1,5 +1,7 @@
 # type: ignore
 
+import uuid
+
 import pytest
 from penelope import workflows
 from penelope.co_occurrence import ContextOpts
@@ -15,6 +17,7 @@ DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytic
 
 
 @pytest.mark.long_running
+@pytest.mark.skip(reason="Used when debugging bugs")
 def test_bug():
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
@@ -96,10 +99,11 @@ def test_bug():
 
 
 def test_checkpoint_feather():
+    FEATHER_FOLDER: str = f'./output/{uuid.uuid1()}'
     compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
-        target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/PROPAGANDA',
+        corpus_filename='./tests/test_data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
+        target_folder='./tests/output/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         transform_opts=TokensTransformOpts(
             only_alphabetic=False,
@@ -165,7 +169,7 @@ def test_checkpoint_feather():
     )
 
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
-
+    corpus_config.checkpoint_opts.feather_folder = FEATHER_FOLDER
     corpus_config.pipeline_payload.files(
         source=compute_opts.corpus_filename,
         document_index_source=None,
