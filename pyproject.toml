@@ -41,7 +41,7 @@ jupyter-bokeh = "*"
 jupyterlab = "*"
 ipywidgets = "*"
 msgpack = "^1.0.2"
-humlab-penelope = "^0.5.15"
+humlab-penelope = "^0.5.16"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
@@ -67,6 +67,7 @@ pyinstrument = "==3.*,>=3.4.1"
 jupytext = "==1.*,>=1.11.1"
 xeus-python = "^0.12.4"
 tomlkit = "^0.7.2"
+jupyterlite = "^0.1.0-alpha.6"
 
 [tool.poetry.scripts]
 # vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
