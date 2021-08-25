@@ -22,7 +22,10 @@ disable=invalid-name,
         # misplaced-comparison-constant,
         broad-except,
         wrong-import-order,
-        duplicate-code
+        duplicate-code,
+        consider-using-from-import,
+        consider-using-dict-items,
+        unused-private-member
 
 
 [REPORTS]
