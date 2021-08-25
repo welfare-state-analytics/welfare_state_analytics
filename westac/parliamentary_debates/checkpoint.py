@@ -9,8 +9,7 @@ import pandas as pd
 from loguru import logger
 from penelope.corpus import TextReaderOpts
 from penelope.pipeline import DocumentPayload, checkpoint as cp
-from penelope.pipeline.checkpoint.interface import CheckpointOpts, SerializableContent
-from penelope.utility import term_frequency
+from penelope.pipeline.checkpoint.interface import CheckpointOpts
 from tqdm.auto import tqdm
 
 
@@ -25,13 +24,13 @@ def process_document_file(args: Tuple[str, str, cp.IContentSerializer, Checkpoin
 
 
 def parallell_deserialized_payload_stream(
-    source_name: str, checkpoint_opts: cp.CheckpointOpts, filenames: List[str]
+    zip_or_filename: str, checkpoint_opts: cp.CheckpointOpts, filenames: List[str]
 ) -> Iterable[DocumentPayload]:
     """Yields a deserialized payload stream read from given source"""
 
     serializer: cp.IContentSerializer = cp.create_serializer(checkpoint_opts)
 
-    with zipfile.ZipFile(source_name, mode="r") as zf:
+    with zipfile.ZipFile(zip_or_filename, mode="r") as zf:
         args: List[Tuple[str, str, cp.IContentSerializer, CheckpointOpts]] = [
             (filename, zf.read(filename).decode(encoding='utf-8'), serializer, checkpoint_opts)
             for filename in filenames
@@ -114,6 +113,6 @@ def load_checkpoints(
             path,
             checkpoint_opts=checkpoint_opts,
             reader_opts=reader_opts,
-            deserialize_stream=parallell_deserialized_payload_stream,
+            payload_loader=parallell_deserialized_payload_stream
         )
         yield checkpoint
