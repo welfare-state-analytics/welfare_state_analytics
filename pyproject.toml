@@ -80,7 +80,7 @@ jupyterlite = "^0.1.0-alpha.6"
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = [
-    "-ra",
+    "-rfE",
     "-q",
     # "-s",
 ]
@@ -88,12 +88,19 @@ log_cli = "False"
 testpaths = [
     "tests",
 ]
-norecursedirs = ['notebooks', '.git', 'data', 'output', 'deprecated', '__pycache__', 'tmp']
+norecursedirs = ['notebooks', '.git', 'data', "test_data", 'output', 'deprecated', '__pycache__', 'tmp']
 python_files = "*_test.py"
 python_functions = "test_*"
 filterwarnings = [
   "ignore::_pytest.warning_types.PytestCollectionWarning",
   "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
+  "ignore::RuntimeWarning",
+  "ignore::UserWarning"
+]
+markers = [
+    "long_running: takes time to run",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
 ]
 
 [tool.dephell.main]
@@ -127,23 +134,25 @@ known_first_party = [ "__paths__" ]
 [tool.coverage]
 # https://github.com/nedbat/coveragepy
 
-    [tool.coverage.run]
-    source = ["notebooks", "westac"]
-    branch = true
-    omit = [
-        '**/__init__.py',
-        '**/__paths__.py',
-        'notebooks/legacy/**/*.py',
-        'notebooks/co_occurrence/co_occurrence_trends.py',
-        'notebooks/pos_statistics/pos_statistics.py',
-        'notebooks/word_trends/word_trends.py'
-    ]
+[tool.coverage.run]
+source = ["notebooks", "westac"]
+branch = true
+omit = [
+    '**/__init__.py',
+    '**/__paths__.py',
+    'notebooks/legacy/**/*.py',
+    'notebooks/co_occurrence/co_occurrence_trends.py',
+    'notebooks/pos_statistics/pos_statistics.py',
+    'notebooks/word_trends/word_trends.py'
+]
 
-    [tool.coverage.report]
-    exclude_lines = [
-        "pragma: no cover",
-        "raise NotImplementedError"
-    ]
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError"
+]
+show_missing = true
+sort = "Name"
 
 [build-system]
 requires = ["poetry>=0.12"]
