@@ -30,15 +30,37 @@ tidy-to-git: guard-clean-working-repository tidy
 		@git push
 	fi
 
-test: clean
-	@mkdir -p ./tests/output
-	@poetry run pytest --verbose --durations=0 \
-		--cov=$(PACKAGE_FOLDER) \
-		--cov-report=term \
-		--cov-report=xml \
-		--cov-report=html \
-		tests
+test: output-dir
+	@echo SKIPPING LONG RUNNING TESTS AND CODE COVERAGE!
+	@poetry run pytest -m "not long_running" --durations=0 tests
 	@rm -rf ./tests/output/*
+
+pytest: output-dir
+	@poetry run pytest -m "not long_running" --durations=0 tests
+
+test-coverage: output-dir
+	@echo SKIPPING LONG RUNNING TESTS!
+	@poetry run pytest -m "not long_running" --cov=$(PACKAGE_FOLDER) --cov-report=html tests
+	@rm -rf ./tests/output/*
+
+full-test: output-dir
+	@poetry run pytest tests
+	@rm -rf ./tests/output/*
+
+long-test: output-dir
+	@poetry run pytest -m "long_running" --durations=0 tests
+	@rm -rf ./tests/output/*
+
+full-test-coverage: output-dir
+	@mkdir -p ./tests/output
+	@poetry run pytest --cov=$(PACKAGE_FOLDER) --cov-report=html tests
+	@rm -rf ./tests/output/*
+
+output-dir:
+	@mkdir -p ./tests/output
+
+retest:
+	@poetry run pytest --durations=0 --last-failed tests
 
 init: tools
 	@poetry install
@@ -102,14 +124,6 @@ tag:
 	@git push
 	@git tag $(shell grep "^version \= " pyproject.toml | sed "s/version = //" | sed "s/\"//g") -a
 	@git push origin --tags
-
-test-coverage:
-	-poetry run coverage --rcfile=.coveragerc run -m pytest
-	-poetry run coveralls
-
-pytest:
-	@mkdir -p ./tests/output
-	@poetry run pytest --quiet tests
 
 pylint:
 	@time poetry run pylint $(SOURCE_FOLDERS)
