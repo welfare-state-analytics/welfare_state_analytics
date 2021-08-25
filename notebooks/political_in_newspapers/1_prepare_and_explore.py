@@ -20,7 +20,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name,no-member
 
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
