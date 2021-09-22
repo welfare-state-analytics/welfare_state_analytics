@@ -19,7 +19,7 @@ from penelope.utility import PoS_Tag_Scheme, strip_extensions, strip_path_and_ex
 from .checkpoint import load_checkpoints
 
 """
-This module implements a task that loads annotated ParlaCLARIN parliamentary debates into penelope pipeline.
+This module implements an ITask that loads annotated ParlaCLARIN parliamentary debates into the penelope pipeline.
 
 Each parliamentary protocol is stored in a ZIP that contains:
  - annotated CSV files for each individual speech
