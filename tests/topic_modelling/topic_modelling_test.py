@@ -8,7 +8,7 @@ import pandas as pd
 import penelope.topic_modelling as topic_modelling
 import pytest
 from penelope.corpus.text_lines_corpus import SimpleTextLinesCorpus
-from penelope.scripts.compute_topic_model import run_model
+from penelope.scripts.topic_model import main
 from penelope.topic_modelling.container import InferredModel, InferredTopicsData, TrainingCorpus
 
 jj = os.path.join
@@ -306,7 +306,7 @@ def test_run_cli():
         'filename_field': ('year:_:1', 'sequence_id:_:2'),
     }
 
-    run_model(**kwargs)
+    main(**kwargs)
 
     target_folder = jj(kwargs['corpus_folder'], kwargs['name'])
 
