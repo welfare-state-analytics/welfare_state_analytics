@@ -65,6 +65,15 @@ retest:
 init: tools
 	@poetry install
 
+TYPINGS_PACKAGES=scipy numpy statsmodels pandas bokeh sklearn gensim ipywidgets
+
+.PHONY: typings
+.ONESHELL: typings
+typings:
+	@for package in $(TYPINGS_PACKAGES); do \
+		poetry run pyright --createstub $$package ; \
+	done
+
 .ONESHELL: paths
 paths:
 	@for folder in `find . -type f -name "*.ipynb" | xargs dirname | grep -v ".ipynb_checkpoints" | sort | uniq | xargs` ; do \
@@ -253,6 +262,12 @@ prs:
 
 pr:
 	gh pr create
+
+perspective-juypterlab:
+	@poetry run jupyter labextension uninstall @jupyter-widgets/jupyterlab-manager @finos/perspective-juypterlab
+	@poetry run jupyter lab clean
+	@poetry run jupyter labextension install @jupyter-widgets/jupyterlab-manager @finos/perspective-juypterlab
+	@poetry run jupyter lab build
 
 .ONESHELL: pair-ipynb unpair-ipynb sync-ipynb update-ipynb
 
