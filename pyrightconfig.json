@@ -12,12 +12,12 @@
         "**/__init__.py",
         "**/__paths__.py"
     ],
-    "reportMissingImports": true,
-    "reportMissingTypeStubs": false,
-    "reportUntypedFunctionDecorator": false,
-    "reportUntypedClassDecorator": true,
-    "reportOptionalSubscript": false,
-    "reportOptionalMemberAccess": false,
-    "reportOptionalCall": false,
-    "pythonVersion": "3.8"
+    // "reportMissingImports": true,
+    // "reportMissingTypeStubs": false,
+    // "reportUntypedFunctionDecorator": false,
+    // "reportUntypedClassDecorator": true,
+    // "reportOptionalSubscript": false,
+    // "reportOptionalMemberAccess": false,
+    // "reportOptionalCall": false,
+    // "pythonVersion": "3.8"
 }
