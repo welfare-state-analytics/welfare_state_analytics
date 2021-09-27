@@ -3,13 +3,13 @@
 import uuid
 
 import pytest
-from penelope import workflows
 from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.interface import ComputeOpts
 from penelope.pipeline import CorpusConfig, CorpusType
 from penelope.utility import PropertyValueMaskingOpts
+from penelope.workflows import co_occurrence as workflow
 
 RESOURCE_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/resources'
 CONFIG_FILENAME = 'riksdagens-protokoll'
@@ -67,6 +67,7 @@ def test_bug():
             append_pos=False,
             global_tf_threshold=1,
             global_tf_threshold_mask=False,
+            **corpus_config.pipeline_payload.tagged_columns_names,
         ),
         tf_threshold=1,
         tf_threshold_mask=False,
@@ -89,16 +90,18 @@ def test_bug():
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute(
+    bundle = workflow.compute(
         args=compute_opts,
         corpus_config=corpus_config,
-        checkpoint_file='./tests/output/test.zip',
+        tagged_frames_filename='./tests/output/test.zip',
     )
 
     assert bundle is not None
 
 
 def test_checkpoint_feather():
+    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
+
     FEATHER_FOLDER: str = f'./output/{uuid.uuid1()}'
     compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
@@ -144,6 +147,7 @@ def test_checkpoint_feather():
             append_pos=False,
             global_tf_threshold=1,
             global_tf_threshold_mask=False,
+            **corpus_config.pipeline_payload.tagged_columns_names,
         ),
         filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
@@ -168,16 +172,15 @@ def test_checkpoint_feather():
         ),
     )
 
-    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
     corpus_config.checkpoint_opts.feather_folder = FEATHER_FOLDER
     corpus_config.pipeline_payload.files(
         source=compute_opts.corpus_filename,
         document_index_source=None,
     )
-    bundle = workflows.co_occurrence.compute(
+    bundle = workflow.compute(
         args=compute_opts,
         corpus_config=corpus_config,
-        checkpoint_file='./tests/output/test.zip',
+        tagged_frames_filename='./tests/output/test.zip',
     )
 
     assert bundle is not None

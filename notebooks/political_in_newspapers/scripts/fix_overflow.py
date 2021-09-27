@@ -1,9 +1,9 @@
 import os
 from typing import Iterable, Tuple
 
-import gensim
 import numpy as np
 import pandas as pd
+from penelope.vendor.gensim.wrappers import LdaMallet
 
 
 def compile_mallet_document_topics(model, minimum_probability=0.001):
@@ -29,7 +29,7 @@ def fix_int32_overflow(data_folder, model_name):
 
     model_filename = os.path.join(target_folder, 'model', 'gensim.model')
 
-    ldaMallet = gensim.models.wrappers.LdaMallet.load(model_filename)
+    ldaMallet = LdaMallet.load(model_filename)
     ldaMallet.prefix = '{}/{}/'.format(data_folder, model_name)
 
     document_index: pd.DataFrame = pd.read_csv(

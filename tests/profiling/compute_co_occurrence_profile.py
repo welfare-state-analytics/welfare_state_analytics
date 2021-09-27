@@ -1,7 +1,8 @@
 # type: ignore
 
+import penelope.workflows.co_occurrence.compute as workflow
 from penelope import corpus as corpora
-from penelope import pipeline, utility, workflows
+from penelope import pipeline, utility
 from penelope.co_occurrence import ContextOpts
 from penelope.notebook.interface import ComputeOpts
 
@@ -61,6 +62,7 @@ compute_opts = ComputeOpts(
         append_pos=False,
         global_tf_threshold=1,
         global_tf_threshold_mask=False,
+        **corpus_config.pipeline_payload.tagged_columns_names,
     ),
     filter_opts=utility.PropertyValueMaskingOpts(),
     vectorize_opts=corpora.VectorizeOpts(
@@ -84,10 +86,10 @@ corpus_config.pipeline_payload.files(
     source=compute_opts.corpus_filename,
     document_index_source=None,
 )
-bundle = workflows.co_occurrence.compute_partitioned_by_key(
+bundle = workflow.compute(
     args=compute_opts,
     corpus_config=corpus_config,
-    checkpoint_file='./tests/output/test.zip',
+    tagged_frames_filename='./tests/output/test.zip',
 )
 
 assert bundle is not None

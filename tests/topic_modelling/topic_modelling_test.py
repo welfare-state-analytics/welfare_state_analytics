@@ -8,8 +8,9 @@ import pandas as pd
 import penelope.topic_modelling as topic_modelling
 import pytest
 from penelope.corpus.text_lines_corpus import SimpleTextLinesCorpus
-from penelope.scripts.topic_model import main
+from penelope.scripts.topic_model_legacy import main
 from penelope.topic_modelling.container import InferredModel, InferredTopicsData, TrainingCorpus
+from penelope.vendor.gensim.wrappers import LdaMallet
 
 jj = os.path.join
 
@@ -33,7 +34,7 @@ TOPIC_MODELING_OPTS = {
     "gensim_mallet-lda": {
         'method': "gensim_mallet-lda",
         'skip': os.environ.get('MALLET_HOME', None) is not None,
-        'class': gensim.models.wrappers.LdaMallet,
+        'class': LdaMallet,
         'run_opts': {
             'default_mallet_home': os.environ.get('MALLET_HOME', None),
             'n_topics': 4,  # note: mallet num_topics
@@ -290,11 +291,11 @@ def test_load_inferred_topics_data(opts):
 def test_run_cli():
 
     kwargs = {
-        'name': f"{uuid.uuid1()}",
+        'target_name': f"{uuid.uuid1()}",
         'corpus_folder': './tests/output',
         'corpus_filename': './tests/test_data/test_corpus.zip',
         'engine': 'gensim_lda-multicore',
-        'topic_modeling_opts': {
+        'engine_args': {
             # 'passes': None,
             # 'random_seed': None,
             'n_topics': 5,
@@ -308,7 +309,7 @@ def test_run_cli():
 
     main(**kwargs)
 
-    target_folder = jj(kwargs['corpus_folder'], kwargs['name'])
+    target_folder = jj(kwargs['corpus_folder'], kwargs['target_name'])
 
     assert os.path.isdir(target_folder)
     assert os.path.isfile(jj(target_folder, 'topic_model.pickle.pbz2'))
