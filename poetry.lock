@@ -552,7 +552,7 @@ unit_tests = ["ipython (>=5.4.0)", "notebook", "matplotlib (>=3)", "bokeh (>=1.1
 
 [[package]]
 name = "humlab-penelope"
-version = "0.5.18"
+version = "0.5.19"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
@@ -2532,7 +2532,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.8.*"
-content-hash = "56755c76697976740984b39c4ffc6f29de02302972c4b88df865804377973f56"
+content-hash = "6f452713e2864a58877df45636858a550fea56dd5b31f041e9b8b1d22fb3540a"
 
 [metadata.files]
 alive-progress = [
@@ -2959,8 +2959,8 @@ holoviews = [
     {file = "holoviews-1.14.4.tar.gz", hash = "sha256:08e8be82c2e514e1700a75f02307f414179dc0ecfa2202702dd304a381909eaa"},
 ]
 humlab-penelope = [
-    {file = "humlab-penelope-0.5.18.tar.gz", hash = "sha256:3b0d73727466ae037117e7671326e52e771f97d03b883504ffe87861c0687134"},
-    {file = "humlab_penelope-0.5.18-py3-none-any.whl", hash = "sha256:6fed859355a662d8c084c6d42305f0c38f506e66e969b2645bb5d2f26884dc92"},
+    {file = "humlab-penelope-0.5.19.tar.gz", hash = "sha256:a24769d79040ca97e72efa60ee40fdf6ac59cc7b1b56333dd78519ea426d9606"},
+    {file = "humlab_penelope-0.5.19-py3-none-any.whl", hash = "sha256:2b98485512f489fbeddedd5909f0f3a54c7705bac02511002d91b99f2d02d1cc"},
 ]
 identify = [
     {file = "identify-2.2.10-py2.py3-none-any.whl", hash = "sha256:18d0c531ee3dbc112fa6181f34faa179de3f57ea57ae2899754f16a7e0ff6421"},

@@ -16,7 +16,7 @@ RESOURCE_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_anal
 CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
 
-# FIXME Word trends raises error
+
 def test_bug_load_word_trends():
     corpus_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
     data_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
