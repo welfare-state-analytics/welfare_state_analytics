@@ -6,11 +6,14 @@ from westac.parliamentary_debates.members import GITHUB_DATA_URL, ParliamentaryM
 from westac.parliamentary_debates.pipelines import to_tagged_frame_pipeline
 
 
+@pytest.mark.skip("Not implemented")
 def test_load_members():
 
     parliament_data = ParliamentaryMembers.load(GITHUB_DATA_URL)
 
     assert parliament_data is not None
+
+    assert parliament_data.genders == [None, 'man', 'woman']
 
 
 @pytest.mark.skip("long running")

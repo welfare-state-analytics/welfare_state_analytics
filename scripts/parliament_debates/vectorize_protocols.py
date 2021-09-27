@@ -199,6 +199,7 @@ def vectorize(
                 lemmatize=lemmatize,
                 tf_threshold=tf_threshold,
                 tf_threshold_mask=tf_threshold_mask,
+                **corpus_config.pipeline_payload.tagged_columns_names,
             ),
             filter_opts=None,
             vectorize_opts=VectorizeOpts(already_tokenized=True),

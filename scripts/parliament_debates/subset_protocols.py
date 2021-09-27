@@ -114,6 +114,7 @@
 #         #         pos_excludes=pos_excludes,
 #         #         pos_paddings=pos_paddings,
 #         #         lemmatize=lemmatize,
+#         #         **corpus_config.pipeline_payload.tagged_columns_names
 #         #     ),
 #         #     filter_opts=None,
 #         #     vectorize_opts=VectorizeOpts(already_tokenized=True),

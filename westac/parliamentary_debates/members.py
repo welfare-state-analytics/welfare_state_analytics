@@ -1,9 +1,14 @@
 from dataclasses import dataclass
+from enum import IntEnum
 from typing import Mapping
 import pandas as pd
 
 GITHUB_DATA_URL = "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus/main/corpus/members_of_parliament.csv"
 
+class Gender(IntEnum):
+    Undefined = 0
+    Male = 1
+    Female = 2
 
 @dataclass
 class ParliamentaryMembers:

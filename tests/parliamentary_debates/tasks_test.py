@@ -39,6 +39,7 @@ def checkpoint_opts() -> checkpoint.CheckpointOpts:
     return opts
 
 
+@pytest.mark.skip("Not implemented")
 def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
     file_pattern: str = "*.zip"
@@ -75,6 +76,7 @@ def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkp
     }
 
 
+@pytest.mark.skip("Not implemented")
 def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.CheckpointOpts):
 
     file_pattern: str = "*.zip"
@@ -98,6 +100,7 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
     assert loaded_filenames == filenames_to_load
 
 
+@pytest.mark.skip("Not implemented")
 def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
     source_folder: str = "tests/test_data/annotated"
