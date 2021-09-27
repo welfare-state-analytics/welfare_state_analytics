@@ -102,3 +102,64 @@ for p in pairs:
     _ = dd[p]
 dd
 # %%
+
+
+# %%
+import pandas as pd
+import csv
+import hashlib
+
+tagged_csv_str = (
+    "token\tlemma\tpos\txpos\n"
+    "Hej\thej\tIN\tIN\n"
+    "!\t!\tMID\tMID\n"
+    "Detta\tdetta\tPN\tPN.NEU.SIN.DEF.SUB+OBJ\n"
+    "är\tvara\tVB\tVB.PRS.AKT\n"
+    "ett\ten\tDT\tDT.NEU.SIN.IND\n"
+    "test\ttest\tNN\tNN.NEU.SIN.IND.NOM\n"
+    "!\t!\tMAD\tMAD\n"
+    "'\t\tMAD\tMAD\n"
+    '"\t\tMAD\tMAD'
+)
+
+write_opts = dict(
+    quoting=csv.QUOTE_MINIMAL,
+    escapechar="\\",
+    doublequote=False,
+    index=False,
+    sep='\t',
+)
+
+data = [ {'id': i, 'checksum': hashlib.sha1(tagged_csv_str.encode('utf-8')).hexdigest(), 'text': tagged_csv_str } for i in range(0,1)]
+df = pd.DataFrame(data).set_index('id')
+df.to_csv('APA.csv', **write_opts)
+
+# %%
+
+# %%
+df2 = pd.read_csv('APA.csv', sep='\t', quoting=csv.QUOTE_MINIMAL, escapechar='\\', quotechar='"', index_col='id')
+df2.to_csv('APA.csv', sep='\t', quoting=csv.QUOTE_MINIMAL, escapechar='\\', quotechar='"')
+
+
+# %%
+tagged_csv_str
+# %%
+df2.info()
+# %%
+print(df)
+# %%
+
+# %%
+from io import StringIO
+tagged_csv_str2 = str(df2.loc[0].text)
+pd.read_csv(tagged_csv_str2)
+# %%
+#tagged_csv_str2
+
+'token\tlemma\tpos\txpos\nHej\thej\tIN\tIN\n!\t!\tMID\tMID\nDetta\tdetta\tPN\tPN.NEU.SIN.DEF.SUB+OBJ\när\tvara\tVB\tVB.PRS.AKT\nett\ten\tDT\tDT.NEU.SIN.IND\ntest\ttest\tNN\tNN.NEU.SIN.IND.NOM\n!\t!\tMAD\tMAD\n\'\t\tMAD\tMAD\n"\t\tMAD\tMAD'
+
+# %%
+df2
+# %%
+df2.reset_index().to_dict(orient='records')
+# %%
