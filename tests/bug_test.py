@@ -6,14 +6,93 @@ import pytest
 from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
+from penelope.notebook.dtm import ComputeGUI
 from penelope.notebook.interface import ComputeOpts
-from penelope.pipeline import CorpusConfig, CorpusType
+from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, PipelinePayload
 from penelope.utility import PropertyValueMaskingOpts
 from penelope.workflows import co_occurrence as workflow
 
 RESOURCE_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/resources'
 CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
+
+# FIXME Word trends raises error
+def test_bug_load_word_trends():
+    corpus_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
+    data_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
+    corpus_config: CorpusConfig = CorpusConfig(
+        corpus_name='riksdagens-protokoll',
+        corpus_type=CorpusType.SparvCSV,
+        corpus_pattern='*sparv4.csv.zip',
+        checkpoint_opts=CheckpointOpts(
+            content_type_code=1,
+            document_index_name=None,
+            document_index_sep=None,
+            sep='\t',
+            quoting=3,
+            custom_serializer_classname='penelope.pipeline.sparv.convert.SparvCsvSerializer',
+            deserialize_processes=6,
+            deserialize_chunksize=4,
+            text_column='token',
+            lemma_column='baseform',
+            pos_column='pos',
+            extra_columns=[],
+            frequency_column=None,
+            index_column=None,
+            feather_folder='/data/westac/shared/checkpoints/riksdagens-protokoll.1920-2019.sparv4.csv_feather',
+            lower_lemma=True,
+        ),
+        text_reader_opts=TextReaderOpts(
+            filename_pattern='*.csv',
+            filename_filter=None,
+            filename_fields=[
+                'year:prot\\_(\\d{4}).*',
+                'year2:prot_\\d{4}(\\d{2})__*',
+                'number:prot_\\d+[afk_]{0,4}__(\\d+).*',
+            ],
+            index_field=None,
+            as_binary=False,
+            sep='\t',
+            quoting=3,
+            n_processes=1,
+            n_chunksize=2,
+        ),
+        filter_opts=None,
+        pipelines={'tagged_frame_pipeline': 'penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline'},
+        pipeline_payload=PipelinePayload(
+            source='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.sparv4.csv.zip',
+            document_index_source=None,
+            document_index_sep='\t',
+            memory_store={
+                'lang': 'se',
+                'tagger': 'Sparv',
+                'sparv_version': 4,
+                'text_column': 'token',
+                'lemma_column': 'baseform',
+                'pos_column': 'pos',
+            },
+            pos_schema_name='SUC',
+            filenames=None,
+            metadata=None,
+            token2id=None,
+            effective_document_index=None,
+        ),
+        language='swedish',
+    )
+    compute_callback = None
+    done_callback = None
+
+    gui = ComputeGUI(
+        default_corpus_path=corpus_folder,
+        default_corpus_filename=(corpus_config.pipeline_payload.source or ''),
+        default_data_folder=data_folder,
+    ).setup(
+        config=corpus_config,
+        compute_callback=compute_callback,
+        done_callback=done_callback,
+    )
+
+    assert gui is not None
 
 
 @pytest.mark.long_running
