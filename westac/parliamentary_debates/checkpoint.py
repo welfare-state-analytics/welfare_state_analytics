@@ -44,10 +44,10 @@ def parallell_deserialized_payload_stream(
 
 
 class ParlaCsvContentSerializer(cp.CsvContentSerializer):
-    def serialize(self, content: pd.DataFrame, options: cp.CheckpointOpts) -> str:
+    def serialize(self, *, content: pd.DataFrame, options: cp.CheckpointOpts) -> str:
         return content.to_csv(sep=options.sep, header=True)
 
-    def deserialize(self, content: str, options: cp.CheckpointOpts) -> pd.DataFrame:
+    def deserialize(self, *, content: str, options: cp.CheckpointOpts) -> pd.DataFrame:
         data: pd.DataFrame = pd.read_csv(
             StringIO(content),
             sep=options.sep,
