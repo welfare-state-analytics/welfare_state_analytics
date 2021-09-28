@@ -82,6 +82,8 @@ def create_bigger_vectorized_corpus(
         tf_threshold_mask=tf_threshold_mask,
         create_subfolder=True,
         persist=True,
+        filter_opts=None,
+        vectorize_opts=None,
     )
     corpus: VectorizedCorpus = workflows.document_term_matrix.compute(args=args, corpus_config=None)
 

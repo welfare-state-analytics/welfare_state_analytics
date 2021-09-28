@@ -243,51 +243,6 @@ def test_store_inferred_topics_data(opts):
     shutil.rmtree(target_folder)
 
 
-@pytest.mark.parametrize("opts", list(TOPIC_MODELING_OPTS.values()))
-def test_load_inferred_topics_data(opts):
-
-    # Arrange
-    inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
-
-    test_inferred_topics_data: InferredTopicsData = topic_modelling.compile_inferred_topics_data(
-        topic_model=inferred_model.topic_model,
-        corpus=inferred_model.train_corpus.corpus,
-        id2word=inferred_model.train_corpus.id2word,
-        document_index=inferred_model.train_corpus.document_index,
-        n_tokens=5,
-    )
-    target_folder = jj(OUTPUT_FOLDER, f"{uuid.uuid1()}")
-    test_inferred_topics_data.store(target_folder)
-    # Act
-    inferred_topics_data: InferredTopicsData = topic_modelling.InferredTopicsData.load(
-        folder=target_folder, filename_fields=None
-    )
-
-    # Assert
-    assert inferred_topics_data is not None
-    assert inferred_topics_data.dictionary.equals(test_inferred_topics_data.dictionary)
-    assert (inferred_topics_data.document_index == test_inferred_topics_data.document_index).all().all()
-    assert inferred_topics_data.topic_token_overview.round(5).equals(
-        test_inferred_topics_data.topic_token_overview.round(5)
-    )
-    # assert inferred_topics_data.document_topic_weights.round(5).equals(test_inferred_topics_data.document_topic_weights.round(5))
-    assert (
-        inferred_topics_data.topic_token_weights.round(5)
-        .eq(test_inferred_topics_data.topic_token_weights.round(5))
-        .all()
-        .all()
-    )
-    # assert inferred_topics_data.topic_token_weights.round(5).equals(test_inferred_topics_data.topic_token_weights.round(5))
-    assert (
-        inferred_topics_data.topic_token_weights.round(5)
-        .eq(test_inferred_topics_data.topic_token_weights.round(5))
-        .all()
-        .all()
-    )
-
-    shutil.rmtree(target_folder)
-
-
 def test_run_cli():
 
     kwargs = {
