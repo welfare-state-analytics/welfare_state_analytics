@@ -1,6 +1,7 @@
 # Visualize topic co-occurrence
 import types
 import warnings
+import pandas as pd
 
 import ipywidgets as widgets
 import penelope.notebook.widgets_utils as widgets_utils
@@ -19,7 +20,6 @@ logger = utility.get_logger()
 
 def display_gui(state: TopicModelContainer):
 
-    lw = lambda w: widgets.Layout(width=w)
     n_topics = state.num_topics
 
     text_id = 'nx_topic_topic'
@@ -31,7 +31,7 @@ def display_gui(state: TopicModelContainer):
 
     topic_proportions = state.inferred_topics.compute_topic_proportions()
 
-    titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights)
+    titles: pd.DataFrame = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights)
 
     gui = types.SimpleNamespace(
         n_topics=n_topics,
@@ -50,17 +50,17 @@ def display_gui(state: TopicModelContainer):
             description='Threshold', min=0.01, max=1.0, step=0.01, value=0.20, continues_update=False
         ),
         output_format=widgets.Dropdown(
-            description='Output', options=output_options, value='network', layout=lw('200px')
+            description='Output', options=output_options, value='network', layout={'width':'200px'}
         ),
         layout=widgets.Dropdown(
-            description='Layout', options=layout_options, value='Fruchterman-Reingold', layout=lw('250px')
+            description='Layout', options=layout_options, value='Fruchterman-Reingold', layout={'width':'250px'}
         ),
         publication_id=widgets.Dropdown(
-            description='Publication', options=publications, value=None, layout=widgets.Layout(width="250px")
+            description='Publication', options=publications, value=None,  layout={'width':'250px'}
         ),
         progress=widgets.IntProgress(min=0, max=4, step=1, value=0, layout=widgets.Layout(width="99%")),
         ignores=widgets.SelectMultiple(
-            description='Ignore', options=ignore_options, value=[], rows=5, layout=lw('250px')
+            description='Ignore', options=ignore_options, value=[], rows=5, layout={'width':'250px'}
         ),
         node_range=widgets.IntRangeSlider(
             description='Node size', min=10, max=100, step=1, value=(20, 60), continues_update=False
