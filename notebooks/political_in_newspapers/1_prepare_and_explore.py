@@ -43,7 +43,7 @@ flatten = lambda l: [item for sublist in l for item in sublist]
 # %%
 
 
-def load_meta_text_blocks_as_data_frame(folder):
+def load_meta_text_blocks_as_data_frame(folder: str) -> pd.DataFrame:
     """ Load censored corpus data """
 
     filename = os.path.join(folder, corpus_data.meta_textblocks_filename)
@@ -54,7 +54,7 @@ def load_meta_text_blocks_as_data_frame(folder):
     return df_meta
 
 
-def load_reconstructed_text_corpus(folder):
+def load_reconstructed_text_corpus(folder) -> pd.DataFrame:
     filename: str = os.path.join(folder, corpus_data.reconstructed_text_corpus_file)
     if not os.path.isfile(filename):
         df_corpus: pd.DataFrame = corpus_data.load_corpus_dtm_as_data_frame(folder)
@@ -72,7 +72,7 @@ def load_reconstructed_text_corpus(folder):
     return df_reconstructed_text_corpus
 
 
-def plot_document_size_distribution(df_document):
+def plot_document_size_distribution(df_document) -> pd.DataFrame:
 
     df_term_counts = df_document.groupby("term_count").size()
 
@@ -89,7 +89,7 @@ def plot_document_size_distribution(df_document):
     return df_term_counts
 
 
-def unique_documents_per_year_and_publication(df_document):
+def unique_documents_per_year_and_publication(df_document) -> pd.DataFrame:
     df = (
         df_document.groupby(["year", "publication"])
         .agg(document_count=("doc_id", "nunique"))
@@ -99,7 +99,7 @@ def unique_documents_per_year_and_publication(df_document):
     return df
 
 
-def mean_tokens_per_year(df_document):
+def mean_tokens_per_year(df_document) -> pd.DataFrame:
     df = (
         df_document.groupby(["year", "publication"])
         .agg(term_count=("term_count", "mean"))
