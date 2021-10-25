@@ -5,11 +5,10 @@ from typing import Any, Mapping
 
 import gensim
 import pandas as pd
-import penelope.topic_modelling as topic_modelling
+import penelope.topic_modelling as tm
 import pytest
 from penelope.corpus.text_lines_corpus import SimpleTextLinesCorpus
 from penelope.scripts.topic_model_legacy import main
-from penelope.topic_modelling.container import InferredModel, InferredTopicsData, TrainingCorpus
 from penelope.vendor.gensim.wrappers import LdaMallet
 
 jj = os.path.join
@@ -28,7 +27,7 @@ TOPIC_MODELING_OPTS = {
             'alpha': 'auto',
             'workers': 1,
             'max_iter': 100,
-            'prefix': '',
+            'work_folder': '',
         },
     },
     "gensim_mallet-lda": {
@@ -39,7 +38,7 @@ TOPIC_MODELING_OPTS = {
             'default_mallet_home': os.environ.get('MALLET_HOME', None),
             'n_topics': 4,  # note: mallet num_topics
             'max_iter': 3000,  # note: mallet iterations
-            'prefix': OUTPUT_FOLDER,
+            'work_folder': OUTPUT_FOLDER,
             'workers': 1,
             'optimize_interval': 10,
             'topic_threshold': 0.0,
@@ -58,15 +57,15 @@ class TranströmerCorpus(SimpleTextLinesCorpus):
         )
 
 
-def compute_inferred_model(engine: str, opts: Mapping[str, Any]) -> InferredModel:
+def compute_inferred_model(engine: str, opts: Mapping[str, Any]) -> tm.InferredModel:
 
     corpus: TranströmerCorpus = TranströmerCorpus()
-    train_corpus = TrainingCorpus(
+    train_corpus: tm.TrainingCorpus = tm.TrainingCorpus(
         terms=corpus.terms,
         document_index=corpus.document_index,
     )
 
-    inferred_model = topic_modelling.infer_model(
+    inferred_model: tm.InferredModel = tm.infer_model(
         train_corpus=train_corpus,
         method=engine,
         engine_args=opts,
@@ -76,7 +75,7 @@ def compute_inferred_model(engine: str, opts: Mapping[str, Any]) -> InferredMode
 
 def test_tranströmers_corpus():
 
-    corpus = TranströmerCorpus()
+    corpus: TranströmerCorpus = TranströmerCorpus()
     for filename, tokens in corpus:
         assert len(filename) > 0
         assert len(tokens) > 0
@@ -85,7 +84,7 @@ def test_tranströmers_corpus():
 @pytest.mark.parametrize("opts", list(TOPIC_MODELING_OPTS.values()))
 def test_infer_model(opts):
 
-    inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
+    inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
 
     assert inferred_model is not None
     assert inferred_model.method == opts['method']
@@ -107,12 +106,12 @@ def test_infer_model(opts):
 def test_store_inferred_model(opts):
 
     # Arrange
-    name = f"{uuid.uuid1()}"
-    target_folder = os.path.join(OUTPUT_FOLDER, name)
-    inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
+    name: str = f"{uuid.uuid1()}"
+    target_folder: str = os.path.join(OUTPUT_FOLDER, name)
+    inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
 
     # Act
-    topic_modelling.store_model(inferred_model, target_folder)
+    inferred_model.store(inferred_model, target_folder)
 
     # Assert
     assert os.path.isfile(os.path.join(target_folder, "topic_model.pickle.pbz2"))
@@ -140,12 +139,12 @@ def test_load_inferred_model_when_stored_corpus_is_true_has_same_loaded_trained_
 
     name = f"{uuid.uuid1()}"
     target_folder = os.path.join(OUTPUT_FOLDER, name)
-    test_inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
-    topic_modelling.store_model(test_inferred_model, target_folder, store_corpus=True)
+    test_inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
+    test_inferred_model.store(test_inferred_model, target_folder, store_corpus=True)
 
     # Act
 
-    inferred_model = topic_modelling.load_model(target_folder)
+    inferred_model: tm.InferredModel = tm.InferredModel.load(target_folder)
 
     # Assert
     assert inferred_model is not None
@@ -165,14 +164,14 @@ def test_load_inferred_model_when_stored_corpus_is_true_has_same_loaded_trained_
 def test_load_inferred_model_when_stored_corpus_is_false_has_no_trained_corpus(opts):
 
     # Arrange
-    name = f"{uuid.uuid1()}"
-    target_folder = os.path.join(OUTPUT_FOLDER, name)
-    test_inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
-    topic_modelling.store_model(test_inferred_model, target_folder, store_corpus=False)
+    name: str = f"{uuid.uuid1()}"
+    target_folder: str = os.path.join(OUTPUT_FOLDER, name)
+    test_inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
+    test_inferred_model.store(test_inferred_model, target_folder, store_corpus=False)
 
     # Actopts['method'],
 
-    inferred_model = topic_modelling.load_model(target_folder)
+    inferred_model: tm.InferredModel = tm.InferredModel.load(target_folder)
 
     # Assert
     assert inferred_model is not None
@@ -186,12 +185,9 @@ def test_load_inferred_model_when_stored_corpus_is_false_has_no_trained_corpus(o
 @pytest.mark.parametrize("opts", list(TOPIC_MODELING_OPTS.values()))
 def test_infer_topics_data(opts):
 
-    # Arrange
     inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
 
-    # Act
-
-    inferred_topics_data = topic_modelling.compile_inferred_topics_data(
+    inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
         id2word=inferred_model.train_corpus.id2word,
@@ -199,7 +195,6 @@ def test_infer_topics_data(opts):
         n_tokens=5,
     )
 
-    # Assert
     assert inferred_topics_data is not None
     assert isinstance(inferred_topics_data.document_index, pd.DataFrame)
     assert isinstance(inferred_topics_data.dictionary, pd.DataFrame)
@@ -207,21 +202,13 @@ def test_infer_topics_data(opts):
     assert isinstance(inferred_topics_data.topic_token_overview, pd.DataFrame)
     assert isinstance(inferred_topics_data.document_topic_weights, pd.DataFrame)
 
-    # assert inferred_topics_data.year_period == (2019, 2020)
-    # assert set(inferred_topics_data.topic_ids) == {0, 1, 2, 3}
-    # assert len(inferred_topics_data.document_index) == 5
-    # assert set(inferred_topics_data.topic_token_weights.topic_id.unique()) == {0, 1, 2, 3}
-    # assert set(inferred_topics_data.topic_token_overview.index) == {0, 1, 2, 3}
-    # assert set(inferred_topics_data.document_topic_weights.topic_id.unique()) == {0, 1, 2, 3}
-
 
 @pytest.mark.parametrize("opts", list(TOPIC_MODELING_OPTS.values()))
 def test_store_inferred_topics_data(opts):
 
-    # Arrange
     inferred_model = compute_inferred_model(opts['method'], opts['run_opts'])
 
-    inferred_topics_data: InferredTopicsData = topic_modelling.compile_inferred_topics_data(
+    inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
         id2word=inferred_model.train_corpus.id2word,
@@ -230,10 +217,8 @@ def test_store_inferred_topics_data(opts):
     )
     target_folder = jj(OUTPUT_FOLDER, f"{uuid.uuid1()}")
 
-    # Act
     inferred_topics_data.store(target_folder)
 
-    # Assert
     assert os.path.isfile(jj(target_folder, "dictionary.zip"))
     assert os.path.isfile(jj(target_folder, "document_topic_weights.zip"))
     assert os.path.isfile(jj(target_folder, "documents.zip"))
@@ -257,7 +242,6 @@ def test_run_cli():
             'alpha': 'asymmetric',
             # 'workers': None,
             # 'max_iter': None,
-            # 'prefix': None,
         },
         'filename_field': ('year:_:1', 'sequence_id:_:2'),
     }
@@ -289,4 +273,4 @@ def test_run_cli():
 #         },
 #     }
 # ]
-# load_model(corpus_config, corpus_folder, state, model_name, model_infos)
+# tm.InferredModel.load(corpus_config, corpus_folder, state, model_name, model_infos)
