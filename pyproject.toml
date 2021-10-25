@@ -41,7 +41,7 @@ jupyter-bokeh = "*"
 jupyterlab = "==3.0.16"
 ipywidgets = "==7.6.3"
 msgpack = "^1.0.2"
-humlab-penelope = "^0.5.20"
+humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
