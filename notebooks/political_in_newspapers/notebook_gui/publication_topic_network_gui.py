@@ -21,7 +21,7 @@ TEXT_ID = 'nx_pub_topic'
 
 
 # pylint: disable=too-many-locals, too-many-arguments
-def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pylint: disable=unused-argument
+def plot_document_topic_network(network, layout, scale: float = 1.0, titles=None):  # pylint: disable=unused-argument
     tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
     source_nodes, target_nodes = network_utility.get_bipartite_node_set(network, bipartite=0)
 
@@ -52,7 +52,7 @@ def plot_document_topic_network(network, layout, scale=1.0, titles=None):  # pyl
         )
     )
 
-    text_opts = dict(x='x', y='y', text='name', level='overlay', x_offset=0, y_offset=0, text_font_size='8pt')
+    text_opts: dict = dict(x='x', y='y', text='name', level='overlay', x_offset=0, y_offset=0, text_font_size='8pt')
 
     p.add_layout(
         bokeh.models.LabelSet(  # type: ignore
