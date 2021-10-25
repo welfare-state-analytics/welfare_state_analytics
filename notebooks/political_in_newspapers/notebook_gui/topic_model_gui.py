@@ -13,7 +13,7 @@ import penelope.vendor.gensim as gensim_utility
 import penelope.vendor.textacy as textacy_utility
 from IPython.display import display
 from penelope.notebook.topic_modelling import TopicModelContainer
-from penelope.topic_modelling.container import InferredModel, InferredTopicsData
+from penelope.topic_modelling import InferredModel, InferredTopicsData
 
 # from . topic_model_compute import compute_topic_model
 
@@ -177,11 +177,11 @@ class ComputeTopicModelUserInterface:
                         train_corpus=train_corpus, method=method, engine_args=topic_modeller_args
                     )
 
-                    inferred_topics: InferredTopicsData = topic_modelling.compile_inferred_topics_data(
-                        inferred_model.topic_model,
-                        train_corpus.corpus,
-                        train_corpus.id2word,
-                        train_corpus.document_index,
+                    inferred_topics: InferredTopicsData = topic_modelling.predict_topics(
+                        topic_model=inferred_model.topic_model,
+                        corpus=train_corpus.corpus,
+                        id2token=train_corpus.id2word,
+                        document_index=train_corpus.document_index,
                     )
 
                     inferred_model.topic_model.save(os.path.join(target_folder, 'gensim.model'))
@@ -273,14 +273,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         self.corpus_widgets.include_pos.observe(pos_change_handler, 'value')
         pos_change_handler()
 
-        def corpus_method_change_handler(*_):
-            self.corpus_widgets.ngrams.disabled = False
-            if 'MALLET' in self.model_widgets.method.value:
-                self.corpus_widgets.ngrams.value = [1]
-                self.corpus_widgets.ngrams.disabled = True
-
-        self.model_widgets.method.observe(corpus_method_change_handler, 'value')
-
         ComputeTopicModelUserInterface.display(self, corpus)
 
     def get_corpus_terms(self, corpus):
@@ -293,9 +285,8 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         gui = self.corpus_widgets
 
         pipeline = (
-            textacy_utility.ExtractPipeline.build(corpus, target=gui.normalize.value)
+            textacy_utility.ExtractPipeline(corpus, target=gui.normalize.value)
             .ingest(
-                ngrams=gui.ngrams.value,
                 as_strings=True,
                 include_pos=gui.include_pos.value,
                 filter_stops=gui.filter_stops.value,
@@ -322,7 +313,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
         pos_options = get_pos_options(self.tagset)
 
         normalize_options = {'None': False, 'Lemma': 'lemma', 'Lower': 'lower'}
-        ngrams_options = {'1': [1], '1, 2': [1, 2], '1,2,3': [1, 2, 3]}
         default_include_pos = ['NOUN', 'PROPN']
         frequent_words = ['_mask_']
 
@@ -338,9 +328,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
                 options=list(range(75, 101)),
                 value=100,
                 layout=widgets.Layout(width='200px', **item_layout),
-            ),
-            ngrams=widgets.Dropdown(
-                description='n-grams', options=ngrams_options, value=[1], layout=widgets.Layout(width='200px')
             ),
             normalize=widgets.Dropdown(
                 description='Normalize',
@@ -370,7 +357,6 @@ class TextacyCorpusUserInterface(ComputeTopicModelUserInterface):
                     gui.min_freq,
                     gui.max_doc_freq,
                     gui.normalize,
-                    gui.ngrams,
                 ]
             ),
             widgets.VBox(
