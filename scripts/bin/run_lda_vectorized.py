@@ -48,7 +48,7 @@ ENGINE_OPTIONS = [
 @click.option('--random-seed', default=None, help="Random seed value", type=click.INT)
 @click.option('--workers', default=None, help='Number of workers (if applicable).', type=click.INT)
 @click.option('--max-iter', default=None, help='Max number of iterations.', type=click.INT)
-@click.option('--prefix', default=None, help='Prefix.')
+@click.option('--work-folder', default=None, help='Work folder (MALLET).')
 def compute_topic_model(
     name,
     n_topics,
@@ -61,7 +61,7 @@ def compute_topic_model(
     alpha,
     workers,
     max_iter,
-    prefix,
+    work_folder,
 ):
     run_model(
         name=name,
@@ -75,7 +75,7 @@ def compute_topic_model(
         alpha=alpha,
         workers=workers,
         max_iter=max_iter,
-        prefix=prefix,
+        work_folder=work_folder,
     )
 
 
@@ -91,7 +91,7 @@ def run_model(
     alpha='asymmetric',  # pylint: disable=unused-argument
     workers=None,
     max_iter=None,
-    prefix=None,
+    work_folder=None,
 ):
     """ runner """
 
@@ -102,7 +102,7 @@ def run_model(
     topic_modeling_opts = {
         k: v
         for k, v in call_arguments.items()
-        if k in ['n_topics', 'passes', 'random_seed', 'alpha', 'workers', 'max_iter', 'prefix'] and v is not None
+        if k in ['n_topics', 'passes', 'random_seed', 'alpha', 'workers', 'max_iter', 'work_folder'] and v is not None
     }
 
     if engine not in [y for _, y in ENGINE_OPTIONS]:
@@ -151,7 +151,7 @@ def run_model(
 
     topic_modelling.store_model(inferred_model, target_folder)
 
-    inferred_topics = topic_modelling.compile_inferred_topics_data(
+    inferred_topics = topic_modelling.predict_topics(
         inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.document_index
     )
     inferred_topics.store(target_folder)
