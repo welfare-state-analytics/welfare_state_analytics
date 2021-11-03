@@ -1,86 +1,37 @@
-import types
-
-import ipywidgets as widgets
-import pandas as pd
-import penelope.notebook.widgets_utils as widgets_utils
-import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
+from ipywidgets import Dropdown, HBox, VBox
+from penelope.notebook.topic_modelling import TopicModelContainer, TopicOverviewGUI
 from IPython.display import display
-from penelope.notebook.topic_modelling import TopicModelContainer, display_topic_trends_heatmap
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 
-def display_gui(state: TopicModelContainer):
+class PoliticalTopicOverviewGUI(TopicOverviewGUI):
 
-    lw = lambda w: widgets.Layout(width=w)
+    def __init__(self):
+        super().__init__()
 
-    text_id: str = 'topic_relevance'
+        publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
+        self.publication_id: Dropdown = Dropdown(
+            description='Publication', options=publications, value=None, layout=dict(width="200px")
+        )
 
-    publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
-    titles = topic_modelling.get_topic_titles(state.inferred_topics.topic_token_weights, n_tokens=100)
-    weighings = [(x['description'], x['key']) for x in topic_modelling.YEARLY_MEAN_COMPUTE_METHODS]
+    def setup(self, state: TopicModelContainer):
+        super().setup(state)
+        self.publication_id.observe(self.update_handler, names='value')
 
-    gui = types.SimpleNamespace(
-        text_id=text_id,
-        text=widgets_utils.text_widget(text_id),
-        flip_axis=widgets.ToggleButton(value=True, description='Flip', icon='', layout=lw("80px")),
-        publication_id=widgets.Dropdown(
-            description='Publication', options=publications, value=None, layout=widgets.Layout(width="200px")
-        ),
-        aggregate=widgets.Dropdown(
-            description='Aggregate', options=weighings, value='true_mean', layout=widgets.Layout(width="250px")
-        ),
-        output_format=widgets.Dropdown(
-            description='Output', options=['Heatmap', 'Table'], value='Heatmap', layout=lw("180px")
-        ),
-        output=widgets.Output(),
-    )
+    def layout(self) -> VBox:
 
-    _current_weight_over_time = dict(publication_id=-1, weights=None)
-
-    def weight_over_time(document_topic_weights: pd.DataFrame, publication_id: int) -> pd.DataFrame:
-        """Cache weight over time due to the large number of ocuments"""
-        if _current_weight_over_time["publication_id"] != publication_id:
-            _current_weight_over_time["publication_id"] = publication_id
-            df: pd.DataFrame = document_topic_weights
-            if publication_id is not None:
-                df = df[df.publication_id == publication_id]  # type: ignore
-            _current_weight_over_time["weights"] = topic_modelling.compute_topic_yearly_means(df).fillna(0)  # type: ignore
-
-        return _current_weight_over_time["weights"]  # type: ignore
-
-    def update_handler(*_):
-
-        gui.output.clear_output()
-        gui.flip_axis.disabled = True
-        gui.flip_axis.description = 'Wait!'
-        with gui.output:
-
-            weights = weight_over_time(state.inferred_topics.document_topic_weights, gui.publication_id.value)
-
-            display_topic_trends_heatmap(
-                weights,
-                titles,
-                flip_axis=gui.flip_axis.value,
-                aggregate=gui.aggregate.value,
-                output_format=gui.output_format.value,
-            )
-        gui.flip_axis.disabled = False
-        gui.flip_axis.description = 'Flip'
-
-    gui.publication_id.observe(update_handler, names='value')
-    gui.aggregate.observe(update_handler, names='value')
-    gui.output_format.observe(update_handler, names='value')
-
-    display(
-        widgets.VBox(
-            children=[
-                widgets.HBox(children=[gui.aggregate, gui.publication_id, gui.output_format, gui.flip_axis]),
-                widgets.HBox(children=[gui.output]),
-                gui.text,
+        return VBox(
+            [
+                HBox([self.aggregate, self.publication_id, self.output_format, self.flip_axis]),
+                HBox([self.output]),
+                self.text,
             ]
         )
-    )
 
-    update_handler()
+def display_gui(state: TopicModelContainer):
+
+    gui: PoliticalTopicOverviewGUI = PoliticalTopicOverviewGUI().setup(state)
+    display(gui.layout())
+    gui.update_handler()
