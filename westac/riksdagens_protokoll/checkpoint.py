@@ -28,6 +28,7 @@ def parallell_deserialized_payload_stream(
 ) -> Iterable[DocumentPayload]:
     """Yields a deserialized payload stream read from given source"""
 
+    # FIXME: Use ParlaCsvContentSerializer
     serializer: cp.IContentSerializer = cp.create_serializer(checkpoint_opts)
 
     with zipfile.ZipFile(zip_or_filename, mode="r") as zf:
@@ -57,7 +58,7 @@ class ParlaCsvContentSerializer(cp.CsvContentSerializer):
             dtype=str,
             engine="c",
             usecols=[0, 1, 2],
-        ) # type: ignore
+        )
         data.fillna("", inplace=True)
         if any(x not in data.columns for x in options.columns):
             raise ValueError(f"missing columns: {', '.join([x for x in options.columns if x not in data.columns])}")

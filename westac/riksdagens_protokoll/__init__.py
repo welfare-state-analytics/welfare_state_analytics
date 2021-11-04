@@ -2,4 +2,4 @@
 
 from .tasks import ToTaggedFrame, ToIdTaggedFrame
 from .checkpoint import load_checkpoints, ParlaCsvContentSerializer
-from .members import ParliamentaryMembers
+from .members import ParliamentaryData

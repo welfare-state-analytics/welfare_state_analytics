@@ -1,17 +1,21 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Mapping
 import pandas as pd
 
-GITHUB_DATA_URL = "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus/main/corpus/members_of_parliament.csv"
+GITHUB_DATA_URL = (
+    "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus/dev/corpus/members_of_parliament.csv"
+)
+
 
 class Gender(IntEnum):
     Undefined = 0
     Male = 1
     Female = 2
 
+
 @dataclass
-class ParliamentaryMembers:
+class ParliamentaryData:
 
     members: pd.DataFrame
     parties: pd.DataFrame
@@ -21,17 +25,17 @@ class ParliamentaryMembers:
     genders: Mapping[str, str]
 
     @staticmethod
-    def load(source_path: str = GITHUB_DATA_URL) -> "ParliamentaryMembers":
+    def load(source_path: str = GITHUB_DATA_URL, branch: str='dev') -> "ParliamentaryData":
 
         members = pd.read_csv(source_path, sep=',', index_col=None).set_index('id', drop=False)
 
         parties = members.groupby('party').size().reset_index()
         districts = members.groupby('district').size().reset_index()
         chambers = members.groupby('chamber').size().reset_index()
-        terms_of_office = members.groupby(['chamber','start','end']).size().reset_index()
+        terms_of_office = members.groupby(['chamber', 'start', 'end']).size().reset_index()
         genders = list(members.gender.unique())
 
-        data = ParliamentaryMembers(
+        data = ParliamentaryData(
             members=members,
             parties=parties,
             districts=districts,
@@ -42,4 +46,18 @@ class ParliamentaryMembers:
         return data
 
 
-data = ParliamentaryMembers.load()
+@dataclass
+class LazyLoader:
+
+    _data: ParliamentaryData = field(init=False, default=None)
+
+    @property
+    def data(self):
+        if self._data is None:
+            self._data = ParliamentaryData.load()
+        return self._data
+
+DATA =
+def get_parla_data():
+
+parla_data: LazyLoader = LazyLoader()
