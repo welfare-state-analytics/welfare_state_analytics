@@ -65,12 +65,12 @@ def compute_inferred_model(engine: str, opts: Mapping[str, Any]) -> tm.InferredM
         document_index=corpus.document_index,
     )
 
-    inferred_model: tm.InferredModel = tm.infer_model(
+    trained_model: tm.InferredModel = tm.train_model(
         train_corpus=train_corpus,
         method=engine,
         engine_args=opts,
     )
-    return inferred_model
+    return trained_model
 
 
 def test_tranströmers_corpus():
@@ -190,7 +190,7 @@ def test_infer_topics_data(opts):
     inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
-        id2word=inferred_model.train_corpus.id2word,
+        id2token=inferred_model.train_corpus.id2word,
         document_index=inferred_model.train_corpus.document_index,
         n_tokens=5,
     )
@@ -211,7 +211,7 @@ def test_store_inferred_topics_data(opts):
     inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
-        id2word=inferred_model.train_corpus.id2word,
+        id2token=inferred_model.train_corpus.id2word,
         document_index=inferred_model.train_corpus.document_index,
         n_tokens=5,
     )
