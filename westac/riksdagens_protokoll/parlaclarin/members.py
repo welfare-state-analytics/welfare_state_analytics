@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import IntEnum
 from typing import Mapping
 import pandas as pd
 
 GITHUB_DATA_URL = (
-    "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus/dev/corpus/members_of_parliament.csv"
+    "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus/{}/corpus/members_of_parliament.csv"
 )
 
 
@@ -25,7 +25,7 @@ class ParliamentaryData:
     genders: Mapping[str, str]
 
     @staticmethod
-    def load(source_path: str = GITHUB_DATA_URL, branch: str='dev') -> "ParliamentaryData":
+    def load(source_path: str = GITHUB_DATA_URL) -> "ParliamentaryData":
 
         members = pd.read_csv(source_path, sep=',', index_col=None).set_index('id', drop=False)
 
@@ -35,7 +35,7 @@ class ParliamentaryData:
         terms_of_office = members.groupby(['chamber', 'start', 'end']).size().reset_index()
         genders = list(members.gender.unique())
 
-        data = ParliamentaryData(
+        data: ParliamentaryData = ParliamentaryData(
             members=members,
             parties=parties,
             districts=districts,
@@ -46,18 +46,11 @@ class ParliamentaryData:
         return data
 
 
-@dataclass
-class LazyLoader:
+__parliamentary_metadata: ParliamentaryData = None
 
-    _data: ParliamentaryData = field(init=False, default=None)
 
-    @property
-    def data(self):
-        if self._data is None:
-            self._data = ParliamentaryData.load()
-        return self._data
-
-DATA =
-def get_parla_data():
-
-parla_data: LazyLoader = LazyLoader()
+def get__parliamentary_metadata() -> ParliamentaryData:
+    global __parliamentary_metadata
+    if __parliamentary_metadata is None:
+        __parliamentary_metadata = ParliamentaryData.load()
+    return __parliamentary_metadata
