@@ -4,7 +4,7 @@ from scripts.parliament_debates.vectorize_protocols import vectorize
 def test_vectorize():
 
     vectorize(
-        input_folder='./tests/test_data/annotated_parliamentary_debates/',
+        input_folder='./tests/test_data/riksdagens_protokoll/annotated',
         output_folder='./tests/output',
         config='./resources/parliamentary-debates.yml',
         output_tag="NEPTUNUS",

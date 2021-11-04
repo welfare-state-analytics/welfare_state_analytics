@@ -5,11 +5,11 @@ import os
 import click
 import loguru
 import penelope.notebook.interface as interface
-import westac.parliamentary_debates.pipelines as rp_pipeline
+import westac.riksdagens_protokoll.pipelines as rp_pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
 from penelope.pipeline import CorpusConfig, CorpusPipelineBase  # ,  Token2Id
 
-# from westac.parliamentary_debates.members import ParliamentaryMembers
+# from westac.parliamentary_debates.members import ParliamentaryData
 
 logger = loguru.logger
 
@@ -208,7 +208,7 @@ def vectorize(
             create_subfolder=create_subfolder,
             persist=True,
         )
-        # parliament_data = ParliamentaryMembers.load()
+        # parliament_data = ParliamentaryData.load()
         _: CorpusPipelineBase = (
             rp_pipeline.to_tagged_frame_pipeline(
                 source_folder=input_folder,

@@ -137,22 +137,25 @@ def run_model(
     train_corpus = topic_modelling.TrainingCorpus(
         terms=None,
         doc_term_matrix=dtm,
-        id2word=id2token,  # type: ignore
+        id2token=id2token,
         document_index=document_index,
     )
 
-    inferred_model = topic_modelling.infer_model(
+    trained_model: topic_modelling.InferredModel = topic_modelling.train_model(
         train_corpus=train_corpus,
         method=engine,
         engine_args=topic_modeling_opts,
     )
 
-    inferred_model.topic_model.save(jj(target_folder, 'gensim.model'))
+    trained_model.topic_model.save(jj(target_folder, 'gensim.model'))
 
-    topic_modelling.store_model(inferred_model, target_folder)
+    trained_model.store(target_folder)
 
-    inferred_topics = topic_modelling.predict_topics(
-        inferred_model.topic_model, train_corpus.corpus, train_corpus.id2word, train_corpus.document_index
+    inferred_topics: topic_modelling.InferredTopicsData = topic_modelling.predict_topics(
+        trained_model.topic_model,
+        corpus=train_corpus.corpus,
+        id2token=train_corpus.id2word,
+        document_index=train_corpus.document_index,
     )
     inferred_topics.store(target_folder)
 

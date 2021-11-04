@@ -12,7 +12,7 @@
 # from penelope.pipeline import CorpusConfig  # , Token2Id
 # from penelope.pipeline.pipelines import CorpusPipeline
 
-# # from westac.parliamentary_debates.members import ParliamentaryMembers
+# # from westac.parliamentary_debates.members import ParliamentaryData
 
 # # pylint: disable=too-many-arguments
 
@@ -123,7 +123,7 @@
 #         #     persist=True,
 #         # )
 
-#         # parliament_data = ParliamentaryMembers.load()
+#         # parliament_data = ParliamentaryData.load()
 #         _: CorpusPipeline = (
 #             pipe.to_tagged_frame_pipeline(
 #                 source_folder=input_folder,
