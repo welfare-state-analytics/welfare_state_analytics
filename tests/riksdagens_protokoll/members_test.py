@@ -2,14 +2,14 @@ import pytest
 from penelope.pipeline import CorpusPipeline
 from penelope.pipeline.config import CorpusConfig
 from tqdm.auto import tqdm
-from westac.parliamentary_debates.members import GITHUB_DATA_URL, ParliamentaryMembers
-from westac.parliamentary_debates.pipelines import to_tagged_frame_pipeline
+from westac.riksdagens_protokoll.members import GITHUB_DATA_URL, ParliamentaryData
+from westac.riksdagens_protokoll.pipelines import to_tagged_frame_pipeline
 
 
 @pytest.mark.skip("Not implemented")
 def test_load_members():
 
-    parliament_data = ParliamentaryMembers.load(GITHUB_DATA_URL)
+    parliament_data = ParliamentaryData.load(GITHUB_DATA_URL)
 
     assert parliament_data is not None
 
@@ -18,13 +18,17 @@ def test_load_members():
 
 @pytest.mark.skip("long running")
 @pytest.mark.long_running
-def test_run_through_entire_corpus():
+@pytest.mark.parametrize(
+    'corpus_path',
+    [
+        '/data/riksdagen_corpus_data/annotated',
+    ],
+)
+def test_run_through_entire_corpus(corpus_path: str):
 
-    corpus_config: CorpusConfig = CorpusConfig.load('./tests/test_data/parliamentary-debates.yml')
+    corpus_config: CorpusConfig = CorpusConfig.load('./tests/test_data/riksdagens-protokoll.yml')
 
-    _ = ParliamentaryMembers.load(GITHUB_DATA_URL)
-
-    corpus_path = '/data/riksdagen_corpus_data/annotated'
+    _ = ParliamentaryData.load(GITHUB_DATA_URL)
 
     pipeline: CorpusPipeline = to_tagged_frame_pipeline(
         source_folder=corpus_path,

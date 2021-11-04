@@ -7,7 +7,7 @@ import pytest
 from penelope.corpus import TextReaderOpts
 from penelope.corpus.document_index import DocumentIndex
 from penelope.pipeline import ContentType, CorpusConfig, CorpusPipeline, checkpoint, interfaces
-from westac.parliamentary_debates import tasks
+from westac.riksdagens_protokoll import tasks
 
 # pylint: disable=redefined-outer-name
 
