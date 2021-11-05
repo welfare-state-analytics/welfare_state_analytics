@@ -2,12 +2,16 @@ import os
 
 import pandas as pd
 import pytest
-from penelope import workflows
+from penelope import pipeline, workflows
 from penelope.notebook.dtm import ComputeGUI, create_compute_gui
 
-from ..utils import OUTPUT_FOLDER, TEST_DATA_FOLDER
-
 # pylint: disable=protected-access
+
+OUTPUT_FOLDER = "./tests/output"
+TEST_DATA_FOLDER = "./tests/test_data/riksdagens_protokoll/kb_labb"
+CONFIG_FILENAME = "./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.yml"
+
+jj = os.path.join
 
 
 def monkey_patch(*_, **__):
@@ -23,7 +27,7 @@ def test_compute_gui_compute_dry_run():
         compute_called = True
 
     gui: ComputeGUI = create_compute_gui(
-        corpus_config="riksdagens-protokoll",
+        corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
         compute_callback=compute_patch,  # type: ignore
@@ -47,7 +51,7 @@ def test_compute_gui_compute_hot_run():
 
     corpus_tag = 'CERES'
     gui: ComputeGUI = create_compute_gui(
-        corpus_config="riksdagens-protokoll",
+        corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
         compute_callback=workflows.document_term_matrix.compute,

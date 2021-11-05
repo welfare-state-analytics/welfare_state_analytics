@@ -17,6 +17,7 @@ CONFIG_FILENAME = 'riksdagens-protokoll'
 DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
 
 
+@pytest.mark.skip("bug fixed")
 def test_bug_load_word_trends():
     corpus_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
     data_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
@@ -98,10 +99,9 @@ def test_bug_load_word_trends():
 @pytest.mark.long_running
 @pytest.mark.skip(reason="Used when debugging bugs")
 def test_bug():
-
-    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
-    # corpus_filename = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.sparv4.csv.zip'
-    corpus_filename = './tests/test_data/prot_1975__59.zip'
+    config_filename = './tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.yml'
+    corpus_config = CorpusConfig.load(config_filename).folders(DATA_FOLDER)
+    corpus_filename = './tests/test_data/riksdagens_protokoll/kb_labb/prot_1975__59.zip'
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
         corpus_filename=corpus_filename,
@@ -178,13 +178,14 @@ def test_bug():
     assert bundle is not None
 
 
+@pytest.mark.long_running
 def test_checkpoint_feather():
     corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
 
     FEATHER_FOLDER: str = f'./output/{uuid.uuid1()}'
     compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='./tests/test_data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
+        corpus_filename='./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
         target_folder='./tests/output/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         transform_opts=TokensTransformOpts(
@@ -263,17 +264,3 @@ def test_checkpoint_feather():
     )
 
     assert bundle is not None
-
-
-# def test_load_co_occurrence_bundle():
-
-#     filename: str = '/data/westac/shared/information_w3_NNPM_lemma_no_stops_NEW/information_w3_NNPM_lemma_no_stops_NEW_co-occurrence.csv.zip'
-
-#     bundle: co_occurrence.Bundle = co_occurrence.Bundle.load(filename)
-
-#     assert bundle is not None
-
-#     trends_data: BundleTrendsData = BundleTrendsData(bundle=bundle)
-#     assert trends_data is not None
-
-#     co_occurrence_gui.ExploreGUI(bundle).setup().display(trends_data=trends_data)

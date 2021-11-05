@@ -4,7 +4,7 @@ from os.path import isfile, join
 
 import pytest
 from numpy import dtype
-from westac.riksdagens_protokoll.speech_index import (
+from westac.riksdagens_protokoll.parlaclarin.speech_index import (
     SPEECH_INDEX_BASENAME,
     SpeechIndex,
     create_speech_index,
@@ -13,7 +13,7 @@ from westac.riksdagens_protokoll.speech_index import (
     store_speech_index,
 )
 
-SPEECH_INDEX_FOLDER = "./tests/test_data/riksdagens_protokoll/annotated"
+SPEECH_INDEX_FOLDER = "./tests/test_data/riksdagens_protokoll/tagged-1"
 # SPEECH_INDEX_FOLDER = "/data/riksdagen_corpus_data/annotated"
 
 # @pytest.fixture(scope='session')

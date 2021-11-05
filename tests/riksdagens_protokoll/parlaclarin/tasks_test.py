@@ -4,17 +4,20 @@ from unittest.mock import Mock
 
 import pandas as pd
 import pytest
+from penelope import pipeline as pp
 from penelope.corpus import TextReaderOpts
 from penelope.corpus.document_index import DocumentIndex
-from penelope.pipeline import ContentType, CorpusConfig, CorpusPipeline, checkpoint, interfaces
-from westac.riksdagens_protokoll import tasks
+from penelope.pipeline import checkpoint, interfaces
+from westac.riksdagens_protokoll.parlaclarin import tasks
 
 # pylint: disable=redefined-outer-name
+CONFIG_FILENAME = './tests/test_data/parlaclarin/riksdagens-protokoll.yml'
+TAGGED_DATA_FOLDER = './tests/test_data/parlaclarin/tagged-1'
 
 
 @pytest.fixture
-def config() -> CorpusConfig:
-    config: CorpusConfig = CorpusConfig.load('./tests/test_data/parliamentary-debates.yml')
+def config() -> pp.CorpusConfig:
+    config: pp.CorpusConfig = pp.CorpusConfig.load(CONFIG_FILENAME)
     config.pipeline_payload.files(
         source='./tests/test_data/annotated',
         document_index_source=None,
@@ -25,7 +28,7 @@ def config() -> CorpusConfig:
 @pytest.fixture
 def checkpoint_opts() -> checkpoint.CheckpointOpts:
     opts = checkpoint.CheckpointOpts(
-        content_type_code=ContentType.TAGGED_FRAME,
+        content_type_code=pp.ContentType.TAGGED_FRAME,
         sep="\t",
         quoting=3,
         document_index_name="document_index.csv",
@@ -43,7 +46,7 @@ def checkpoint_opts() -> checkpoint.CheckpointOpts:
 def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
     file_pattern: str = "*.zip"
-    source_folder: str = "tests/test_data/annotated"
+    source_folder: str = TAGGED_DATA_FOLDER
 
     stream: Iterable[checkpoint.CheckpointData] = tasks.load_checkpoints(source_folder, file_pattern, checkpoint_opts)
 
@@ -80,7 +83,7 @@ def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkp
 def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.CheckpointOpts):
 
     file_pattern: str = "*.zip"
-    source_folder: str = "tests/test_data/annotated"
+    source_folder: str = TAGGED_DATA_FOLDER
     filenames_to_load = {
         'prot-1960--fk--3.zip',
         'prot-202021--2.zip',
@@ -103,10 +106,10 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
 @pytest.mark.skip("Not implemented")
 def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
-    source_folder: str = "tests/test_data/annotated"
+    source_folder: str = TAGGED_DATA_FOLDER
     reader_opts: TextReaderOpts = TextReaderOpts(filename_pattern="*.csv")
 
-    pipeline: CorpusPipeline = Mock(spec=CorpusPipeline)
+    pipeline: pp.CorpusPipeline = Mock(spec=pp.CorpusPipeline)
 
     task: interfaces.ITask = tasks.ToTaggedFrame(
         source_folder=source_folder,

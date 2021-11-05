@@ -51,7 +51,7 @@ TOPIC_MODELING_OPTS = {
 class TranströmerCorpus(SimpleTextLinesCorpus):
     def __init__(self):
         super().__init__(
-            filename='./tests/test_data/tranströmer.txt',
+            filename='./tests/test_data/tranströmer/tranströmer.txt',
             fields={'filename': 0, 'title': 1, 'text': 2},
             filename_fields=["year:_:1", "year_serial_id:_:2"],  # type: ignore
         )
@@ -111,7 +111,7 @@ def test_store_inferred_model(opts):
     inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
 
     # Act
-    inferred_model.store(inferred_model, target_folder)
+    inferred_model.store(target_folder)
 
     # Assert
     assert os.path.isfile(os.path.join(target_folder, "topic_model.pickle.pbz2"))
@@ -140,7 +140,7 @@ def test_load_inferred_model_when_stored_corpus_is_true_has_same_loaded_trained_
     name = f"{uuid.uuid1()}"
     target_folder = os.path.join(OUTPUT_FOLDER, name)
     test_inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
-    test_inferred_model.store(test_inferred_model, target_folder, store_corpus=True)
+    test_inferred_model.store(target_folder, store_corpus=True)
 
     # Act
 
@@ -167,7 +167,7 @@ def test_load_inferred_model_when_stored_corpus_is_false_has_no_trained_corpus(o
     name: str = f"{uuid.uuid1()}"
     target_folder: str = os.path.join(OUTPUT_FOLDER, name)
     test_inferred_model: tm.InferredModel = compute_inferred_model(opts['method'], opts['run_opts'])
-    test_inferred_model.store(test_inferred_model, target_folder, store_corpus=False)
+    test_inferred_model.store(target_folder, store_corpus=False)
 
     # Actopts['method'],
 
@@ -190,7 +190,7 @@ def test_infer_topics_data(opts):
     inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
-        id2token=inferred_model.train_corpus.id2word,
+        id2token=inferred_model.train_corpus.id2token,
         document_index=inferred_model.train_corpus.document_index,
         n_tokens=5,
     )
@@ -211,7 +211,7 @@ def test_store_inferred_topics_data(opts):
     inferred_topics_data: tm.InferredTopicsData = tm.predict_topics(
         topic_model=inferred_model.topic_model,
         corpus=inferred_model.train_corpus.corpus,
-        id2token=inferred_model.train_corpus.id2word,
+        id2token=inferred_model.train_corpus.id2token,
         document_index=inferred_model.train_corpus.document_index,
         n_tokens=5,
     )
@@ -233,7 +233,7 @@ def test_run_cli():
     kwargs = {
         'target_name': f"{uuid.uuid1()}",
         'corpus_folder': './tests/output',
-        'corpus_filename': './tests/test_data/test_corpus.zip',
+        'corpus_filename': './tests/test_data/tranströmer/test_corpus.zip',
         'engine': 'gensim_lda-multicore',
         'engine_args': {
             # 'passes': None,
@@ -255,22 +255,3 @@ def test_run_cli():
     assert os.path.isfile(jj(target_folder, 'model_options.json'))
 
     shutil.rmtree(target_folder)
-
-
-# corpus_folder = '/data/westac/sou_kb_labb'
-# state = current_state()
-# model_name = 'gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn'
-# model_infos = [
-#     {
-#         'folder': '/data/westac/sou_kb_labb/gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn',
-#         'name': 'gensim_mallet-lda.topics.50.sou_kb-labb_1945-1989_nn',
-#         'options': {
-#             'method': 'gensim_mallet-lda',
-#             'perplexity_score': None,
-#             'coherence_score': -0.5392711665948583,
-#             'engine_options': {'n_topics': 50, 'alpha': 'asymmetric', 'workers': 1, 'max_iter': 2500},
-#             'extra_options': {'tfidf_weiging': False},
-#         },
-#     }
-# ]
-# tm.InferredModel.load(corpus_config, corpus_folder, state, model_name, model_infos)

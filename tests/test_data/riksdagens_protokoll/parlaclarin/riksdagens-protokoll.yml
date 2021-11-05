@@ -1,4 +1,4 @@
-corpus_name: parliamentary-debates-protocol
+corpus_name: riksdagens-protokoll-parlaclarin
 corpus_pattern: '*.zip'
 corpus_type: 3
 language: swedish
@@ -14,7 +14,7 @@ checkpoint_opts:
     custom_serializer_classname: null
     index_column: null
 pipelines:
-  tagged_frame_pipeline: westac.parliamentary_debates.to_tagged_frame_pipeline
+  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.to_tagged_frame_pipeline
 pipeline_payload:
   source:
   document_index_source: null

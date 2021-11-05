@@ -1,14 +1,14 @@
 # type: ignore
 
+from os.path import join as jj
+
 import penelope.workflows.co_occurrence.compute as workflow
 from penelope import corpus as corpora
 from penelope import pipeline, utility
 from penelope.co_occurrence import ContextOpts
 from penelope.notebook.interface import ComputeOpts
 
-RESOURCE_FOLDER = "./resources/"
-CONFIG_FILENAME = "riksdagens-protokoll.yml"
-DATA_FOLDER = "./tests/test_data"
+DATA_FOLDER = "./tests/test_data/riksdagens_protokoll/kb_labb"
 CONCEPT = set()  # {'information'}
 
 SUC_SCHEMA: utility.PoS_Tag_Scheme = utility.PoS_Tag_Schemes.SUC
@@ -16,8 +16,11 @@ POS_TARGETS: str = 'NN|PM'
 POS_PADDINGS: str = 'AB|DT|HA|HD|HP|HS|IE|IN|JJ|KN|PC|PL|PN|PP|PS|RG|RO|SN|UO|VB'
 POS_EXLUDES: str = 'MAD|MID|PAD'
 
-corpus_config = pipeline.CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
-corpus_filename = './tests/test_data/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip'
+config_filename = jj(DATA_FOLDER, "riksdagens-protokoll.yml")
+corpus_config = pipeline.CorpusConfig.load(config_filename).folders(DATA_FOLDER)
+
+corpus_filename = jj(DATA_FOLDER, 'riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip')
+
 compute_opts = ComputeOpts(
     corpus_type=pipeline.CorpusType.SparvCSV,
     corpus_filename=corpus_filename,

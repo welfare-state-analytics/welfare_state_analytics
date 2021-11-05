@@ -8,18 +8,13 @@ from penelope import pipeline, workflows
 from penelope.corpus import ExtractTaggedTokensOpts, TextReaderOpts, TokensTransformOpts, VectorizedCorpus
 from penelope.notebook import interface
 
-TEST_CORPUS_FILENAME = './tests/test_data/test_corpus.zip'
-OUTPUT_FOLDER = './tests/output'
-TEST_DATA_FOLDER = './tests/test_data'
-
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+os.makedirs('./tests/output', exist_ok=True)
 
 # pylint: disable=too-many-arguments
 
 if __file__ in globals():
     this_file = os.path.dirname(__file__)
     this_path = os.path.abspath(this_file)
-    TEST_CORPUS_FILENAME = os.path.join(this_path, TEST_CORPUS_FILENAME)
 
 
 def create_smaller_vectorized_corpus():
