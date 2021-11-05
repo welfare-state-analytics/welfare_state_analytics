@@ -24,9 +24,12 @@ repository = "https://github.com/welfare-state-analytics/welfare_state_analytics
 [tool.poetry.dependencies]
 bokeh = "*"
 click = "*"
-gensim = "*"
-holoviews = "*"
+humlab-penelope = {path = "../../penelope", develop = true}
+ipywidgets = "==7.6.3"
+jupyterlab = "==3.0.16"
+loguru = "^0.5.3"
 matplotlib = "*"
+msgpack = "^1.0.2"
 nltk = "*"
 pandas = "*"
 pandas-bokeh = "*"
@@ -34,14 +37,7 @@ python = "==3.8.*"
 scikit-learn = "*"
 scipy = "*"
 sklearn = "*"
-textacy = "==0.10.1"
 tqdm = "*"
-loguru = "^0.5.3"
-jupyter-bokeh = "*"
-jupyterlab = "==3.0.16"
-ipywidgets = "==7.6.3"
-msgpack = "^1.0.2"
-humlab-penelope = {path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
