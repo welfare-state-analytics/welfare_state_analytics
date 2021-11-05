@@ -1,4 +1,4 @@
-from scripts.parliament_debates.vectorize_protocols import vectorize
+from scripts.riksdagens_protokoll.parlaclarin.vectorize_protocols import vectorize
 
 
 def test_vectorize():

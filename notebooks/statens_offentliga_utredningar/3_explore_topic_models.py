@@ -52,9 +52,7 @@ display(load_gui.layout())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-gui.find_topic_documents_gui(
-    current_state().inferred_topics.document_topic_weights, current_state().inferred_topics.topic_token_overview
-)
+gui.find_topic_documents_gui(current_state().inferred_topics)
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>

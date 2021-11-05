@@ -1,6 +1,7 @@
 import pandas as pd
 import penelope.topic_modelling as tm
 
+
 class YearlyMeanTopicWeightsProxy:
     def __init__(self):
 

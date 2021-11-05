@@ -33,7 +33,7 @@ import __paths__  # isort: skip
 import os
 import warnings
 
-import holoviews as hv
+# import holoviews as hv
 import ipywidgets
 import penelope.common.goodness_of_fit as gof
 import penelope.notebook.cluster_analysis.cluster_analysis_gui as cluster_analysis_gui
@@ -50,7 +50,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 output_notebook()
 
-hv.extension("bokeh")
+# hv.extension("bokeh")
 
 
 # %% [markdown]

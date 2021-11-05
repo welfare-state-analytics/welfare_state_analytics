@@ -2,24 +2,25 @@ from typing import Any, Mapping, Sequence
 
 import bokeh
 import bokeh.plotting
-from ipywidgets import VBox, HBox, Output, IntRangeSlider, SelectMultiple, FloatSlider, IntProgress, Dropdown, HTML
+import networkx as nx
 import numpy as np
-from IPython.display import display
 import pandas as pd
+from IPython.display import display
+from ipywidgets import HTML, Dropdown, FloatSlider, HBox, IntProgress, IntRangeSlider, Output, SelectMultiple, VBox
 from penelope import topic_modelling, utility
 from penelope.network import plot_utility
 from penelope.network.bipartite_plot import plot_bipartite_network
 from penelope.network.networkx import utility as network_utility
 from penelope.notebook import widgets_utils
 from penelope.notebook.topic_modelling import TopicModelContainer
-import networkx  as nx
+
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 TEXT_ID = 'nx_pub_topic'
 LAYOUT_OPTIONS = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
 
 
-# pylint: disable=too-many-locals, too-many-arguments
+# pylint: disable=too-many-locals, too-many-arguments, too-many-instance-attributes
 
 
 def display_document_topic_network(
@@ -95,11 +96,9 @@ def display_document_topic_network(
 
     tick(0)
 
-class PublicationTopicNetworkGUI:
-    """"""
 
+class PublicationTopicNetworkGUI:
     def __init__(self, state: TopicModelContainer):
-        """"""
 
         self.state = state
 
@@ -141,7 +140,6 @@ class PublicationTopicNetworkGUI:
         self.output: Output = Output()
 
     def setup(self) -> "PublicationTopicNetworkGUI":
-        """"""
         self.layout_network.observe(self.compute_handler, names='value')
         self.document_threshold.observe(self.compute_handler, names='value')
         self.period.observe(self.compute_handler, names='value')
@@ -153,7 +151,6 @@ class PublicationTopicNetworkGUI:
         return self
 
     def compute_handler(self, *_):
-        """"""
         self.output.clear_output()
         self.tick(1)
         with self.output:
@@ -174,11 +171,9 @@ class PublicationTopicNetworkGUI:
         self.tick(0)
 
     def tick(self, x=None):
-        """"""
         self.progress.value = self.progress.value + 1 if x is None else x
 
     def layout(self) -> VBox:
-        """"""
         return VBox(
             [
                 HBox(
@@ -197,7 +192,6 @@ class PublicationTopicNetworkGUI:
 
 
 def display_gui(state: TopicModelContainer):
-    """"""
     gui = PublicationTopicNetworkGUI(state).setup()
     display(gui.layout())
     gui.compute_handler()

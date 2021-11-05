@@ -6,15 +6,15 @@ import penelope.notebook.widgets_utils as widgets_utils
 import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
-from ipywidgets import HTML, Dropdown, FloatSlider, HBox, IntProgress, IntSlider, Output, VBox, Button
+from ipywidgets import HTML, Button, Dropdown, FloatSlider, HBox, IntProgress, IntSlider, Output, VBox
 from penelope.corpus import bow_to_text
-from penelope.notebook.topic_modelling import TopicModelContainer, filter_document_topic_weights
+from penelope.notebook.topic_modelling import TopicModelContainer
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 TEXT_ID = 'topic_document_text'
 
-
+# pylint: disable=too-many-instance-attributes)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -42,9 +42,8 @@ def display_texts(
 
     corpus = state.inferred_model.train_corpus.corpus
     id2token = state.inferred_model.train_corpus.id2word
-    document_topic_weights = state.inferred_topics.document_topic_weights
 
-    df: pd.DataFrame = filter_document_topic_weights(document_topic_weights, filters=filters, threshold=threshold)
+    df: pd.DataFrame = state.inferred_topics.filter_document_topic_weights(filters=filters, threshold=threshold)
 
     df = reconstitue_texts_for_topic(df, corpus, id2token, n_top=n_top)
 

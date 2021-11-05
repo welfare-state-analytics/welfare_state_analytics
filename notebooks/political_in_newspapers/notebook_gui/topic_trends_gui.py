@@ -5,7 +5,6 @@ from penelope.notebook.topic_modelling import TopicModelContainer, TopicTrendsGU
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
-from .compute_weights_mixin import YearlyMeanTopicWeightsProxy
 
 class PoliticalTopicTrendsGUI(TopicTrendsGUI):
     def __init__(self):
@@ -30,9 +29,8 @@ class PoliticalTopicTrendsGUI(TopicTrendsGUI):
         return self
 
     def data_filter(self) -> dict:
-        return {
-            'publication_id': self.publication_id.value
-        }
+        return {'publication_id': self.publication_id.value}
+
 
 def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disable=unused-argument
 

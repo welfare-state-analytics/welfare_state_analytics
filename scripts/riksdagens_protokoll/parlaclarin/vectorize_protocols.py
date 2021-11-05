@@ -5,7 +5,7 @@ import os
 import click
 import loguru
 import penelope.notebook.interface as interface
-import westac.riksdagens_protokoll.pipelines as rp_pipeline
+import westac.riksdagens_protokoll.parlaclarin.pipelines as rp_pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TokensTransformOpts, VectorizeOpts
 from penelope.pipeline import CorpusConfig, CorpusPipelineBase  # ,  Token2Id
 

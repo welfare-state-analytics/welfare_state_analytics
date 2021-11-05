@@ -1,15 +1,15 @@
 import penelope.utility as utility
+from IPython.display import display
 from ipywidgets import Dropdown, HBox, VBox
 from penelope.notebook.topic_modelling import TopicModelContainer, TopicOverviewGUI
-from IPython.display import display
+from penelope.topic_modelling import prevelance
 
 import notebooks.political_in_newspapers.corpus_data as corpus_data
 
 
 class PoliticalTopicOverviewGUI(TopicOverviewGUI):
-
     def __init__(self):
-        super().__init__()
+        super().__init__(prevelance.AverageTopicPrevalenceOverTimeCalculator())
 
         publications = utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None})
         self.publication_id: Dropdown = Dropdown(
@@ -29,6 +29,7 @@ class PoliticalTopicOverviewGUI(TopicOverviewGUI):
                 self.text,
             ]
         )
+
 
 def display_gui(state: TopicModelContainer):
 
