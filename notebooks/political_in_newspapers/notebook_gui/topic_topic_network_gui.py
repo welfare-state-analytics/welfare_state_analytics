@@ -1,3 +1,4 @@
+from IPython.display import display
 from ipywidgets import HTML, Dropdown, VBox  # type: ignore
 from penelope.notebook.topic_modelling import TopicModelContainer
 from penelope.notebook.topic_modelling.topic_topic_network_gui import TopicTopicGUI
@@ -20,7 +21,7 @@ class PoliticalTopicTopicGUI(TopicTopicGUI):
 
     def setup(self) -> "TopicTopicGUI":
         super().setup()
-        self.publication_id.observe(self.compute_handler, names='value')
+        self.publication_id.observe(self.update_handler, names='value')
 
     def extra_widgets(self) -> VBox:
         return VBox(
@@ -29,3 +30,10 @@ class PoliticalTopicTopicGUI(TopicTopicGUI):
                 self.publication_id,
             ]
         )
+
+
+def display_gui(state: TopicModelContainer):
+
+    gui: PoliticalTopicTopicGUI = PoliticalTopicTopicGUI(state).setup()
+    display(gui.layout())
+    gui.update_handler()

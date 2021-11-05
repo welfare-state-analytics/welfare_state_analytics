@@ -56,10 +56,7 @@ display(load_gui.layout())
 
 # %%
 
-try:
-    gui.display_topic_wordcloud_gui(current_state())
-except Exception as ex:
-    print(ex)
+gui.display_topic_wordcloud_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -67,11 +64,8 @@ except Exception as ex:
 
 # %%
 
-try:
-    gui.display_topic_word_distribution_gui(current_state())
-    # topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
-except Exception as ex:
-    print(ex)
+gui.display_topic_word_distribution_gui(current_state())
+# topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
@@ -79,11 +73,8 @@ except Exception as ex:
 
 # %%
 
-try:
-    trends_gui.display_gui(current_state())
-    # trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
-except Exception as ex:
-    print(ex)
+trends_gui.display_gui(current_state())
+# trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -93,10 +84,7 @@ except Exception as ex:
 
 # %%
 
-try:
-    overview_gui.display_gui(current_state())
-except ValueError as ex:
-    print(ex)
+overview_gui.display_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Publication Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -104,10 +92,7 @@ except ValueError as ex:
 
 # %%
 
-try:
-    publication_topic_network_gui.display_gui(current_state())
-except Exception as ex:
-    print(ex)
+publication_topic_network_gui.display_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -116,10 +101,7 @@ except Exception as ex:
 
 # %%
 
-try:
-    texts_gui.display_gui(current_state())
-except Exception as ex:
-    print(ex)
+texts_gui.display_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -129,7 +111,4 @@ except Exception as ex:
 
 # %% code_folding=[0]
 
-try:
-    topic_topic_gui.display_gui(current_state())
-except Exception as ex:
-    print(ex)
+topic_topic_gui.display_gui(current_state())
