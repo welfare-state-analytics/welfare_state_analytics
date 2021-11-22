@@ -11,10 +11,10 @@ checkpoint_opts:
     text_column: text
     lemma_column: lemma
     pos_column: pos
-    custom_serializer_classname: westac.parliamentary_debates.ParlaCsvContentSerializer
+    custom_serializer_classname: westac.riksdagens_protokoll.parlaclarin.ParlaCsvContentSerializer
     index_column: null
 pipelines:
-  tagged_frame_pipeline: westac.parliamentary_debates.to_tagged_frame_pipeline
+  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.to_tagged_frame_pipeline
 pipeline_payload:
   source:
   document_index_source: null
