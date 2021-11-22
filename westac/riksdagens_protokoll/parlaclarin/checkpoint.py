@@ -18,7 +18,7 @@ def process_document_file(args: Tuple[str, str, cp.IContentSerializer, Checkpoin
     filename, content, serializer, checkpoint_opts = args
     return DocumentPayload(
         content_type=checkpoint_opts.content_type,
-        content=serializer.deserialize(content, checkpoint_opts),
+        content=serializer.deserialize(content=content, options=checkpoint_opts),
         filename=filename,
     )
 
