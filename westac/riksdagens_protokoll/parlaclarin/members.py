@@ -26,7 +26,14 @@ def encode(df: pd.DataFrame, codes: pd.DataFrame, columns: Union[str, List[str]]
     return df
 
 
-def codify(df: pd.DataFrame, column_names: Union[str, List[str]], id_column_name: str = None) -> pd.DataFrame:
+def reset_index_base(df: pd.DataFrame, base: int = 0) -> pd.DataFrame:
+    if base == 0:
+        return df.reset_index()
+    df.index = pd.RangeIndex(start=base, stop=len(df) + base, step=1)
+    return df
+
+
+def codify(df: pd.DataFrame, column_names: Union[str, List[str]], *, id_column_name: str = None, base: int=0) -> pd.DataFrame:
     """Create a dataframe with integer codes for each unique value in `column_name`. Return data frame."""
 
     if id_column_name is None:
@@ -36,7 +43,7 @@ def codify(df: pd.DataFrame, column_names: Union[str, List[str]], id_column_name
         pd.DataFrame(df[column_names])
         .groupby(column_names)
         .size()
-        .reset_index()
+        .pipe(reset_index_base, base=base)
         .rename({0: 'items'}, axis=1)
         .rename_axis(id_column_name)
     )
@@ -146,7 +153,7 @@ class ParliamentaryData:
 __parliamentary_metadata: ParliamentaryData = None
 
 
-def get__parliamentary_metadata() -> ParliamentaryData:
+def get_parliamentary_metadata() -> ParliamentaryData:
     global __parliamentary_metadata
     if __parliamentary_metadata is None:
         __parliamentary_metadata = ParliamentaryData.load()
