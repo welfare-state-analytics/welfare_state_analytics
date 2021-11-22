@@ -4,26 +4,13 @@ from os.path import isfile, join
 
 import pytest
 from numpy import dtype
-from westac.riksdagens_protokoll.parlaclarin.speech_index import (
-    SPEECH_INDEX_BASENAME,
-    SpeechIndex,
-    create_speech_index,
-    read_speech_index,
-    speech_index_exists,
-    store_speech_index,
-)
+from westac.riksdagens_protokoll.parlaclarin.speech_index import SPEECH_INDEX_BASENAME, SpeechIndex, SpeechIndexHelper
 
-SPEECH_INDEX_FOLDER = "./tests/test_data/riksdagens_protokoll/tagged-1"
-# SPEECH_INDEX_FOLDER = "/data/riksdagen_corpus_data/annotated"
-
-# @pytest.fixture(scope='session')
-# def speech_index() -> SpeechIndex:
-#     return create_speech_index(folder=SPEECH_INDEX_FOLDER)
+SPEECH_INDEX_FOLDER = "tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01"
 
 
-@pytest.mark.skip("Not implemented")
 def test_create_speech_index():
-    speech_index: SpeechIndex = create_speech_index(folder=SPEECH_INDEX_FOLDER)
+    speech_index: SpeechIndex = SpeechIndexHelper.create(folder=SPEECH_INDEX_FOLDER).value
     assert speech_index is not None
     # assert len(speech_index) == 12
     assert set(speech_index.columns.tolist()) == {
@@ -46,37 +33,32 @@ def test_create_speech_index():
         'document_name': dtype('O'),
         'filename': dtype('O'),
         'n_tokens': dtype('int32'),
-        'document_id': dtype('int32'),
+        'document_id': dtype('int64'),
         'year': dtype('int16'),
     }
 
 
-@pytest.mark.skip("Not implemented")
-@pytest.mark.parametrize('extension', ['feather', 'excel', 'csv'])
+@pytest.mark.parametrize('extension', ['feather', 'xlsx', 'csv', 'zip'])
 def test_store_speech_index(extension: str):
     target_folder = './tests/output'
-    speech_index: SpeechIndex = create_speech_index(folder=SPEECH_INDEX_FOLDER)
-    store_speech_index(folder=target_folder, speech_index=speech_index, extension="feather")
-    assert isfile(join(target_folder, f"{SPEECH_INDEX_BASENAME}.{extension}"))
+    SpeechIndexHelper.create(folder=SPEECH_INDEX_FOLDER).store(folder=target_folder, extension=extension)
+    assert isfile(join(target_folder, f"{SPEECH_INDEX_BASENAME}.{extension.split('_')[0]}"))
 
 
-@pytest.mark.skip("Not implemented")
-def test_speech_index_exists():
+@pytest.mark.parametrize('extension', ['feather', 'xlsx', 'csv', 'zip'])
+def test_speech_index_store_load(extension: str):
 
     target_folder = f'./tests/output/{uuid.uuid1()}'
 
     os.makedirs(target_folder, exist_ok=True)
 
-    assert not speech_index_exists(target_folder)
+    assert not SpeechIndexHelper.exists(target_folder)
 
-    speech_index: SpeechIndex = create_speech_index(folder=SPEECH_INDEX_FOLDER)
-    store_speech_index(target_folder, speech_index)
+    helper: SpeechIndexHelper = SpeechIndexHelper.create(folder=SPEECH_INDEX_FOLDER)
+    helper.store(target_folder, extension)
 
-    assert speech_index_exists(target_folder)
+    assert SpeechIndexHelper.exists(target_folder)
 
+    helper2: SpeechIndexHelper = SpeechIndexHelper.load(target_folder)
 
-@pytest.mark.skip("Not implemented")
-def test_read_speech_index():
-    folder: str = SPEECH_INDEX_FOLDER
-    speech_index: SpeechIndex = read_speech_index(folder)
-    assert speech_index is not None
+    assert (helper.value == helper2.value).all().all()
