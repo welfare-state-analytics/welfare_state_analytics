@@ -14,7 +14,7 @@ checkpoint_opts:
     custom_serializer_classname: westac.riksdagens_protokoll.parlaclarin.ParlaCsvContentSerializer
     index_column: null
 pipelines:
-  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.to_tagged_frame_pipeline
+  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.load_tagged_frame_pipeline
 pipeline_payload:
   source:
   document_index_source: null

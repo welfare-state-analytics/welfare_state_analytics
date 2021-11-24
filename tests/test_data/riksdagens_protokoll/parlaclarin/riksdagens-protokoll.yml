@@ -14,7 +14,7 @@ checkpoint_opts:
     custom_serializer_classname: null
     index_column: null
 pipelines:
-  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.to_tagged_frame_pipeline
+  tagged_frame_pipeline: westac.riksdagens_protokoll.parlaclarin.load_tagged_frame_pipeline
 pipeline_payload:
   source:
   document_index_source: null
@@ -26,7 +26,7 @@ pipeline_payload:
     text_column: text
     lemma_column: lemma
     pos_column: pos
-  pos_schema_name: Universal
+  pos_schema_name: SUC
 filter_opts:
 text_reader_opts:
   as_binary: false
