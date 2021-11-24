@@ -4,9 +4,9 @@ from scripts.riksdagens_protokoll.parlaclarin.vectorize_protocols import vectori
 def test_vectorize():
 
     vectorize(
-        input_folder='./tests/test_data/riksdagens_protokoll/annotated',
+        input_folder='./tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01',
         output_folder='./tests/output',
-        config='./resources/parliamentary-debates.yml',
+        config='./resources/parlaclarin/riksdagens_protokoll.yml',
         output_tag="NEPTUNUS",
         create_subfolder=True,
         pos_includes='NN|PM|VB',
@@ -25,5 +25,3 @@ def test_vectorize():
         merge_speeches=True,
     )
 
-
-test_vectorize()
