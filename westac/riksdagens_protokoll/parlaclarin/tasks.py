@@ -99,10 +99,10 @@ def _create_merged_document_info(checkpoint: CheckpointData, i: int = 0) -> dict
 
 
 @dataclass
-class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
+class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     """Loads parliamentary debates protocols stored as Sparv CSV into pipeline """
 
-    source_folder: str = ""
+    corpus_path: str = ""
     checkpoint_opts: Optional[CheckpointOpts] = None
     checkpoint_filter: Optional[Callable[[str], bool]] = None
     reader_opts: Optional[TextReaderOpts] = None
@@ -127,7 +127,7 @@ class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
 
         for i, checkpoint in enumerate(
             load_checkpoints(
-                self.source_folder,
+                self.corpus_path,
                 file_pattern=self.file_pattern,
                 checkpoint_opts=self.checkpoint_opts,
                 checkpoint_filter=self.checkpoint_filter,
@@ -200,11 +200,11 @@ class ToTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
 
 
 @dataclass
-class ToIdTaggedFrame(ToTaggedFrame):
+class LoadIdTaggedFrame(LoadTaggedFrame):
     """Loads parliamentary debates protocols using id-word mappings
     Resulting data frame will have columns `token_id` and `pos_id`
     """
-
+    # FIXME: Consolidate with penelope.pipeline.ToIdTaggedFrame
     token2id: Token2Id = field(default=Token2Id())
     lemmatize: bool = False
 
