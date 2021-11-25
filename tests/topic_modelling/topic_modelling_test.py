@@ -233,7 +233,7 @@ def test_run_cli():
     kwargs = {
         'target_name': f"{uuid.uuid1()}",
         'corpus_folder': './tests/output',
-        'corpus_filename': './tests/test_data/tranströmer/test_corpus.zip',
+        'corpus_source': './tests/test_data/tranströmer/test_corpus.zip',
         'engine': 'gensim_lda-multicore',
         'engine_args': {
             # 'passes': None,

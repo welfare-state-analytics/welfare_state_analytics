@@ -19,11 +19,11 @@ POS_EXLUDES: str = 'MAD|MID|PAD'
 config_filename = jj(DATA_FOLDER, "riksdagens-protokoll.yml")
 corpus_config = pipeline.CorpusConfig.load(config_filename).folders(DATA_FOLDER)
 
-corpus_filename = jj(DATA_FOLDER, 'riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip')
+corpus_source = jj(DATA_FOLDER, 'riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip')
 
 compute_opts = ComputeOpts(
     corpus_type=pipeline.CorpusType.SparvCSV,
-    corpus_filename=corpus_filename,
+    corpus_source=corpus_source,
     target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
     corpus_tag='APA',
     transform_opts=corpora.TokensTransformOpts(
@@ -86,7 +86,7 @@ compute_opts = ComputeOpts(
 )
 
 corpus_config.pipeline_payload.files(
-    source=compute_opts.corpus_filename,
+    source=compute_opts.corpus_source,
     document_index_source=None,
 )
 bundle = workflow.compute(

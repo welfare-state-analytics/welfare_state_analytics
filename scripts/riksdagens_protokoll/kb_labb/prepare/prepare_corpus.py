@@ -53,10 +53,10 @@
 # import westac.corpus.corpus_vectorizer as corpus_vectorizer
 #
 # kwargs = dict( ...vectorize arguments...)
-# corpus_filename = ...
+# corpus_source = ...
 # output_folder = ...
 #
-# corpus_vectorizer.generate_corpus(corpus_filename, output_folder=output_folder, **kwargs)
+# corpus_vectorizer.generate_corpus(corpus_source, output_folder=output_folder, **kwargs)
 #
 # ```
 #

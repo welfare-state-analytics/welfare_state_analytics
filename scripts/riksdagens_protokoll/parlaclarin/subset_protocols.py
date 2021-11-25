@@ -90,7 +90,7 @@
 
 #         # args: interface.ComputeOpts = interface.ComputeOpts(
 #         #     corpus_type=corpus_config.corpus_type,
-#         #     corpus_filename=input_folder,
+#         #     corpus_source=input_folder,
 #         #     target_folder=output_folder,
 #         #     corpus_tag=output_tag,
 #         #     transform_opts=TokensTransformOpts(
@@ -125,9 +125,9 @@
 
 #         # parliament_data = ParliamentaryData.load()
 #         _: CorpusPipeline = (
-#             pipe.to_tagged_frame_pipeline(
-#                 source_folder=input_folder,
+#             pipe.load_tagged_frame_pipeline(
 #                 corpus_config=corpus_config,
+#                 corpus_source=input_folder,
 #                 checkpoint_filter=None,
 #                 filename_filter=None,
 #                 filename_pattern=None,

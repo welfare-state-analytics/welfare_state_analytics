@@ -26,7 +26,7 @@ def create_smaller_vectorized_corpus():
 
 
 def create_bigger_vectorized_corpus(
-    corpus_filename: str,
+    corpus_source: str,
     output_tag: str = "xyz_nnvb_lemma",
     output_folder: str = "./tests/output",
     tf_threshold: int = 5,
@@ -35,7 +35,7 @@ def create_bigger_vectorized_corpus(
 
     args: interface.ComputeOpts = interface.ComputeOpts(
         corpus_type=pipeline.CorpusType.SparvCSV,
-        corpus_filename=corpus_filename,
+        corpus_source=corpus_source,
         target_folder=output_folder,
         corpus_tag=f"{output_tag}_nnvb_lemma",
         transform_opts=TokensTransformOpts(

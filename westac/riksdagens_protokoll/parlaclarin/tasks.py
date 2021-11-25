@@ -102,7 +102,7 @@ def _create_merged_document_info(checkpoint: CheckpointData, i: int = 0) -> dict
 class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     """Loads parliamentary debates protocols stored as Sparv CSV into pipeline """
 
-    corpus_path: str = ""
+    corpus_source: str = ""
     checkpoint_opts: Optional[CheckpointOpts] = None
     checkpoint_filter: Optional[Callable[[str], bool]] = None
     reader_opts: Optional[TextReaderOpts] = None
@@ -125,9 +125,12 @@ class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
 
     def process_stream(self) -> Iterable[DocumentPayload]:
 
+        if self.corpus_source is None:
+            raise FileNotFoundError("LoadTaggedFrame: Corpus source is None")
+
         for i, checkpoint in enumerate(
             load_checkpoints(
-                self.corpus_path,
+                self.corpus_source,
                 file_pattern=self.file_pattern,
                 checkpoint_opts=self.checkpoint_opts,
                 checkpoint_filter=self.checkpoint_filter,

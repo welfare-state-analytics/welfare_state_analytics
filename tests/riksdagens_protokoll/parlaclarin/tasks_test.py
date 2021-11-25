@@ -106,13 +106,13 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
 @pytest.mark.skip("Not implemented")
 def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
-    source_folder: str = TAGGED_DATA_FOLDER
+    corpus_source: str = TAGGED_DATA_FOLDER
     reader_opts: TextReaderOpts = TextReaderOpts(filename_pattern="*.csv")
 
     pipeline: pp.CorpusPipeline = Mock(spec=pp.CorpusPipeline)
 
-    task: interfaces.ITask = tasks.ToTaggedFrame(
-        source_folder=source_folder,
+    task: interfaces.ITask = tasks.LoadTaggedFrame(
+        corpus_source=corpus_source,
         reader_opts=reader_opts,
         checkpoint_opts=checkpoint_opts,
         pipeline=pipeline,

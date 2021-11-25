@@ -101,10 +101,10 @@ def test_bug_load_word_trends():
 def test_bug():
     config_filename = './tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.yml'
     corpus_config = CorpusConfig.load(config_filename).folders(DATA_FOLDER)
-    corpus_filename = './tests/test_data/riksdagens_protokoll/kb_labb/prot_1975__59.zip'
+    corpus_source = './tests/test_data/riksdagens_protokoll/kb_labb/prot_1975__59.zip'
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename=corpus_filename,
+        corpus_source=corpus_source,
         target_folder='./tests/output',
         corpus_tag='APA',
         transform_opts=TokensTransformOpts(
@@ -166,7 +166,7 @@ def test_bug():
     )
 
     corpus_config.pipeline_payload.files(
-        source=compute_opts.corpus_filename,
+        source=compute_opts.corpus_source,
         document_index_source=None,
     )
     bundle = workflow.compute(
@@ -185,7 +185,7 @@ def test_checkpoint_feather():
     FEATHER_FOLDER: str = f'./output/{uuid.uuid1()}'
     compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_filename='./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
+        corpus_source='./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
         target_folder='./tests/output/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         transform_opts=TokensTransformOpts(
@@ -254,7 +254,7 @@ def test_checkpoint_feather():
 
     corpus_config.checkpoint_opts.feather_folder = FEATHER_FOLDER
     corpus_config.pipeline_payload.files(
-        source=compute_opts.corpus_filename,
+        source=compute_opts.corpus_source,
         document_index_source=None,
     )
     bundle = workflow.compute(
