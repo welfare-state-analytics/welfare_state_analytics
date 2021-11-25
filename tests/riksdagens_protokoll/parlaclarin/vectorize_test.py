@@ -1,12 +1,12 @@
-from scripts.riksdagens_protokoll.parlaclarin.vectorize_protocols import vectorize
+from scripts.riksdagens_protokoll.parlaclarin.vectorize import process
 
 
 def test_vectorize():
 
-    vectorize(
+    process(
+        corpus_config='./resources/riksdagens-protokoll-parlaclarin.yml',
         input_folder='./tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01',
         output_folder='./tests/output',
-        config='./resources/parlaclarin/riksdagens_protokoll.yml',
         output_tag="NEPTUNUS",
         create_subfolder=True,
         pos_includes='NN|PM|VB',
@@ -24,4 +24,3 @@ def test_vectorize():
         tf_threshold=None,
         merge_speeches=True,
     )
-
