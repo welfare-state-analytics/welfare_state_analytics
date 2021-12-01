@@ -4,20 +4,20 @@ function run_task() {
 
     engine=$1
     n_topics=$2
-    corpus_filename=$3
+    corpus_source=$3
     tag=$4
     max_iter=3000
     n_workers=1
     name="$1.topics.$2.$tag"
     #.$random_seed
 
-    if [ ! -f "$corpus_filename" ]; then
-        echo "error: corpus file '$corpus_filename' not found"
+    if [ ! -f "$corpus_source" ]; then
+        echo "error: corpus file '$corpus_source' not found"
         exit 64
     fi
 
     poetry run python -m penelope.scripts.compute_topic_model $name \
-        --corpus-filename "$corpus_filename" \
+        --corpus-source "$corpus_source" \
         --n-topics $2 \
         --engine "$1" \
         --max-iter $max_iter \
