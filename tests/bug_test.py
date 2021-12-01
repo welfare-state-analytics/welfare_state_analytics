@@ -1,5 +1,7 @@
 # type: ignore
 
+import os
+import shutil
 import uuid
 
 import pytest
@@ -12,10 +14,10 @@ from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, Pipeline
 from penelope.utility import PropertyValueMaskingOpts
 from penelope.workflows import co_occurrence as workflow
 
-RESOURCE_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/resources'
-CONFIG_FILENAME = 'riksdagens-protokoll'
-DATA_FOLDER = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
+KB_LABB_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/kb_labb'
+PARLACLARIN_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/parlaclarin'
 
+jj = os.path.join
 
 @pytest.mark.skip("bug fixed")
 def test_bug_load_word_trends():
@@ -99,14 +101,14 @@ def test_bug_load_word_trends():
 @pytest.mark.long_running
 @pytest.mark.skip(reason="Used when debugging bugs")
 def test_bug():
-    config_filename = './tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.yml'
-    corpus_config = CorpusConfig.load(config_filename).folders(DATA_FOLDER)
-    corpus_source = './tests/test_data/riksdagens_protokoll/kb_labb/prot_1975__59.zip'
+    config_filename = jj(KB_LABB_DATA_FOLDER, 'riksdagens-protokoll.yml')
+    corpus_config = CorpusConfig.load(config_filename).folders(KB_LABB_DATA_FOLDER)
+    corpus_source = jj(KB_LABB_DATA_FOLDER, 'prot_1975__59.zip')
     compute_opts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
         corpus_source=corpus_source,
         target_folder='./tests/output',
-        corpus_tag='APA',
+        corpus_tag=f'{uuid.uuid1()}',
         transform_opts=TokensTransformOpts(
             only_alphabetic=False,
             only_any_alphanumeric=False,
@@ -180,12 +182,13 @@ def test_bug():
 
 @pytest.mark.long_running
 def test_checkpoint_feather():
-    corpus_config = CorpusConfig.find(CONFIG_FILENAME, RESOURCE_FOLDER).folders(DATA_FOLDER)
 
-    FEATHER_FOLDER: str = f'./output/{uuid.uuid1()}'
+    config_filename = jj(KB_LABB_DATA_FOLDER, 'riksdagens-protokoll.yml')
+    corpus_config = CorpusConfig.load(config_filename).folders(KB_LABB_DATA_FOLDER)
+    feather_folder: str = f'./tests/output/{uuid.uuid1()}'
     compute_opts: ComputeOpts = ComputeOpts(
         corpus_type=CorpusType.SparvCSV,
-        corpus_source='./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip',
+        corpus_source=jj(KB_LABB_DATA_FOLDER, 'riksdagens-protokoll.1920-2019.9files.sparv4.csv.zip'),
         target_folder='./tests/output/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         transform_opts=TokensTransformOpts(
@@ -252,7 +255,7 @@ def test_checkpoint_feather():
         ),
     )
 
-    corpus_config.checkpoint_opts.feather_folder = FEATHER_FOLDER
+    corpus_config.checkpoint_opts.feather_folder = feather_folder
     corpus_config.pipeline_payload.files(
         source=compute_opts.corpus_source,
         document_index_source=None,
@@ -264,3 +267,5 @@ def test_checkpoint_feather():
     )
 
     assert bundle is not None
+
+    shutil.rmtree(feather_folder, ignore_errors=True)
