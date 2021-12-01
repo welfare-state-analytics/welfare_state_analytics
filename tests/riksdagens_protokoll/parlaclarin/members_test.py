@@ -1,5 +1,5 @@
-from westac.riksdagens_protokoll.parlaclarin import members
 import pandas as pd
+from westac.riksdagens_protokoll.parlaclarin import members
 
 
 def test_reset_index_base():
