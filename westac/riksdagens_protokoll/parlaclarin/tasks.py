@@ -68,13 +68,13 @@ def temporary_update_document_index(document_index: DocumentIndex) -> DocumentIn
 def _create_empty_merged_document_index() -> pd.DataFrame:
     _document_index: pd.DataFrame = pd.DataFrame(
         {
-            'document_name': pd.Series([], 'str'),
-            'filename': pd.Series([], 'str'),
-            'year': pd.Series([], 'int'),
-            'document_date': pd.Series([], 'str'),
-            'num_tokens': pd.Series([], 'int'),
-            'num_words': pd.Series([], 'int'),
-            'document_id': pd.Series([], 'int'),
+            'document_name': pd.Series([], dtype='str'),
+            'filename': pd.Series([], dtype='str'),
+            'year': pd.Series([], dtype='int'),
+            'document_date': pd.Series([], dtype='str'),
+            'num_tokens': pd.Series([], dtype='int'),
+            'num_words': pd.Series([], dtype='int'),
+            'document_id': pd.Series([], dtype='int'),
         }
     ).set_index('document_name', drop=False)
     return _document_index
