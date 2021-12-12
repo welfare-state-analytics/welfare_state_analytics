@@ -67,12 +67,8 @@ jupyterlite = "^0.1.0-alpha.6"
 pyright = "^0.0.9"
 
 [tool.poetry.scripts]
-# vectorize_corpus = "penelope.scripts.vectorize_corpus:main"
+parlaclarin-vectorize = "scripts.riksdagens_protokoll.parlaclarin.vectorize.py:process"
 # compute_topic_model = "penelope.scripts.compute_topic_model:main"
-
-
-
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
