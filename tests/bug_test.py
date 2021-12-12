@@ -19,6 +19,7 @@ PARLACLARIN_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/parlaclarin'
 
 jj = os.path.join
 
+
 @pytest.mark.skip("bug fixed")
 def test_bug_load_word_trends():
     corpus_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'

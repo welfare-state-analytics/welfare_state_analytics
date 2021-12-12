@@ -2,8 +2,9 @@ import os
 
 import pandas as pd
 import pytest
-from penelope import pipeline, workflows
+from penelope import pipeline
 from penelope.notebook.dtm import ComputeGUI, create_compute_gui
+from penelope.workflows.vectorize import dtm as workflow
 
 # pylint: disable=protected-access
 
@@ -54,7 +55,7 @@ def test_compute_gui_compute_hot_run():
         corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
-        compute_callback=workflows.document_term_matrix.compute,
+        compute_callback=workflow.compute,
         done_callback=monkey_patch,  # type: ignore
     )
 

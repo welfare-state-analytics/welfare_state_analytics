@@ -4,9 +4,10 @@ import os
 
 import numpy as np
 import pandas as pd
-from penelope import pipeline, workflows
+from penelope import pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TextReaderOpts, TokensTransformOpts, VectorizedCorpus
 from penelope.notebook import interface
+from penelope.workflows.vectorize import dtm as workflow
 
 os.makedirs('./tests/output', exist_ok=True)
 
@@ -80,6 +81,6 @@ def create_bigger_vectorized_corpus(
         filter_opts=None,
         vectorize_opts=None,
     )
-    corpus: VectorizedCorpus = workflows.document_term_matrix.compute(args=args, corpus_config=None)
+    corpus: VectorizedCorpus = workflow.compute(args=args, corpus_config=None)
 
     return corpus
