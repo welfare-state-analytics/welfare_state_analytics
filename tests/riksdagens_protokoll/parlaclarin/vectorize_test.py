@@ -30,6 +30,7 @@ VECTORIZE_OPTS: dict = dict(
     merge_speeches=False,
 )
 
+
 @pytest.mark.long_running
 def test_vectorize_cli():
 
@@ -40,7 +41,7 @@ def test_vectorize_cli():
 
     opts: dict = dict(output_folder=output_folder, output_tag=output_tag, **VECTORIZE_OPTS)
 
-    shutil.rmtree(target_folder,ignore_errors=True)
+    shutil.rmtree(target_folder, ignore_errors=True)
 
     process(**opts)
 
