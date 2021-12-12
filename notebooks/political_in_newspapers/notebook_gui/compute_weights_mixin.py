@@ -1,5 +1,23 @@
+from functools import wraps
+
 import pandas as pd
 import penelope.topic_modelling as tm
+
+
+def memoize(f):
+    memo: dict = {
+        'filters': {},
+        'threshold': {},
+        'data': {},
+    }
+
+    @wraps(f)
+    def wrapper(x):
+        if x not in memo:
+            memo[x] = f(x)
+        return memo[x]
+
+    return wrapper
 
 
 class YearlyMeanTopicWeightsProxy:

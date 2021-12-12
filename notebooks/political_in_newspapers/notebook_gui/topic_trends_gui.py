@@ -3,7 +3,7 @@ from IPython.display import display
 from ipywidgets import Dropdown
 from penelope.notebook.topic_modelling import TopicModelContainer, TopicTrendsGUI
 
-import notebooks.political_in_newspapers.corpus_data as corpus_data
+import notebooks.political_in_newspapers.repository as repository
 
 
 class PoliticalTopicTrendsGUI(TopicTrendsGUI):
@@ -12,7 +12,7 @@ class PoliticalTopicTrendsGUI(TopicTrendsGUI):
 
         self.publication_id = Dropdown(
             description='Publication',
-            options=utility.extend(dict(corpus_data.PUBLICATION2ID), {'(ALLA)': None}),
+            options=utility.extend(dict(repository.PUBLICATION2ID), {'(ALLA)': None}),
             value=None,
             layout=dict(width="200px"),
         )

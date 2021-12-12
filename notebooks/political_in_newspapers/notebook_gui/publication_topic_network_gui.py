@@ -14,7 +14,7 @@ from penelope.network.networkx import utility as network_utility
 from penelope.notebook import widgets_utils
 from penelope.notebook.topic_modelling import TopicModelContainer
 
-import notebooks.political_in_newspapers.corpus_data as corpus_data
+from notebooks.political_in_newspapers import repository
 
 TEXT_ID = 'nx_pub_topic'
 LAYOUT_OPTIONS = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
@@ -24,8 +24,9 @@ LAYOUT_OPTIONS = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']
 
 
 def display_document_topic_network(
-    layout_algorithm: str,
-    state: TopicModelContainer,
+    *,
+    document_topic_weights: pd.DataFrame,
+    topic_token_weights: pd.DataFrame,
     document_threshold: float = 0.0,
     mean_threshold: float = 0.10,
     period: Sequence[int] = None,
@@ -33,68 +34,93 @@ def display_document_topic_network(
     scale: float = 1.0,
     aggregate: str = 'mean',
     output_format: str = 'network',
+    layout_algorithm: str,
     tick=utility.noop,
 ):
 
     tick(1)
 
-    topic_token_weights: pd.DataFrame = state.inferred_topics.topic_token_weights
-    document_topic_weights: pd.DataFrame = state.inferred_topics.document_topic_weights
-
-    titles = topic_modelling.get_topic_titles(topic_token_weights)
-    period = period or []
-
-    df = document_topic_weights
-    if len(period or []) == 2:
-        df = df[(df.year >= period[0]) & (df.year <= period[1])]
-
-    if len(ignores or []) > 0:
-        df = df[~df.topic_id.isin(ignores)]
-
-    df = df[(df['weight'] >= document_threshold)]  # type: ignore
-
-    df = df.groupby(['publication_id', 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
-    df.columns = ['publication_id', 'topic_id', 'mean', 'max']
-
-    df = df[(df[aggregate] > mean_threshold)].reset_index()
-
-    if len(df) == 0:
-        print('No data! Please change selection.')
-        return
-
-    df[aggregate] = utility.clamp_values(list(df[aggregate]), (0.1, 1.0))  # type: ignore
-
-    df['publication'] = df.publication_id.apply(lambda x: corpus_data.ID2PUBLICATION[x])
-    df['weight'] = df[aggregate]
+    weights = compute_weights(document_topic_weights, document_threshold, mean_threshold, period, ignores, aggregate)
 
     tick()
 
+    if len(weights) == 0:
+
+        print('No data! Please change selection.')
+        return
+
     if output_format == 'network':
-        network: nx.Graph = network_utility.create_bipartite_network(
-            df[['publication', 'topic_id', 'weight']], 'publication', 'topic_id'
-        )
-        args: Mapping[str, Any] = plot_utility.layout_args(layout_algorithm, network, scale)
-        layout: network_utility.NodesLayout = (plot_utility.layout_algorithms[layout_algorithm])(network, **args)
-        tick()
-        p = plot_bipartite_network(network, layout, scale=scale, titles=titles, element_id=TEXT_ID)
-        bokeh.plotting.show(p)
+
+        titles: pd.DataFrame = topic_modelling.get_topic_titles(topic_token_weights=topic_token_weights)
+        display_network(weights, layout_algorithm, scale, titles)
 
     else:
 
-        df = df[['publication', 'topic_id', 'weight', 'mean', 'max']]
-        df.columns = ['Source', 'Target', 'weight', 'mean', 'max']
-        if output_format == 'table':
-            display(df)
-        if output_format == 'excel':
-            filename = utility.timestamp("{}_publication_topic_network.xlsx")
-            df.to_excel(filename)
-        if output_format == 'CSV':
-            filename = utility.timestamp("{}_publication_topic_network.csv")
-            df.to_csv(filename, sep='\t')
-
-        display(df)
+        display_tabular(weights, output_format)
 
     tick(0)
+
+
+def display_tabular(weights: pd.DataFrame, output_format):
+
+    weights = weights[['publication', 'topic_id', 'weight', 'mean', 'max']]
+    weights.columns = ['Source', 'Target', 'weight', 'mean', 'max']
+
+    if output_format == 'excel':
+        filename: str = utility.timestamp("{}_publication_topic_network.xlsx")
+        weights.to_excel(filename)
+
+    if output_format == 'CSV':
+        filename: str = utility.timestamp("{}_publication_topic_network.csv")
+        weights.to_csv(filename, sep='\t')
+
+    display(weights)
+
+
+def display_network(weights: pd.DataFrame, layout_algorithm: str, scale: float, titles: pd.DataFrame) -> None:
+    network: nx.Graph = network_utility.create_bipartite_network(
+        weights[['publication', 'topic_id', 'weight']], 'publication', 'topic_id'
+    )
+    args: Mapping[str, Any] = plot_utility.layout_args(layout_algorithm, network, scale)
+    layout: network_utility.NodesLayout = (plot_utility.layout_algorithms[layout_algorithm])(network, **args)
+    p = plot_bipartite_network(network, layout, scale=scale, titles=titles, element_id=TEXT_ID)
+    bokeh.plotting.show(p)
+
+
+def compute_weights(
+    document_topic_weights: pd.DataFrame,
+    document_threshold: float = 0.0,
+    mean_threshold: float = 0.10,
+    period: Sequence[int] = None,
+    ignores: Sequence[int] = None,
+    aggregate: str = 'mean',
+):
+    period: Sequence[int] = period or []
+
+    weights: pd.DataFrame = document_topic_weights
+
+    if len(period or []) == 2:
+        weights = weights[(weights.year >= period[0]) & (weights.year <= period[1])]
+
+    if len(ignores or []) > 0:
+        weights = weights[~weights.topic_id.isin(ignores)]
+
+    weights = weights[(weights['weight'] >= document_threshold)]  # type: ignore
+
+    weights = weights.groupby(['publication_id', 'topic_id']).agg([np.mean, np.max])['weight'].reset_index()
+    weights.columns = ['publication_id', 'topic_id', 'mean', 'max']
+
+    weights = weights[(weights[aggregate] > mean_threshold)].reset_index()
+
+    if len(weights) == 0:
+        return weights
+
+    weights[aggregate] = utility.clamp_values(list(weights[aggregate]), (0.1, 1.0))  # type: ignore
+
+    weights['publication'] = weights.publication_id.apply(lambda x: repository.ID2PUBLICATION[x])
+    weights['weight'] = weights[aggregate]
+
+    return weights
 
 
 class PublicationTopicNetworkGUI:
@@ -151,20 +177,23 @@ class PublicationTopicNetworkGUI:
         return self
 
     def compute_handler(self, *_):
+
         self.output.clear_output()
         self.tick(1)
+
         with self.output:
 
             display_document_topic_network(
-                layout_algorithm=self.layout_network.value,
-                state=self.state,
+                document_topic_weights=self.state.inferred_topics.document_topic_weights,
+                topic_token_weights=self.state.inferred_topics.topic_token_weights,
                 document_threshold=self.document_threshold.value,
                 period=self.period.value,
-                scale=self.scale.value,
                 mean_threshold=self.mean_threshold.value,
                 ignores=self.ignores.value,
                 aggregate=self.aggregate.value,
                 output_format=self.output_format.value,
+                scale=self.scale.value,
+                layout_algorithm=self.layout_network.value,
                 tick=self.tick,
             )
 
@@ -188,6 +217,19 @@ class PublicationTopicNetworkGUI:
                 self.output,
                 self.text,
             ]
+        )
+
+    def compute_opts(self) -> dict:
+        return dict(
+            state=self.state,
+            document_threshold=self.document_threshold.value,
+            period=self.period.value,
+            mean_threshold=self.mean_threshold.value,
+            ignores=self.ignores.value,
+            aggregate=self.aggregate.value,
+            output_format=self.output_format.value,
+            layout_algorithm=self.layout_network.value,
+            scale=self.scale.value,
         )
 
 

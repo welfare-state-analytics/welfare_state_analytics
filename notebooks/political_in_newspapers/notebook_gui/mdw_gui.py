@@ -1,213 +1,240 @@
-import logging
-import types
-from typing import Mapping, Sequence
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Mapping, Sequence, Tuple
 
 import ipywidgets
 import pandas as pd
 from IPython.display import display
+from loguru import logger
 from penelope.corpus import VectorizedCorpus
 from penelope.vendor.textacy import compute_most_discriminating_terms
 
-import notebooks.political_in_newspapers.corpus_data as corpus_data
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("westac")
+from notebooks.political_in_newspapers import repository
 
 
-def year_range_group_indices(
-    document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] = None
+def get_group_indicies(
+    document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] | int = None
 ) -> pd.Index:
-    """[summary]
-
-    Parameters
-    ----------
-    document_index : pd.DataFrame
-        Documents meta data
-    period : Sequence[int]
-        Year range for group
-    pub_ids : : Sequence[int], optional
-        [description], by default None
-
-    Returns
-    -------
-    pd.Index[int]
-        [description]
-    """
-    assert "year" in document_index.columns
-
-    docs = document_index[document_index.year.between(*period)]
 
     if isinstance(pub_ids, int):
         pub_ids = list(pub_ids)
 
-    if len(pub_ids or []) > 0:
-        # TODO: #90 Make groupings mot generic and move to penelope
-        docs = docs[(docs.publication_id.isin(pub_ids))]
+    group_index: pd.DataFrame = document_index[document_index.year.between(*period)]
 
-    return docs.index
+    if len(pub_ids or []) > 0:
+        # TODO: #90 Make groupings more generic and move to penelope
+        group_index = group_index[group_index.publication_id.isin(pub_ids)]
+
+    return group_index.index
 
 
 def load_vectorized_corpus(corpus_folder: str, publication_ids) -> VectorizedCorpus:
     logger.info("Loading DTM corpus...")
-    bag_term_matrix, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, list(publication_ids))
-    token2id: Mapping[str, int] = {v: k for k, v in id2token.items()}
-    v_corpus: VectorizedCorpus = VectorizedCorpus(bag_term_matrix, token2id, document_index)
-    return v_corpus
+    source_corpus: repository.SourceCorpus = (
+        repository.SourceRepository.load(corpus_folder).to_coo_corpus().slice_by_publications(list(publication_ids))
+    )
+    token2id: Mapping[str, int] = {v: k for k, v in source_corpus.id2token.items()}
+    corpus: VectorizedCorpus = VectorizedCorpus(source_corpus.corpus, token2id, source_corpus.document_index)
+    return corpus
 
 
-id2pubs = lambda pubs: [corpus_data.PUB2ID[x] for x in pubs]
+@dataclass
+class ComputeOpts:
+    @dataclass
+    class GroupOpts:
+        pub_ids: Sequence[int]
+        period: Tuple[int, int]
+
+    @dataclass
+    class FilterOpts:
+        min_df: float
+        max_df: float
+        top_n_terms: int
+        max_n_terms: int
+
+    group1: GroupOpts
+    group2: GroupOpts
+    filter_opts: FilterOpts
 
 
-def compile_opts(gui):
+def compile_CLI_opts(opts: ComputeOpts):
     return (
         f"python mdw_runner.py "
-        f"--group {','.join([corpus_data.ID2PUB[x] for x in gui.publication_ids1.value])} {gui.period1.value[0]} {gui.period1.value[1]} "
-        f"--group {','.join([corpus_data.ID2PUB[x] for x in gui.publication_ids2.value])} {gui.period2.value[0]} {gui.period2.value[1]} "
-        f"--top-n-terms {gui.top_n_terms.value} "
-        f"--max-n-terms {gui.max_n_terms.value} "
-        f"--min-df {gui.min_df.value/100.0} "
-        f"--max-df {gui.max_df.value/100.0} "
+        f"--group {','.join([repository.ID2PUB[x] for x in opts.group1.pub_ids])} {opts.group1.period[0]} {opts.group1.period[1]} "
+        f"--group {','.join([repository.ID2PUB[x] for x in opts.group2.pub_ids])} {opts.group2.period[0]} {opts.group2.period[1]} "
+        f"--top-n-terms {opts.filter_opts.top_n_terms} "
+        f"--max-n-terms {opts.filter_opts.max_n_terms} "
+        f"--min-df {opts.filter_opts.min_df} "
+        f"--max-df {opts.filter_opts.max_df} "
     )
 
 
-def display_gui(v_corpus: VectorizedCorpus, v_documents: pd.DataFrame):
+def compute_mdw(corpus: VectorizedCorpus, opts: ComputeOpts) -> pd.DataFrame:
+    """Compute most discriminating wors between two non-overlapping subsets."""
+    filter_opts: ComputeOpts.FilterOpts = opts.filter_opts
 
-    publications = dict(corpus_data.PUBLICATION2ID)
+    logger.info(f"Using min DF {filter_opts.min_df} and max DF{filter_opts.max_df}")
+    logger.info("Slicing corpus...")
 
-    lw = lambda w: ipywidgets.Layout(width=w)
-    year_span = (v_documents.year.min(), v_documents.year.max())
-    gui = types.SimpleNamespace(
-        progress=ipywidgets.IntProgress(value=0, min=0, max=5, step=1, description="", layout=lw("90%")),
-        top_n_terms=ipywidgets.IntSlider(
+    sliced_corpus: VectorizedCorpus = corpus.slice_by_document_frequency(
+        min_df=filter_opts.min_df,
+        max_df=filter_opts.max_df,
+        max_n_terms=filter_opts.max_n_terms,
+    )
+
+    mdw_data: pd.DataFrame = compute_most_discriminating_terms(
+        sliced_corpus,
+        group1_indices=get_group_indicies(sliced_corpus.document_index, opts.group1.period, opts.group1.pub_ids),
+        group2_indices=get_group_indicies(sliced_corpus.document_index, opts.group2.period, opts.group2.pub_ids),
+        top_n_terms=filter_opts.top_n_terms,
+        max_n_terms=filter_opts.max_n_terms,
+    )
+
+    return mdw_data
+
+
+def display_mwd(mdw_data: pd.DataFrame):
+    """Display result"""
+    # logger.info(compile_CLI_opts(self))
+    if mdw_data is not None:
+        display(mdw_data)
+    else:
+        logger.info("No data for selected groups or periods.")
+
+
+class MDWGUI:
+    def __init__(self, corpus: VectorizedCorpus, document_index: pd.DataFrame):
+
+        self.corpus: VectorizedCorpus = corpus
+        self.document_index: pd.DataFrame = document_index
+
+        self.progress = ipywidgets.IntProgress(value=0, min=0, max=5, step=1, description="", layout={'width': "90%"})
+        self.top_n_terms = ipywidgets.IntSlider(
             description="#terms",
             min=10,
             max=1000,
             value=200,
             tooltip="The total number of tokens to return for each group",
-        ),
-        max_n_terms=ipywidgets.IntSlider(
+        )
+        self.max_n_terms = ipywidgets.IntSlider(
             description="#top",
             min=1,
             max=2000,
             value=100,
             tooltip="Only consider tokens whose DF is within the top # terms out of all terms",
-        ),
-        min_df=ipywidgets.FloatSlider(
+        )
+        self.min_df = ipywidgets.FloatSlider(
             description="Min DF%",
             min=0.0,
             max=100.0,
             value=3.0,
             step=0.1,
-            layout=lw("250px"),
-        ),
-        max_df=ipywidgets.FloatSlider(
+            layout={'width': "250px"},
+        )
+        self.max_df = ipywidgets.FloatSlider(
             description="Max DF%",
             min=0.0,
             max=100.0,
             value=95.0,
             step=0.1,
-            layout=lw("250px"),
-        ),
-        period1=ipywidgets.IntRangeSlider(
-            description="Period",
-            min=year_span[0],
-            max=year_span[1],
-            value=(v_documents.year.min(), v_documents.year.min() + 4),
-            layout=lw("250px"),
-        ),
-        period2=ipywidgets.IntRangeSlider(
-            description="Period",
-            min=year_span[0],
-            max=year_span[1],
-            value=(v_documents.year.max() - 4, v_documents.year.max()),
-            layout=lw("250px"),
-        ),
-        publication_ids1=ipywidgets.SelectMultiple(
+            layout={'width': "250px"},
+        )
+        self.period1 = ipywidgets.IntRangeSlider(description="Period", min=0, max=100, layout={'width': "250px"})
+        self.period2 = ipywidgets.IntRangeSlider(description="Period", layout={'width': "250px"})
+        self.publication_ids1 = ipywidgets.SelectMultiple(
             description="Publication",
-            options=publications,
+            options=dict(repository.PUBLICATION2ID),
             rows=4,
             value=(1,),
             layout=ipywidgets.Layout(width="250px"),
-        ),
-        publication_ids2=ipywidgets.SelectMultiple(
+        )
+        self.publication_ids2 = ipywidgets.SelectMultiple(
             description="Publication",
-            options=publications,
+            options=dict(repository.PUBLICATION2ID),
             rows=4,
             value=(3,),
             layout=ipywidgets.Layout(width="250px"),
-        ),
-        compute=ipywidgets.Button(description="Compute", icon="", button_style="Success", layout=lw("120px")),
-        output=ipywidgets.Output(layout={"border": "1px solid black"}),
-    )
+        )
+        self.compute = ipywidgets.Button(
+            description="Compute", icon="", button_style="Success", layout={'width': "120px"}
+        )
+        self.output = ipywidgets.Output(layout={"border": "1px solid black"})
 
-    boxes = ipywidgets.VBox(
-        children=[
-            ipywidgets.HBox(
-                children=[
-                    ipywidgets.VBox(children=[gui.period1, gui.publication_ids1]),
-                    ipywidgets.VBox(children=[gui.period2, gui.publication_ids2]),
-                    ipywidgets.VBox(
-                        children=[
-                            gui.top_n_terms,
-                            gui.max_n_terms,
-                            gui.min_df,
-                            gui.max_df,
-                        ],
-                        layout=ipywidgets.Layout(align_items="flex-end"),
-                    ),
-                    ipywidgets.VBox(children=[gui.compute]),
-                ]
+    def setup(self) -> "MDWGUI":
+
+        min_year, max_year = (self.document_index.year.min(), self.document_index.year.max())
+
+        self.period1.min, self.period1.max = min_year, max_year
+        self.period1.value = (min_year, max_year + 4)
+
+        self.period2.min, self.period2.max = min_year, max_year
+        self.period2.value = (max_year + 4, max_year)
+
+        def compute_callback_handler(*_args):
+            self.output.clear_output()
+            with self.output:
+                try:
+                    self.compute.disabled = True
+                    mdw_data: pd.DataFrame = compute_mdw(self.corpus, self.opts)
+                    display_mwd(mdw_data)
+                except Exception as ex:
+                    logger.error(ex)
+                finally:
+                    self.compute.disabled = False
+
+        self.compute.on_click(compute_callback_handler)
+
+        return self
+
+    def layout(self) -> ipywidgets.VBox:
+
+        return ipywidgets.VBox(
+            children=[
+                ipywidgets.HBox(
+                    children=[
+                        ipywidgets.VBox(children=[self.period1, self.publication_ids1]),
+                        ipywidgets.VBox(children=[self.period2, self.publication_ids2]),
+                        ipywidgets.VBox(
+                            children=[
+                                self.top_n_terms,
+                                self.max_n_terms,
+                                self.min_df,
+                                self.max_df,
+                            ],
+                            layout=ipywidgets.Layout(align_items="flex-end"),
+                        ),
+                        ipywidgets.VBox(children=[self.compute]),
+                    ]
+                ),
+                self.output,
+            ]
+        )
+
+    @property
+    def opts(self) -> ComputeOpts:
+        return ComputeOpts(
+            group1=ComputeOpts.GroupOpts(
+                pub_ids=self.publication_ids1.value,
+                period=self.period1.value,
             ),
-            gui.output,
-        ]
-    )
+            group2=ComputeOpts.GroupOpts(
+                pub_ids=self.publication_ids2.value,
+                period=self.period2.value,
+            ),
+            filter_opts=ComputeOpts.FilterOpts(
+                min_df=self.min_df.value / 100.0,
+                max_df=self.max_df.value / 100.0,
+                top_n_terms=self.top_n_terms.value,
+                max_n_terms=self.max_n_terms.value,
+            ),
+        )
 
-    display(boxes)
 
-    def compute_callback_handler(*_args):
-        gui.output.clear_output()
-        with gui.output:
-            try:
-                gui.compute.disabled = True
+def display_gui(corpus: VectorizedCorpus, documents: pd.DataFrame):
 
-                logger.info("Using min DF %s and max DF %s", gui.min_df.value, gui.max_df.value)
+    gui = MDWGUI(corpus, documents).setup()
 
-                logger.info("Slicing corpus...")
+    display(gui.layout())
 
-                x_corpus: VectorizedCorpus = v_corpus.slice_by_df(  # type: ignore
-                    max_df=gui.max_df.value / 100.0,
-                    min_df=gui.min_df.value / 100.0,
-                    max_n_terms=gui.max_n_terms.value,
-                )
-
-                logger.info("Corpus size after DF trim %s x %s.", *x_corpus.data.shape)
-
-                logger.info(compile_opts(gui))
-
-                df = compute_most_discriminating_terms(
-                    x_corpus,
-                    group1_indices=year_range_group_indices(
-                        x_corpus.document_index,
-                        gui.period1.value,
-                        gui.publication_ids1.value,
-                    ),  # type: ignore
-                    group2_indices=year_range_group_indices(
-                        x_corpus.document_index,
-                        gui.period2.value,
-                        gui.publication_ids2.value,
-                    ),  # type: ignore
-                    top_n_terms=gui.top_n_terms.value,
-                    max_n_terms=gui.max_n_terms.value,
-                )
-                if df is not None:
-                    display(df)
-                else:
-                    logger.info("No data for selected groups or periods.")
-
-            except Exception as ex:
-                logger.error(ex)
-            finally:
-                gui.compute.disabled = False
-
-    gui.compute.on_click(compute_callback_handler)
     return gui
