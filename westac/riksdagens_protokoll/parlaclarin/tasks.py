@@ -201,7 +201,7 @@ class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
     #         logging.exception(ex)
     #         raise
 
-
+# FIXME Copied to penelope.pipeline.tagged_frame.py
 @dataclass
 class LoadIdTaggedFrame(LoadTaggedFrame):
     """Loads parliamentary debates protocols using id-word mappings
