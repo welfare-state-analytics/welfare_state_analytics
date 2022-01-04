@@ -81,7 +81,6 @@ output_notebook()
 y_corpus = load_corpus(
     tag="SOU_test_L0_+N_+S",
     folder=os.path.join(root_folder, "output"),
-    n_count=5000,
     n_top=50000,
     axis=1,
     keep_magnitude=False,
@@ -154,7 +153,7 @@ def display_uniformity_metrics(x_corpus, df_gof, df_most_deviating):
 # n_corpus.data.shape[0]
 
 df_gof = gof.compute_goddness_of_fits_to_uniform(n_corpus)
-df_most_deviating = gof.compile_most_deviating_words(df_gof, n_count=10000)
+df_most_deviating = gof.compile_most_deviating_words(df_gof, n_top=10000)
 
 
 display_uniformity_metrics(n_corpus, df_gof, df_most_deviating)
