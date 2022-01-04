@@ -6,7 +6,7 @@ import penelope.workflows.co_occurrence.compute as workflow
 from penelope import corpus as corpora
 from penelope import pipeline, utility
 from penelope.co_occurrence import ContextOpts
-from penelope.notebook.interface import ComputeOpts
+from penelope.workflows.interface import ComputeOpts
 
 DATA_FOLDER = "./tests/test_data/riksdagens_protokoll/kb_labb"
 CONCEPT = set()  # {'information'}
@@ -67,7 +67,6 @@ compute_opts = ComputeOpts(
         global_tf_threshold_mask=False,
         **corpus_config.pipeline_payload.tagged_columns_names,
     ),
-    filter_opts=utility.PropertyValueMaskingOpts(),
     vectorize_opts=corpora.VectorizeOpts(
         already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
     ),
@@ -92,7 +91,7 @@ corpus_config.pipeline_payload.files(
 bundle = workflow.compute(
     args=compute_opts,
     corpus_config=corpus_config,
-    tagged_frames_filename='./tests/output/test.zip',
+    tagged_corpus_source='./tests/output/test.zip',
 )
 
 assert bundle is not None

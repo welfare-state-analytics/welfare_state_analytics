@@ -3,7 +3,7 @@ import sys
 from typing import Sequence
 
 import click
-import penelope.notebook.interface as interface
+import penelope.workflows.interface as interface
 import penelope.workflows.vectorize.dtm as workflow
 import westac.riksdagens_protokoll.parlaclarin as parlaclarin
 from loguru import logger
@@ -196,7 +196,6 @@ def process(
             tf_threshold_mask=tf_threshold_mask,
             create_subfolder=create_subfolder,
             persist=True,
-            filter_opts=PropertyValueMaskingOpts(),
             enable_checkpoint=False,
             force_checkpoint=False,
         )

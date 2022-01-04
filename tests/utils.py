@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from penelope import pipeline
 from penelope.corpus import ExtractTaggedTokensOpts, TextReaderOpts, TokensTransformOpts, VectorizedCorpus
-from penelope.notebook import interface
+from penelope.workflows import interface
 from penelope.workflows.vectorize import dtm as workflow
 
 os.makedirs('./tests/output', exist_ok=True)
@@ -22,7 +22,7 @@ def create_smaller_vectorized_corpus():
     bag_term_matrix = np.array([[2, 1, 4, 1], [2, 2, 3, 0], [2, 3, 2, 0], [2, 4, 1, 1], [2, 0, 1, 1]])
     token2id = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
     document_index = pd.DataFrame({'year': [2013, 2013, 2014, 2014, 2014]})
-    v_corpus = VectorizedCorpus(bag_term_matrix, token2id, document_index)
+    v_corpus = VectorizedCorpus(bag_term_matrix, token2id=token2id, document_index=document_index)
     return v_corpus
 
 
@@ -78,7 +78,6 @@ def create_bigger_vectorized_corpus(
         tf_threshold_mask=tf_threshold_mask,
         create_subfolder=True,
         persist=True,
-        filter_opts=None,
         vectorize_opts=None,
     )
     corpus: VectorizedCorpus = workflow.compute(args=args, corpus_config=None)

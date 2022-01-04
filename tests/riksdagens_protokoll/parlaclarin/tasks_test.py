@@ -1,18 +1,21 @@
 import os
+from glob import glob
 from typing import Iterable, List, Set
 from unittest.mock import Mock
 
 import pandas as pd
 import pytest
+import tqdm
+from penelope import corpus
 from penelope import pipeline as pp
-from penelope.corpus import TextReaderOpts
-from penelope.corpus.document_index import DocumentIndex
+from penelope import utility
 from penelope.pipeline import checkpoint, interfaces
 from westac.riksdagens_protokoll.parlaclarin import tasks
 
 # pylint: disable=redefined-outer-name
 CONFIG_FILENAME = './tests/test_data/riksdagens_protokoll/parlaclarin/riksdagens-protokoll.yml'
 TAGGED_DATA_FOLDER = './tests/test_data/parlaclarin/tagged-1'
+jj = os.path.join
 
 
 @pytest.fixture
@@ -64,8 +67,8 @@ def test_load_checkpoints_when_stanza_csv_files_succeeds(checkpoint_opts: checkp
         'prot-1932--fk--1.zip',
     }
 
-    document_indexes: List[DocumentIndex] = [x.document_index for x in cps]
-    merged_index: DocumentIndex = pd.concat(document_indexes, ignore_index=False, sort=False)
+    document_indexes: List[corpus.DocumentIndex] = [x.document_index for x in cps]
+    merged_index: corpus.DocumentIndex = pd.concat(document_indexes, ignore_index=False, sort=False)
 
     assert len(merged_index) == 15
 
@@ -107,7 +110,7 @@ def test_load_checkpoints_with_predicate_filter(checkpoint_opts: checkpoint.Chec
 def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: checkpoint.CheckpointOpts):
 
     corpus_source: str = TAGGED_DATA_FOLDER
-    reader_opts: TextReaderOpts = TextReaderOpts(filename_pattern="*.csv")
+    reader_opts: corpus.TextReaderOpts = corpus.TextReaderOpts(filename_pattern="*.csv")
 
     pipeline: pp.CorpusPipeline = Mock(spec=pp.CorpusPipeline)
 
@@ -137,3 +140,23 @@ def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: chec
     )
 
     assert ' '.join(payload.content.head(13).pos) == 'PM NN MID NN NN MID PC NN PP PM NN MID PM'
+
+
+def test_load_tagged_frame_groups():
+
+    source_folder: str = '/data/riksdagen_corpus_data/tagged-speech-corpus.numeric.feather'
+    document_index: pd.DataFrame = corpus.DocumentIndexHelper.load(
+        jj(source_folder, 'document_index.feather')
+    ).document_index
+
+    assert document_index is not None
+
+    filenames = sorted(glob(jj(source_folder, '**/prot-*.feather'), recursive=True))
+
+    assert len(filenames) == len(document_index.document_name.apply(lambda x: x.split('_')[0]).unique())
+
+    n_tokens = 0
+    for filename in tqdm.tqdm(filenames, total=len(filenames)):
+        document_name: str = utility.strip_path_and_extension(filename)
+        tagged_frame: pd.DataFrame = pd.read_feather(filename)
+        n_tokens += len(tagged_frame)

@@ -8,13 +8,13 @@ from penelope.pipeline import (
     CheckpointData,
     CheckpointOpts,
     ContentType,
-    CountTaggedTokensMixIn,
+    PoSCountMixIn,
     DefaultResolveMixIn,
     DocumentPayload,
     ITask,
 )
 from penelope.type_alias import TaggedFrame
-from penelope.utility import PoS_Tag_Scheme, strip_extensions, strip_path_and_extension
+from penelope.utility import PoS_Tag_Scheme, strip_extensions, strip_path_and_extension, deprecated
 
 from .checkpoint import load_checkpoints
 
@@ -99,7 +99,8 @@ def _create_merged_document_info(checkpoint: CheckpointData, i: int = 0) -> dict
 
 
 @dataclass
-class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
+@deprecated
+class LoadTaggedFrame(PoSCountMixIn, DefaultResolveMixIn, ITask):
     """Loads parliamentary debates protocols stored as Sparv CSV into pipeline """
 
     corpus_source: str = ""
@@ -203,6 +204,7 @@ class LoadTaggedFrame(CountTaggedTokensMixIn, DefaultResolveMixIn, ITask):
 
 # FIXME Copied to penelope.pipeline.tagged_frame.py
 @dataclass
+@deprecated
 class LoadIdTaggedFrame(LoadTaggedFrame):
     """Loads parliamentary debates protocols using id-word mappings
     Resulting data frame will have columns `token_id` and `pos_id`
@@ -239,6 +241,7 @@ class LoadIdTaggedFrame(LoadTaggedFrame):
         return payload.update(ContentType.TAGGED_ID_FRAME, tagged_frame)
 
 
+@deprecated
 def codify_tagged_frame(
     tagged_frame: pd.DataFrame,
     token2id: Token2Id,
