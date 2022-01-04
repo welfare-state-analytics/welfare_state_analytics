@@ -316,8 +316,6 @@ class SourceRepository:
 
         return reconstructed_text
 
-    ### APA APA APA
-
 
 def plot_document_size_distribution(document_index: pd.DataFrame) -> pd.DataFrame:
 

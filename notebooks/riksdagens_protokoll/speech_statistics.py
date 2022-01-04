@@ -8,7 +8,7 @@ from ipywidgets import Dropdown, HBox, Output, ToggleButton, VBox
 pd.options.mode.chained_assignment = None
 
 # pylint: disable=no-member, unused-argument
-#%matplotlib inline
+# %matplotlib inline
 
 
 def load_speech_index(index_path: str, members_path) -> pd.DataFrame:
