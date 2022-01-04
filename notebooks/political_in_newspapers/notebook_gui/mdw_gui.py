@@ -35,7 +35,9 @@ def load_vectorized_corpus(corpus_folder: str, publication_ids) -> VectorizedCor
         repository.SourceRepository.load(corpus_folder).to_coo_corpus().slice_by_publications(list(publication_ids))
     )
     token2id: Mapping[str, int] = {v: k for k, v in source_corpus.id2token.items()}
-    corpus: VectorizedCorpus = VectorizedCorpus(source_corpus.corpus, token2id=token2id, document_index=source_corpus.document_index)
+    corpus: VectorizedCorpus = VectorizedCorpus(
+        source_corpus.corpus, token2id=token2id, document_index=source_corpus.document_index
+    )
     return corpus
 
 

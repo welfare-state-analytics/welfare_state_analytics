@@ -120,9 +120,7 @@ def test_to_topic_model_pipeline(corpus_source: str, engine: str, config: pipeli
         #     filename_filter=filename_filter,
         #     filename_pattern=filename_pattern,
         # )
-        .tagged_frame_to_tokens(
-            extract_opts=extract_opts, transform_opts=transform_opts
-        ).to_topic_model(
+        .tagged_frame_to_tokens(extract_opts=extract_opts, transform_opts=transform_opts).to_topic_model(
             corpus_source=None,
             target_folder=target_folder,
             target_name=target_name,
