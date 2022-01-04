@@ -9,7 +9,7 @@ from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.dtm import ComputeGUI
-from penelope.notebook.interface import ComputeOpts
+from penelope.workflows.interface import ComputeOpts
 from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, PipelinePayload
 from penelope.utility import PropertyValueMaskingOpts
 from penelope.workflows import co_occurrence as workflow
@@ -61,7 +61,6 @@ def test_bug_load_word_trends():
             n_processes=1,
             n_chunksize=2,
         ),
-        filter_opts=None,
         pipelines={'tagged_frame_pipeline': 'penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline'},
         pipeline_payload=PipelinePayload(
             source='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/riksdagens-protokoll.1920-2019.sparv4.csv.zip',
@@ -153,7 +152,6 @@ def test_bug():
         ),
         tf_threshold=1,
         tf_threshold_mask=False,
-        filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
             already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
         ),
@@ -175,7 +173,7 @@ def test_bug():
     bundle = workflow.compute(
         args=compute_opts,
         corpus_config=corpus_config,
-        tagged_frames_filename='./tests/output/test.zip',
+        tagged_corpus_source='./tests/output/test.zip',
     )
 
     assert bundle is not None
@@ -233,7 +231,6 @@ def test_checkpoint_feather():
             global_tf_threshold_mask=False,
             **corpus_config.pipeline_payload.tagged_columns_names,
         ),
-        filter_opts=PropertyValueMaskingOpts(),
         vectorize_opts=VectorizeOpts(
             already_tokenized=True,
             lowercase=False,
@@ -264,7 +261,7 @@ def test_checkpoint_feather():
     bundle = workflow.compute(
         args=compute_opts,
         corpus_config=corpus_config,
-        tagged_frames_filename='./tests/output/test.zip',
+        tagged_corpus_source='./tests/output/test.zip',
     )
 
     assert bundle is not None
