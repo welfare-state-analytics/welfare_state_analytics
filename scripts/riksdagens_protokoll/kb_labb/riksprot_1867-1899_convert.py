@@ -1,12 +1,12 @@
 import csv
 import io
-import os
 import zipfile
 from typing import List, Optional
 
 import pandas as pd
 from tqdm import tqdm
 
+# pylint: disable=unsubscriptable-object)
 
 def baseform(x: dict) -> Optional[str]:
     hist_baseform = x.get('hist.baseform')
