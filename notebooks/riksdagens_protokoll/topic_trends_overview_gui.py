@@ -19,17 +19,27 @@ class PoliticalTopicOverviewGUI(TopicOverviewGUI):
             value=None,
             layout=dict(width="200px"),
         )
+        self.gender_id = Dropdown(
+            description='Gender',
+            options=[],
+            value=None,
+            layout=dict(width="200px"),
+        )
 
-    def setup(self, state: TopicModelContainer):
+    def setup(self, state: TopicModelContainer) -> "PoliticalTopicOverviewGUI":
         super().setup(state)
         self.party_id.observe(self.update_handler, names='value')
         self.speaker_id.observe(self.update_handler, names='value')
+        self.gender_id.observe(self.update_handler, names='value')
+        return state
 
     def layout(self) -> VBox:
 
         return VBox(
             [
-                HBox([self.aggregate, self.party_id, self.speaker_id, self.output_format, self.flip_axis]),
+                HBox(
+                    [self.aggregate, self.party_id, self.gender_id, self.speaker_id, self.output_format, self.flip_axis]
+                ),
                 HBox([self.output]),
                 self.text,
             ]

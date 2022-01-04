@@ -17,24 +17,31 @@ class ProtocolTopicTrendsGUI(TopicTrendsGUI):
             layout=dict(width="200px"),
         )
         self.speaker_id = Dropdown(
-            description='Party',
+            description='Speaker',
             options=[],
             value=None,
             layout=dict(width="200px"),
         )
-
+        self.gender_id = Dropdown(
+            description='Gender',
+            options=[],
+            value=None,
+            layout=dict(width="200px"),
+        )
         self.current_party_id: int = -1
         self.current_weights: pd.DataFrame = None
 
     def layout(self):
         placeholder: VBox = self.extra_placeholder
-        placeholder.children = [self.party_id]
+        placeholder.children = [self.party_id, self.gender_id, self.speaker_id]
         return super().layout()
 
     def setup(self, state: TopicModelContainer) -> "ProtocolTopicTrendsGUI":
         super().setup(state)
 
         self.party_id.observe(self.update_handler, names='value')
+        self.gender_id.observe(self.update_handler, names='value')
+        self.speaker_id.observe(self.update_handler, names='value')
 
         return self
 
