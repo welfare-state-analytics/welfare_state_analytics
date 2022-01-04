@@ -7,7 +7,7 @@ import penelope.topic_modelling as topic_modelling
 import penelope.utility as utility
 from IPython.display import display
 from ipywidgets import HTML, Button, Dropdown, FloatSlider, HBox, IntProgress, IntSlider, Output, VBox
-from penelope.corpus import bow_to_text
+from penelope.corpus import bow2text
 from penelope.notebook.topic_modelling import TopicModelContainer
 
 import notebooks.political_in_newspapers.repository as repository
@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def reconstitue_texts_for_topic(df: pd.DataFrame, corpus, id2token, n_top=500) -> pd.DataFrame:
 
-    df['text'] = df.document_id.apply(lambda x: bow_to_text(corpus[x], id2token))
+    df['text'] = df.document_id.apply(lambda x: bow2text(corpus[x], id2token))
     df['pub'] = df.publication_id.apply(lambda x: repository.ID2PUB[x])
     df = df.drop(['topic_id', 'year', 'publication_id'], axis=1).set_index('document_id')
     df.index.name = 'id'
@@ -36,12 +36,12 @@ def display_texts(
     n_top: int = 500,
 ):
 
-    if state.trained_model.train_corpus is None:
+    if state.train_corpus is None:
         print("Corpus is not avaliable. Please store model with corpus!")
         return
 
-    corpus = state.trained_model.train_corpus.corpus
-    id2token = state.trained_model.train_corpus.id2word
+    corpus = state.trained_model.corpus
+    id2token = state.trained_model.id2word
 
     df: pd.DataFrame = state.inferred_topics.filter_document_topic_weights(filters=filters, threshold=threshold)
 

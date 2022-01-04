@@ -124,7 +124,7 @@ class SourceCorpus:
 
         corpus: Sparse2Corpus = Sparse2Corpus(self.corpus, documents_columns=False)
         document_index: pd.DataFrame = self.document_index
-        document_index['n_terms'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)  # type: ignore
+        document_index['n_tokens'] = np.asarray(corpus.sparse.sum(axis=0)).reshape(-1).astype(np.uint32)  # type: ignore
 
         if inplace:
             self.corpus = corpus
@@ -398,5 +398,5 @@ def migrate_document_index(folder: str = '/data/westac/textblock_politisk'):
     document_index: pd.DataFrame = pd.read_csv(source_name, sep='\t', index_col=0)
 
     document_index.merge(source_corpus.document_index[['filename', 'tf']], on='filename', how='inner').rename(
-        columns={'tf': 'n_terms'}
+        columns={'tf': 'n_tokens'}
     ).to_csv(target_name, compression=dict(method='zip', archive_name="document_index.csv"), sep='\t', header=True)
