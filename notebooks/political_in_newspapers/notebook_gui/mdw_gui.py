@@ -12,6 +12,7 @@ from penelope.vendor.textacy import compute_most_discriminating_terms
 
 from notebooks.political_in_newspapers import repository
 
+# pylint: disable=too-many-instance-attributes
 
 def get_group_indicies(
     document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] | int = None

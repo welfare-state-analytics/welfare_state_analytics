@@ -42,7 +42,7 @@ def convert(source_filename: str, target_filename: str):
 
 if __name__ == "__main__":
 
-    source_filename: str = '/home/roger/source/penelope/data/riksprot_1800.csv.zip'
-    target_filename: str = '/home/roger/source/penelope/data/riksdagens_protokoll_1867-1899.csv.zip'
+    source_file: str = '/home/roger/source/penelope/data/riksprot_1800.csv.zip'
+    target_file: str = '/home/roger/source/penelope/data/riksdagens_protokoll_1867-1899.csv.zip'
 
-    convert(source_filename, target_filename)
+    convert(source_file, target_file)
