@@ -10,7 +10,6 @@ from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
 from penelope.corpus.readers import ExtractTaggedTokensOpts
 from penelope.notebook.dtm import ComputeGUI
 from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, PipelinePayload
-from penelope.utility import PropertyValueMaskingOpts
 from penelope.workflows import co_occurrence as workflow
 from penelope.workflows.interface import ComputeOpts
 

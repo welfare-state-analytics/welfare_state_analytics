@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 # pylint: disable=unsubscriptable-object)
 
+
 def baseform(x: dict) -> Optional[str]:
     hist_baseform = x.get('hist.baseform')
     saldo_baseform = x.get('saldo.baseform')

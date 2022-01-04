@@ -11,8 +11,8 @@ from penelope import topic_modelling, utility
 from penelope.network import plot_utility
 from penelope.network.bipartite_plot import plot_bipartite_network
 from penelope.network.networkx import utility as network_utility
+from penelope.notebook import widgets_utils
 from penelope.notebook.topic_modelling import TopicModelContainer
-from penelope.workflows import widgets_utils
 
 from notebooks.political_in_newspapers import repository
 
