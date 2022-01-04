@@ -3,7 +3,7 @@ from typing import Callable, Optional
 
 import pandas as pd
 import pytest
-from penelope import corpus, pipeline, utility
+from penelope import corpus, pipeline
 from westac.riksdagens_protokoll import parlaclarin
 
 # pylint: disable=redefined-outer-name, too-many-function-args, too-many-locals
