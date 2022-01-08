@@ -52,6 +52,4 @@ coverage.xml
 dist
 /stopwords
 export
-*.feather
-*.feathering
 typings
