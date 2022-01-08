@@ -1,4 +1,4 @@
 # type: ignore
 
-from .tokens_count_gui import PoSCountGUI, ComputeOpts
+from .pos_statistics_gui import PoSCountGUI, ComputeOpts
 
