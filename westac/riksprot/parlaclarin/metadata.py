@@ -1,6 +1,15 @@
 from functools import cached_property
+from io import StringIO
+from typing import List
 import pandas as pd
-from os.path import join as jj
+import numpy as np
+from os.path import isfile, isdir, join
+from penelope import utility as pu
+from penelope import corpus as pc
+
+
+def revdict(d: dict) -> dict:
+    return {v: k for k, v in d.items()}
 
 
 def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
@@ -18,30 +27,144 @@ class ProtoMetaData:
     DOCUMENT_INDEX_NAME: str = 'document_index.feather'
     MEMBERS_NAME: str = 'person_index.csv'
 
-    def __init__(self, members: pd.DataFrame, document_index: pd.DataFrame):
-        self.document_index: pd.DataFrame = document_index
-        self.members: pd.DataFrame = members
+    def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame):
+
+        self.document_index: pd.DataFrame = (
+            document_index if isinstance(document_index, pd.DataFrame) else self.load_document_index(document_index)
+        )
+        self.members: pd.DataFrame = members if isinstance(members, pd.DataFrame) else self.load_members(members)
+        self.members['party_abbrev'] = self.members['party_abbrev'].fillna('unknown')
+        self.role_type2id: dict = {
+            'unknown': 0,
+            'talman': 1,
+            'minister': 2,
+            'member': 3,
+        }
+        self.role_type2name: dict = revdict(self.role_type2id)
+        self.gender2id: dict = {
+            'unknown': 0,
+            'man': 1,
+            'woman': 2,
+        }
+        self.members.loc[~self.members['gender'].isin(self.gender2id.keys()), 'gender'] = 'unknown'
+        self.members.loc[~self.members['role_type'].isin(self.role_type2id.keys()), 'role_type'] = 'unknown'
+
+        self.gender2name: dict = revdict(self.gender2id)
+
+    @cached_property
+    def genders(self) -> pd.DataFrame:
+        return pd.DataFrame(data={'gender': self.gender2id.values()}, index=self.gender2id.keys())
+
+    # @cached_property
+    # def gender2name(self) -> pd.DataFrame:
+    #     return self.genders['gender'].to_dict()
+
+    # @cached_property
+    # def gender2id(self) -> dict:
+    #     return revdict(self.gender2name)
+
+    @cached_property
+    def party_abbrevs(self) -> pd.DataFrame:
+        return pd.DataFrame({'party_abbrev': self.members.party_abbrev.unique()})
+
+    @cached_property
+    def party_abbrev2name(self) -> dict:
+        return self.party_abbrevs['party_abbrev'].to_dict()
+
+    @cached_property
+    def party_abbrev2id(self) -> dict:
+        return revdict(self.party_abbrev2name)
+
+    @cached_property
+    def whos(self) -> pd.DataFrame:
+        return pd.DataFrame({'who': self.members.index.unique()})
+
+    @cached_property
+    def who2name(self) -> dict:
+        return self.whos['who'].to_dict()
+
+    @cached_property
+    def who2id(self) -> dict:
+        return revdict(self.who2name)
 
     @staticmethod
-    def load(folder: str) -> "ProtoMetaData":
+    def load_from_same_folder(folder: str) -> "ProtoMetaData":
+        """Loads members and document index from `folder`"""
+        return ProtoMetaData(document_index=folder, members=folder)
 
-        document_index: pd.DataFrame = pd.read_feather(jj(folder, ProtoMetaData.DOCUMENT_INDEX_NAME))
+    @staticmethod
+    def load_document_index(folder: str) -> pd.DataFrame:
+        document_index: pd.DataFrame = None
+        try:
+            document_index = pc.DocumentIndexHelper.load(
+                filename=folder if not isdir(folder) else join(folder, ProtoMetaData.DOCUMENT_INDEX_NAME)
+            ).document_index
+        except FileNotFoundError:
+            """Try load from DTM folder"""
+            document_index = pc.DocumentIndexHelper.load(filename=folder).document_index
+
+        # document_index = pd.read_feather(join(folder, ProtoMetaData.DOCUMENT_INDEX_NAME))
         document_index.assign(protocol_name=document_index.filename.str.split('_').str[0])
-        members: pd.DataFrame = pd.read_csv(jj(folder, ProtoMetaData.MEMBERS_NAME), delimiter='\t').set_index('id')
+        return document_index
 
-        return ProtoMetaData(document_index=document_index, members=members)
-
-    @cached_property
-    def full_index(self) -> pd.DataFrame:
-        si: pd.DataFrame = self.document_index.merge(self.members, left_on='who', right_index=True, how='inner').fillna(
-            ''
+    @staticmethod
+    def read_members(filename: str, sep: str = '\t') -> pd.DataFrame:
+        members: pd.DataFrame = (
+            pd.read_feather(filename)
+            if not isinstance(filename, StringIO) and filename.endswith('feather')
+            else pd.read_csv(filename, sep=sep)
         )
-        si.loc[si['gender'] == '', 'gender'] = 'unknown'
-        return si
+        members = members.set_index('id')
+        return members
+
+    @staticmethod
+    def load_members(source: str, sep: str = '\t') -> pd.DataFrame:
+
+        if isinstance(source, StringIO) or isfile(source):
+            return ProtoMetaData.read_members(source, sep=sep)
+
+        probe_extension: List[str] = ['feather', 'csv.feather', 'csv', 'zip', 'csv.gz', 'csv.zip']
+        for extension in probe_extension:
+            filename: str = join(
+                source,
+                pu.replace_extension(ProtoMetaData.MEMBERS_NAME, extension=extension),
+            )
+            if not isfile(filename):
+                continue
+            return ProtoMetaData.read_members(filename, sep=sep)
+
+        raise FileNotFoundError(f"Parliamentary members file not found in {source}, probed {','.join(probe_extension)}")
+
+    def overload_by_member_data(
+        self, df: pd.DataFrame, *, encoded: bool = True, drop: bool = True, columns: List[str] = None
+    ) -> pd.DataFrame:
+
+        if 'who' not in df.columns:
+            raise ValueError("cannot merge member data, `who` is missing in target")
+
+        columns = (
+            columns
+            if columns is not None
+            else ['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id']
+            if encoded
+            else ['gender', 'party_abbrev', 'role_type']
+        )
+
+        target: pd.DataFrame = self.encoded_members if encoded else self.members
+        target = target[columns]
+        xi: pd.DataFrame = self.document_index.merge(target, left_on='who', right_index=True, how='left')
+        if drop:
+            xi.drop(columns='who', inplace=True)
+
+        return xi
 
     @cached_property
-    def simple_index(self) -> pd.DataFrame:
-        return self.full_index[
+    def overloaded_document_index(self) -> pd.DataFrame:
+        return self.overload_by_member_data(self.document_index, encoded=True, drop=True)
+
+    @cached_property
+    def simple_members(self) -> pd.DataFrame:
+        return self.members[
             [
                 'year',
                 'document_name',
@@ -55,3 +178,26 @@ class ProtoMetaData:
                 'party_abbrev',
             ]
         ]
+
+    @cached_property
+    def encoded_members(self) -> pd.DataFrame:
+        mx: pd.DataFrame = self.members
+        mx = mx.assign(
+            who_id=pd.Series(mx.index).apply(self.who2id.get).astype(np.int16),
+            gender_id=mx['gender'].apply(self.gender2id.get).astype(np.int8),
+            party_abbrev_id=mx['party_abbrev'].apply(self.party_abbrev2id.get).astype(np.int8),
+            role_type_id=mx['role_type'].apply(self.role_type2id.get),
+        )
+        mx = mx.drop(columns=['gender', 'party_abbrev', 'role_type'])
+        return mx
+
+    def decode_members_data(self, df: pd.DataFrame, drop: bool = True) -> pd.DataFrame:
+        if 'role_type_id' in df.columns:
+            df['role_type'] = df['role_type_id'].apply(self.role_type2name.get)
+        if 'gender_id' in df.columns:
+            df['gender'] = df['gender_id'].apply(self.gender2name.get)
+        if 'party_abbrev_id' in df.columns:
+            df['party_abbrev'] = df['party_abbrev_id'].apply(self.party_abbrev2name.get)
+        if drop:
+            df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
+        return df
