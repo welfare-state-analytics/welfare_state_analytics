@@ -47,8 +47,8 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool):
     assert gui.document_index is None
 
     assert gui.opts.document_index is None
-    assert set(gui._pivot_keys.options) == set(['None'] + list(gui.pivot_keys_map.keys()))
-    assert set(gui.selected_pivot_keys) == set() == set(gui.opts.pivot_keys)
+    assert set(gui._pivot_keys.options) == set(['None'] + list(gui.pivot_key_name2idname.keys()))
+    assert set(gui.selected_pivot_keys_idnames) == set() == set(gui.opts.pivot_keys)
 
 
 @pytest.mark.long_running
@@ -119,33 +119,30 @@ def test_pos_count_gui_compute_without_pivot_keys(folder: str, temporal_key: str
 @pytest.mark.parametrize(
     'folder,temporal_key,encoded,pivot_keys,expected_count',
     [
-        (TEST_FOLDER, 'decade', True, ['gender_id'], 33),
-        # (TEST_FOLDER, 'decade', False, ['gender'], 33),
+        (TEST_FOLDER, 'decade', True, [], 11),
+        (TEST_FOLDER, 'decade', True, ['gender_id'], 11),
+        (TEST_FOLDER, 'decade', True, ['gender_id', 'party_abbrev_id'], 11),
     ],
 )
-def test_pos_count_gui_compute_with_pivot_keys(
+def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     folder: str, temporal_key: str, encoded: bool, pivot_keys: List[str], expected_count: int
 ):
 
+    #expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]
+
     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded).setup(load_data=False).load(folder).prepare()
+
     gui.observe(False)
 
     gui._temporal_key.value = temporal_key
+    gui._pivot_keys.value = [gui.pivot_key_idname2name.get(x) for x in pivot_keys]
 
-    """Translates pivot key names to pivot key IDs if encoded = False"""
-    # FIXME: GUI only accepts ID options
-    gui._pivot_keys.value = tuple()
-    gui._pivot_keys.options = pivot_keys
-    gui._pivot_keys.value = pivot_keys
+    data: pd.DataFrame = gui.compute()
+    unstacked_data = gui.unstack_data(data)
 
-    data: pd.DataFrame = gui.compute(gui.document_index, gui.opts)
+    assert len(unstacked_data) == expected_count
 
-    """Decode pivot key names since returned data always has decoded values"""
-    """Translates pivot key IDs to pivot key names if encoded = True"""
-    expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]
-
-    assert len(data) == expected_count
-    assert set(data.columns) == set(['Total', temporal_key] + expected_pivot_keys)
+    gui.plot(data)
 
 
 @pytest.mark.long_running
