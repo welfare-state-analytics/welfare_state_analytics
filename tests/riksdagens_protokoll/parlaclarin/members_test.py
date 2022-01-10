@@ -6,6 +6,8 @@ import pytest
 from penelope import corpus as pc
 from westac.riksprot.parlaclarin.metadata import ProtoMetaData
 
+# pylint: disable=redefined-outer-name
+
 
 def sample_members(folder: str) -> None:
     filename: str = 'tests/test_data/person_index.feather'
