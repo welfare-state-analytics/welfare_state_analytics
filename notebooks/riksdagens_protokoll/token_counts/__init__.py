@@ -1,4 +1,3 @@
 # type: ignore
 
-from .pos_statistics_gui import PoSCountGUI, ComputeOpts
-
+from .pos_statistics_gui import PoSCountGUI
