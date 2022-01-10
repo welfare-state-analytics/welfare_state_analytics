@@ -32,11 +32,11 @@
 
 # %% tags=[]
 from IPython.core.display import display
-from penelope.notebook.token_counts import tokens_count_gui
+from penelope.notebook.token_counts import pipeline_gui
 
 import __paths__  # pylint: disable=unused-import
 
-gui = tokens_count_gui.create_token_count_gui(
+gui = pipeline_gui.create_token_count_gui(
     corpus_folder=__paths__.corpus_folder,
     resources_folder=__paths__.resources_folder,
 )
