@@ -152,9 +152,12 @@ class ProtoMetaData:
 
         target: pd.DataFrame = self.encoded_members if encoded else self.members
         target = target[columns]
-        xi: pd.DataFrame = self.document_index.merge(target, left_on='who', right_index=True, how='left')
+        xi: pd.DataFrame = df.merge(target, left_on='who', right_index=True, how='left')
+
         if drop:
             xi.drop(columns='who', inplace=True)
+
+        xi = self.as_slim_types(xi)
 
         return xi
 
@@ -191,6 +194,11 @@ class ProtoMetaData:
         mx = mx.drop(columns=['gender', 'party_abbrev', 'role_type'])
         return mx
 
+    def as_slim_types(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = as_slim_types(df, columns=['role_type_id', 'gender_id', 'party_abbrev_id'], dtype=np.int8)
+        df = as_slim_types(df, columns=['who_id'], dtype=np.int16)
+        return df
+
     def decode_members_data(self, df: pd.DataFrame, drop: bool = True) -> pd.DataFrame:
         if 'role_type_id' in df.columns:
             df['role_type'] = df['role_type_id'].apply(self.role_type2name.get)
@@ -201,3 +209,13 @@ class ProtoMetaData:
         if drop:
             df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
         return df
+
+def as_slim_types(df: pd.DataFrame, columns: List[str], dtype: np.dtype) -> pd.DataFrame:
+    if df is None:
+        return None
+    if isinstance(columns, str):
+        columns = [columns]
+    for column in columns:
+        if column in df.columns:
+            df[column] = df[column].fillna(0).astype(dtype)
+    return df
