@@ -20,11 +20,14 @@
 #
 # | | Building block | Arguments | Description |
 # | -- | :------------- | :------------- | :------------- |
-# | 💾 | <b>pyriksprot (tagger(</b> | FIXME | FIXME
+# | 💾 | <b>pyriksprot</b> | TF[20, MASK] | Extract corpus from Parla-CLARIN
+# | 💾 | <b>pyriksprot (tagger)</b> | _ | PoS-tag and lemmatize
+# | 💾 | <b>dtm_id</b> | _ | Create DTM
+# | 💾 | <b>dtm </b> | _ | Create DTM
 #
-# from IPython.display import display
 #
-# import importlib
+
+# %% tags=[]
 
 import importlib
 
@@ -32,14 +35,19 @@ import pandas as pd
 from bokeh.io import output_notebook
 from IPython.display import display
 
-# %% tags=[]
 import __paths__  # pylint: disable=unused-import
+
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as ps
+from westac.riksprot.parlaclarin import metadata
 
 importlib.reload(ps)
 output_notebook()
 
 pd.set_option('display.max_rows', 500)
 
-gui = ps.PoSCountGUI(default_folder='/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20').setup(load_data=True)
+md: metadata.ProtoMetaData = metadata.ProtoMetaData.load_from_same_folder('/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20')
+
+gui = ps.PoSCountGUI(default_folder='/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20', riksprot_metadata=md).setup(load_data=True)
 display(gui.layout())
+
+# %%
