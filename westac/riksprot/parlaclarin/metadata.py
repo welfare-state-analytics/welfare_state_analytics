@@ -1,15 +1,32 @@
+from __future__ import annotations
 from functools import cached_property
 from io import StringIO
-from typing import List
+from typing import List, Mapping
 import pandas as pd
 import numpy as np
 from os.path import isfile, isdir, join
 from penelope import utility as pu
 from penelope import corpus as pc
 
+ROLE_TYPE2ID: dict = {
+    'unknown': 0,
+    'talman': 1,
+    'minister': 2,
+    'member': 3,
+}
 
-def revdict(d: dict) -> dict:
-    return {v: k for k, v in d.items()}
+GENDER2ID: dict = {
+    'unknown': 0,
+    'man': 1,
+    'woman': 2,
+}
+
+MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = {
+    'gender': 'gender_id',
+    'party_abbrev': 'party_abbrev_id',
+    'role_type': 'role_type_id',
+    'who': 'who_id',
+}
 
 
 def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
@@ -26,6 +43,7 @@ class ProtoMetaData:
 
     DOCUMENT_INDEX_NAME: str = 'document_index.feather'
     MEMBERS_NAME: str = 'person_index.csv'
+    MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = MEMBER_NAME2IDNAME_MAPPING
 
     def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame):
 
@@ -34,22 +52,33 @@ class ProtoMetaData:
         )
         self.members: pd.DataFrame = members if isinstance(members, pd.DataFrame) else self.load_members(members)
         self.members['party_abbrev'] = self.members['party_abbrev'].fillna('unknown')
-        self.role_type2id: dict = {
-            'unknown': 0,
-            'talman': 1,
-            'minister': 2,
-            'member': 3,
-        }
-        self.role_type2name: dict = revdict(self.role_type2id)
-        self.gender2id: dict = {
-            'unknown': 0,
-            'man': 1,
-            'woman': 2,
-        }
-        self.members.loc[~self.members['gender'].isin(self.gender2id.keys()), 'gender'] = 'unknown'
-        self.members.loc[~self.members['role_type'].isin(self.role_type2id.keys()), 'role_type'] = 'unknown'
+        self.members.loc[~self.members['gender'].isin(GENDER2ID.keys()), 'gender'] = 'unknown'
+        self.members.loc[~self.members['role_type'].isin(ROLE_TYPE2ID.keys()), 'role_type'] = 'unknown'
 
-        self.gender2name: dict = revdict(self.gender2id)
+    @property
+    def gender2id(self) -> dict:
+        return GENDER2ID
+
+    @property
+    def gender2name(self) -> dict:
+        return pu.revdict(GENDER2ID)
+
+    @property
+    def role_type2id(self) -> dict:
+        return ROLE_TYPE2ID
+
+    @property
+    def role_type2name(self) -> dict:
+        return pu.revdict(ROLE_TYPE2ID)
+
+    @cached_property
+    def member_property_specs(self) -> List[Mapping[str, str | Mapping[str, int]]]:
+        return [
+            dict(text_name='gender', id_name='gender_id', values=self.gender2id),
+            dict(text_name='role_type', id_name='role_type_id', values=self.role_type2id),
+            dict(text_name='party_abbrev', id_name='party_abbrev_id', values=self.party_abbrev2id),
+            dict(text_name='who', id_name='who_id', values=self.who2id),
+        ]
 
     @cached_property
     def genders(self) -> pd.DataFrame:
@@ -73,7 +102,7 @@ class ProtoMetaData:
 
     @cached_property
     def party_abbrev2id(self) -> dict:
-        return revdict(self.party_abbrev2name)
+        return pu.revdict(self.party_abbrev2name)
 
     @cached_property
     def whos(self) -> pd.DataFrame:
@@ -85,12 +114,17 @@ class ProtoMetaData:
 
     @cached_property
     def who2id(self) -> dict:
-        return revdict(self.who2name)
+        return pu.revdict(self.who2name)
 
     @staticmethod
     def load_from_same_folder(folder: str) -> "ProtoMetaData":
         """Loads members and document index from `folder`"""
-        return ProtoMetaData(document_index=folder, members=folder)
+        try:
+            return ProtoMetaData(document_index=folder, members=folder)
+        except Exception as ex:
+            raise FileNotFoundError(
+                "unable to load data from {folder}, please make sure both document index and members index reside in same folder."
+            ) from ex
 
     @staticmethod
     def load_document_index(folder: str) -> pd.DataFrame:
@@ -209,6 +243,7 @@ class ProtoMetaData:
         if drop:
             df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
         return df
+
 
 def as_slim_types(df: pd.DataFrame, columns: List[str], dtype: np.dtype) -> pd.DataFrame:
     if df is None:
