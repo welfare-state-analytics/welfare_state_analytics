@@ -28,6 +28,8 @@ MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = {
     'who': 'who_id',
 }
 
+MEMBER_IDNAME2NAME_MAPPING: Mapping[str, str] = pu.revdict(MEMBER_NAME2IDNAME_MAPPING)
+
 
 def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
     """Load speech index. Merge with person index (parla. members, ministers, speakers)"""
@@ -44,6 +46,7 @@ class ProtoMetaData:
     DOCUMENT_INDEX_NAME: str = 'document_index.feather'
     MEMBERS_NAME: str = 'person_index.csv'
     MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = MEMBER_NAME2IDNAME_MAPPING
+    MEMBER_IDNAME2NAME_MAPPING: Mapping[str, str] = MEMBER_IDNAME2NAME_MAPPING
 
     def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame):
 
@@ -54,6 +57,9 @@ class ProtoMetaData:
         self.members['party_abbrev'] = self.members['party_abbrev'].fillna('unknown')
         self.members.loc[~self.members['gender'].isin(GENDER2ID.keys()), 'gender'] = 'unknown'
         self.members.loc[~self.members['role_type'].isin(ROLE_TYPE2ID.keys()), 'role_type'] = 'unknown'
+
+    def map_id2text_names(self, id_names: List[str]) -> List[str]:
+        return [MEMBER_IDNAME2NAME_MAPPING.get(x) for x in id_names]
 
     @property
     def gender2id(self) -> dict:
