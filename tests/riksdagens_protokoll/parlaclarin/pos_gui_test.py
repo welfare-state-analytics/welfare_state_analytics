@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import ipywidgets as widgets
 import pandas as pd
-from penelope import utility as pu
 import pytest
+from penelope import utility as pu
 from westac.riksprot.parlaclarin import metadata
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
@@ -151,7 +151,7 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
 
     # expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]
 
-    gui = (
+    gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, riksprot_metadata=riksprot_metadata)
         .setup(load_data=False)
         .load(folder)
@@ -185,7 +185,7 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
         computed_data = self.compute()
 
     gender_value_pairs: Set[str] = {"gender: unknown", "gender: man", "gender: woman"}
-    gui = (
+    gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=TEST_FOLDER, encoded=True, riksprot_metadata=riksprot_metadata)
         .setup(load_data=False)
         .load(TEST_FOLDER)
@@ -231,7 +231,7 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True)])
 def test_pos_count_gui_display(folder: str, encoded: bool, riksprot_metadata: metadata.ProtoMetaData):
 
-    gui = (
+    gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, riksprot_metadata=riksprot_metadata)
         .setup(load_data=False)
         .load(folder)
