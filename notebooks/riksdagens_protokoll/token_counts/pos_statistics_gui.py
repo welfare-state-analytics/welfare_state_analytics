@@ -18,14 +18,10 @@ class PoSCountGUI(tc.BasicDTMGUI):
         member_property_spec: dict = self.riksprot_metadata.member_property_specs
         super().__init__(default_folder=default_folder, pivot_key_specs=member_property_spec)
 
-    def setup(self, load_data: bool = False) -> "PoSCountGUI":
-
-        return super().setup(load_data=load_data)
-
     def keep_columns(self) -> List[str]:
         return super().keep_columns() + ['who']
 
-    def prepare(self) -> "tc.BasicDTMGUI":
+    def prepare(self) -> "PoSCountGUI":
         super().prepare()
         self.document_index = self.riksprot_metadata.overload_by_member_data(self.document_index, encoded=self.encoded)
         return self
