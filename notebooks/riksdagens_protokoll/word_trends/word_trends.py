@@ -18,6 +18,7 @@
 # ## Word, or part-of-word, trend analysis
 #
 # ### Text Processing Pipeline
+# To be updated:
 #
 # | 🔽 | Building block | Arguments | Description | Configuration
 # | -- | :------------- | :------------- | :------------- | :------------- |
@@ -35,39 +36,9 @@
 #
 # ### User instructions
 #
-# #### Compute DTM
-#
-# This notebook implements the entire processing pipeline from plain text to a computed (and stored)
-# document-term matrix (DTM) that are the basis for the word trend exploration.
-#
-# For large corpora the DTM processing time can be considerable and in such a case you
-# should consider using the CLI-version of the processing pipeline.
-#
-# Note that the computed DTM is saved on disk in the specified folder. You must enter a
-# tag that will be used when naming the (principal) result data file. This file will be named
-# "tag + `_vectorized_data.pickle`" and will be used to uniquely identify the bundle of files that makes
-# up the result. Note that if the `tag` already exists in the specified target folder then it will
-# be overwritten. You can use the tag to describe the arguments of the computation i.e. PoS tags etc. If the `Create folder` option is checked, then the result bundle will be stored in a subfolder of the target folder named _tag_.
-#
-# #### Compute arguments
-#
-# | | Config element |  Description |
-# | -- | :------------- | :------------- |
-# | | Corpus type | Type of corpus, disabled since only text corpora are allowed in this notebook.
-# | | Source corpus file | Select file (ZIP) or folder that contains the text documents.
-# | | Output tag | String that will be prefix to result files. Only valid filename chars allowed.
-# | | Output folder | Target folder for result files.
-# | | Part-of-speech groups | Groups of tags to include in DTM given corpus PoS-schema
-# | | Remove stopwords | Remove common stopwords using NLTK language specific stopwords
-# | | Extra stopwords | Additional stopwords
-# | | Filename fields | Specifies attribute values to be extracted from filenames
-#
-# N.B. Note that PoS schema (e.g. SUC, Universal, ON5 Penn Treebank tag sets) and language must be set for each corpus.
-#  This, and other options, is specified in the _corpus configuration file_. For an example, please see _SSI.yml_ inf the `resources` folder.
-#
 # #### Load a DTM corpus
 #
-# To load an existing corpus youmust first select a file, then press <b>`Load`</b>. To select the file:</b> <b>1)</b> press <b>`Change`</b> to open the file browser, <b>2)</b> find and select the file you want to open and <b>3)</b> press <b>`Change`</b> again to confirm the file and close the file browser. Then you can load the corpus by pressing <b>`Load`</b>.
+# To load a corpus you must first select a file, then press <b>`Load`</b>. To select the file:</b> <b>1)</b> press <b>`Change`</b> to open the file browser, <b>2)</b> find and select the file you want to open and <b>3)</b> press <b>`Change`</b> again to confirm the file and close the file browser. Then you can load the corpus by pressing <b>`Load`</b>.
 #
 # #### Word trends
 #
@@ -83,21 +54,12 @@
 # So this expression matches all words that begins with any number of characters follwoed, by the character sequence `tion` at the end of the word.
 # To match all words starting with `info`you can enter `|^info.*|` where `^` specifies the start of the word.
 #
-#
-#
 # %%
-
-import importlib
-
 from bokeh.io import output_notebook
-
-# from bokeh.resources import INLINE
 from IPython.display import display
-
-from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 from westac.riksprot.parlaclarin import metadata as md
 
-importlib.reload(wt)
+from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 
 default_folder = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 output_notebook()  # resources=INLINE)
@@ -107,9 +69,6 @@ riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(def
 gui = wt.RiksProtTrendsGUI(default_folder=default_folder, riksprot_metadata=riksprot_metadata).setup()
 
 display(gui.layout())
-gui.load();
-
-# %%
-gui.pivot_keys
+gui.load()
 
 # %%
