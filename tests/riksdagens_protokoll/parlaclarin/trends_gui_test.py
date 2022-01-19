@@ -1,4 +1,5 @@
 import os
+from types import MethodType
 from typing import List, Set
 from unittest import mock
 
@@ -92,7 +93,7 @@ def test_trends_gui_update_picker(riksprot_metadata: md.ProtoMetaData):
         nonlocal it_was_called
         it_was_called = True
 
-    gui._update_picker = patch_update_picker
+    gui._update_picker = MethodType(patch_update_picker, gui)
 
     gui = gui.setup()
 
