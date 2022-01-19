@@ -2,6 +2,7 @@ import os
 from typing import Callable
 
 import penelope.notebook.topic_modelling as tm_ui
+import penelope.topic_modelling as tm
 from penelope.pipeline.config import CorpusConfig
 
 
@@ -21,3 +22,12 @@ def test_bugcheck():
     find_ui.update_handler()
 
     assert True
+
+
+def test_tm_speech():
+
+    folder: str = "/data/riksdagen_corpus_data/tm_1920-2020_500-topics"
+    folder = "/data/riksdagen_corpus_data/tm_1920-2020_500-topics.id.year.who/"
+    inferred_data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=folder, pickled=False)
+
+    assert inferred_data is not None
