@@ -521,12 +521,11 @@ test-win = ["pytest", "mock", "cython", "testfixtures", "Morfessor (>=2.0.2a4)",
 
 [[package]]
 name = "humlab-penelope"
-version = "0.5.42"
+version = "0.6.0"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = "==3.8.*"
-develop = true
+python-versions = ">=3.8.0,<3.9.0"
 
 [package.dependencies]
 bokeh = "*"
@@ -535,37 +534,33 @@ ftfy = "*"
 gensim = "*"
 ipyaggrid = "*"
 ipycytoscape = "*"
-ipydatagrid = "^1.1.8"
+ipydatagrid = ">=1.1.8,<2.0.0"
 ipyfilechooser = "*"
 ipysheet = "*"
 ipywidgets = "*"
-itertoolz = "^0.5"
+itertoolz = ">=0.5,<0.6"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = "^0.3.1"
-more_itertools = "^8.5.0"
-msgpack = "^1.0.2"
-nltk = "^3.5"
+memoization = ">=0.3.1,<0.4.0"
+more_itertools = ">=8.5.0,<9.0.0"
+msgpack = ">=1.0.2,<2.0.0"
+nltk = ">=3.5,<4.0"
 numpy = "*"
-openpyxl = "^3.0.5"
+openpyxl = ">=3.0.5,<4.0.0"
 pandas = "*"
 perspective-python = "*"
 pyarrow = "*"
-python-louvain = "^0.14"
-PyYAML = "^5.3.1"
-requests = "^2.24.0"
+python-louvain = ">=0.14,<0.15"
+PyYAML = ">=5.3.1,<6.0.0"
+requests = ">=2.24.0,<3.0.0"
 scipy = "*"
 sklearn = "*"
 spacy = "*"
 textacy = "*"
-toml = "^0.10.2"
-tqdm = "^4.62.3"
+toml = ">=0.10.2,<0.11.0"
+tqdm = ">=4.62.3,<5.0.0"
 wordcloud = "*"
-
-[package.source]
-type = "directory"
-url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -632,7 +627,7 @@ simplejson = ">=3.13.2"
 
 [[package]]
 name = "ipycytoscape"
-version = "1.3.1"
+version = "1.3.2"
 description = "A Cytoscape widget for Jupyter"
 category = "main"
 optional = false
@@ -644,8 +639,8 @@ spectate = ">=1.0.0"
 
 [package.extras]
 docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autobuild (>=2020.9.1)", "jupyter-sphinx (>=0.3.1)", "sphinx-copybutton", "nbsphinx", "nbsphinx-link", "networkx", "pandas"]
-examples = ["pandas", "py2neo", "neotime"]
-neo4j = ["py2neo", "neotime"]
+examples = ["pandas", "py2neo", "monotonic"]
+neo4j = ["py2neo", "monotonic"]
 test = ["pytest (>4.6)", "pytest-cov", "nbval", "pandas", "nbclassic (>=0.2.8)", "networkx"]
 
 [[package]]
@@ -1550,7 +1545,7 @@ flake8-polyfill = ">=1.0.2,<2"
 
 [[package]]
 name = "perspective-python"
-version = "1.1.0"
+version = "1.1.1"
 description = "Python bindings and JupyterLab integration for Perspective"
 category = "main"
 optional = false
@@ -2552,7 +2547,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.8.*"
-content-hash = "92498f1cc5fd124ea9559cf622b92ecaef57075f601c650d4c898422690780c9"
+content-hash = "d527120b437cb29c53b8874f29f0ee4d5e9e42494df357fa565b71ff67391117"
 
 [metadata.files]
 anyio = [
@@ -2909,7 +2904,10 @@ gensim = [
     {file = "gensim-4.1.2-cp39-cp39-win_amd64.whl", hash = "sha256:39139be83c3128e234216189a094f959ac2b052a808911b0b56d980d5f96981f"},
     {file = "gensim-4.1.2.tar.gz", hash = "sha256:1932c257de4eccbb64cc40d46e8577a25f5f47b94b96019a969fb36150f11d15"},
 ]
-humlab-penelope = []
+humlab-penelope = [
+    {file = "humlab-penelope-0.6.0.tar.gz", hash = "sha256:d38da9510ff29286b5b3d41f29a0c0f5d0261e193ccebd3aef511e15527760fa"},
+    {file = "humlab_penelope-0.6.0-py3-none-any.whl", hash = "sha256:b71c4f0f09f86d2fb3e2c11600e1098caf9422e4b22f8662e3e0050c958d48e0"},
+]
 identify = [
     {file = "identify-2.4.2-py2.py3-none-any.whl", hash = "sha256:67c1e66225870dce721228176637a8ef965e8dd58450bcc7592249d0dfc4da6c"},
     {file = "identify-2.4.2.tar.gz", hash = "sha256:93e8ec965e888f2212aa5c24b2b662f4832c39acb1d7196a70ea45acb626a05e"},
@@ -2936,8 +2934,8 @@ ipyaggrid = [
     {file = "ipyaggrid-0.2.1.tar.gz", hash = "sha256:8919f6ad97f0d02a7d89a912f99d7c0153eafa5181f385c63767c2a56d9ec01c"},
 ]
 ipycytoscape = [
-    {file = "ipycytoscape-1.3.1-py2.py3-none-any.whl", hash = "sha256:2b02ed284b5da3e0d93b3a2c5810b3c2f5a66b54a57e7b04c6206cce6706fda3"},
-    {file = "ipycytoscape-1.3.1.tar.gz", hash = "sha256:ce89cc14b3538d20ddf259d3040bc57cd2f411a23eb5f4545f9681e35168de18"},
+    {file = "ipycytoscape-1.3.2-py2.py3-none-any.whl", hash = "sha256:3b3a1e5278bbd0d12d9430e1f33ee45f4b78ec9044395bd45d388878c8144ab1"},
+    {file = "ipycytoscape-1.3.2.tar.gz", hash = "sha256:67e44fe967166855999b394c5cb0ab6a4eda097c04f191737eb9daecb82413da"},
 ]
 ipydatagrid = [
     {file = "ipydatagrid-1.1.8-py3-none-any.whl", hash = "sha256:b611f681cd4ff7a798b5c36c56000326114b897374cc614d5987b314f46ecff7"},
@@ -3511,23 +3509,23 @@ pep8-naming = [
     {file = "pep8_naming-0.12.1-py2.py3-none-any.whl", hash = "sha256:4a8daeaeb33cfcde779309fc0c9c0a68a3bbe2ad8a8308b763c5068f86eb9f37"},
 ]
 perspective-python = [
-    {file = "perspective-python-1.1.0.tar.gz", hash = "sha256:2dfddedaf4cd6b05fb79d037b43ed43aefab4a0e8c6e715988a13d08937137d7"},
-    {file = "perspective_python-1.1.0-cp36-cp36m-macosx_10_15_x86_64.whl", hash = "sha256:eb728fc6a35663372af9d625ffc0f8f2668762eae402416048d6c8d84a3a1246"},
-    {file = "perspective_python-1.1.0-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:0e333be8e1232ab94b989b2cf986f4487f53eea5cc0c07484d1cdf901cea230b"},
-    {file = "perspective_python-1.1.0-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:cc962bdc7413f923408e0c2962d97c4306ce1a8f49b677565c531268fae3dfb0"},
-    {file = "perspective_python-1.1.0-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:2cf22df02b29b07a8924ad9ac613d003651381957979d63f36b819170bbed855"},
-    {file = "perspective_python-1.1.0-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:0138bb475d6fd8ea9a1713e9618f57241ae89090907af47f2e3ce489a1c1731e"},
-    {file = "perspective_python-1.1.0-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:bd2fc2af5f539d06f6d5441d6624149323e38ff41c7655dcb35b56c1768a9ea7"},
-    {file = "perspective_python-1.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:53b6f95866b9f56f91b07d049eedb8f56bc48bef6f26f3fa097d34304ba3753f"},
-    {file = "perspective_python-1.1.0-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:8b8fbd37aae940fdfd4d66118d1365305fc4538fa70de89957f4bb32729d2cc5"},
-    {file = "perspective_python-1.1.0-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:35589ab2c045a485790af9e1dce9bca6c79424858ab3eb25866eabe3bf5756e2"},
-    {file = "perspective_python-1.1.0-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:e01aa1240645c491780ee9de0814ebc17f895b271d0e815f6967179d7c322bdc"},
-    {file = "perspective_python-1.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:9b9794e5aa92e7028dd03b06fb9954f456180be49a6c81e32bc4be0e264a3431"},
-    {file = "perspective_python-1.1.0-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:a1251cdac0a90bfeec21191c47e25b42b7004ade361b9996205c4dc635863ebe"},
-    {file = "perspective_python-1.1.0-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:22a9deb91a28487fa83f469df6ae0c3004ab9dbcdc6b85cb0e899cea0d355b13"},
-    {file = "perspective_python-1.1.0-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:2c307d3928ef840f30698ab1d1e0c1207d588dbcd661685ee250df9d39b06d67"},
-    {file = "perspective_python-1.1.0-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:c3fefea7e64b8bd59d7acb38a7675b06efb392ee084e14d86654bc573f39ec15"},
-    {file = "perspective_python-1.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:163d4e730a645123ef0a98865bd3298cc6c1f1b010ca0e15ddfb30dcfc8b4a27"},
+    {file = "perspective-python-1.1.1.tar.gz", hash = "sha256:17d520bc1c1e6749751bfa246ab773268b2c08d1306f34823543652aad93e202"},
+    {file = "perspective_python-1.1.1-cp36-cp36m-macosx_10_15_x86_64.whl", hash = "sha256:786ed68a857d07305067b5830dcb835db1929625e3d07bc28732cefe8d5a3d44"},
+    {file = "perspective_python-1.1.1-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:2d696a938cdb183391bd61d58f388811bfaf5430aab3ccd3e033c318ad105997"},
+    {file = "perspective_python-1.1.1-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:b6a3217e24af83e7cebab1b5c704621a2a5588bd0e8b95ef24e37394cfdf627f"},
+    {file = "perspective_python-1.1.1-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:06614ad655a0b96cbb6d0aa5987c35bda9dbca8ac174534e72ec18f014ea3839"},
+    {file = "perspective_python-1.1.1-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:89a9cdb266576bf52727c99b4be166c7653c511c9768468316a7b66e83d092a8"},
+    {file = "perspective_python-1.1.1-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:eae765af40a2b4a443af0ee684c9775e57463f13615a4278a5e7da0c9f6e42dc"},
+    {file = "perspective_python-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:dfc3276ac2dcbe2393e5dea8fcd4dfe925b3ad84944d6aa3c5980124afcd58c0"},
+    {file = "perspective_python-1.1.1-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:04efe9453b5b46a396829285dba70093cad544484475aec4c9a0f3de941ae85b"},
+    {file = "perspective_python-1.1.1-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:b60ae8664bc8478a3eaa526854e2f31477226b9a1b0cf2d03de9e6899d4ca472"},
+    {file = "perspective_python-1.1.1-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:e7b6485e9b88f60f9fc98245cd3261369b134c7c82e64b1d4ab40214bbe73221"},
+    {file = "perspective_python-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:cd59a26b1412595836a09a996843431b2b2562be7994a51ff204751debc610de"},
+    {file = "perspective_python-1.1.1-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:c7337cae440fbf10b7e3de7fb3d0a188de6199df461c6cfb67c0922fa6d3d3ff"},
+    {file = "perspective_python-1.1.1-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:7fcc800f7dffb3ce7296254ebbffe1370c06c100871165421542fa35310098f8"},
+    {file = "perspective_python-1.1.1-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:4fd04ad75cd5e83f6baf0d21bcdd8b048aaaff72934df850e784e764a3b73601"},
+    {file = "perspective_python-1.1.1-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:8a14598f65a10d54f9e73f890d401090c1c007b7256b63272c733f8d2a0b96da"},
+    {file = "perspective_python-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:2dbe36793683ad740852066c72126f24d1827153df7352258d153ae10f2e9b1e"},
 ]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
