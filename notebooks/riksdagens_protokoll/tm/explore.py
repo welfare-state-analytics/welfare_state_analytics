@@ -26,8 +26,8 @@ from bokeh.io import output_notebook
 from IPython.display import display
 from penelope.pipeline.config import CorpusConfig
 from penelope.utility import pandas_utils
+from westac.riksprot.parlaclarin import metadata as md
 
-# %%
 import __paths__  # pylint: disable=unused-import
 
 output_notebook()
@@ -36,7 +36,10 @@ pandas_utils.set_default_options()
 current_state: Callable[[], tm_ui.TopicModelContainer] = tm_ui.TopicModelContainer.singleton
 corpus_folder: str = "/data/riksdagen_corpus_data/"
 corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(corpus_folder, "dtm_1920-2020_v0.3.0.tf20", 'corpus.yml'))
+metadata_folder = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+output_notebook()  # resources=INLINE)
 
+riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(metadata_folder)
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
