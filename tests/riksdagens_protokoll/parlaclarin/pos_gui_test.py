@@ -242,6 +242,6 @@ def test_pos_count_gui_display(folder: str, encoded: bool, riksprot_metadata: me
     layout = gui.layout()
     assert isinstance(layout, widgets.VBox)
 
-    gui = gui.display()
-
+    data: pd.DataFrame = gui.compute()
+    gui.plot(data)
     assert gui._status.value == '✔'

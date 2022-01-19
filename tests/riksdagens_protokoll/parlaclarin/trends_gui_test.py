@@ -11,7 +11,7 @@ from westac.riksprot.parlaclarin import metadata as md
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
 
-# pylint: disable=protected-access,redefined-outer-name
+# pylint: disable=protected-access,redefined-outer-name,(too-many-locals
 
 # FIXME: Create smaller test data
 TEST_FOLDER: str = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
@@ -230,7 +230,7 @@ def test_trends_gui_bugcheck(riksprot_metadata: md.ProtoMetaData):
     gui.load()
     gui.transform()
 
-    gui._invalidate(False)
+    gui.invalidate(False)
 
     gui.plot()
     gui._pivot_keys_text_names.value = ['gender', 'role_type']

@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from typing import List, Sequence
+from dataclasses import dataclass
+from typing import List
 
 import ipywidgets as w
 import pandas as pd
-from IPython.display import display as ipydisplay
-from ipywidgets import HTML, Tab
+from ipywidgets import HTML
 from penelope import corpus as pc
-from penelope import utility as pu
 from penelope.common.keyness import KeynessMetric
 from penelope.notebook import mixins as mx
 from penelope.notebook import utility as nu
@@ -38,7 +36,7 @@ class ComputeOpts(wt.TrendsComputeOpts):
 
     @property
     def clone(self) -> "ComputeOpts":
-        obj: ComputeOpts = super(ComputeOpts, self).clone
+        obj: ComputeOpts = super(ComputeOpts, self).clone  # pylint: disable=super-with-arguments
         obj.source_folder = self.source_folder
         return obj
 
@@ -105,14 +103,14 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
             show_only_dirs=True,
         )
 
-    def setup(self, *, displayers: Sequence[wt.ITrendDisplayer] = None) -> RiksProtTrendsGUI:
-        super().setup(displayers=displayers or wt.DEFAULT_WORD_TREND_DISPLAYERS)
+    def setup(self, **kwargs) -> RiksProtTrendsGUI:
+        super().setup(displayers=kwargs.get('displayers', wt.DEFAULT_WORD_TREND_DISPLAYERS))
         self._source_folder.refresh()
         self._source_folder.register_callback(self._load)
         return self
 
-    def plot(self):
-        return super().plot()
+    def plot(self, trends_data: TrendsData):
+        return super().plot(trends_data)
 
     @view.capture(clear_output=CLEAR_OUTPUT)
     def load(self, compute: bool = True) -> RiksProtTrendsGUI:
