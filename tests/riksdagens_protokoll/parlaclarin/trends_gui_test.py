@@ -93,13 +93,14 @@ def test_trends_gui_update_picker(riksprot_metadata: md.ProtoMetaData):
         nonlocal it_was_called
         it_was_called = True
 
-    gui._update_picker = MethodType(patch_update_picker, gui)
+    gui._update_picker_handler = MethodType(patch_update_picker, gui)
 
     gui = gui.setup()
 
     assert gui._displayers is not None
     assert len(gui._displayers) == len(gui._tab.children)
 
+    gui.load()
     gui.observe(True)
     gui._words.value = "APA"
     assert it_was_called
