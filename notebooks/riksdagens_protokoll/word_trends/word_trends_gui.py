@@ -109,7 +109,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         self._source_folder.register_callback(self._load)
         return self
 
-    def plot(self, trends_data: TrendsData=None):
+    def plot(self, trends_data: TrendsData = None):
         return super().plot(trends_data)
 
     @view.capture(clear_output=CLEAR_OUTPUT)
