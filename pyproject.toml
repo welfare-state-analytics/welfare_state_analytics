@@ -4,9 +4,7 @@ name = "humlab-westac"
 version = "0.5.11"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
-packages = [
-    { include = "notebooks" }
-]
+packages = [{ include = "notebooks" }]
 classifiers = [
     'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
@@ -79,27 +77,34 @@ addopts = [
     # "-s",
 ]
 log_cli = "False"
-testpaths = [
-    "tests",
+testpaths = ["tests"]
+norecursedirs = [
+    'notebooks',
+    '.git',
+    'data',
+    "test_data",
+    'output',
+    'deprecated',
+    '__pycache__',
+    'tmp',
 ]
-norecursedirs = ['notebooks', '.git', 'data', "test_data", 'output', 'deprecated', '__pycache__', 'tmp']
 python_files = "*_test.py"
 python_functions = "test_*"
 filterwarnings = [
-  "ignore::_pytest.warning_types.PytestCollectionWarning",
-  "ignore::DeprecationWarning",
-  "ignore::PendingDeprecationWarning",
-  "ignore::RuntimeWarning",
-  "ignore::UserWarning"
+    "ignore::_pytest.warning_types.PytestCollectionWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore::RuntimeWarning",
+    "ignore::UserWarning",
 ]
 markers = [
     "long_running: takes time to run",
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
 
 [tool.dephell.main]
-from = {format = "poetry", path = "pyproject.toml"}
-to = {format = "poetry", path = "pyproject.toml"}
+from = { format = "poetry", path = "pyproject.toml" }
+to = { format = "poetry", path = "pyproject.toml" }
 
 [tool.black]
 line-length = 120
@@ -122,8 +127,8 @@ profile = "black"
 line_length = 120
 py_version = "auto"
 float_to_top = true
-src_paths = [ "notebooks", "westac", "tests" ]
-known_first_party = [ "__paths__" ]
+src_paths = ["notebooks", "westac", "tests", "scripts"]
+extra_standard_library = ["__paths__"]
 
 [tool.coverage]
 # https://github.com/nedbat/coveragepy
@@ -137,14 +142,11 @@ omit = [
     'notebooks/legacy/**/*.py',
     'notebooks/co_occurrence/co_occurrence_trends.py',
     'notebooks/pos_statistics/pos_statistics.py',
-    'notebooks/word_trends/word_trends.py'
+    'notebooks/word_trends/word_trends.py',
 ]
 
 [tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError"
-]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 show_missing = true
 sort = "Name"
 
