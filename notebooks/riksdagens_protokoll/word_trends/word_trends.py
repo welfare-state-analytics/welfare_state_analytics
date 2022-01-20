@@ -57,9 +57,9 @@
 # %%
 from bokeh.io import output_notebook
 from IPython.display import display
-from westac.riksprot.parlaclarin import metadata as md
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
+from westac.riksprot.parlaclarin import metadata as md
 
 default_folder = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 output_notebook()  # resources=INLINE)

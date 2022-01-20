@@ -3,6 +3,7 @@ from typing import List
 
 import pandas as pd
 from penelope import corpus as pc
+
 from westac.riksprot.parlaclarin.metadata import ProtoMetaData
 
 SAMPLE_MEMBERS: str = [

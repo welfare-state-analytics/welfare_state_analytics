@@ -11,6 +11,7 @@ from penelope.common.keyness import KeynessMetric
 from penelope.notebook import mixins as mx
 from penelope.notebook import utility as nu
 from penelope.notebook import word_trends as wt
+
 from westac.riksprot.parlaclarin import metadata as md
 
 view = w.Output(layout={'border': '2px solid green'})

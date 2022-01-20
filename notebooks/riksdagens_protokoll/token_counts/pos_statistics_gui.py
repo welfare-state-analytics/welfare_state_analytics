@@ -5,6 +5,7 @@ from typing import List, Union
 import pandas as pd
 from ipydatagrid import DataGrid
 from penelope.notebook import token_counts as tc
+
 from westac.riksprot.parlaclarin import metadata
 
 # pylint: disable=unused-argument

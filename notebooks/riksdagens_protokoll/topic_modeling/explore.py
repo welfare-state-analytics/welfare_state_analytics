@@ -27,6 +27,7 @@ from bokeh.io import output_notebook
 from IPython.display import display
 from penelope.pipeline.config import CorpusConfig
 from penelope.utility import pandas_utils
+
 from westac.riksprot.parlaclarin import metadata as md
 
 output_notebook()

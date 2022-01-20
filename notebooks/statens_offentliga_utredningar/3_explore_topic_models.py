@@ -20,6 +20,7 @@
 
 # %%
 
+import __paths__  # pylint: disable=unused-import
 import os
 from typing import Callable
 
@@ -28,8 +29,6 @@ import penelope.notebook.topic_modelling as gui
 from IPython.display import display
 from penelope.pipeline.config import CorpusConfig
 from penelope.utility import pandas_utils
-
-import __paths__  # pylint: disable=unused-import
 
 bokeh.plotting.output_notebook()
 pandas_utils.set_default_options()

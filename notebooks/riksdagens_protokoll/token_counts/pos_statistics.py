@@ -35,9 +35,9 @@ import importlib
 import pandas as pd
 from bokeh.io import output_notebook
 from IPython.display import display
-from westac.riksprot.parlaclarin import metadata
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as ps
+from westac.riksprot.parlaclarin import metadata
 
 importlib.reload(ps)
 output_notebook()

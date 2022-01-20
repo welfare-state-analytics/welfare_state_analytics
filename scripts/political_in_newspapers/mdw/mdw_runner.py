@@ -1,11 +1,11 @@
+import __paths__
 import os
 from typing import Any
 
-import __paths__
-
 import click
-from penelope.vendor.textacy import mdw_modified
 from loguru import logger
+from penelope.vendor.textacy import mdw_modified
+
 from notebooks.political_in_newspapers import repository
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
 

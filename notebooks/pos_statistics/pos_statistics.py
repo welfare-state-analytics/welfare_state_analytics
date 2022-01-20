@@ -30,11 +30,11 @@
 # Note: The dcument index file is either a pre-existing document index or, if no such index exists, automatically generated during the initial text loading pipeline task.
 # If no pre-existing file exists, then the necessary attributes (e.g. document's year) are extracted from the filename of each  document.
 
+import __paths__  # pylint: disable=unused-import
+
 # %% tags=[]
 from IPython.core.display import display
 from penelope.notebook.token_counts import pipeline_gui
-
-import __paths__  # pylint: disable=unused-import
 
 gui = pipeline_gui.create_token_count_gui(
     corpus_folder=__paths__.corpus_folder,

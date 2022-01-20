@@ -88,11 +88,11 @@
 # %%
 
 
+import __paths__
+
 import penelope.notebook.word_trends.main_gui as main_gui
 from bokeh.plotting import output_notebook
 from IPython.core.display import display
-
-import __paths__
 
 output_notebook()
 gui = main_gui.create_to_dtm_gui(

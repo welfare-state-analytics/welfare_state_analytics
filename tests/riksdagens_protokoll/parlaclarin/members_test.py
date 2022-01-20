@@ -2,6 +2,7 @@ from io import StringIO
 
 import pandas as pd
 import pytest
+
 from westac.riksprot.parlaclarin.metadata import ProtoMetaData
 
 from .fixtures import ID_COLUMNS, NAME_COLUMNS, SAMPLE_MEMBERS, sample_document_index

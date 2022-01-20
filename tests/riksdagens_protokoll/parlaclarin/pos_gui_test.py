@@ -7,10 +7,10 @@ import ipywidgets as widgets
 import pandas as pd
 import pytest
 from penelope import utility as pu
-from westac.riksprot.parlaclarin import metadata
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
 from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
+from westac.riksprot.parlaclarin import metadata
 
 # pylint: disable=protected-access,redefined-outer-name
 
