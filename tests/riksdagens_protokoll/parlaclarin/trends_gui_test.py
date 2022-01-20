@@ -7,10 +7,10 @@ import pytest
 from penelope import corpus as pc
 from penelope import utility as pu
 from penelope.common.keyness.metrics import KeynessMetric
-from westac.riksprot.parlaclarin import metadata as md
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
+from westac.riksprot.parlaclarin import metadata as md
 
 # pylint: disable=protected-access,redefined-outer-name,(too-many-locals
 
