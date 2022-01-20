@@ -193,15 +193,15 @@ def count_empty(x):
     return (x.isna() | x.isnull() | x.eq('') | x.eq('unknown')).sum()
 
 
-l = []
+empty_percentages_stats = []
 
 for col in MEMBERS.columns:
     #     print(f"Members without {col} specified: {round((MEMBERS[col].isna().sum()) / len(MEMBERS['born']),4)*100}%")
     empty_percentage = round(count_empty(MEMBERS[col]) / len(MEMBERS['born']) * 100, 3)
     if empty_percentage > 0:
-        l.append((col, empty_percentage))
+        empty_percentages_stats.append((col, empty_percentage))
 #         print(f"Members without {col} specified: {empty_percentage}%")
-pd.DataFrame(l, columns=['Value', 'Missing (%)']).set_index('Value').plot.bar()
+pd.DataFrame(empty_percentages_stats, columns=['Value', 'Missing (%)']).set_index('Value').plot.bar()
 
 # %%
 MEMBERS.groupby(['occupation']).size().sort_values(ascending=False).head(30)
