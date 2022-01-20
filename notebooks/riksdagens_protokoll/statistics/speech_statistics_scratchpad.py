@@ -17,7 +17,6 @@
 # %%
 from dataclasses import dataclass
 
-import ipywidgets
 import matplotlib.pyplot as plt
 
 # %%
@@ -184,10 +183,7 @@ SPEECH_INDEX[SPEECH_INDEX.year != 1995].groupby(['year', 'gender']).agg(
 SPEECH_INDEX.groupby(['protocol_name'])['n_tokens'].sum().hist(bins=1000, figsize=(20, 10))
 
 # %%
-SPEECH_INDEX[SPEECH_INDEX.year != 1995].columns
 
-# %%
-# from math import round
 print(MEMBERS.columns)
 # SPEECH_INDEX[SPEECH_INDEX.born != ''].groupby(['born']).size().plot() # TODO FIXA GENOMSNITTSÅLDER
 # SPEECH_INDEX.groupby(['year','party_abbrev']).agg({'born': lambda x: next((z for z in x if z != ''),-1)})
@@ -197,7 +193,7 @@ def count_empty(x):
     return (x.isna() | x.isnull() | x.eq('') | x.eq('unknown')).sum()
 
 
-l = list()
+l = []
 
 for col in MEMBERS.columns:
     #     print(f"Members without {col} specified: {round((MEMBERS[col].isna().sum()) / len(MEMBERS['born']),4)*100}%")
@@ -250,9 +246,6 @@ axes = year_group['n_tokens'].describe().plot(subplots=True, figsize=(20, 20), r
 
 for ax in axes:
     ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
-
-# %%
-SPEECH_INDEX.columns
 
 # %%
 year_party = SPEECH_INDEX[SPEECH_INDEX.year != 1995].drop(columns=['document_id']).groupby(['year', 'party_abbrev'])
