@@ -42,7 +42,7 @@ from bokeh.plotting import output_notebook
 from IPython.display import display
 from penelope.corpus import load_corpus
 
-root_folder = __paths__.ROOT_FOLDER
+root_folder = __paths__.root_folder
 corpus_folder = os.path.join(root_folder, "output")
 
 warnings.filterwarnings("ignore", category=FutureWarning)

@@ -61,7 +61,7 @@ from westac.riksprot.parlaclarin import metadata as md
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 
-default_folder = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+default_folder = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 output_notebook()  # resources=INLINE)
 
 riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(default_folder)

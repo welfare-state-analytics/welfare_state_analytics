@@ -1,31 +1,22 @@
-import logging
 import os
 from typing import Any
 
 import click
 from penelope.vendor.textacy import mdw_modified
-
-import notebooks.political_in_newspapers.corpus_data as corpus_data
+from loguru import logger
+from notebooks.political_in_newspapers import repository
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
 
 # pylint: disable=too-many-locals, too-many-arguments
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("westac")
+import __paths__
 
 
-def get_ancestor_folder(ancestor):
-    parts = os.getcwd().split(os.path.sep)
-    parts = parts[: parts.index(ancestor) + 1]
-    return os.path.join("/", *parts)
+CORPUS_FOLDER = os.path.join(__paths__.data_folder, "textblock_politisk")
 
+PUB_IDS = ["AB", "DN"]
 
-ROOT_FOLDER = get_ancestor_folder("welfare_state_analytics")
-CORPUS_FOLDER = os.path.join(ROOT_FOLDER, "data/textblock_politisk")
-
-PUB_IDS = ["AB", "DN"]  # list(corpus_data.ID2PUB.values()) + ['ALL']
-
-pubs2ids = lambda pubs: [corpus_data.PUB2ID[x] for x in pubs]
+pubs2ids = lambda pubs: [repository.PUB2ID[x] for x in pubs]
 
 
 @click.command()

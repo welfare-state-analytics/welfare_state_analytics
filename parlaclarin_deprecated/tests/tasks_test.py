@@ -144,7 +144,7 @@ def test_to_tagged_frame_when_loading_checkpoints_succeeds(checkpoint_opts: chec
 
 def test_load_tagged_frame_groups():
 
-    source_folder: str = '/data/riksdagen_corpus_data/tagged-speech-corpus.numeric.feather'
+    source_folder: str = '/data/westac/riksdagen_corpus_data/tagged-speech-corpus.numeric.feather'
     document_index: pd.DataFrame = corpus.DocumentIndexHelper.load(
         jj(source_folder, 'document_index.feather')
     ).document_index

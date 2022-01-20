@@ -15,7 +15,7 @@ from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_meta
 # pylint: disable=protected-access,redefined-outer-name,(too-many-locals
 
 # FIXME: Create smaller test data
-TEST_FOLDER: str = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+TEST_FOLDER: str = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 
 
 @pytest.fixture

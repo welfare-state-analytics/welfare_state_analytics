@@ -45,11 +45,11 @@ output_notebook()
 pd.set_option('display.max_rows', 500)
 
 md: metadata.ProtoMetaData = metadata.ProtoMetaData.load_from_same_folder(
-    '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+    '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 )
 
 gui = ps.PoSCountGUI(
-    default_folder='/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20', riksprot_metadata=md
+    default_folder='/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20', riksprot_metadata=md
 ).setup(load_data=True)
 display(gui.layout())
 

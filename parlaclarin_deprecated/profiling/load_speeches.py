@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 def load():
 
-    source_folder: str = '/data/riksdagen_corpus_data/tagged-speech-corpus.numeric.feather'
+    source_folder: str = '/data/westac/riksdagen_corpus_data/tagged-speech-corpus.numeric.feather'
     vocabulary = pd.read_feather(jj(source_folder, 'token2id.feather'))
     document_index: pd.DataFrame = corpus.DocumentIndexHelper.load(
         jj(source_folder, 'document_index.feather')

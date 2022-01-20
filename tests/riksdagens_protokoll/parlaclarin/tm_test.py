@@ -8,7 +8,7 @@ from penelope.pipeline.config import CorpusConfig
 
 def test_bugcheck():
     current_state: Callable[[], tm_ui.TopicModelContainer] = tm_ui.TopicModelContainer.singleton
-    corpus_folder: str = "/data/riksdagen_corpus_data/"
+    corpus_folder: str = "/data/westac/riksdagen_corpus_data/"
     corpus_config: CorpusConfig = CorpusConfig.load(
         os.path.join(corpus_folder, "dtm_1920-2020_v0.3.0.tf20", 'corpus.yml')
     )
@@ -26,8 +26,8 @@ def test_bugcheck():
 
 def test_tm_speech():
 
-    folder: str = "/data/riksdagen_corpus_data/tm_1920-2020_500-topics"
-    folder = "/data/riksdagen_corpus_data/tm_1920-2020_500-topics.id.year.who/"
+    folder: str = "/data/westac/westac/riksdagen_corpus_data/tm_1920-2020_500-topics"
+    folder = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics.id.year.who/"
     inferred_data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=folder, pickled=False)
 
     assert inferred_data is not None
