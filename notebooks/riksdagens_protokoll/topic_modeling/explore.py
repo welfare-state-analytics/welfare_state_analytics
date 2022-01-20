@@ -18,10 +18,9 @@
 # ## Text Analysis - Topic Modelling
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
+import __paths__  # pylint: disable=unused-import
 import os
 from typing import Callable
-
-import __paths__  # pylint: disable=unused-import
 
 import penelope.notebook.topic_modelling as tm_ui
 from bokeh.io import output_notebook

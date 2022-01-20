@@ -29,6 +29,7 @@
 
 # %% tags=[]
 
+import __paths__  # pylint: disable=unused-import
 import importlib
 
 import pandas as pd
@@ -36,7 +37,6 @@ from bokeh.io import output_notebook
 from IPython.display import display
 from westac.riksprot.parlaclarin import metadata
 
-import __paths__  # pylint: disable=unused-import
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as ps
 
 importlib.reload(ps)

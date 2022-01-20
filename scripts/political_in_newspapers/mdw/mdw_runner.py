@@ -1,6 +1,8 @@
 import os
 from typing import Any
 
+import __paths__
+
 import click
 from penelope.vendor.textacy import mdw_modified
 from loguru import logger
@@ -8,8 +10,6 @@ from notebooks.political_in_newspapers import repository
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
 
 # pylint: disable=too-many-locals, too-many-arguments
-
-import __paths__
 
 
 CORPUS_FOLDER = os.path.join(__paths__.data_folder, "textblock_politisk")
