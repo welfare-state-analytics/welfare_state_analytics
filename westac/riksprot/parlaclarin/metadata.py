@@ -55,6 +55,7 @@ class ProtoMetaData:
         )
         self.members: pd.DataFrame = members if isinstance(members, pd.DataFrame) else self.load_members(members)
         self.members['party_abbrev'] = self.members['party_abbrev'].fillna('unknown')
+        self.members['gender'] = self.members['gender'].fillna('unknown')
         self.members.loc[~self.members['gender'].isin(GENDER2ID.keys()), 'gender'] = 'unknown'
         self.members.loc[~self.members['role_type'].isin(ROLE_TYPE2ID.keys()), 'role_type'] = 'unknown'
 
@@ -154,6 +155,8 @@ class ProtoMetaData:
             if not isinstance(filename, StringIO) and filename.endswith('feather')
             else pd.read_csv(filename, sep=sep)
         )
+        if 'unknown' not in members.id:
+            members = members.append(unknown_member(), ignore_index=True)
         members = members.set_index('id')
         return members
 
@@ -249,6 +252,23 @@ class ProtoMetaData:
         if drop:
             df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
         return df
+
+
+def unknown_member() -> dict:
+    return dict(
+        id='unknown',
+        role_type='unknown',
+        born=0,
+        chamber=np.nan,
+        district=np.nan,
+        start=0,
+        end=0,
+        gender='unknown',
+        name='unknown',
+        occupation='unknown',
+        party='unknown',
+        party_abbrev='unknown',
+    )
 
 
 def as_slim_types(df: pd.DataFrame, columns: List[str], dtype: np.dtype) -> pd.DataFrame:
