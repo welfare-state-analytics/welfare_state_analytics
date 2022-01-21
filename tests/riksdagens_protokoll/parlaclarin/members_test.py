@@ -38,15 +38,15 @@ def test_members_load():
 
     mps: pd.DataFrame = ProtoMetaData.load_members(StringIO('\n'.join(SAMPLE_MEMBERS)))
     assert isinstance(mps, pd.DataFrame)
-    assert len(mps) == 14
+    assert len(mps) == 15
 
     mps: pd.DataFrame = ProtoMetaData.load_members('tests/test_data/person_index.feather')
     assert isinstance(mps, pd.DataFrame)
-    assert len(mps) == 14
+    assert len(mps) == 15
 
     mps: pd.DataFrame = ProtoMetaData.load_members('tests/test_data')
     assert isinstance(mps, pd.DataFrame)
-    assert len(mps) == 14
+    assert len(mps) == 15
 
 
 def test_create_metadata(members, document_index):
@@ -54,7 +54,7 @@ def test_create_metadata(members, document_index):
     md: ProtoMetaData = ProtoMetaData(members=members, document_index=document_index)
 
     assert md is not None
-    assert len(md.members) == 14
+    assert len(md.members) == 15
     assert len(md.document_index) == 24
     assert len(md.role_type2id) == 4 == len(md.role_type2name)
     assert len(md.gender2id) == 3 == len(md.gender2name) == len(md.genders)
