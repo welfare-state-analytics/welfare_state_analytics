@@ -54,7 +54,7 @@ class ProtocolTopicTrendsGUI(TopicTrendsGUI):
 
             self.current_party_id = self.party_id.value
             self.current_weights = (
-                tm.FilterDocumentTopicWeights(self.state.inferred_topics).filter_by_keys(filters).value
+                tm.DocumentTopicsCalculator(self.state.inferred_topics).filter_by_keys(**filters).value
             )
 
         return self.current_weights
