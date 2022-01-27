@@ -133,7 +133,7 @@ def test_trends_gui_load(riksprot_metadata: md.ProtoMetaData):
 
 @pytest.mark.long_running
 @pytest.mark.parametrize(
-    'temporal_key,normalize,smooth,fill_gaps,pivot_keys_id_names,pivot_keys_filter,picked_tokens',
+    'temporal_key,normalize,smooth,fill_gaps,pivot_keys_id_names,filter_opts,picked_tokens',
     [
         # ([], None),
         ('decade', False, False, False, ['gender_id'], None, ["information"]),
@@ -156,7 +156,7 @@ def test_trends_gui_transform(
     smooth: bool,
     fill_gaps: bool,
     pivot_keys_id_names: List[str],
-    pivot_keys_filter: pu.PropertyValueMaskingOpts,
+    filter_opts: pu.PropertyValueMaskingOpts,
     picked_tokens: List[str],
 ):
 
@@ -167,7 +167,7 @@ def test_trends_gui_transform(
         keyness=KeynessMetric.TF,
         normalize=normalize,
         pivot_keys_id_names=pivot_keys_id_names,
-        pivot_keys_filter=pivot_keys_filter,
+        filter_opts=filter_opts,
         smooth=smooth,
         temporal_key=temporal_key,
         top_count=100,
@@ -179,7 +179,7 @@ def test_trends_gui_transform(
         with mock.patch(f'{class_name}.picked_indices', new_callable=mock.PropertyMock) as mocked_picked_indices:
 
             opts.pivot_keys_id_names = pivot_keys_id_names
-            opts.pivot_keys_filter = pivot_keys_filter
+            opts.filter_opts = filter_opts
             opts.temporal_key = temporal_key
             pivot_keys_text_names: List[str] = riksprot_metadata.map_id2text_names(pivot_keys_id_names)
 
