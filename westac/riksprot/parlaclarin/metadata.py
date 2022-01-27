@@ -2,6 +2,7 @@ from __future__ import annotations
 from functools import cached_property
 from io import StringIO
 from typing import List, Mapping
+from loguru import logger
 import pandas as pd
 import numpy as np
 from os.path import isfile, isdir, join
@@ -40,7 +41,6 @@ def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
     speech_index.loc[speech_index['gender'] == '', 'gender'] = 'unknown'
     return speech_index, members
 
-
 class ProtoMetaData:
 
     DOCUMENT_INDEX_NAME: str = 'document_index.feather'
@@ -58,6 +58,9 @@ class ProtoMetaData:
         self.members['gender'] = self.members['gender'].fillna('unknown')
         self.members.loc[~self.members['gender'].isin(GENDER2ID.keys()), 'gender'] = 'unknown'
         self.members.loc[~self.members['role_type'].isin(ROLE_TYPE2ID.keys()), 'role_type'] = 'unknown'
+
+        logger.info(f"size of mop's metadata: {pu.size_of(self.members, 'MB', total=True)}")
+        logger.info(f"size of document_index: {pu.size_of(self.document_index, 'MB', total=True)}")
 
     def map_id2text_names(self, id_names: List[str]) -> List[str]:
         return [MEMBER_IDNAME2NAME_MAPPING.get(x) for x in id_names]
