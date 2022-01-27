@@ -37,4 +37,4 @@ class YearlyMeanTopicWeightsProxy:
         return self._current_data
 
     def _compute_data(self, inferred_topics, filters, threshold):
-        return tm.FilterDocumentTopicWeights(inferred_topics).threshold(threshold).filter_by_keys(filters).value
+        return tm.DocumentTopicsCalculator(inferred_topics).threshold(threshold).filter_by_keys(**filters).value
