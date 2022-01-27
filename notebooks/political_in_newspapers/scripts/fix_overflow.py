@@ -7,7 +7,7 @@ from penelope.vendor.gensim.wrappers import LdaMallet
 
 
 def compile_mallet_document_topics(model, minimum_probability=0.001):
-    def document_topics_iter(model, minimum_probability=0.0) -> Iterable[Tuple[int, int, float]]:
+    def document_topics_iter(model, minimum_probability=0.001) -> Iterable[Tuple[int, int, float]]:
         data_iter = enumerate(model.load_document_topics())
         for document_id, topic_weights in data_iter:
             for (topic_id, weight) in (
