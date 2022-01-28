@@ -28,10 +28,10 @@ import bokeh.plotting
 import penelope.notebook.topic_modelling as gui
 from IPython.display import display
 from penelope.pipeline.config import CorpusConfig
-from penelope.utility import pandas_utils
+from penelope import utility as pu
 
 bokeh.plotting.output_notebook()
-pandas_utils.set_default_options()
+pu.set_default_options()
 
 current_state: Callable[[], gui.TopicModelContainer] = gui.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
