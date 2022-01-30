@@ -29,6 +29,24 @@ MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = {
     'who': 'who_id',
 }
 
+PARTY_COLORS = [
+    (0, 'S', '#E8112d'),
+    (1, 'M', '#52BDEC'),
+    (2, 'gov', '#000000'),
+    (3, 'C', '#009933'),
+    (4, 'L', '#006AB3'),
+    (5, 'V', '#DA291C'),
+    (6, 'MP', '#83CF39'),
+    (7, 'KD', '#000077'),
+    (8, 'NYD', '#007700'),
+    (9, 'SD', '#DDDD00'),
+    # {'party_abbrev_id': 0, 'party_abbrev': 'PP', 'party': 'Piratpartiet', 'color_name': 'Lila', 'color': '#572B85'},
+    # {'party_abbrev_id': 0, 'party_abbrev': 'F', 'party': 'Feministiskt', 'color_name': 'initiativ	Rosa', 'color': '#CD1B68'},
+]
+
+PARTY_COLOR_BY_ID = {x[0]: x[2] for x in PARTY_COLORS}
+PARTY_COLOR_BY_ABBREV = {x[1]: x[2] for x in PARTY_COLORS}
+
 MEMBER_IDNAME2NAME_MAPPING: Mapping[str, str] = pu.revdict(MEMBER_NAME2IDNAME_MAPPING)
 
 
@@ -41,14 +59,19 @@ def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
     speech_index.loc[speech_index['gender'] == '', 'gender'] = 'unknown'
     return speech_index, members
 
+class MemberNotFoundError(ValueError):
+    ...
+
 class ProtoMetaData:
 
     DOCUMENT_INDEX_NAME: str = 'document_index.feather'
     MEMBERS_NAME: str = 'person_index.csv'
     MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = MEMBER_NAME2IDNAME_MAPPING
-    MEMBER_IDNAME2NAME_MAPPING: Mapping[str, str] = MEMBER_IDNAME2NAME_MAPPING
+    MEMBER_IDNAME2NAME_MAPPING: Mapping[int, str] = MEMBER_IDNAME2NAME_MAPPING
+    PARTY_COLOR_BY_ID: Mapping[int, str] = PARTY_COLOR_BY_ID
+    PARTY_COLOR_BY_ABBREV: Mapping[str, str] = PARTY_COLOR_BY_ABBREV
 
-    def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame):
+    def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame, verbose: bool = False):
 
         self.document_index: pd.DataFrame = (
             document_index if isinstance(document_index, pd.DataFrame) else self.load_document_index(document_index)
@@ -59,8 +82,9 @@ class ProtoMetaData:
         self.members.loc[~self.members['gender'].isin(GENDER2ID.keys()), 'gender'] = 'unknown'
         self.members.loc[~self.members['role_type'].isin(ROLE_TYPE2ID.keys()), 'role_type'] = 'unknown'
 
-        logger.info(f"size of mop's metadata: {pu.size_of(self.members, 'MB', total=True)}")
-        logger.info(f"size of document_index: {pu.size_of(self.document_index, 'MB', total=True)}")
+        if verbose:
+            logger.info(f"size of mop's metadata: {pu.size_of(self.members, 'MB', total=True)}")
+            logger.info(f"size of document_index: {pu.size_of(self.document_index, 'MB', total=True)}")
 
     def map_id2text_names(self, id_names: List[str]) -> List[str]:
         return [MEMBER_IDNAME2NAME_MAPPING.get(x) for x in id_names]
@@ -126,11 +150,17 @@ class ProtoMetaData:
     def who2id(self) -> dict:
         return pu.revdict(self.who2name)
 
+    def get_member(self, who: str) -> dict:
+        try:
+            return self.members.loc[who].to_dict()
+        except:
+            MemberNotFoundError(f"ID={who}")
+
     @staticmethod
-    def load_from_same_folder(folder: str) -> "ProtoMetaData":
+    def load_from_same_folder(folder: str, verbose: bool = False) -> "ProtoMetaData":
         """Loads members and document index from `folder`"""
         try:
-            return ProtoMetaData(document_index=folder, members=folder)
+            return ProtoMetaData(document_index=folder, members=folder, verbose=verbose)
         except Exception as ex:
             raise FileNotFoundError(
                 "unable to load data from {folder}, please make sure both document index and members index reside in same folder."
@@ -252,6 +282,8 @@ class ProtoMetaData:
             df['gender'] = df['gender_id'].apply(self.gender2name.get)
         if 'party_abbrev_id' in df.columns:
             df['party_abbrev'] = df['party_abbrev_id'].apply(self.party_abbrev2name.get)
+        if 'who_id' in df.columns:
+            df['who'] = df['who_id'].apply(self.who2name.get)
         if drop:
             df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
         return df
