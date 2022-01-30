@@ -207,9 +207,9 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
     assert set(gui._filter_keys.options) == gender_value_pairs
     assert set(gui._filter_keys.value) == gender_value_pairs
 
-    filter_opts: pu.PropertyValueMaskingOpts = gui.pivot_keys_filter_values
+    filter_opts: pu.PropertyValueMaskingOpts = gui.filter_opts
     gui._filter_keys.value = gui._filter_keys.options
-    assert set(filter_opts.data.keys()) == {'gender_id'} and set(filter_opts.gender_id) == {0, 1, 2}
+    assert set(filter_opts.opts.keys()) == {'gender_id'} and set(filter_opts.gender_id) == {0, 1, 2}
 
     gui._pivot_keys_text_names.value = ['None']
 
