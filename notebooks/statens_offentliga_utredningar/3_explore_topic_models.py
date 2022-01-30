@@ -27,8 +27,8 @@ from typing import Callable
 import bokeh.plotting
 import penelope.notebook.topic_modelling as gui
 from IPython.display import display
-from penelope.pipeline.config import CorpusConfig
 from penelope import utility as pu
+from penelope.pipeline.config import CorpusConfig
 
 bokeh.plotting.output_notebook()
 pu.set_default_options()
@@ -51,7 +51,7 @@ display(load_gui.layout())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-gui.find_topic_documents_gui(current_state().inferred_topics)
+display(gui.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -59,7 +59,7 @@ gui.find_topic_documents_gui(current_state().inferred_topics)
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-gui.display_topic_documents_gui(current_state())
+display(gui.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>

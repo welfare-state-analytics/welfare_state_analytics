@@ -2,15 +2,16 @@ import penelope.utility as utility
 from IPython.display import display
 from ipywidgets import Dropdown
 from penelope.notebook.topic_modelling import TopicModelContainer, TopicTrendsGUI
+from penelope.topic_modelling import prevelance
 
 import notebooks.political_in_newspapers.repository as repository
 
 
 class PoliticalTopicTrendsGUI(TopicTrendsGUI):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, state: TopicModelContainer):
+        super().__init__(state=state, calculator=prevelance.AverageTopicPrevalenceOverTimeCalculator())
 
-        self.publication_id = Dropdown(
+        self._publication_id = Dropdown(
             description='Publication',
             options=utility.extend(dict(repository.PUBLICATION2ID), {'(ALLA)': None}),
             value=None,
@@ -18,23 +19,23 @@ class PoliticalTopicTrendsGUI(TopicTrendsGUI):
         )
 
     def layout(self):
-        self.extra_placeholder.children = [self.publication_id]
+        self._extra_placeholder.children = [self._publication_id]
         return super().layout()
 
-    def setup(self, state: TopicModelContainer) -> "PoliticalTopicTrendsGUI":
-        super().setup(state)
+    def setup(self, **kwargs) -> "PoliticalTopicTrendsGUI":
+        super().setup(**kwargs)
 
-        self.publication_id.observe(self.update_handler, names='value')
+        self._publication_id.observe(self.update_handler, names='value')
 
         return self
 
     def data_filter(self) -> dict:
-        return {'publication_id': self.publication_id.value}
+        return {'publication_id': self._publication_id.value}
 
 
 def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disable=unused-argument
 
-    gui = PoliticalTopicTrendsGUI().setup(state)
+    gui = PoliticalTopicTrendsGUI(state=state).setup()
 
     display(gui.layout())
 

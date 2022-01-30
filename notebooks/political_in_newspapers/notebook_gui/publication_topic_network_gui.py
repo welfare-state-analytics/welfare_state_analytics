@@ -11,8 +11,8 @@ from penelope import topic_modelling, utility
 from penelope.network import plot_utility
 from penelope.network.bipartite_plot import plot_bipartite_network
 from penelope.network.networkx import utility as network_utility
+from penelope.notebook import topic_modelling as ntm
 from penelope.notebook import widgets_utils
-from penelope.notebook.topic_modelling import TopicModelContainer
 
 from notebooks.political_in_newspapers import repository
 
@@ -123,14 +123,11 @@ def compute_weights(
     return weights
 
 
-class PublicationTopicNetworkGUI:
-    def __init__(self, state: TopicModelContainer):
+class PublicationTopicNetworkGUI(ntm.TopicsStateGui):
+    def __init__(self, state: ntm.TopicModelContainer):
+        super().__init__(state=state)
 
-        self.state = state
-
-        year_min, year_max = state.inferred_topics.year_period
-
-        n_topics = state.num_topics
+        year_min, year_max = self.inferred_topics.year_period
 
         self.text: HTML = widgets_utils.text_widget(TEXT_ID)
         self.period = IntRangeSlider(
@@ -158,7 +155,7 @@ class PublicationTopicNetworkGUI:
         self.progress = IntProgress(min=0, max=4, step=1, value=0, layout=dict(width="99%"))
         self.ignores = SelectMultiple(
             description='Ignore',
-            options=[('', None)] + [(f'Topic #{i}', i) for i in range(0, n_topics)],  # type: ignore
+            options=[('', None)] + [(f'Topic #{i}', i) for i in range(0, self.inferred_n_topics)],  # type: ignore
             value=[],
             rows=8,
             layout=dict(width='240px'),
@@ -184,8 +181,8 @@ class PublicationTopicNetworkGUI:
         with self.output:
 
             display_document_topic_network(
-                document_topic_weights=self.state.inferred_topics.document_topic_weights,
-                topic_token_weights=self.state.inferred_topics.topic_token_weights,
+                document_topic_weights=self.inferred_topics.document_topic_weights,
+                topic_token_weights=self.inferred_topics.topic_token_weights,
                 document_threshold=self.document_threshold.value,
                 period=self.period.value,
                 mean_threshold=self.mean_threshold.value,
@@ -233,7 +230,7 @@ class PublicationTopicNetworkGUI:
         )
 
 
-def display_gui(state: TopicModelContainer):
-    gui = PublicationTopicNetworkGUI(state).setup()
+def display_gui(state: ntm.TopicModelContainer):
+    gui = PublicationTopicNetworkGUI(state=state).setup()
     display(gui.layout())
     gui.compute_handler()

@@ -3,12 +3,12 @@ from typing import Any, Dict
 
 import pandas as pd
 import penelope.notebook.widgets_utils as widgets_utils
-import penelope.topic_modelling as topic_modelling
+import penelope.topic_modelling as tm
 import penelope.utility as utility
 from IPython.display import display
 from ipywidgets import HTML, Button, Dropdown, FloatSlider, HBox, IntProgress, IntSlider, Output, VBox
 from penelope.corpus import bow2text
-from penelope.notebook.topic_modelling import TopicModelContainer
+from penelope.notebook import topic_modelling as ntm
 
 import notebooks.political_in_newspapers.repository as repository
 
@@ -29,21 +29,20 @@ def reconstitue_texts_for_topic(df: pd.DataFrame, corpus, id2token, n_top=500) -
 
 
 def display_texts(
-    state: TopicModelContainer,
+    corpus: Any,
+    id2token: dict,
+    inferred_topics: tm.InferredTopicsData,
     filters: Dict[str, Any],
     threshold: float = 0.0,
     output_format: str = 'Table',
     n_top: int = 500,
 ):
 
-    if state.train_corpus is None:
-        print("Corpus is not avaliable. Please store model with corpus!")
-        return
+    # if state.train_corpus is None:
+    #     print("Corpus is not avaliable. Please store model with corpus!")
+    #     return
 
-    corpus = state.trained_model.corpus
-    id2token = state.trained_model.id2word
-
-    df: pd.DataFrame = state.inferred_topics.filter_document_topic_weights(filters=filters, threshold=threshold)
+    df: pd.DataFrame = inferred_topics.calculator.filter_by_keys(threshold=threshold, **filters)
 
     df = reconstitue_texts_for_topic(df, corpus, id2token, n_top=n_top)
 
@@ -53,16 +52,19 @@ def display_texts(
         display(df)
 
 
-class TopicDocumentTextGUI:
-    def __init__(self, state: TopicModelContainer):
+class TopicDocumentTextGUI(ntm.TopicsStateGui):
+    def __init__(self, state: ntm.TopicModelContainer):
+        super().__init__(state=state)
 
-        year_min, year_max = state.inferred_topics.year_period
+        year_min, year_max = self.inferred_topics.year_period
+
         year_options = [(x, x) for x in range(year_min, year_max + 1)]
 
         publications = utility.extend(dict(repository.PUBLICATION2ID), {'(ALLA)': None})
 
-        self.state: TopicModelContainer = state
-        self.n_topics: int = state.num_topics
+        self.n_topics: int = self.inferred_n_topics
+        self.train_corpus: tm.TrainingCorpus = tm.TrainingCorpus.load(self.state.train_corpus_folder)
+
         self.text_id: str = TEXT_ID
         self.text: HTML = widgets_utils.text_widget(TEXT_ID)
         self.year: Dropdown = Dropdown(
@@ -72,7 +74,7 @@ class TopicDocumentTextGUI:
             description='Publication', options=publications, value=None, layout=dict(width="200px")
         )
         self.topic_id: IntSlider = IntSlider(
-            description='Topic ID', min=0, max=state.num_topics - 1, step=1, value=0, continuous_update=False
+            description='Topic ID', min=0, max=self.inferred_n_topics - 1, step=1, value=0, continuous_update=False
         )
         self.n_top: IntSlider = IntSlider(description='#Docs', min=5, max=500, step=1, value=75)
         self.threshold: FloatSlider = FloatSlider(
@@ -83,8 +85,10 @@ class TopicDocumentTextGUI:
         )
         self.progress: IntProgress = IntProgress(min=0, max=4, step=1, value=0)
         self.output: Output = Output()
-        self.prev_topic_id: Button = widgets_utils.button_with_previous_callback(self, 'topic_id', state.num_topics)
-        self.next_topic_id: Button = widgets_utils.button_with_next_callback(self, 'topic_id', state.num_topics)
+        self.prev_topic_id: Button = widgets_utils.button_with_previous_callback(
+            self, 'topic_id', self.inferred_n_topics
+        )
+        self.next_topic_id: Button = widgets_utils.button_with_next_callback(self, 'topic_id', self.inferred_n_topics)
 
     def setup(self) -> "TopicDocumentTextGUI":
 
@@ -97,14 +101,14 @@ class TopicDocumentTextGUI:
 
         return self
 
-    def on_topic_change_update_gui(self, topic_id: int):
+    def topic_changed(self, topic_id: int):
 
-        if self.n_topics != self.state.num_topics:
-            self.n_topics = self.state.num_topics
+        if self.n_topics != self.inferred_n_topics:
+            self.n_topics = self.inferred_n_topics
             self.topic_id.value = 0
-            self.topic_id.max = self.state.num_topics - 1
+            self.topic_id.max = self.inferred_n_topics - 1
 
-        tokens = topic_modelling.get_topic_title(self.state.inferred_topics.topic_token_weights, topic_id, n_tokens=200)
+        tokens: str = self.inferred_topics.get_topic_title(topic_id, n_tokens=200)
 
         self.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
@@ -114,10 +118,12 @@ class TopicDocumentTextGUI:
 
         with self.output:
 
-            self.on_topic_change_update_gui(self.topic_id.value)
+            self.topic_changed(self.topic_id.value)
 
             display_texts(
-                state=self.state,
+                corpus=self.train_corpus.corpus,
+                id2token=self.train_corpus.corpus.id2token,
+                inferred_topics=self.inferred_topics,
                 filters=dict(
                     year=self.year.value, topic_id=self.topic_id.value, publication_id=self.publication_id.value
                 ),
@@ -144,7 +150,7 @@ class TopicDocumentTextGUI:
         )
 
 
-def display_gui(state: TopicModelContainer):
+def display_gui(state: ntm.TopicModelContainer):
 
     gui: TopicDocumentTextGUI = TopicDocumentTextGUI(state).setup()
 
