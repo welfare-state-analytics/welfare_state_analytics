@@ -31,6 +31,7 @@ from penelope import utility as pu
 from penelope.pipeline.config import CorpusConfig
 from notebooks.riksdagens_protokoll.topic_modeling import RiksprotBrowseTopicDocumentsGUI, RiksprotFindTopicDocumentsGUI
 from notebooks.riksdagens_protokoll.topic_modeling import RiksprotTopicTrendsGUI, RiksprotTopicTrendsOverviewGUI
+from notebooks.riksdagens_protokoll.topic_modeling.topic_network_gui import RiksprotTopicTopicGUI
 from westac.riksprot.parlaclarin import metadata as md
 import westac.riksprot.parlaclarin.speech_text as sr
 
@@ -129,7 +130,9 @@ tto_ui = RiksprotTopicTrendsOverviewGUI(riksprot_metadata, speech_repository=spe
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %%
-tm_ui.display_topic_topic_network_gui(current_state())
+tto_ui = RiksprotTopicTrendsOverviewGUI(riksprot_metadata, speech_repository=speech_repository, state=current_state()).setup().layout())
+display()
+
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Document Topic Network<span style='color: red; float: right'>TRY IT</span>

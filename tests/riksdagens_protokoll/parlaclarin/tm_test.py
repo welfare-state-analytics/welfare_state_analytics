@@ -234,3 +234,48 @@ def test_topic_trends(
     ui.update_handler()
 
     assert ui is not None
+
+
+
+def test_topic_topic_network(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
+
+    state = dict(inferred_topics=inferred_topics)
+
+    # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
+    ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(
+        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+    )
+
+    ui.setup()
+
+    ui.update_handler()
+    _ = ui.layout()
+    ui._compute.click()
+
+    assert ui is not None
+
+
+def test_topic_topic_network(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
+
+    state = dict(inferred_topics=inferred_topics)
+
+    # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
+    ui: wtm_ui.PivotTopicNetworkGUI = wtm_ui.PivotTopicNetworkGUI(
+        pivot_key_specs=riksprot_metadata.member_property_specs, state=state
+    )
+
+    ui.setup()
+
+    ui.update_handler()
+    _ = ui.layout()
+    ui._compute.click()
+
+    assert ui is not None
