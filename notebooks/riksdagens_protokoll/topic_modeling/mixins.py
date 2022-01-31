@@ -1,6 +1,8 @@
 from __future__ import annotations
+from typing import Any
 
 import ipywidgets as w
+import pandas as pd
 
 from westac.riksprot.parlaclarin import metadata as md
 from westac.riksprot.parlaclarin import speech_text as st
@@ -10,8 +12,7 @@ from westac.riksprot.parlaclarin import speech_text as st
 
 class RiksProtMetaDataMixIn:
     def __init__(self, riksprot_metadata: md.ProtoMetaData, speech_repository: st.SpeechTextRepository, **kwargs):
-        pivot_key_specs = riksprot_metadata.member_property_specs
-        super().__init__(pivot_key_specs=pivot_key_specs, **kwargs)
+        super().__init__(**kwargs)
 
         self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
         self.speech_repository: st.SpeechTextRepository = speech_repository
@@ -19,22 +20,18 @@ class RiksProtMetaDataMixIn:
         """Display speech text stuff"""
         self._content: w.HTML = w.HTML(layout={'width': '48%', 'background-color': 'lightgreen'})
         self._content_placeholder: w.VBox = self._content
-        self.click_handler = self.on_row_select
+        self.click_handler = self.on_row_click
 
-    def on_row_select(self, args: dict):
-
+    def on_row_click(self, item: pd.Series, g: Any):
         try:
             if self.speech_repository is None:
                 raise ValueError("no repo!")
 
-            if args.get('column', '') != 'document_name':
-                raise ValueError(f"Got nothing to show for column {args.get('column', '')}.")
-
-            speech_name: str = args.get('cell_value', '')
-
+            speech_name: str = item['document_name']
             if not speech_name.startswith("prot-"):
                 raise ValueError(f"WTF! {speech_name}")
 
             self._content.value = self.speech_repository.speech(speech_name, mode="html")
+
         except Exception as ex:
             self._content.value = str(ex)
