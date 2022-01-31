@@ -1,13 +1,13 @@
 import penelope.utility as utility
 from IPython.display import display
 from ipywidgets import Dropdown, HBox, VBox
-from penelope.notebook.topic_modelling import TopicModelContainer, TopicOverviewGUI
+from penelope.notebook.topic_modelling import TopicModelContainer, TopicTrendsOverviewGUI
 from penelope.topic_modelling import prevelance
 
 import notebooks.political_in_newspapers.repository as repository
 
 
-class PoliticalTopicOverviewGUI(TopicOverviewGUI):
+class PoliticalTopicOverviewGUI(TopicTrendsOverviewGUI):
     def __init__(self, state: TopicModelContainer):
         super().__init__(state=state, calculator=prevelance.AverageTopicPrevalenceOverTimeCalculator())
 

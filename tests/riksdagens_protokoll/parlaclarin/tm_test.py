@@ -6,8 +6,9 @@ import pytest
 from penelope import pipeline as pp
 from penelope import topic_modelling as tm
 
-from notebooks.riksdagens_protokoll.topic_modeling import topic_documents_gui as td_ui
+from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
 from westac.riksprot.parlaclarin import metadata as md
+import westac.riksprot.parlaclarin.speech_text as sr
 
 DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
 
@@ -72,10 +73,25 @@ def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsDat
     return data
 
 
-def test_find_documents_gui(riksprot_metadata: md.ProtoMetaData, inferred_topics: tm.InferredTopicsData):
+@pytest.fixture
+def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
+    repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
+        folder="/data/westac/riksdagen_corpus_data/tagged_frames_v0.3.0_20201218",
+        riksprot_metadata=riksprot_metadata,
+    )
+    return repository
+
+
+def test_find_documents_gui(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
 
     state = dict(inferred_topics=inferred_topics)
-    ui: td_ui.RiksprotFindTopicDocumentsGUI = td_ui.RiksprotFindTopicDocumentsGUI(riksprot_metadata, state)
+    ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
+        riksprot_metadata, speech_repository, state
+    )
 
     ui.setup()
     ui._year_range.value = (1990, 1992)
@@ -124,10 +140,16 @@ def test_find_documents_gui(riksprot_metadata: md.ProtoMetaData, inferred_topics
     _ = ui.update()
 
 
-def test_browse_documents_gui(riksprot_metadata: md.ProtoMetaData, inferred_topics: tm.InferredTopicsData):
+def test_browse_documents_gui(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
 
     state = dict(inferred_topics=inferred_topics)
-    ui: td_ui.RiksprotBrowseTopicDocumentsGUI = td_ui.RiksprotBrowseTopicDocumentsGUI(riksprot_metadata, state)
+    ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
+        riksprot_metadata, speech_repository, state
+    )
 
     ui.setup()
     ui._year_range.value = (1990, 1992)
@@ -172,3 +194,43 @@ def test_browse_documents_gui(riksprot_metadata: md.ProtoMetaData, inferred_topi
     ui._max_count_slider.value = 10
 
     _ = ui.update()
+
+
+def test_topic_trends_overview(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
+
+    state = dict(inferred_topics=inferred_topics)
+
+    # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
+    ui: wtm_ui.RiksprotTopicTrendsOverviewGUI = wtm_ui.RiksprotTopicTrendsOverviewGUI(
+        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+    )
+
+    ui.setup()
+
+    ui.update_handler()
+
+    assert ui is not None
+
+
+def test_topic_trends(
+    riksprot_metadata: md.ProtoMetaData,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
+
+    state = dict(inferred_topics=inferred_topics)
+
+    # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
+    ui: wtm_ui.RiksprotTopicTrendsGUI = wtm_ui.RiksprotTopicTrendsGUI(
+        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+    )
+
+    ui.setup()
+
+    ui.update_handler()
+
+    assert ui is not None
