@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import ipywidgets as w
 import pandas as pd
-from penelope import topic_modelling as tx
 from penelope import utility as pu
 from penelope.notebook import mixins as mx
 from penelope.notebook import topic_modelling as tm
@@ -28,7 +26,6 @@ class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicT
             state=state,
         )
         # self._threshold.value = 0.20
-        self._year_range.value = (1990, 1992)
         self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
