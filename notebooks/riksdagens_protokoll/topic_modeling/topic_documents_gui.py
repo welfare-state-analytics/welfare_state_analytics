@@ -5,6 +5,7 @@ import pandas as pd
 from penelope import topic_modelling as tx
 from penelope import utility as pu
 from penelope.notebook import mixins as mx
+from penelope.notebook.topic_modelling import mixins as tx
 from penelope.notebook import topic_modelling as tm
 
 from westac.riksprot.parlaclarin import metadata as md
@@ -22,11 +23,16 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
-        super().__init__(riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state)
+        super().__init__(
+            riksprot_metadata=riksprot_metadata,
+            speech_repository=speech_repository,
+            pivot_key_specs=riksprot_metadata.member_property_specs,
+            state=state,
+        )
 
         self._threshold.value = 0.20
         self._year_range.value = (1990, 1992)
-        self._extra_placeholder = self.default_pivot_keys_layout(layout = {'width': '180px'},rows = 8)
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
@@ -54,13 +60,17 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
-        super().__init__(riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state)
+        super().__init__(
+            riksprot_metadata=riksprot_metadata,
+            speech_repository=speech_repository,
+            pivot_key_specs=riksprot_metadata.member_property_specs,
+            state=state,
+        )
 
         self._threshold.value = 0.20
         self._find_text.value = "film"
         self._year_range.value = (1990, 1992)
-        self._extra_placeholder = self.default_pivot_keys_layout(layout = {'width': '180px'},rows = 8)
-
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
