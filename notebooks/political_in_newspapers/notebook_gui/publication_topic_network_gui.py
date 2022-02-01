@@ -131,14 +131,14 @@ class PublicationTopicNetworkGUI(ntm.TopicsStateGui):
 
         self.text: HTML = widgets_utils.text_widget(TEXT_ID)
         self.period = IntRangeSlider(
-            description='Time', min=year_min, max=year_max, step=1, value=(year_min, year_max), continues_update=False
+            description='Time', min=year_min, max=year_max, step=1, value=(year_min, year_max), continuous_update=False
         )
-        self.scale = FloatSlider(description='Scale', min=0.0, max=1.0, step=0.01, value=0.1, continues_update=False)
+        self.scale = FloatSlider(description='Scale', min=0.0, max=1.0, step=0.01, value=0.1, continuous_update=False)
         self.document_threshold = FloatSlider(
-            description='Threshold(D)', min=0.0, max=1.0, step=0.01, value=0.00, continues_update=False
+            description='Threshold(D)', min=0.0, max=1.0, step=0.01, value=0.00, continuous_update=False
         )
         self.mean_threshold = FloatSlider(
-            description='Threshold(G)', min=0.0, max=1.0, step=0.01, value=0.10, continues_update=False
+            description='Threshold(G)', min=0.0, max=1.0, step=0.01, value=0.10, continuous_update=False
         )
         self.aggregate: Dropdown = Dropdown(
             description='Aggregate', options=['mean', 'max'], value='mean', layout=dict(width="200px")

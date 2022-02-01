@@ -78,7 +78,7 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
         )
         self.n_top: IntSlider = IntSlider(description='#Docs', min=5, max=500, step=1, value=75)
         self.threshold: FloatSlider = FloatSlider(
-            description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continues_update=False
+            description='Threshold', min=0.0, max=1.0, step=0.01, value=0.20, continuous_update=False
         )
         self.output_format: Dropdown = Dropdown(
             description='Format', options=['Table'], value='Table', layout=dict(width="200px")

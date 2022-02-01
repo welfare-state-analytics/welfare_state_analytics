@@ -184,15 +184,15 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
     def layout(self) -> w.HBox:
         self._filter_keys.layout = {'width': '180px'}
-        self._pivot_keys_text_names.layout = {'width': '180px'}
+        self._multi_pivot_keys_picker.layout = {'width': '180px'}
         if self.pivot_keys.has_pivot_keys:
 
-            # tab = Tab(children=[self._pivot_keys_text_names, self._filter_keys])
+            # tab = Tab(children=[self._multi_pivot_keys_picker, self._filter_keys])
             # tab.titles = ["Pivot by", "Filter by"]
             self._picker.rows = 15
             self._sidebar_ctrls = (
                 # [tab]
-                [HTML("<b>Pivot by</b>"), self._pivot_keys_text_names]
+                [HTML("<b>Pivot by</b>"), self._multi_pivot_keys_picker]
                 + [HTML("<b>Filter by</b>"), self._filter_keys]
                 + self._sidebar_ctrls
             )

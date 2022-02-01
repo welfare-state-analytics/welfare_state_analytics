@@ -79,7 +79,7 @@ def test_trends_gui_create_with_pivot_keys(riksprot_metadata: md.ProtoMetaData):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata)
 
-    assert set(gui._pivot_keys_text_names.options) == expected_keys
+    assert set(gui._multi_pivot_keys_picker.options) == expected_keys
     assert set(gui.pivot_keys_id_names) == set() == set(gui.options.pivot_keys_id_names)
 
 
@@ -235,7 +235,7 @@ def test_trends_gui_bugcheck(riksprot_metadata: md.ProtoMetaData):
     gui.invalidate(False)
 
     gui.plot()
-    gui._pivot_keys_text_names.value = ['gender', 'role_type']
+    gui._multi_pivot_keys_picker.value = ['gender', 'role_type']
     gui._temporal_key.value = 'decade'
 
     words = ['herr']

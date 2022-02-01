@@ -46,7 +46,7 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, riksprot_metadata
     assert gui.document_index is None
 
     assert gui.opts.document_index is None
-    assert set(gui._pivot_keys_text_names.options) == set(['None'] + list(gui.pivot_keys.text_names))
+    assert set(gui._multi_pivot_keys_picker.options) == set(['None'] + list(gui.pivot_keys.text_names))
     assert set(gui.pivot_keys_id_names) == set() == set(gui.opts.pivot_keys_id_names)
 
 
@@ -161,7 +161,7 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     gui.observe(False)
 
     gui._temporal_key.value = temporal_key
-    gui._pivot_keys_text_names.value = [gui.pivot_keys.id_name2text_name.get(x) for x in pivot_keys]
+    gui._multi_pivot_keys_picker.value = [gui.pivot_keys.id_name2text_name.get(x) for x in pivot_keys]
 
     data: pd.DataFrame = gui.compute()
     unstacked_data = gui.unstack_pivot_keys(data)
@@ -199,9 +199,9 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
     assert computed_data is None
 
     gui._temporal_key.value = "decade"
-    gui._pivot_keys_text_names.value = ['gender']
+    gui._multi_pivot_keys_picker.value = ['gender']
 
-    """No display triggered by _pivot_keys_text_names"""
+    """No display triggered by _multi_pivot_keys_picker"""
     assert compute_calls == 1
 
     assert set(gui._filter_keys.options) == gender_value_pairs
@@ -211,7 +211,7 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
     gui._filter_keys.value = gui._filter_keys.options
     assert set(filter_opts.opts.keys()) == {'gender_id'} and set(filter_opts.gender_id) == {0, 1, 2}
 
-    gui._pivot_keys_text_names.value = ['None']
+    gui._multi_pivot_keys_picker.value = ['None']
 
     assert set(gui._filter_keys.options) == set()
     assert set(gui._filter_keys.value) == set()
@@ -220,7 +220,7 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
     assert computed_data is not None
     assert len(computed_data) == 11  # Unstacked
 
-    gui._pivot_keys_text_names.value = ['gender']
+    gui._multi_pivot_keys_picker.value = ['gender']
     assert compute_calls == 3
 
     gui._filter_keys.value = ['gender: woman']
