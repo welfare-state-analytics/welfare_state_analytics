@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from penelope.notebook import topic_modelling as ntm
-from penelope import topic_modelling  as tm
 from penelope import pipeline as pp
+from penelope import topic_modelling as tm
+from penelope.notebook import topic_modelling as ntm
+
 from westac.riksprot.parlaclarin import metadata as md
 
 

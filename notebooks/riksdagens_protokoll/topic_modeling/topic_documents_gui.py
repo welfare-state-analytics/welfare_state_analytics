@@ -5,8 +5,8 @@ import pandas as pd
 from penelope import topic_modelling as tx
 from penelope import utility as pu
 from penelope.notebook import mixins as mx
-from penelope.notebook.topic_modelling import mixins as tx
 from penelope.notebook import topic_modelling as tm
+from penelope.notebook.topic_modelling import mixins as tx
 
 from westac.riksprot.parlaclarin import metadata as md
 from westac.riksprot.parlaclarin import speech_text as st

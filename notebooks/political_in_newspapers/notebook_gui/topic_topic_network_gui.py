@@ -1,11 +1,10 @@
+import penelope.utility as pu
 from IPython.display import display
 from ipywidgets import HTML, Dropdown, VBox  # type: ignore
 from penelope.notebook.topic_modelling import TopicModelContainer
 from penelope.notebook.topic_modelling.topic_topic_network_gui import TopicTopicGUI
 
 import notebooks.political_in_newspapers.repository as repository
-
-import penelope.utility as pu
 
 
 class PoliticalTopicTopicGUI(TopicTopicGUI):

@@ -25,12 +25,12 @@ import os
 from bokeh.io import output_notebook
 from IPython.display import display
 from penelope import utility as pu
-from penelope.pipeline.config import CorpusConfig
-from notebooks.riksdagens_protokoll import topic_modeling as wtm
 from penelope.notebook import topic_modelling as ntm
+from penelope.pipeline.config import CorpusConfig
 
-from westac.riksprot.parlaclarin import metadata as md
 import westac.riksprot.parlaclarin.speech_text as sr
+from notebooks.riksdagens_protokoll import topic_modeling as wtm
+from westac.riksprot.parlaclarin import metadata as md
 
 output_notebook()
 pu.set_default_options()
@@ -76,7 +76,9 @@ wc_ui.update_handler()
 # Displays documents having topics in which given token is in toplist of dominant words.
 
 # %%
-find_ui = wtm.RiksprotFindTopicDocumentsGUI(riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()).setup()
+find_ui = wtm.RiksprotFindTopicDocumentsGUI(
+    riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()
+).setup()
 display(find_ui.layout())
 
 # %% [markdown]
@@ -101,7 +103,9 @@ display(btd_ui.layout())
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-rtt_ui = wtm.RiksprotTopicTrendsGUI(riksprot_metadata, speech_repository=speech_repository, state=current_state()).setup()
+rtt_ui = wtm.RiksprotTopicTrendsGUI(
+    riksprot_metadata, speech_repository=speech_repository, state=current_state()
+).setup()
 display(rtt_ui.layout())
 
 # %% [markdown]
@@ -110,7 +114,9 @@ display(rtt_ui.layout())
 #
 
 # %%
-tto_ui = wtm.RiksprotTopicTrendsOverviewGUI(riksprot_metadata, speech_repository=speech_repository, state=current_state()).setup()
+tto_ui = wtm.RiksprotTopicTrendsOverviewGUI(
+    riksprot_metadata, speech_repository=speech_repository, state=current_state()
+).setup()
 display(tto_ui.layout())
 
 # %% [markdown]
@@ -119,7 +125,9 @@ display(tto_ui.layout())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %%
-ttx_ui = wtm.RiksprotTopicTopicGUI(riksprot_metadata, speech_repository=speech_repository, state=current_state()).setup()
+ttx_ui = wtm.RiksprotTopicTopicGUI(
+    riksprot_metadata, speech_repository=speech_repository, state=current_state()
+).setup()
 display(ttx_ui.layout())
 
 # %% [markdown]
@@ -127,7 +135,9 @@ display(ttx_ui.layout())
 #
 
 # %%
-ptn_ui = ntm.PivotTopicNetworkGUI(pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state()).setup()
+ptn_ui = ntm.PivotTopicNetworkGUI(
+    pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state()
+).setup()
 display(ptn_ui.layout())
 
 # %% [markdown]
@@ -141,7 +151,5 @@ ntm.display_topic_document_network_gui(plot_mode=ntm.PlotMode.FocusTopics, state
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
 # %%
-w = ntm.create_topics_token_network_gui(
-    data_folder=corpus_folder, custom_styles={'edges': {'curve-style': 'haystack'}}
-)
+w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles={'edges': {'curve-style': 'haystack'}})
 display(w.layout())

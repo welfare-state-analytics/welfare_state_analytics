@@ -6,9 +6,9 @@ import pytest
 from penelope import pipeline as pp
 from penelope import topic_modelling as tm
 
+import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
 from westac.riksprot.parlaclarin import metadata as md
-import westac.riksprot.parlaclarin.speech_text as sr
 
 DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
 

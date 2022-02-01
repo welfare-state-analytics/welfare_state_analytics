@@ -6,8 +6,9 @@ from penelope.notebook import mixins as mx
 from penelope.notebook import topic_modelling as tm
 
 from westac.riksprot.parlaclarin import metadata as md
-from .mixins import RiksProtMetaDataMixIn
 from westac.riksprot.parlaclarin import speech_text as st
+
+from .mixins import RiksProtMetaDataMixIn
 
 # pylint: disable=too-many-instance-attributes
 
