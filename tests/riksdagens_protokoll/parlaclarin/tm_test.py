@@ -82,6 +82,23 @@ def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepos
     return repository
 
 
+def test_load_gui(
+    riksprot_metadata: md.ProtoMetaData,
+    inferred_topics: tm.InferredTopicsData,
+):
+    state = dict(inferred_topics=inferred_topics)
+    ui = wtm_ui.RiksprotLoadGUI(
+        riksprot_metadata,
+        corpus_folder="/data/westac/riksdagen_corpus_data/",
+        corpus_config=None,
+        state=state,
+        slim=True,
+    )
+    assert ui is not None
+    ui.setup()
+    ui.load()
+
+
 def test_find_documents_gui(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -109,7 +126,7 @@ def test_find_documents_gui(
     assert ui.pivot_keys_text_names == []
 
     """Make a selection"""
-    ui._pivot_keys_text_names.value = ["gender"]
+    ui._multi_pivot_keys_picker.value = ["gender"]
     assert ui.pivot_keys_id_names == ["gender_id"]
     assert ui.pivot_keys_text_names == ["gender"]
 
@@ -167,7 +184,7 @@ def test_browse_documents_gui(
     assert ui.pivot_keys_text_names == []
 
     """Make a selection"""
-    ui._pivot_keys_text_names.value = ["gender"]
+    ui._multi_pivot_keys_picker.value = ["gender"]
     assert ui.pivot_keys_id_names == ["gender_id"]
     assert ui.pivot_keys_text_names == ["gender"]
 
@@ -236,7 +253,6 @@ def test_topic_trends(
     assert ui is not None
 
 
-
 def test_topic_topic_network(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -259,7 +275,7 @@ def test_topic_topic_network(
     assert ui is not None
 
 
-def test_topic_topic_network(
+def test_pivot_topic_network(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
@@ -278,4 +294,5 @@ def test_topic_topic_network(
     _ = ui.layout()
     ui._compute.click()
 
-    assert ui is not None
+    assert ui.network_data is not None
+    assert len(ui.network_data) > 0
