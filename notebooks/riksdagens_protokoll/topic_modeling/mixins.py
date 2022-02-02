@@ -23,7 +23,7 @@ class RiksProtMetaDataMixIn:
         self._content_placeholder: w.VBox = self._content
         self.click_handler = self.on_row_click
 
-    def on_row_click(self, item: pd.Series, g: Any):
+    def on_row_click(self, item: pd.Series, g: Any):  # pylint: disable=unused-argument
         try:
             if self.speech_repository is None:
                 raise ValueError("no repo!")

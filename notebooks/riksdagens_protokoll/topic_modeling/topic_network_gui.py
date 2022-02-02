@@ -20,7 +20,7 @@ class RiksprotTopicTopicGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTo
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
-        super(RiksprotTopicTopicGUI, self).__init__(
+        super(RiksprotTopicTopicGUI, self).__init__(  # pylint: disable=super-with-arguments
             pivot_key_specs=riksprot_metadata.member_property_specs,
             riksprot_metadata=riksprot_metadata,
             speech_repository=speech_repository,

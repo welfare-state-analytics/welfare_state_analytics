@@ -24,8 +24,8 @@ class PoliticalTopicTopicGUI(TopicTopicGUI):
     def filter_opts(self) -> pu.PropertyValueMaskingOpts:
         return pu.PropertyValueMaskingOpts(publication_id=self._publication_id.value).update(super().filter_opts)
 
-    def setup(self) -> "TopicTopicGUI":
-        super().setup()
+    def setup(self, **kwargs) -> "TopicTopicGUI":
+        super().setup(**kwargs)
         self._publication_id.observe(self.update_handler, names='value')
         return self
 

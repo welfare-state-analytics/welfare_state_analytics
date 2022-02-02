@@ -76,7 +76,9 @@ typings:
 
 .ONESHELL: paths
 paths:
-	@for folder in `find . -type f -name "*.ipynb" | xargs dirname | grep -v ".ipynb_checkpoints" | sort | uniq | xargs` ; do \
+	@for folder in `find . -type f -name "*.ipynb" -print \
+			-o -name tmp -prune -o -name deprecated -prune -o -name .ipynb_checkpoints -prune \
+				| xargs dirname | sort | uniq | xargs`; do \
 		pushd .  > /dev/null ; \
 		cd $$folder ; \
 		rm -f __paths__.py ; \

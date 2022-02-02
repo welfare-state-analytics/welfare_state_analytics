@@ -20,7 +20,7 @@ class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicT
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
-        super(RiksprotTopicTrendsGUI, self).__init__(
+        super(RiksprotTopicTrendsGUI, self).__init__(  # pylint: disable=super-with-arguments
             pivot_key_specs=riksprot_metadata.member_property_specs,
             riksprot_metadata=riksprot_metadata,
             speech_repository=speech_repository,
@@ -52,7 +52,7 @@ class RiksprotTopicTrendsOverviewGUI(mx.PivotKeysMixIn, RiksProtMetaDataMixIn, t
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
-        super(RiksprotTopicTrendsOverviewGUI, self).__init__(
+        super(RiksprotTopicTrendsOverviewGUI, self).__init__(  # pylint: disable=super-with-arguments
             pivot_key_specs=riksprot_metadata.member_property_specs,
             riksprot_metadata=riksprot_metadata,
             speech_repository=speech_repository,

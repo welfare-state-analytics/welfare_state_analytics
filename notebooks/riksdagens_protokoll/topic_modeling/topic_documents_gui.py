@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import ipywidgets as w
 import pandas as pd
 from penelope import topic_modelling as tx
 from penelope import utility as pu
 from penelope.notebook import mixins as mx
-from penelope.notebook import topic_modelling as tm
-from penelope.notebook.topic_modelling import mixins as tx
+from penelope.notebook import topic_modelling as ntm
 
 from westac.riksprot.parlaclarin import metadata as md
 from westac.riksprot.parlaclarin import speech_text as st
@@ -16,12 +14,12 @@ from .mixins import RiksProtMetaDataMixIn
 # pylint: disable=too-many-instance-attributes
 
 
-class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.BrowseTopicDocumentsGUI):
+class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.BrowseTopicDocumentsGUI):
     def __init__(
         self,
         riksprot_metadata: md.ProtoMetaData,
         speech_repository: st.SpeechTextRepository,
-        state: tm.TopicModelContainer | dict,
+        state: ntm.TopicModelContainer | dict,
     ):
         super().__init__(
             riksprot_metadata=riksprot_metadata,
@@ -53,12 +51,12 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
         return data
 
 
-class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.FindTopicDocumentsGUI):
+class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.FindTopicDocumentsGUI):
     def __init__(
         self,
         riksprot_metadata: md.ProtoMetaData,
         speech_repository: st.SpeechTextRepository,
-        state: tm.TopicModelContainer | dict,
+        state: ntm.TopicModelContainer | dict,
     ):
         super().__init__(
             riksprot_metadata=riksprot_metadata,

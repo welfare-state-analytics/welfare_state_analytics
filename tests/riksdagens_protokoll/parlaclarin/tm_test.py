@@ -1,9 +1,7 @@
 import os
-from typing import Callable
 
 import penelope.notebook.topic_modelling as tm_ui
 import pytest
-from penelope import pipeline as pp
 from penelope import topic_modelling as tm
 
 import westac.riksprot.parlaclarin.speech_text as sr
@@ -170,10 +168,8 @@ def test_browse_documents_gui(
 
     ui.setup()
     ui._year_range.value = (1990, 1992)
-    ui._n_top_token.value = 3
     ui._threshold.value = 0.20
 
-    assert ui.n_top_token == 3
     assert ui.pivot_keys is not None
     assert ui.years == (1990, 1992)
     assert ui.threshold == 0.20
@@ -207,8 +203,7 @@ def test_browse_documents_gui(
     assert ui.layout() is not None
 
     ui._auto_compute.value = False
-    ui._find_text.value = "film"
-    ui._max_count_slider.value = 10
+    ui._max_count.value = 10
 
     _ = ui.update()
 
@@ -277,14 +272,13 @@ def test_topic_topic_network(
 
 def test_pivot_topic_network(
     riksprot_metadata: md.ProtoMetaData,
-    speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
 
     state = dict(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
-    ui: wtm_ui.PivotTopicNetworkGUI = wtm_ui.PivotTopicNetworkGUI(
+    ui: tm_ui.PivotTopicNetworkGUI = tm_ui.PivotTopicNetworkGUI(
         pivot_key_specs=riksprot_metadata.member_property_specs, state=state
     )
 
