@@ -58,11 +58,6 @@ load_gui = wtm.RiksprotLoadGUI(
     slim=True,
 ).setup()
 display(load_gui.layout())
-# %%
-current_state().inferred_topics.document_index = riksprot_metadata.overload_by_member_data(
-    current_state().inferred_topics.document_index, encoded=True, drop=True
-)
-
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
@@ -131,7 +126,7 @@ ttx_ui = wtm.RiksprotTopicTopicGUI(
 display(ttx_ui.layout())
 
 # %% [markdown]
-# ### <span style='color: green;'>VISUALIZE</span> Document Topic Network<span style='color: red; float: right'>TRY IT</span>
+# ### <span style='color: green;'>VISUALIZE</span> Pivot Topic Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
@@ -153,3 +148,5 @@ ntm.display_topic_document_network_gui(plot_mode=ntm.PlotMode.FocusTopics, state
 # %%
 w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles={'edges': {'curve-style': 'haystack'}})
 display(w.layout())
+
+# %%

@@ -12,6 +12,9 @@ from .mixins import RiksProtMetaDataMixIn
 
 # pylint: disable=too-many-instance-attributes
 
+# FIXME #162 [BUG] {TopicTrends} Nothing happens when pressing prev/next
+# FIXME #163 [BUG] {TopicTrends} Empty chart when filtering on gender (woman)
+# FIXME #164  [ENHANCEMENT] {TopicTrends} Enable display of protocol text for output format table
 
 class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTrendsGUI):
     def __init__(
