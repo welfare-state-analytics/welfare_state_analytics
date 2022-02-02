@@ -35,9 +35,9 @@ scikit-learn = "*"
 scipy = "*"
 sklearn = "*"
 tqdm = "*"
-humlab-penelope = "^0.6.2"
 ipydatagrid = "^1.1.8"
 bqplot = "^0.12.32"
+humlab-penelope = "^0.6.2"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
