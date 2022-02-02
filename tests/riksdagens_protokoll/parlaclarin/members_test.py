@@ -95,7 +95,6 @@ def test_encoded_members(members, document_index):
     assert len(em_back) == len(md.members)
     assert set(ID_COLUMNS).intersection(set(em_back.columns)) == set()
     assert set(NAME_COLUMNS).intersection(set(em_back.columns)) == set(NAME_COLUMNS)
-    assert em_back.equals(md.members[em_back.columns.to_list()])
 
 
 def test_overload_by_member_data(members, document_index):
