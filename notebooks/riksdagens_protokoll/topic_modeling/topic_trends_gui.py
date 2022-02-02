@@ -16,6 +16,7 @@ from .mixins import RiksProtMetaDataMixIn
 # FIXME #163 [BUG] {TopicTrends} Empty chart when filtering on gender (woman)
 # FIXME #164  [ENHANCEMENT] {TopicTrends} Enable display of protocol text for output format table
 
+
 class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTrendsGUI):
     def __init__(
         self,
