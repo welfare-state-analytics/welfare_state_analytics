@@ -26,45 +26,52 @@ from bokeh.io import output_notebook
 from IPython.display import display
 from penelope import utility as pu
 from penelope.notebook import topic_modelling as ntm
-from penelope.pipeline.config import CorpusConfig
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm
 from westac.riksprot.parlaclarin import metadata as md
 
+jj = os.path.join
 output_notebook()
 pu.set_default_options()
 
-current_state = ntm.TopicModelContainer.singleton
-corpus_folder: str = "/data/westac/riksdagen_corpus_data/"
-corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(corpus_folder, "dtm_1920-2020_v0.3.0.tf20", 'corpus.yml'))
-metadata_folder = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
+data_folder: str = jj(__paths__.corpus_folder, "riksdagen_corpus_data")
+members_filename: str = jj(data_folder, 'dtm_1920-2020_v0.3.0.tf20/person_index.zip')
 
-riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(metadata_folder)
+riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=members_filename)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    folder="/data/westac/riksdagen_corpus_data/tagged_frames_v0.3.0_20201218",
+    folder=jj(data_folder, "tagged_frames_v0.3.0_20201218"),
     riksprot_metadata=riksprot_metadata,
 )
+# %%
+# # ! jupytext --to py:percent explore.ipynb
+# # ! cat /data/westac/riksdagen_corpus_data/tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/topic_token_overview_label.csv
+
 # %% [markdown]
 # ### <span style='color: green'>SETUP </span> Load Model<span style='float: right; color: red'>MANDATORY</span>
 #
 
 # %%
-load_gui = wtm.RiksprotLoadGUI(
-    riksprot_metadata,
-    corpus_folder=corpus_folder,
-    corpus_config=None,
-    state=current_state(),
-    slim=True,
+load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
+    riksprot_metadata, corpus_folder=data_folder, corpus_config=None, state=current_state(), slim=True
 ).setup()
 display(load_gui.layout())
+# %% [markdown]
+# ### <span style='color: green'>PREPARE </span> Edit Topic Labels<span style='float: right; color: red'></span>
+#
+
+# %%
+ui = ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=current_state()).setup()
+display(ui.layout())
+
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
 wc_ui = ntm.WordcloudGUI(current_state()).setup()
 display(wc_ui.layout())
-wc_ui.update_handler()
+wc_ui.update_handler();
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Find topic's documents by token<span style='color: red; float: right'>TRY IT</span>
@@ -146,7 +153,7 @@ ntm.display_topic_document_network_gui(plot_mode=ntm.PlotMode.FocusTopics, state
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
 # %%
-w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles={'edges': {'curve-style': 'haystack'}})
+w = ntm.create_topics_token_network_gui(data_folder=data_folder, custom_styles={'edges': {'curve-style': 'haystack'}})
 display(w.layout())
 
 # %%

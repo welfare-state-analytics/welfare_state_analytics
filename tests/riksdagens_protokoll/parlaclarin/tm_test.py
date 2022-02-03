@@ -1,4 +1,6 @@
 import os
+import uuid
+import pandas as pd
 
 import penelope.notebook.topic_modelling as tm_ui
 import pytest
@@ -8,9 +10,11 @@ import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
 from westac.riksprot.parlaclarin import metadata as md
 
-DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
-
 jj = os.path.join
+
+DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
+MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/")
+# MODEL_FOLDER: str = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/"
 
 # pylint: disable=protected-access,redefined-outer-name
 
@@ -57,15 +61,16 @@ jj = os.path.join
 
 @pytest.fixture
 def riksprot_metadata() -> md.ProtoMetaData:
-    metadata_folder: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20')
-    data: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(metadata_folder)
+    person_filename: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
+    data: md.ProtoMetaData = md.ProtoMetaData(members=person_filename)
     return data
-
 
 @pytest.fixture
 def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsData:
     data: tm.InferredTopicsData = tm.InferredTopicsData.load(
-        folder="/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/", slim=True
+        # folder="/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/", slim=True
+        folder=jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/"),
+        slim=True,
     )
     data.document_index = riksprot_metadata.overload_by_member_data(data.document_index, encoded=True, drop=True)
     return data
@@ -74,7 +79,7 @@ def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsDat
 @pytest.fixture
 def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        folder="/data/westac/riksdagen_corpus_data/tagged_frames_v0.3.0_20201218",
+        folder=jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218"),
         riksprot_metadata=riksprot_metadata,
     )
     return repository
@@ -290,3 +295,28 @@ def test_pivot_topic_network(
 
     assert ui.network_data is not None
     assert len(ui.network_data) > 0
+
+def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
+
+    folder: str = f'tests/output/{str(uuid.uuid4())[:6]}'
+    os.makedirs(folder)
+
+    expected_filename: str = jj(folder, 'topic_token_overview_label.csv')
+    assert not os.path.isfile(expected_filename)
+
+    topic_labels: pd.DataFrame = inferred_topics.load_topic_labels(folder=folder, sep='\t', header=0, index_col=0)
+
+    assert topic_labels is not None
+    assert 'label' in topic_labels.columns
+    assert (topic_labels.label == inferred_topics.topic_token_overview.label).all()
+    assert inferred_topics.is_satisfied_topic_token_overview(topic_labels)
+
+    state = dict(inferred_topics=inferred_topics)
+    ui = tm_ui.EditTopicLabelsGUI(folder=folder, state=state)
+    ui.setup()
+
+    assert topic_labels is not None
+
+    ui.save()
+    assert os.path.isfile(expected_filename)
+
