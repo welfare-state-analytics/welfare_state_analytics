@@ -1,7 +1,7 @@
 import os
 import uuid
-import pandas as pd
 
+import pandas as pd
 import penelope.notebook.topic_modelling as tm_ui
 import pytest
 from penelope import topic_modelling as tm
@@ -64,6 +64,7 @@ def riksprot_metadata() -> md.ProtoMetaData:
     person_filename: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
     data: md.ProtoMetaData = md.ProtoMetaData(members=person_filename)
     return data
+
 
 @pytest.fixture
 def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsData:
@@ -296,6 +297,7 @@ def test_pivot_topic_network(
     assert ui.network_data is not None
     assert len(ui.network_data) > 0
 
+
 def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
 
     folder: str = f'tests/output/{str(uuid.uuid4())[:6]}'
@@ -319,4 +321,3 @@ def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
 
     ui.save()
     assert os.path.isfile(expected_filename)
-
