@@ -521,7 +521,7 @@ test-win = ["pytest", "mock", "cython", "testfixtures", "Morfessor (>=2.0.2a4)",
 
 [[package]]
 name = "humlab-penelope"
-version = "0.6.2"
+version = "0.6.3"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
@@ -2548,7 +2548,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.8.*"
-content-hash = "42a40247b4bdf47cbd1a828a8c1c130f9d45dfbfe270d58a22e0685dab0c5e4d"
+content-hash = "fd3ac65dbad939384c657eeb814436e10657be8f6be6113c9a0db2ea1597c521"
 
 [metadata.files]
 anyio = [
@@ -2900,8 +2900,8 @@ gensim = [
     {file = "gensim-4.1.2.tar.gz", hash = "sha256:1932c257de4eccbb64cc40d46e8577a25f5f47b94b96019a969fb36150f11d15"},
 ]
 humlab-penelope = [
-    {file = "humlab-penelope-0.6.2.tar.gz", hash = "sha256:e56c0ab85c154125e80ff2abf393a8418a060df99f8aa5820044e478cedc462a"},
-    {file = "humlab_penelope-0.6.2-py3-none-any.whl", hash = "sha256:e23757cba0e6a337907f542ec65badf744c9c8a067b798a962ae03cf16683fcd"},
+    {file = "humlab-penelope-0.6.3.tar.gz", hash = "sha256:75ebbacc446edc37d444ca3e5c27e8c97d89700a81ee0053a728b7acdae5c766"},
+    {file = "humlab_penelope-0.6.3-py3-none-any.whl", hash = "sha256:b17b6968ec0c86a1d401981cf4dfd09ccb1cab540e42e402db79f4a39fd4058e"},
 ]
 identify = [
     {file = "identify-2.4.7-py2.py3-none-any.whl", hash = "sha256:e64210654dfbca6ced33230eb1b137591a0981425e1a60b4c6c36309f787bbd5"},
