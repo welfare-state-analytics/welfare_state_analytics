@@ -49,13 +49,12 @@ def test_members_load():
     assert len(mps) == 15
 
 
-def test_create_metadata(members, document_index):
+def test_create_metadata(members):
 
-    md: ProtoMetaData = ProtoMetaData(members=members, document_index=document_index)
+    md: ProtoMetaData = ProtoMetaData(members=members)
 
     assert md is not None
     assert len(md.members) == 15
-    assert len(md.document_index) == 24
     assert len(md.role_type2id) == 4 == len(md.role_type2name)
     assert len(md.gender2id) == 3 == len(md.gender2name) == len(md.genders)
     assert len(md.party_abbrevs) == 5
@@ -65,8 +64,6 @@ def test_create_metadata(members, document_index):
     assert not md.members.role_type.isna().any()
     assert not md.party_abbrevs.party_abbrev.isna().any()
     assert not md.genders.gender.isna().any()
-
-    assert not md.document_index.who.isna().any()
 
     assert md.who2id['hans_blix_minister_1978'] == 3
     assert md.who2name[3] == 'hans_blix_minister_1978'
@@ -78,9 +75,9 @@ def test_create_metadata(members, document_index):
     assert md.role_type2name[1] == 'talman'
 
 
-def test_encoded_members(members, document_index):
+def test_encoded_members(members):
 
-    md: ProtoMetaData = ProtoMetaData(members=members, document_index=document_index)
+    md: ProtoMetaData = ProtoMetaData(members=members)
 
     em: pd.DataFrame = md.encoded_members
 
@@ -99,16 +96,16 @@ def test_encoded_members(members, document_index):
 
 def test_overload_by_member_data(members, document_index):
 
-    md: ProtoMetaData = ProtoMetaData(members=members, document_index=document_index)
+    md: ProtoMetaData = ProtoMetaData(members=members)
 
-    dx: pd.DataFrame = md.overloaded_document_index
+    dx: pd.DataFrame = md.overload_by_member_data(document_index)
 
     assert dx is not None
 
     assert set(ID_COLUMNS).intersection(set(dx.columns)) == set(ID_COLUMNS)
 
-    dx: pd.DataFrame = md.overload_by_member_data(md.document_index, encoded=True, drop=True, columns='gender_id')
+    dx: pd.DataFrame = md.overload_by_member_data(document_index, encoded=True, drop=True, columns='gender_id')
     assert set(ID_COLUMNS).intersection(set(dx.columns)) == set(['gender_id'])
 
-    dx: pd.DataFrame = md.overload_by_member_data(md.document_index, encoded=False, drop=True, columns='gender')
+    dx: pd.DataFrame = md.overload_by_member_data(document_index, encoded=False, drop=True, columns='gender')
     assert set(NAME_COLUMNS).intersection(set(dx.columns)) == set(['gender'])

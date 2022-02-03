@@ -53,7 +53,6 @@ def test_trends_gui_create_with_metadata(riksprot_metadata: md.ProtoMetaData):
     ).setup()
 
     assert gui.riksprot_metadata is not None
-    assert gui.riksprot_metadata.document_index is not None
     assert gui.riksprot_metadata.members is not None
 
 

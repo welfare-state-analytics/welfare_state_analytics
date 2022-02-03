@@ -50,32 +50,19 @@ PARTY_COLOR_BY_ABBREV = {x[1]: x[2] for x in PARTY_COLORS}
 MEMBER_IDNAME2NAME_MAPPING: Mapping[str, str] = pu.revdict(MEMBER_NAME2IDNAME_MAPPING)
 
 
-def load_speech_index(index_path: str, members_path: str) -> pd.DataFrame:
-    """Load speech index. Merge with person index (parla. members, ministers, speakers)"""
-    speech_index: pd.DataFrame = pd.read_feather(index_path)
-    members: pd.DataFrame = pd.read_csv(members_path, delimiter='\t').set_index('id')
-    speech_index['protocol_name'] = speech_index.filename.str.split('_').str[0]
-    speech_index = speech_index.merge(members, left_on='who', right_index=True, how='inner').fillna('')
-    speech_index.loc[speech_index['gender'] == '', 'gender'] = 'unknown'
-    return speech_index, members
-
 class MemberNotFoundError(ValueError):
     ...
 
 class ProtoMetaData:
 
-    DOCUMENT_INDEX_NAME: str = 'document_index.feather'
     MEMBERS_NAME: str = 'person_index.csv'
     MEMBER_NAME2IDNAME_MAPPING: Mapping[str, str] = MEMBER_NAME2IDNAME_MAPPING
     MEMBER_IDNAME2NAME_MAPPING: Mapping[int, str] = MEMBER_IDNAME2NAME_MAPPING
     PARTY_COLOR_BY_ID: Mapping[int, str] = PARTY_COLOR_BY_ID
     PARTY_COLOR_BY_ABBREV: Mapping[str, str] = PARTY_COLOR_BY_ABBREV
 
-    def __init__(self, *, members: pd.DataFrame, document_index: pd.DataFrame, verbose: bool = False):
+    def __init__(self, *, members: pd.DataFrame, verbose: bool = False):
 
-        self.document_index: pd.DataFrame = (
-            document_index if isinstance(document_index, pd.DataFrame) else self.load_document_index(document_index)
-        )
         self.members: pd.DataFrame = members if isinstance(members, pd.DataFrame) else self.load_members(members)
         self.members['party_abbrev'] = self.members['party_abbrev'].fillna('unknown')
         self.members['gender'] = self.members['gender'].fillna('unknown')
@@ -84,7 +71,6 @@ class ProtoMetaData:
 
         if verbose:
             logger.info(f"size of mop's metadata: {pu.size_of(self.members, 'MB', total=True)}")
-            logger.info(f"size of document_index: {pu.size_of(self.document_index, 'MB', total=True)}")
 
     def map_id2text_names(self, id_names: List[str]) -> List[str]:
         return [MEMBER_IDNAME2NAME_MAPPING.get(x) for x in id_names]
@@ -157,31 +143,6 @@ class ProtoMetaData:
             MemberNotFoundError(f"ID={who}")
 
     @staticmethod
-    def load_from_same_folder(folder: str, verbose: bool = False) -> "ProtoMetaData":
-        """Loads members and document index from `folder`"""
-        try:
-            return ProtoMetaData(document_index=folder, members=folder, verbose=verbose)
-        except Exception as ex:
-            raise FileNotFoundError(
-                "unable to load data from {folder}, please make sure both document index and members index reside in same folder."
-            ) from ex
-
-    @staticmethod
-    def load_document_index(folder: str) -> pd.DataFrame:
-        document_index: pd.DataFrame = None
-        try:
-            document_index = pc.DocumentIndexHelper.load(
-                filename=folder if not isdir(folder) else join(folder, ProtoMetaData.DOCUMENT_INDEX_NAME)
-            ).document_index
-        except FileNotFoundError:
-            """Try load from DTM folder"""
-            document_index = pc.DocumentIndexHelper.load(filename=folder).document_index
-
-        # document_index = pd.read_feather(join(folder, ProtoMetaData.DOCUMENT_INDEX_NAME))
-        document_index.assign(protocol_name=document_index.filename.str.split('_').str[0])
-        return document_index
-
-    @staticmethod
     def read_members(filename: str, sep: str = '\t') -> pd.DataFrame:
         members: pd.DataFrame = (
             pd.read_feather(filename)
@@ -236,10 +197,6 @@ class ProtoMetaData:
         xi = self.as_slim_types(xi)
 
         return xi
-
-    @cached_property
-    def overloaded_document_index(self) -> pd.DataFrame:
-        return self.overload_by_member_data(self.document_index, encoded=True, drop=True)
 
     @cached_property
     def simple_members(self) -> pd.DataFrame:

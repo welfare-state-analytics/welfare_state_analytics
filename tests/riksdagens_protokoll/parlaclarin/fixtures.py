@@ -64,4 +64,4 @@ def sample_members() -> pd.DataFrame:
 
 
 def sample_riksprot_metadata():
-    return ProtoMetaData(members=sample_members(), document_index=sample_document_index())
+    return ProtoMetaData(members=sample_members())
