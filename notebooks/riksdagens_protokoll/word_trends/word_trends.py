@@ -55,16 +55,19 @@
 # To match all words starting with `info`you can enter `|^info.*|` where `^` specifies the start of the word.
 #
 # %%
+import __paths__
+from os.path import join as jj
+
 from bokeh.io import output_notebook
 from IPython.display import display
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 from westac.riksprot.parlaclarin import metadata as md
 
-default_folder = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+default_folder = jj(__paths__.data_folder, 'riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20')
 output_notebook()  # resources=INLINE)
 
-riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData.load_from_same_folder(default_folder)
+riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=jj(default_folder, 'person_index.zip'))
 
 gui = wt.RiksProtTrendsGUI(default_folder=default_folder, riksprot_metadata=riksprot_metadata).setup()
 
