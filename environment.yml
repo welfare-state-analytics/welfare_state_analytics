@@ -77,7 +77,6 @@ dependencies:
   - appnope
   - cutter-ng
   - humlab-penelope
-  - ipyaggrid
   - jupyter-bokeh
   - pandas-bokeh
   - sklearn
