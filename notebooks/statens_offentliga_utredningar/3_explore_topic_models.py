@@ -25,7 +25,7 @@ import os
 from typing import Callable
 
 import bokeh.plotting
-import penelope.notebook.topic_modelling as gui
+import penelope.notebook.topic_modelling as ntm
 from IPython.display import display
 from penelope import utility as pu
 from penelope.pipeline.config import CorpusConfig
@@ -33,7 +33,7 @@ from penelope.pipeline.config import CorpusConfig
 bokeh.plotting.output_notebook()
 pu.set_default_options()
 
-current_state: Callable[[], gui.TopicModelContainer] = gui.TopicModelContainer.singleton
+current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
 corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
 
@@ -42,7 +42,7 @@ corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-load_gui = gui.create_load_topic_model_gui(corpus_config, corpus_folder, current_state())
+load_gui = ntm.create_load_topic_model_gui(corpus_config, corpus_folder, current_state())
 display(load_gui.layout())
 
 # %% [markdown]
@@ -51,7 +51,7 @@ display(load_gui.layout())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-display(gui.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup().layout())
+display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -59,26 +59,26 @@ display(gui.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-display(gui.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state).setup().layout())
+display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-gui.display_topic_wordcloud_gui(current_state())
+ntm.display_topic_wordcloud_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-gui.display_topic_word_distribution_gui(current_state())
+ntm.display_topic_word_distribution_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-gui.display_topic_trends_gui(current_state())
+ntm.display_topic_trends_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -87,7 +87,7 @@ gui.display_topic_trends_gui(current_state())
 # - [Stanford’s Termite software](http://vis.stanford.edu/papers/termite) uses a similar visualization.
 
 # %%
-gui.display_topic_trends_overview_gui(current_state())
+ntm.display_topic_trends_overview_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -95,22 +95,20 @@ gui.display_topic_trends_overview_gui(current_state())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %% code_folding=[0]
-gui.display_topic_topic_network_gui(current_state())
+ntm.display_topic_topic_network_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Document Topic Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.Default, state=current_state())  # type: ignore
-
+display(ntm.DefaultTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state()).setup().layout())
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state=current_state())
-
+display(ntm.FocusTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state()).setup().layout())
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
@@ -118,7 +116,7 @@ gui.display_topic_document_network_gui(plot_mode=gui.PlotMode.FocusTopics, state
 
 corpus_folder: str = "/data/westac/sou_kb_labb"
 custom_styles = {'edges': {'curve-style': 'haystack'}}
-w = gui.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
+w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
 display(w.layout())
 
 # %%
