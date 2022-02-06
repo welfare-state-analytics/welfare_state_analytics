@@ -155,7 +155,7 @@ class PublicationTopicNetworkGUI(ntm.TopicsStateGui):
         self.progress = IntProgress(min=0, max=4, step=1, value=0, layout=dict(width="99%"))
         self.ignores = SelectMultiple(
             description='Ignore',
-            options=[('', None)] + [(f'Topic #{i}', i) for i in range(0, self.inferred_n_topics)],  # type: ignore
+            options=[('', None)] + self.topic_id_options(),  # type: ignore
             value=[],
             rows=8,
             layout=dict(width='240px'),
