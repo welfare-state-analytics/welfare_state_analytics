@@ -9,6 +9,7 @@ from penelope import topic_modelling as tm
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
 from westac.riksprot.parlaclarin import metadata as md
+from penelope.notebook.topic_modelling import mixins as mx
 
 jj = os.path.join
 
@@ -58,7 +59,6 @@ MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.ma
 
 # FIXME: Use **way** smaller corpus!
 
-
 @pytest.fixture
 def riksprot_metadata() -> md.ProtoMetaData:
     person_filename: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
@@ -79,6 +79,7 @@ def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsDat
 
 @pytest.fixture
 def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
+    os.environ["WESTAC_GITHUB_ACCESS_TOKEN"] = "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"
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
         folder=jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218"),
         riksprot_metadata=riksprot_metadata,
@@ -321,3 +322,27 @@ def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
 
     ui.save()
     assert os.path.isfile(expected_filename)
+
+
+class TNextPrevTopicMixIn(mx.NextPrevTopicMixIn):
+    def __init__(self, inferred_topics: tm.InferredTopicsData):
+        self.inferred_topics: tm.InferredTopicsData = inferred_topics
+        super().__init__()
+
+
+def test_NextPrevTopicMixIn(inferred_topics: tm.InferredTopicsData):
+    ...
+    ctrl: TNextPrevTopicMixIn = TNextPrevTopicMixIn(inferred_topics)
+    assert ctrl is not None
+    ctrl.topic_id = (0, inferred_topics.n_topics - 1, inferred_topics.topic_labels)
+    assert ctrl is not None
+
+
+def test_get_github_tags(speech_repository: sr.SpeechTextRepository):
+    release_tags: list[str] = speech_repository.release_tags
+    assert len(release_tags) > 2
+    assert "main" in release_tags
+    github_urls = speech_repository.get_github_xml_urls("prot-1920--ak--1.xml")
+    assert len(github_urls) > 0
+    links = speech_repository.to_parla_clarin_urls("prot-1920--ak--1.xml")
+    assert len(links) > 0
