@@ -44,6 +44,10 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
     folder=jj(data_folder, "tagged_frames_v0.3.0_20201218"),
     riksprot_metadata=riksprot_metadata,
 )
+default_args: dict = dict(
+    riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()
+)
+
 # %%
 # # ! jupytext --to py:percent explore.ipynb
 # # ! cat /data/westac/riksdagen_corpus_data/tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/topic_token_overview_label.csv
@@ -54,7 +58,7 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 
 # %%
 load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
-    riksprot_metadata, corpus_folder=data_folder, corpus_config=None, state=current_state(), slim=True
+    riksprot_metadata, corpus_folder=data_folder, state=current_state(), slim=True
 ).setup()
 display(load_gui.layout())
 # %% [markdown]
@@ -62,8 +66,7 @@ display(load_gui.layout())
 #
 
 # %%
-ui = ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=current_state()).setup()
-display(ui.layout())
+display(ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=current_state()).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
@@ -78,10 +81,7 @@ wc_ui.update_handler()
 # Displays documents having topics in which given token is in toplist of dominant words.
 
 # %%
-find_ui = wtm.RiksprotFindTopicDocumentsGUI(
-    riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()
-).setup()
-display(find_ui.layout())
+display(wtm.RiksprotFindTopicDocumentsGUI(**default_args).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -96,19 +96,13 @@ ntm.display_topic_word_distribution_gui(current_state())
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-btd_ui = wtm.RiksprotBrowseTopicDocumentsGUI(
-    riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()
-).setup()
-display(btd_ui.layout())
+display(wtm.RiksprotBrowseTopicDocumentsGUI(**default_args).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-rtt_ui = wtm.RiksprotTopicTrendsGUI(
-    riksprot_metadata, speech_repository=speech_repository, state=current_state()
-).setup()
-display(rtt_ui.layout())
+display(wtm.RiksprotTopicTrendsGUI(**default_args).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -116,10 +110,7 @@ display(rtt_ui.layout())
 #
 
 # %%
-tto_ui = wtm.RiksprotTopicTrendsOverviewGUI(
-    riksprot_metadata, speech_repository=speech_repository, state=current_state()
-).setup()
-display(tto_ui.layout())
+display(wtm.RiksprotTopicTrendsOverviewGUI(**default_args).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -127,27 +118,29 @@ display(tto_ui.layout())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %%
-ttx_ui = wtm.RiksprotTopicTopicGUI(
-    riksprot_metadata, speech_repository=speech_repository, state=current_state()
-).setup()
-display(ttx_ui.layout())
+display(wtm.RiksprotTopicTopicGUI(**default_args).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Pivot Topic Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-ptn_ui = ntm.PivotTopicNetworkGUI(
-    pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state()
-).setup()
-display(ptn_ui.layout())
+display(
+    ntm.PivotTopicNetworkGUI(pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state())
+    .setup()
+    .layout()
+)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-ntm.display_topic_document_network_gui(plot_mode=ntm.PlotMode.FocusTopics, state=current_state())
+display(
+    ntm.FocusTopicDocumentNetworkGui(pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state())
+    .setup()
+    .layout()
+)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
