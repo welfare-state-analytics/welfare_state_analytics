@@ -1,15 +1,16 @@
 import os
 import uuid
+from unittest import mock
 
 import pandas as pd
 import penelope.notebook.topic_modelling as tm_ui
 import pytest
 from penelope import topic_modelling as tm
+from penelope.notebook.topic_modelling import mixins as mx
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
 from westac.riksprot.parlaclarin import metadata as md
-from penelope.notebook.topic_modelling import mixins as mx
 
 jj = os.path.join
 
@@ -58,6 +59,7 @@ MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.ma
 #     # topic_token_overview=pd.read_feather(jj(folder, "topic_token_overview.feather")).set_index( 'topic_id', drop=True )
 
 # FIXME: Use **way** smaller corpus!
+
 
 @pytest.fixture
 def riksprot_metadata() -> md.ProtoMetaData:
@@ -215,6 +217,7 @@ def test_browse_documents_gui(
     _ = ui.update()
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends_overview(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -229,12 +232,13 @@ def test_topic_trends_overview(
     )
 
     ui.setup()
-
+    ui._year_range.value = (1920, 2020)
     ui.update_handler()
 
-    assert ui is not None
+    assert ui._alert.value == "✅"
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -255,6 +259,7 @@ def test_topic_trends(
     assert ui is not None
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_topic_network(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -277,6 +282,7 @@ def test_topic_topic_network(
     assert ui is not None
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pivot_topic_network(
     riksprot_metadata: md.ProtoMetaData,
     inferred_topics: tm.InferredTopicsData,
