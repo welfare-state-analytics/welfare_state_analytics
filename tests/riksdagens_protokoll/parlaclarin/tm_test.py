@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import uuid
 from unittest import mock
@@ -81,7 +83,6 @@ def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsDat
 
 @pytest.fixture
 def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
-    os.environ["WESTAC_GITHUB_ACCESS_TOKEN"] = "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"
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
         folder=jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218"),
         riksprot_metadata=riksprot_metadata,
