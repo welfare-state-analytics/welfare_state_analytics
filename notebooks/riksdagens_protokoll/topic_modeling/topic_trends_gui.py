@@ -64,7 +64,6 @@ class RiksprotTopicTrendsOverviewGUI(mx.PivotKeysMixIn, RiksProtMetaDataMixIn, t
         )
 
         self._threshold.value = 0.02
-        self._year_range.value = (1990, 1992)
         self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
 
     def setup(self, **kwargs) -> RiksprotTopicTrendsOverviewGUI:  # pylint: disable=useless-super-delegation
