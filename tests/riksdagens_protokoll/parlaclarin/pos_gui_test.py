@@ -186,9 +186,9 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
 
     gender_value_pairs: Set[str] = {"gender: unknown", "gender: man", "gender: woman"}
     gui: tc.PoSCountGUI = (
-        tc.PoSCountGUI(default_folder=TEST_FOLDER, encoded=True, riksprot_metadata=riksprot_metadata)
+        tc.PoSCountGUI(default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata, encoded=True)
         .setup(load_data=False)
-        .load(TEST_FOLDER)
+        .load(source=TEST_FOLDER)
         .prepare()
     )
 
