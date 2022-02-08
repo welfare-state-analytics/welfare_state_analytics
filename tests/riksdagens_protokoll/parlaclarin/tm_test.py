@@ -107,6 +107,7 @@ def test_load_gui(
     ui.load()
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_find_documents_gui(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
@@ -165,6 +166,7 @@ def test_find_documents_gui(
     _ = ui.update()
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_browse_documents_gui(
     riksprot_metadata: md.ProtoMetaData,
     speech_repository: sr.SpeechTextRepository,
