@@ -236,7 +236,6 @@ def test_checkpoint_feather():
             stop_words=None,
             max_df=1.0,
             min_df=1,
-            verbose=False,
         ),
         tf_threshold=1,
         tf_threshold_mask=False,
