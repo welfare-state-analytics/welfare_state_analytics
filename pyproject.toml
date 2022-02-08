@@ -37,8 +37,8 @@ sklearn = "*"
 tqdm = "*"
 ipydatagrid = "^1.1.8"
 bqplot = "^0.12.32"
-humlab-penelope = {path = "../../penelope", develop = true}
 PyGithub = "^1.55"
+humlab-penelope = "^0.6.4"
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"

@@ -527,12 +527,11 @@ test-win = ["pytest", "mock", "cython", "testfixtures", "Morfessor (>=2.0.2a4)",
 
 [[package]]
 name = "humlab-penelope"
-version = "0.6.3"
+version = "0.6.4"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = "==3.8.*"
-develop = true
+python-versions = ">=3.8.0,<3.9.0"
 
 [package.dependencies]
 bokeh = "*"
@@ -540,36 +539,32 @@ click = "*"
 ftfy = "*"
 gensim = "*"
 ipycytoscape = "*"
-ipydatagrid = "^1.1.8"
+ipydatagrid = ">=1.1.8,<2.0.0"
 ipyfilechooser = "*"
 ipysheet = "*"
 ipywidgets = "*"
-itertoolz = "^0.5"
+itertoolz = ">=0.5,<0.6"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = "^0.3.1"
-more_itertools = "^8.5.0"
-msgpack = "^1.0.2"
-nltk = "^3.5"
+memoization = ">=0.3.1,<0.4.0"
+more_itertools = ">=8.5.0,<9.0.0"
+msgpack = ">=1.0.2,<2.0.0"
+nltk = ">=3.5,<4.0"
 numpy = "*"
-openpyxl = "^3.0.5"
+openpyxl = ">=3.0.5,<4.0.0"
 pandas = "*"
 pyarrow = "*"
-python-louvain = "^0.14"
-PyYAML = "^5.3.1"
-requests = "^2.24.0"
+python-louvain = ">=0.14,<0.15"
+PyYAML = ">=5.3.1,<6.0.0"
+requests = ">=2.24.0,<3.0.0"
 scipy = "*"
 sklearn = "*"
 spacy = "*"
 textacy = "*"
-toml = "^0.10.2"
-tqdm = "^4.62.3"
+toml = ">=0.10.2,<0.11.0"
+tqdm = ">=4.62.3,<5.0.0"
 wordcloud = "*"
-
-[package.source]
-type = "directory"
-url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -2562,7 +2557,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.8.*"
-content-hash = "87e9d70529ce92b14308b4c885f5a0244965dec10370b8a4009758a7eaf38200"
+content-hash = "51b7251a18302aa7b7115bdeabf6eabaaf2719b4f966c8ac51fe81091634e483"
 
 [metadata.files]
 anyio = [
@@ -2914,7 +2909,10 @@ gensim = [
     {file = "gensim-4.1.2-cp39-cp39-win_amd64.whl", hash = "sha256:39139be83c3128e234216189a094f959ac2b052a808911b0b56d980d5f96981f"},
     {file = "gensim-4.1.2.tar.gz", hash = "sha256:1932c257de4eccbb64cc40d46e8577a25f5f47b94b96019a969fb36150f11d15"},
 ]
-humlab-penelope = []
+humlab-penelope = [
+    {file = "humlab-penelope-0.6.4.tar.gz", hash = "sha256:ca28f756641c99422cc580532bb3a7fb8be7d83d03eeab9ed0caae32bbdf7724"},
+    {file = "humlab_penelope-0.6.4-py3-none-any.whl", hash = "sha256:e5782d3cc9874cf92b6ceca8d42bd06a9207ae4fa5d062ff54ecb7a02ebb0195"},
+]
 identify = [
     {file = "identify-2.4.8-py2.py3-none-any.whl", hash = "sha256:a55bdd671b6063eb837af938c250ec00bba6e610454265133b0d2db7ae718d0f"},
     {file = "identify-2.4.8.tar.gz", hash = "sha256:97e839c1779f07011b84c92af183e1883d9745d532d83412cca1ca76d3808c1c"},
