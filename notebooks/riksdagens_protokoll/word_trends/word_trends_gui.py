@@ -85,7 +85,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         if pivot_key_specs is None:
             pivot_key_specs = riksprot_metadata.member_property_specs if riksprot_metadata is not None else {}
 
-        super().__init__(pivot_key_specs=riksprot_metadata.member_property_specs, n_top_count=n_top_count)
+        super().__init__(pivot_key_specs=pivot_key_specs, n_top_count=n_top_count)
 
         self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
         self.data: pd.DataFrame = None
