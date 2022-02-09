@@ -32,6 +32,7 @@ nohup.out
 clone/
 trashcan
 output
+_output
 log
 lint-analysis
 clone
@@ -53,3 +54,4 @@ dist
 /stopwords
 export
 typings
+.jupyterlite*
