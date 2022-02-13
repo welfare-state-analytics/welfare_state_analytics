@@ -1,9 +1,11 @@
 from __future__ import annotations
+import abc
 import os
 import re
 import types
-from typing import Literal
+from typing import Iterable, Literal
 from collections import namedtuple
+from itertools import groupby
 
 import zipfile
 import json
@@ -24,7 +26,7 @@ default_template: Template = Template(
 <b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }} <br/>
 <b>Källa (XML):</b> {{parlaclarin_links}} <br/>
 <b>Talare:</b> {{name}}, {{ party }}, {{ district }} ({{ gender}}) <br/>
-<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}) ({{u_id}}) <br/>
+<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}),  uid: {{u_id}}, who: {{who}} ) <br/>
 <h3> Anförande av {{ role_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
 <span style="color: blue;line-height:50%;">
 {% for n in paragraphs %}
@@ -37,15 +39,80 @@ default_template: Template = Template(
 GithubUrl = namedtuple('GithubUrl', 'name url')
 
 
+class IMergeStrategy(abc.ABC):
+    @abc.abstractmethod
+    def merge(self, utterances: list[dict], metadata: dict) -> list[dict]:
+        ...
+
+    def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
+        ...
+
+class DefaultMergeStrategy(IMergeStrategy):
+
+    def merge(self, utterances: list[dict], metadata: dict) -> Iterable[dict]:
+        return [self.to_speech(us, metadata=metadata) for _, us in self.groups(utterances)]
+
+    def groups(self, utterances: list[dict]) -> list[tuple[str, list[dict]]]:
+        return [(who, [u for u in us]) for who, us in groupby(utterances, key=lambda x: x['who'])]
+
+    def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
+        return self.to_speech(self.groups(utterances=utterances)[n][1], metadata=metadata)
+
+    def to_speech(self, utterances: list[dict], metadata: dict) -> dict:
+        utterances = list(utterances or [])
+        metadata = metadata or {}
+        if len(utterances) == 0:
+            return {}
+        speech: dict = dict(
+            who=utterances[0]['who'],
+            u_id=utterances[0]['u_id'],
+            paragraphs=[p for u in utterances for p in u['paragraphs']],
+            num_tokens=sum(x['num_tokens'] for x in utterances),
+            num_words=sum(x['num_words'] for x in utterances),
+            page_number=utterances[0]["page_number"] or "?",
+            page_number2=utterances[-1]["page_number"] or "?",
+            protocol_name=metadata.get("name", "?"),
+            date=metadata.get("date", "?"),
+        )
+        return speech
+
+
+class Loader(abc.ABC):
+    @abc.abstractmethod
+    def load(self, protocol_name: str) -> tuple[dict, list[dict]]:
+        ...
+
+
+class ZipLoader(Loader):
+    def __init__(self, folder: str):
+        self.folder: str = folder
+
+    def load(self, protocol_name: str) -> tuple[dict, list[dict]]:
+        """Loads tagged protocol data from archive"""
+        sub_folder: str = protocol_name.split('-')[1]
+        filename: str = jj(self.folder, sub_folder, f"{protocol_name}.zip")
+        with zipfile.ZipFile(filename, "r") as fp:
+            json_str: str = fp.read(f"{protocol_name}.json")
+            metadata_str: str = fp.read(f"metadata.json")
+        metadata: dict = json.loads(metadata_str)
+        utterances: list[dict] = json.loads(json_str)
+        return metadata, utterances
+
 class SpeechTextRepository:
 
     GITHUB_REPOSITORY_URL: str = "https://github.com/welfare-state-analytics/riksdagen-corpus"
     GITHUB_REPOSITORY_RAW_URL = "https://raw.githubusercontent.com/welfare-state-analytics/riksdagen-corpus"
 
-    def __init__(self, folder: str, riksprot_metadata: md.ProtoMetaData = None, template: Template = None):
+    def __init__(
+        self,
+        source: str | Loader,
+        riksprot_metadata: md.ProtoMetaData = None,
+        template: Template = None,
+        merger: IMergeStrategy = None,
+    ):
 
         self.template: Template = template or default_template
-        self.folder: str = folder
+        self.source: Loader = source if isinstance(source, Loader) else ZipLoader(source)
         self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
         self.role_type_translation: dict = {
             'member': 'riksdagsman',
@@ -54,40 +121,28 @@ class SpeechTextRepository:
         }
         self.subst_puncts = re.compile(r'\s([,?.!"%\';:`](?:\s|$))')
         self.release_tags: list[str] = self.get_github_tags()
+        self.merger: IMergeStrategy = merger or DefaultMergeStrategy()
+
+    def load_protocol(self, protocol_name: str) -> tuple[dict, list[dict]]:
+        return self.source.load(protocol_name)
+
+    def speeches(self, protocol_name: str) -> Iterable[dict]:
+        metadata, utterances = self.source.load(protocol_name)
+        return self.merger.merge(utterances=utterances, metadata=metadata)
 
     def speech(self, speech_name: str, mode: Literal['dict', 'text', 'html']) -> dict | str:
-
         try:
-            sub_folder: str = speech_name.split('-')[1]
             protocol_name: str = speech_name.split('_')[0]
             speech_index: int = int(speech_name.split('_')[1])
-
-            filename: str = jj(self.folder, sub_folder, f"{protocol_name}.zip")
-
-            with zipfile.ZipFile(filename, "r") as fp:
-                json_str: str = fp.read(f"{protocol_name}.json")
-                metadata_str: str = fp.read(f"metadata.json")
-
-            metadata: dict = json.loads(metadata_str)
-            protocol_data: dict = json.loads(json_str)
-
-            try:
-                speech: dict = protocol_data[speech_index]
-            except IndexError:
-                return {"name": "speech not found (index-out-of-bound!"}
-
-            if metadata:
-                speech.update(protocol_name=metadata.get("name", "?"), date=metadata.get("date"))
-
+            metadata, utterances = self.source.load(protocol_name)
+            speech: dict = self.merger.nth(utterances, n=speech_index-1, metadata=metadata)
             try:
                 speaker: dict = self.riksprot_metadata.get_member(speech.get('who'))
                 speech.update(**speaker)
             except md.MemberNotFoundError:
                 speech.update(md.unknown_member())
 
-            speech["page_number"] = speech["page_number"] or "?"
             speech["role_type"] = self.role_type_translation.get(speech["role_type"], speech["role_type"])
-
         except:
             speech = {"name": "speech not found"}
 
@@ -105,7 +160,7 @@ class SpeechTextRepository:
         return text
 
     def fix_whitespace(self, text: str) -> str:
-        return self.subst_puncts.sub(r'\s([,?.!"%\';:`](?:\s|$))', r'\1', text)
+        return self.subst_puncts.sub(r'\1', text)
 
     def to_html(self, speech: dict) -> str:
         try:

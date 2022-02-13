@@ -41,7 +41,7 @@ members_filename: str = jj(data_folder, 'dtm_1920-2020_v0.3.0.tf20/person_index.
 
 riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=members_filename)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    folder=jj(data_folder, "tagged_frames_v0.3.0_20201218"),
+    source=jj(data_folder, "tagged_frames_v0.3.0_20201218"),
     riksprot_metadata=riksprot_metadata,
 )
 default_args: dict = dict(

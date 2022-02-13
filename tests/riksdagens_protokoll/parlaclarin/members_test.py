@@ -66,7 +66,7 @@ def test_create_metadata(members):
     assert not md.genders.gender.isna().any()
 
     assert md.who2id['hans_blix_minister_1978'] == 3
-    assert md.who2name[3] == 'hans_blix_minister_1978'
+    assert md.id2who[3] == 'hans_blix_minister_1978'
 
     assert md.gender2id['woman'] == 2
     assert md.gender2name[2] == 'woman'

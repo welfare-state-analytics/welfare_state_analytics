@@ -125,16 +125,12 @@ class ProtoMetaData:
         return pu.revdict(self.party_abbrev2name)
 
     @cached_property
-    def whos(self) -> pd.DataFrame:
-        return pd.DataFrame({'who': self.members.index.unique()})
-
-    @cached_property
-    def who2name(self) -> dict:
-        return self.whos['who'].to_dict()
+    def id2who(self) -> dict:
+        return pu.revdict(self.who2id)
 
     @cached_property
     def who2id(self) -> dict:
-        return pu.revdict(self.who2name)
+        return self.members['who_id'].to_dict()
 
     def get_member(self, who: str) -> dict:
         try:
@@ -151,6 +147,7 @@ class ProtoMetaData:
         )
         if 'unknown' not in members.id:
             members = members.append(unknown_member(), ignore_index=True)
+        members['who_id'] = members.index
         members = members.set_index('id')
         return members
 
@@ -218,13 +215,14 @@ class ProtoMetaData:
     @cached_property
     def encoded_members(self) -> pd.DataFrame:
         mx: pd.DataFrame = self.members
+        mx['who'] = mx.index
         mx = mx.assign(
-            who_id=pd.Series(mx.index).apply(self.who2id.get).astype(np.int16),
+            who_id=mx['who'].apply(self.who2id.get).astype(np.int32),
             gender_id=mx['gender'].apply(self.gender2id.get).astype(np.int8),
             party_abbrev_id=mx['party_abbrev'].apply(self.party_abbrev2id.get).astype(np.int8),
             role_type_id=mx['role_type'].apply(self.role_type2id.get),
         )
-        mx = mx.drop(columns=['gender', 'party_abbrev', 'role_type'])
+        mx = mx.drop(columns=['who', 'gender', 'party_abbrev', 'role_type'])
         return mx
 
     def as_slim_types(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -240,7 +238,7 @@ class ProtoMetaData:
         if 'party_abbrev_id' in df.columns:
             df['party_abbrev'] = df['party_abbrev_id'].apply(self.party_abbrev2name.get)
         if 'who_id' in df.columns:
-            df['who'] = df['who_id'].apply(self.who2name.get)
+            df['who'] = df['who_id'].apply(self.id2who.get)
         if drop:
             df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
         return df

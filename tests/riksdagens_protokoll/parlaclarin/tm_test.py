@@ -18,6 +18,9 @@ jj = os.path.join
 
 DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
 MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/")
+MEMBER_FILENAME: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
+TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218")
+
 # MODEL_FOLDER: str = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/"
 
 # pylint: disable=protected-access,redefined-outer-name
@@ -65,18 +68,13 @@ MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.ma
 
 @pytest.fixture
 def riksprot_metadata() -> md.ProtoMetaData:
-    person_filename: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
-    data: md.ProtoMetaData = md.ProtoMetaData(members=person_filename)
+    data: md.ProtoMetaData = md.ProtoMetaData(members=MEMBER_FILENAME)
     return data
 
 
 @pytest.fixture
 def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsData:
-    data: tm.InferredTopicsData = tm.InferredTopicsData.load(
-        # folder="/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/", slim=True
-        folder=jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/"),
-        slim=True,
-    )
+    data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
     data.document_index = riksprot_metadata.overload_by_member_data(data.document_index, encoded=True, drop=True)
     return data
 
@@ -84,8 +82,7 @@ def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsDat
 @pytest.fixture
 def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        folder=jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218"),
-        riksprot_metadata=riksprot_metadata,
+        source=TAGGED_CORPUS_FOLDER, riksprot_metadata=riksprot_metadata
     )
     return repository
 
@@ -96,11 +93,7 @@ def test_load_gui(
 ):
     state = dict(inferred_topics=inferred_topics)
     ui = wtm_ui.RiksprotLoadGUI(
-        riksprot_metadata,
-        corpus_folder="/data/westac/riksdagen_corpus_data/",
-        corpus_config=None,
-        state=state,
-        slim=True,
+        riksprot_metadata, corpus_folder=DATA_FOLDER, corpus_config=None, state=state, slim=True
     )
     assert ui is not None
     ui.setup()
@@ -118,7 +111,13 @@ def test_find_documents_gui(
     ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
         riksprot_metadata, speech_repository, state
     )
-
+    """
+    Protokoll: prot-198586--152 sidan 5, Enkammarriksdagen
+    Källa (XML): main  (main)  dev  (dev)
+    Talare: Göthe Knutson, Moderata samlingspartiet, Värmlands län (man)
+    Antal tokens: 82 (82) (i-78c036a7f9e08229-0)
+    Anförande av riksdagsman Göthe Knutson (M) 1986-05-27
+    """
     ui.setup()
     ui._year_range.value = (1990, 1992)
     ui._n_top_token.value = 3
@@ -355,3 +354,62 @@ def test_get_github_tags(speech_repository: sr.SpeechTextRepository):
     assert len(github_urls) > 0
     links = speech_repository.to_parla_clarin_urls("prot-1920--ak--1.xml")
     assert len(links) > 0
+
+
+def test_speech_repository(
+    riksprot_metadata: md.ProtoMetaData,
+):
+    loader: sr.Loader = sr.ZipLoader(folder=TAGGED_CORPUS_FOLDER)
+    repository1: sr.SpeechTextRepository = sr.SpeechTextRepository(source=loader, riksprot_metadata=riksprot_metadata)
+    repository2: sr.SpeechTextRepository = sr.SpeechTextRepository(
+        source=TAGGED_CORPUS_FOLDER, riksprot_metadata=riksprot_metadata
+    )
+
+    for metadata, utterances in [
+        loader.load('prot-198586--152'),
+        repository1.load_protocol('prot-198586--152'),
+        repository2.load_protocol('prot-198586--152'),
+    ]:
+        assert isinstance(metadata, dict)
+        assert isinstance(utterances, list)
+        assert metadata['name'] == "prot-198586--152"
+        assert len(utterances) == 270
+        assert utterances[7]['who'] == 'gothe_knutson_2fa077'
+        assert utterances[7]["u_id"] == "i-78c036a7f9e08229-3"
+
+    metadata, utterances = repository1.load_protocol('prot-198586--152')
+
+    merger: sr.DefaultMergeStrategy = sr.DefaultMergeStrategy()
+    groups: list[str, list[dict]] = merger.groups(utterances)
+    assert len(groups) == 70
+
+    assert [(g[0], len(g[1])) for g in groups][:7] == [
+        ('karl-anders_petersson_8c3cb6', 2),
+        ('inger_hestvik_ddc26f', 3),
+        ('gothe_knutson_2fa077', 3),
+        ('elver_jonsson_e67379', 7),
+        ('ingemund_bengtsson_talman', 1),
+        ('per-olof_strindberg_a2107a', 10),
+        ('ulla_orring_dac7cf', 12),
+    ]
+
+    speech: dict = merger.to_speech(groups[5][1], metadata=metadata)
+    assert speech is not None
+    assert speech['who'] == 'per-olof_strindberg_a2107a'
+    assert len(speech['paragraphs']) == 35
+    assert int(speech['page_number']) == 15
+    assert int(speech['page_number2']) == 19
+
+    speech = repository1.speech('prot-198586--152_005', mode='dict')
+    assert speech['who'] == 'ingemund_bengtsson_talman'
+    assert speech['num_words'] == 1
+    assert speech['protocol_name'] == 'prot-198586--152'
+    assert speech['role_type'] == 'talman'
+    assert int(speech['page_number']) == 15
+    assert int(speech['page_number2']) == 15
+
+    speech = repository1.speech('prot-198586--152_004', mode='html')
+    assert isinstance(speech, str)
+
+    speech = repository1.speech('prot-198586--152_002', mode='text')
+    assert isinstance(speech, str)
