@@ -4,7 +4,7 @@ from typing import Any
 
 import click
 from loguru import logger
-from penelope.vendor.textacy import mdw_modified
+from penelope.vendor.textacy_api import mdw
 
 from notebooks.political_in_newspapers import repository
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
@@ -104,7 +104,7 @@ def mdw_run(
 
     logger.info("Corpus size after DF trim %s x %s.", *corpus.data.shape)
 
-    df = mdw_modified.compute_most_discriminating_terms(
+    df = mdw.compute_most_discriminating_terms(
         corpus,
         group1_indices=mdw_gui.get_group_indicies(corpus.document_index, period1, pubs_ids1),  # type: ignore
         group2_indices=mdw_gui.get_group_indicies(corpus.document_index, period2, pubs_ids2),  # type: ignore

@@ -8,7 +8,7 @@ import pandas as pd
 from IPython.display import display
 from loguru import logger
 from penelope.corpus import VectorizedCorpus
-from penelope.vendor.textacy import compute_most_discriminating_terms
+from penelope.vendor.textacy_api import mdw
 
 from notebooks.political_in_newspapers import repository
 
@@ -87,7 +87,7 @@ def compute_mdw(corpus: VectorizedCorpus, opts: ComputeOpts) -> pd.DataFrame:
         max_n_terms=filter_opts.max_n_terms,
     )
 
-    mdw_data: pd.DataFrame = compute_most_discriminating_terms(
+    mdw_data: pd.DataFrame = mdw.compute_most_discriminating_terms(
         sliced_corpus,
         group1_indices=get_group_indicies(sliced_corpus.document_index, opts.group1.period, opts.group1.pub_ids),
         group2_indices=get_group_indicies(sliced_corpus.document_index, opts.group2.period, opts.group2.pub_ids),
