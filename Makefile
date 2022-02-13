@@ -107,12 +107,12 @@ tools:
 	@poetry run pip install poetry --upgrade --quiet
 
 penelope-production-mode: penelope-uninstall
-	@poetry add humlab-penelope
+	@poetry add humlab-penelope[full]
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode:
 	@cp -f pyproject.toml pyproject.tmp
-	@sed -i '/humlab-penelope/c\humlab-penelope = {path = "../../penelope", develop = true}' pyproject.tmp
+	@sed -i '/humlab-penelope/c\humlab-penelope = {extras = ["full"], path = "../../penelope", develop = true}' pyproject.tmp
 	@poetry remove humlab-penelope
 	@poetry run pip uninstall humlab-penelope --yes
 	@mv -f pyproject.tmp pyproject.toml
@@ -121,8 +121,8 @@ penelope-edit-mode:
 # @poetry@3940 add --editable ../../penelope
 
 penelope-uninstall:
-	@poetry remove humlab-penelope
-	@poetry run pip uninstall humlab-penelope --yes
+	@poetry remove humlab-penelope[full]
+	@poetry run pip uninstall humlab-penelope[full] --yes
 
 bump.patch: requirements.txt
 	@poetry version patch
