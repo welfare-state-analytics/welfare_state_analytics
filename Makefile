@@ -121,8 +121,8 @@ penelope-edit-mode:
 # @poetry@3940 add --editable ../../penelope
 
 penelope-uninstall:
-	@poetry remove humlab-penelope[full]
-	@poetry run pip uninstall humlab-penelope[full] --yes
+	@poetry remove humlab-penelope
+	@poetry run pip uninstall humlab-penelope --yes
 
 bump.patch: requirements.txt
 	@poetry version patch
