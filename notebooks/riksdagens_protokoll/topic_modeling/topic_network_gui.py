@@ -16,7 +16,7 @@ from .mixins import RiksProtMetaDataMixIn
 class RiksprotTopicTopicGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTopicGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):

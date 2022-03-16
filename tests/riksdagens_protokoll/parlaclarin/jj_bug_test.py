@@ -16,13 +16,13 @@
 # MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/")
 
 
-# def get_riksprot_metadata() -> md.ProtoMetaData:
+# def get_riksprot_metadata() -> md.IRiksprotMetaData:
 #     person_filename: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
-#     data: md.ProtoMetaData = md.ProtoMetaData(members=person_filename)
+#     data: md.IRiksprotMetaData = md.IRiksprotMetaData.load(members=person_filename)
 #     return data
 
 
-# def get_inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsData:
+# def get_inferred_topics(riksprot_metadata: md.IRiksprotMetaData) -> tm.InferredTopicsData:
 #     data: tm.InferredTopicsData = tm.InferredTopicsData.load(
 #         # folder="/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/", slim=True
 #         folder=jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/"),
@@ -32,7 +32,7 @@
 #     return data
 
 
-# def get_speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
+# def get_speech_repository(riksprot_metadata: md.IRiksprotMetaData) -> sr.SpeechTextRepository:
 #     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 #         source=jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218"),
 #         riksprot_metadata=riksprot_metadata,
@@ -42,7 +42,7 @@
 
 # def test_find_documents_gui():
 
-#     riksprot_metadata: md.ProtoMetaData = get_riksprot_metadata()
+#     riksprot_metadata: md.IRiksprotMetaData = get_riksprot_metadata()
 #     speech_repository: sr.SpeechTextRepository = get_speech_repository(riksprot_metadata)
 #     inferred_topics: tm.InferredTopicsData = get_inferred_topics(riksprot_metadata)
 #     state = dict(inferred_topics=inferred_topics)

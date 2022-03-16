@@ -106,14 +106,14 @@ class SpeechTextRepository:
     def __init__(
         self,
         source: str | Loader,
-        riksprot_metadata: md.ProtoMetaData = None,
+        riksprot_metadata: md.IRiksprotMetaData = None,
         template: Template = None,
         merger: IMergeStrategy = None,
     ):
 
         self.template: Template = template or default_template
         self.source: Loader = source if isinstance(source, Loader) else ZipLoader(source)
-        self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
+        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
         self.role_type_translation: dict = {
             'member': 'riksdagsman',
             'speaker': 'talman',

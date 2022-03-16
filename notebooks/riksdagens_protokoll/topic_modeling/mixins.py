@@ -12,10 +12,10 @@ from westac.riksprot.parlaclarin import speech_text as st
 
 
 class RiksProtMetaDataMixIn:
-    def __init__(self, riksprot_metadata: md.ProtoMetaData, speech_repository: st.SpeechTextRepository, **kwargs):
+    def __init__(self, riksprot_metadata: md.IRiksprotMetaData, speech_repository: st.SpeechTextRepository, **kwargs):
         super().__init__(**kwargs)
 
-        self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
+        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
         self.speech_repository: st.SpeechTextRepository = speech_repository
 
         """Display speech text stuff"""

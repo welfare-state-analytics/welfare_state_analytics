@@ -45,7 +45,9 @@ output_notebook()
 
 pd.set_option('display.max_rows', 2000)
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20")
-riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=jj(data_folder, 'person_index.zip'))
+riksprot_metadata: md.IRiksprotMetaData = md.IRiksprotMetaData.load(
+    database_filename=jj(data_folder, 'riksprot_metadata.db')
+)
 
 gui = ps.PoSCountGUI(default_folder=data_folder, riksprot_metadata=riksprot_metadata).setup(load_data=True)
 display(gui.layout())

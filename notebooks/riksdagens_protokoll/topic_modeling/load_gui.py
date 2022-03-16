@@ -10,14 +10,14 @@ from westac.riksprot.parlaclarin import metadata as md
 class RiksprotLoadGUI(ntm.LoadGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         corpus_folder: str,
         state: ntm.TopicModelContainer,
         corpus_config: pp.CorpusConfig | None = None,
         slim: bool = False,
     ):
         super().__init__(corpus_folder, state, corpus_config, slim)
-        self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
+        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
 
     def load(self):
         super().load()

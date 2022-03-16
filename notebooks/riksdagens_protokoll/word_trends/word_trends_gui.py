@@ -43,9 +43,9 @@ class ComputeOpts(wt.TrendsComputeOpts):
 
 
 class TrendsData(wt.TrendsData):
-    def __init__(self, corpus: pc.VectorizedCorpus, riksproto_metadata: md.ProtoMetaData, n_top: int = 100000):
+    def __init__(self, corpus: pc.VectorizedCorpus, riksproto_metadata: md.IRiksprotMetaData, n_top: int = 100000):
         super().__init__(corpus, n_top=n_top)
-        self.riksproto_metadata: md.ProtoMetaData = riksproto_metadata
+        self.riksproto_metadata: md.IRiksprotMetaData = riksproto_metadata
         self._compute_opts: ComputeOpts = ComputeOpts(
             normalize=False,
             keyness=KeynessMetric.TF,
@@ -75,7 +75,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
     def __init__(
         self,
         *,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         pivot_key_specs: mx.PivotKeySpecArg = None,
         default_folder: str,
         n_top_count: int = 1000,
@@ -87,7 +87,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
         super().__init__(pivot_key_specs=pivot_key_specs, n_top_count=n_top_count)
 
-        self.riksprot_metadata: md.ProtoMetaData = riksprot_metadata
+        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
         self.data: pd.DataFrame = None
 
         self.default_folder: str = default_folder
@@ -155,7 +155,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
             corpus = self.assign_metadata(corpus, self.riksprot_metadata)
         return corpus
 
-    def assign_metadata(self, corpus: pc.VectorizedCorpus, metadata: md.ProtoMetaData) -> pc.VectorizedCorpus:
+    def assign_metadata(self, corpus: pc.VectorizedCorpus, metadata: md.IRiksprotMetaData) -> pc.VectorizedCorpus:
         document_index: pd.DataFrame = metadata.overload_by_member_data(
             corpus.document_index, encoded=self.encoded, drop=True
         )

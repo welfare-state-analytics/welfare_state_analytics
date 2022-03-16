@@ -10,7 +10,7 @@ from penelope import utility as pu
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
 from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
-from westac.riksprot.parlaclarin import metadata
+from westac.riksprot.parlaclarin import metadata as md
 
 # pylint: disable=protected-access,redefined-outer-name
 
@@ -25,7 +25,7 @@ def riksprot_metadata():
 
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True), (TEST_FOLDER, False)])
-def test_pos_count_gui_load_create(folder: str, encoded: bool, riksprot_metadata: metadata.ProtoMetaData):
+def test_pos_count_gui_load_create(folder: str, encoded: bool, riksprot_metadata: md.IRiksprotMetaData):
     """See also tc.BaseDTMGUI test case in penelope"""
 
     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded, riksprot_metadata=riksprot_metadata)
@@ -52,7 +52,7 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, riksprot_metadata
 
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True)])
-def test_pos_count_gui_load(folder: str, encoded: bool, riksprot_metadata: metadata.ProtoMetaData):
+def test_pos_count_gui_load(folder: str, encoded: bool, riksprot_metadata: md.IRiksprotMetaData):
 
     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded, riksprot_metadata=riksprot_metadata).setup(
         load_data=False
@@ -81,7 +81,7 @@ def test_pos_count_gui_load(folder: str, encoded: bool, riksprot_metadata: metad
     ],
 )
 def test_pos_count_gui_prepare(
-    folder: str, encoded: bool, expected_columns_added: Set[str], riksprot_metadata: metadata.ProtoMetaData
+    folder: str, encoded: bool, expected_columns_added: Set[str], riksprot_metadata: md.IRiksprotMetaData
 ):
 
     gui = (
@@ -111,7 +111,7 @@ def test_pos_count_gui_prepare(
     ],
 )
 def test_pos_count_gui_compute_without_pivot_keys(
-    folder: str, temporal_key: str, encoded: bool, expected_count: int, riksprot_metadata: metadata.ProtoMetaData
+    folder: str, temporal_key: str, encoded: bool, expected_count: int, riksprot_metadata: md.IRiksprotMetaData
 ):
 
     gui = (
@@ -146,7 +146,7 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     encoded: bool,
     pivot_keys: List[str],
     expected_count: int,
-    riksprot_metadata: metadata.ProtoMetaData,
+    riksprot_metadata: md.IRiksprotMetaData,
 ):
 
     # expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]
@@ -174,7 +174,7 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
 @pytest.mark.long_running
 @patch('penelope.notebook.token_counts.plot.plot_multiline', lambda *_, **__: None)
 @patch('penelope.notebook.token_counts.plot.plot_stacked_bar', lambda *_, **__: None)
-def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaData):
+def test_pos_count_gui_with_filter_keys(riksprot_metadata: md.IRiksprotMetaData):
 
     computed_data: pd.DataFrame = None
     compute_calls: int = 0
@@ -229,7 +229,7 @@ def test_pos_count_gui_with_filter_keys(riksprot_metadata: metadata.ProtoMetaDat
 
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True)])
-def test_pos_count_gui_display(folder: str, encoded: bool, riksprot_metadata: metadata.ProtoMetaData):
+def test_pos_count_gui_display(folder: str, encoded: bool, riksprot_metadata: md.IRiksprotMetaData):
 
     gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, riksprot_metadata=riksprot_metadata)

@@ -20,7 +20,7 @@ from .mixins import RiksProtMetaDataMixIn
 class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTrendsGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
@@ -52,7 +52,7 @@ class RiksprotTopicTrendsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicT
 class RiksprotTopicTrendsOverviewGUI(mx.PivotKeysMixIn, RiksProtMetaDataMixIn, tm.TopicTrendsOverviewGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
