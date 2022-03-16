@@ -11,7 +11,7 @@ classifiers = [
     'Topic :: Software Development',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
 ]
 license = "Apache-2.0"
 readme = "README.md"
@@ -30,7 +30,7 @@ msgpack = "^1.0.2"
 nltk = "*"
 pandas = "*"
 pandas-bokeh = "*"
-python = "==3.8.*"
+python = "==3.9.*"
 scikit-learn = "*"
 scipy = "*"
 sklearn = "*"
@@ -40,7 +40,7 @@ bqplot = "^0.12.32"
 PyGithub = "^1.55"
 plotly = "^5.5.0"
 bar-chart-race = "^0.1.0"
-humlab-penelope = {extras = ["full"], version = "^0.6.11"}
+humlab-penelope = {extras = ["full"], path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
