@@ -65,6 +65,17 @@ retest:
 init: tools
 	@poetry install
 
+PYRIKSPROT_VERSION=v0.4.0
+PYRIKSSPROT_SOURCE_FOLDER=~/source/welfare-state-analytics/pyriksprot/tests/test_data/source
+PYRIKSSPROT_TESTDATA_FOLDER=tests/test_data/riksdagens_protokoll
+
+.ONESHELL: parlaclarin-test-data
+parlaclarin-test-data:
+	@rm -rf $(PYRIKSSPROT_TESTDATA_FOLDER)/$(PYRIKSPROT_VERSION)
+	@cp -r $(PYRIKSSPROT_SOURCE_FOLDER)/parlaclarin/$(PYRIKSPROT_VERSION) $(PYRIKSSPROT_TESTDATA_FOLDER)/
+	@cp -r $(PYRIKSSPROT_SOURCE_FOLDER)/tagged_frames/$(PYRIKSPROT_VERSION) $(PYRIKSSPROT_TESTDATA_FOLDER)/
+
+
 TYPINGS_PACKAGES=scipy numpy statsmodels pandas bokeh sklearn gensim ipywidgets
 
 .PHONY: typings
@@ -205,6 +216,9 @@ requirements.txt-to-git: requirements.txt
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
+apa:
+	echo $(PY_FILES)
+
 unpair-ipynb:
 	@for ipynb_path in $(IPYNB_FILES) ; do \
         echo "info: unpairing $$ipynb_path..." ;\
@@ -221,7 +235,7 @@ sync-ipynb:
 
 write-to-ipynb:
 	@echo "warning: write-to-ipynb is disabled in Makefile!"
-	poetry run jupytext --to notebook $(PY_FILES)
+	@-poetry run jupytext --to ipynb $(PY_FILES)
 
 .PHONY: git-ipynb
 git-ipynb: guard-clean-working-repository
