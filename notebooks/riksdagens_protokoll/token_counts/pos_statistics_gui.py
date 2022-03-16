@@ -6,16 +6,16 @@ import pandas as pd
 from ipydatagrid import DataGrid
 from penelope.notebook import token_counts as tc
 
-from westac.riksprot.parlaclarin import metadata
+from westac.riksprot.parlaclarin import metadata as md
 
 # pylint: disable=unused-argument
 
 
 class PoSCountGUI(tc.BasicDTMGUI):
-    def __init__(self, *, default_folder: str, riksprot_metadata: metadata.ProtoMetaData, encoded: bool = True):
+    def __init__(self, *, default_folder: str, riksprot_metadata: md.IRiksprotMetaData, encoded: bool = True):
         self.DATA = None
         self.encoded: bool = encoded
-        self.riksprot_metadata: metadata.ProtoMetaData = riksprot_metadata
+        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
         member_property_spec: dict = self.riksprot_metadata.member_property_specs
         super().__init__(default_folder=default_folder, pivot_key_specs=member_property_spec)
 

@@ -8,7 +8,7 @@ import pandas as pd
 from IPython.display import display
 from loguru import logger
 from penelope.corpus import VectorizedCorpus
-from penelope.vendor.textacy_api import mdw
+from penelope.vendor import textacy_api as mdw
 
 from notebooks.political_in_newspapers import repository
 
