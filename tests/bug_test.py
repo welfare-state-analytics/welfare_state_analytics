@@ -14,7 +14,6 @@ from penelope.workflows import co_occurrence as workflow
 from penelope.workflows.interface import ComputeOpts
 
 KB_LABB_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/kb_labb'
-PARLACLARIN_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/parlaclarin'
 
 jj = os.path.join
 
@@ -151,9 +150,7 @@ def test_bug():
         ),
         tf_threshold=1,
         tf_threshold_mask=False,
-        vectorize_opts=VectorizeOpts(
-            already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1, verbose=False
-        ),
+        vectorize_opts=VectorizeOpts(already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1),
         create_subfolder=True,
         persist=True,
         context_opts=ContextOpts(
