@@ -17,7 +17,7 @@ from .mixins import RiksProtMetaDataMixIn
 class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.BrowseTopicDocumentsGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         speech_repository: st.SpeechTextRepository,
         state: ntm.TopicModelContainer | dict,
     ):
@@ -54,7 +54,7 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
 class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.FindTopicDocumentsGUI):
     def __init__(
         self,
-        riksprot_metadata: md.ProtoMetaData,
+        riksprot_metadata: md.IRiksprotMetaData,
         speech_repository: st.SpeechTextRepository,
         state: ntm.TopicModelContainer | dict,
     ):
@@ -82,7 +82,7 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
 
 
 def overload_decoded_member_data(
-    riksprot_metadata: md.ProtoMetaData, calculator: tx.DocumentTopicsCalculator
+    riksprot_metadata: md.IRiksprotMetaData, calculator: tx.DocumentTopicsCalculator
 ) -> pd.DataFrame:
     """note: at this point dtw is equal to calculator.data"""
     data: pd.DataFrame = riksprot_metadata.decode_members_data(

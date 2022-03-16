@@ -19,7 +19,7 @@ TEST_FOLDER: str = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20
 
 
 @pytest.fixture
-def riksprot_metadata() -> md.ProtoMetaData:
+def riksprot_metadata() -> md.IRiksprotMetaData:
     return sample_riksprot_metadata()
 
 
@@ -46,7 +46,7 @@ def test_trends_gui_create_without_pivot_keys():
 
 
 @pytest.mark.long_running
-def test_trends_gui_create_with_metadata(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_create_with_metadata(riksprot_metadata: md.IRiksprotMetaData):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
         default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
@@ -57,7 +57,7 @@ def test_trends_gui_create_with_metadata(riksprot_metadata: md.ProtoMetaData):
 
 
 @pytest.mark.long_running
-def test_trends_gui_corpus_assign_metadata(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_corpus_assign_metadata(riksprot_metadata: md.IRiksprotMetaData):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
         default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
@@ -72,7 +72,7 @@ def test_trends_gui_corpus_assign_metadata(riksprot_metadata: md.ProtoMetaData):
 
 
 @pytest.mark.long_running
-def test_trends_gui_create_with_pivot_keys(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_create_with_pivot_keys(riksprot_metadata: md.IRiksprotMetaData):
 
     expected_keys: Set[str] = {'role_type', 'who', 'None', 'party_abbrev', 'gender'}
 
@@ -82,7 +82,7 @@ def test_trends_gui_create_with_pivot_keys(riksprot_metadata: md.ProtoMetaData):
     assert set(gui.pivot_keys_id_names) == set() == set(gui.options.pivot_keys_id_names)
 
 
-def test_trends_gui_update_picker(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_update_picker(riksprot_metadata: md.IRiksprotMetaData):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata)
 
@@ -119,7 +119,7 @@ def test_trends_gui_update_picker(riksprot_metadata: md.ProtoMetaData):
 
 
 @pytest.mark.long_running
-def test_trends_gui_load(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_load(riksprot_metadata: md.IRiksprotMetaData):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
         default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
@@ -149,7 +149,7 @@ def test_trends_gui_load(riksprot_metadata: md.ProtoMetaData):
     ],
 )
 def test_trends_gui_transform(
-    riksprot_metadata: md.ProtoMetaData,
+    riksprot_metadata: md.IRiksprotMetaData,
     temporal_key: str,
     normalize: bool,
     smooth: bool,
@@ -223,7 +223,7 @@ def test_trends_gui_transform(
             assert set(pivot_keys_text_names).intersection(set(result_columns)) == set(pivot_keys_text_names)
 
 
-def test_trends_gui_bugcheck(riksprot_metadata: md.ProtoMetaData):
+def test_trends_gui_bugcheck(riksprot_metadata: md.IRiksprotMetaData):
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
         default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
     ).setup()
