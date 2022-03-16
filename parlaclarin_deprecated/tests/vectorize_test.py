@@ -8,7 +8,7 @@ from scripts.riksdagens_protokoll.parlaclarin.vectorize import process
 jj = os.path.join
 
 
-CORPUS_SOURCE: str = './tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01'
+CORPUS_SOURCE: str = './tests/test_data/riksdagens_protokoll/v0.4.0/tagged_corpus'
 
 VECTORIZE_OPTS: dict = dict(
     corpus_config='./resources/riksdagens-protokoll-parlaclarin.yml',

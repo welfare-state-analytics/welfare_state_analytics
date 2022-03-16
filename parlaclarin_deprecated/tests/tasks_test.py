@@ -13,7 +13,7 @@ from penelope.pipeline import checkpoint, interfaces
 from westac.riksdagens_protokoll.parlaclarin import tasks
 
 # pylint: disable=redefined-outer-name
-CONFIG_FILENAME = './tests/test_data/riksdagens_protokoll/parlaclarin/riksdagens-protokoll.yml'
+CONFIG_FILENAME = './tests/test_data/riksdagens_protokoll/riksdagens-protokoll.yml'
 TAGGED_DATA_FOLDER = './tests/test_data/parlaclarin/tagged-1'
 jj = os.path.join
 

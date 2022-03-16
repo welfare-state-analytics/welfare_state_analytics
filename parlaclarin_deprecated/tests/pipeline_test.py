@@ -8,8 +8,8 @@ from westac.riksdagens_protokoll import parlaclarin
 
 # pylint: disable=redefined-outer-name, too-many-function-args
 
-CONFIG_FILENAME = './tests/test_data/riksdagens_protokoll/parlaclarin/riksdagens-protokoll.yml'
-TAGGED_CORPUS_FOLDER = './tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01'
+CONFIG_FILENAME = './tests/test_data/riksdagens_protokoll/riksdagens-protokoll.yml'
+TAGGED_CORPUS_FOLDER = './tests/test_data/riksdagens_protokoll/v0.4.0/tagged_corpus'
 INDEX_COLUMNS = [
     'speech_id',
     'speaker',

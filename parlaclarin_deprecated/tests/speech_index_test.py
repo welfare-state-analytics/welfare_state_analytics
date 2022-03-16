@@ -6,7 +6,7 @@ import pytest
 from numpy import dtype
 from westac.riksdagens_protokoll.parlaclarin.speech_index import SPEECH_INDEX_BASENAME, SpeechIndex, SpeechIndexHelper
 
-SPEECH_INDEX_FOLDER = "tests/test_data/riksdagens_protokoll/parlaclarin/tagged_corpus_01"
+SPEECH_INDEX_FOLDER = "tests/test_data/riksdagens_protokoll/v0.4.0/tagged_corpus"
 
 
 def test_create_speech_index():
