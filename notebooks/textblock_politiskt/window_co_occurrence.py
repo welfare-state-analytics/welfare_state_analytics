@@ -8,11 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.7.1
 #   kernelspec:
-#     display_name: 'Python 3.8.5 64-bit (''westac-O7wB9ikj-py3.8'': venv)'
-#     metadata:
-#       interpreter:
-#         hash: 22b1e31d3d5f905e8a7998fc3532ca535c806f75d42474f77651a5c803dd310a
-#     name: 'Python 3.8.5 64-bit (''westac-O7wB9ikj-py3.8'': venv)'
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
 # ---
 
 # %% tags=[]
