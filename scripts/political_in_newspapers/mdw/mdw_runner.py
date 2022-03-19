@@ -4,7 +4,7 @@ from typing import Any
 
 import click
 from loguru import logger
-from penelope.vendor.textacy_api import mdw
+from penelope.vendor import textacy_api as mdw
 
 from notebooks.political_in_newspapers import repository
 from notebooks.political_in_newspapers.notebook_gui import mdw_gui
