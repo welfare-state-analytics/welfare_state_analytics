@@ -1,0 +1,3 @@
+	category	filename	document_name	n_docs	n_raw_tokens	n_tokens	year	document_id
+year_1991	1991	year_1991.txt	year_1991	2	12.0	12.0	1991	0
+year_1993	1993	year_1993.txt	year_1993	1	4.0	4.0	1993	1
