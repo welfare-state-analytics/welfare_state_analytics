@@ -13,7 +13,7 @@ from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, Pipeline
 from penelope.workflows import co_occurrence as workflow
 from penelope.workflows.interface import ComputeOpts
 
-KB_LABB_DATA_FOLDER = './tests/test_data/riksdagens_protokoll/kb_labb'
+KB_LABB_DATA_FOLDER = './tests/test_data/riksprot/kb_labb'
 
 jj = os.path.join
 
