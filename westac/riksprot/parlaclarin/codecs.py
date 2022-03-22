@@ -8,8 +8,8 @@ from typing import Callable, Literal, Mapping
 
 import pandas as pd
 from penelope import utility as pu
-from .utility import load_tables
 
+from .utility import load_tables
 
 CODE_TABLENAMES: dict[str, str] = {
     'chamber': 'chamber_id',
@@ -18,13 +18,12 @@ CODE_TABLENAMES: dict[str, str] = {
     'office_type': 'office_type_id',
     'party': 'party_id',
     'sub_office_type': 'sub_office_type_id',
-    'person_of_interest': 'person_id',
 }
 
 
 @dataclass
 class Codec:
-    type: Literal['encoder', 'decoder']
+    type: Literal['encode', 'decode']
     from_column: str
     to_column: str
     fx: Callable[[int], str]
@@ -42,7 +41,6 @@ class Codecs:
         self.office_type: pd.DataFrame = null_frame
         self.party: pd.DataFrame = null_frame
         self.sub_office_type: pd.DataFrame = null_frame
-        self.persons_of_interest: pd.DataFrame = null_frame
         self.extra_codecs: list[Codec] = []
 
     def load(self, source: str | sqlite3.Connection | dict) -> Codecs:
@@ -135,6 +133,27 @@ class Codecs:
             dict(text_name='sub_office_type', id_name='sub_office_type_id', values=self.sub_office_type2id),
         ]
 
+    @cached_property
+    def key_name_translate_id2text(self) -> dict:
+        return {codec.from_column: codec.to_column for codec in self.codecs if codec.type == 'decode'}
+
+    @cached_property
+    def key_name_translate_text2id(self) -> dict:
+        return pu.revdict(self.key_name_translate_id2text)
+
+    @cached_property
+    def key_name_translate_any2any(self) -> dict:
+        """Translates key's id/text name to corresponding text (id) name e.g. `gender_id` => `gender` """
+        translation: dict = {}
+        translation.update(self.key_name_translate_id2text)
+        translation.update(self.key_name_translate_text2id)
+        return translation
+
+    def translate_key_names(self, keys: list[str]) -> list[str]:
+        """Translates keys' id/text name to corresponding text (id) name e.g. `gender_id` => `gender` """
+        fg = self.key_name_translate_any2any.get
+        return [fg(key) for key in keys if fg(key) is not None]
+
 
 class PersonCodecs(Codecs):
     def __init__(self):
@@ -146,9 +165,18 @@ class PersonCodecs(Codecs):
         tables['persons_of_interest'] = 'person_id'
         return tables
 
+    def load(self, source: str | sqlite3.Connection | dict) -> Codecs:
+        super().load(source)
+        if 'pid' not in self.persons_of_interest.columns:
+            pi: pd.DataFrame = self.persons_of_interest.reset_index()
+            pi['pid'] = pi.index
+            pi.set_index('person_id', inplace=True)
+            self.persons_of_interest = pi
+        return self
+
     @cached_property
     def pid2person_id(self) -> dict:
-        return self.person['person_id'].to_dict()
+        return self.person.reset_index().set_index('pid')['person_id'].to_dict()
 
     @cached_property
     def person_id2pid(self) -> dict:
@@ -156,13 +184,23 @@ class PersonCodecs(Codecs):
 
     @cached_property
     def pid2person_name(self) -> dict:
-        return self.person['name'].to_dict()
+        return self.person.reset_index().set_index('pid')['name'].to_dict()
+
+    @cached_property
+    def person_name2pid(self) -> dict:
+        fg = self.person_id2pid.get
+        return {f"{name} ({person_id})": fg(person_id) for person_id, name in self.person_id2name.items()}
 
     @cached_property
     def property_values_specs(self) -> list[Mapping[str, str | Mapping[str, int]]]:
         return super().property_values_specs + [
-            dict(text_name='person_id', id_name='pid', values=self.name2id),
+            dict(text_name='name', id_name='pid', values=self.person_name2pid),
         ]
+
+    @cached_property
+    def person_id2name(self) -> dict[str, str]:
+        fg = self.pid2person_id.get
+        return {fg(pid): name for pid, name in self.pid2person_name.items()}
 
     @property
     def person(self) -> pd.DataFrame:
