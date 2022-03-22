@@ -1,0 +1,48 @@
+{
+    "corpus_type": 3,
+    "input_filename": "/home/roger/source/welfare-state-analytics/pyriksprot/tests/test_data/source/main/tagged_frames_speeches.feather/",
+    "output_folder": "./data",
+    "output_tag": "dtm_5files.test",
+    "vectorize_opts": {
+        "already_tokenized": true,
+        "lowercase": false,
+        "stop_words": null,
+        "max_df": 1.0,
+        "min_df": 1,
+        "min_tf": 2,
+        "max_tokens": 2000000
+    },
+    "transform_opts": {
+        "to_lower": false,
+        "to_upper": false,
+        "only_alphabetic": false,
+        "only_any_alphanumeric": false,
+        "min_len": 2,
+        "max_len": null,
+        "remove_accents": false,
+        "remove_stopwords": false,
+        "stopwords": null,
+        "extra_stopwords": null,
+        "language": null,
+        "keep_numerals": true,
+        "keep_symbols": true
+    },
+    "extract_opts": {
+        "lemmatize": true,
+        "target_override": null,
+        "pos_includes": null,
+        "pos_excludes": "|MAD|MID|PAD|",
+        "pos_paddings": null,
+        "pos_replace_marker": "*",
+        "passthrough_tokens": [],
+        "block_tokens": [],
+        "append_pos": false,
+        "phrases": null,
+        "text_column": "token_id",
+        "lemma_column": "lemma_id",
+        "pos_column": "pos_id",
+        "filter_opts": {}
+    },
+    "tf_threshold": 2,
+    "tf_threshold_mask": true
+}
