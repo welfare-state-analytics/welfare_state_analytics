@@ -1,25 +1,28 @@
 from __future__ import annotations
+
 import abc
+import json
 import os
 import re
 import types
-from typing import Iterable, Literal
+import zipfile
 from collections import namedtuple
 from itertools import groupby
-
-import zipfile
-import json
 from os.path import join as jj
-from loguru import logger
+from typing import Iterable, Literal
 
 from jinja2 import Template
-from . import metadata as md
+from loguru import logger
+import pandas as pd
 from penelope import utility as pu
+
+from . import codecs as md
 
 try:
     import github as gh
 except ImportError:
     Github = lambda t: types.SimpleNamespace()
+
 
 default_template: Template = Template(
     """
@@ -27,7 +30,7 @@ default_template: Template = Template(
 <b>Källa (XML):</b> {{parlaclarin_links}} <br/>
 <b>Talare:</b> {{name}}, {{ party }}, {{ district }} ({{ gender}}) <br/>
 <b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}),  uid: {{u_id}}, who: {{who}} ) <br/>
-<h3> Anförande av {{ role_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
+<h3> Anförande av {{ office_type }} {{ sub_office_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
 <span style="color: blue;line-height:50%;">
 {% for n in paragraphs %}
 {{n}}
@@ -38,6 +41,8 @@ default_template: Template = Template(
 
 GithubUrl = namedtuple('GithubUrl', 'name url')
 
+# pylint: disable=unused-argument
+
 
 class IMergeStrategy(abc.ABC):
     @abc.abstractmethod
@@ -47,13 +52,15 @@ class IMergeStrategy(abc.ABC):
     def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
         ...
 
-class DefaultMergeStrategy(IMergeStrategy):
 
+class DefaultMergeStrategy(IMergeStrategy):
     def merge(self, utterances: list[dict], metadata: dict) -> Iterable[dict]:
         return [self.to_speech(us, metadata=metadata) for _, us in self.groups(utterances)]
 
     def groups(self, utterances: list[dict]) -> list[tuple[str, list[dict]]]:
-        return [(who, [u for u in us]) for who, us in groupby(utterances, key=lambda x: x['who'])]
+        return [
+            (speaker_hash, [u for u in us]) for speaker_hash, us in groupby(utterances, key=lambda x: x['speaker_hash'])
+        ]
 
     def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
         return self.to_speech(self.groups(utterances=utterances)[n][1], metadata=metadata)
@@ -64,6 +71,7 @@ class DefaultMergeStrategy(IMergeStrategy):
         if len(utterances) == 0:
             return {}
         speech: dict = dict(
+            speaker_hash=utterances[0]['speaker_hash'],
             who=utterances[0]['who'],
             u_id=utterances[0]['u_id'],
             paragraphs=[p for u in utterances for p in u['paragraphs']],
@@ -93,10 +101,11 @@ class ZipLoader(Loader):
         filename: str = jj(self.folder, sub_folder, f"{protocol_name}.zip")
         with zipfile.ZipFile(filename, "r") as fp:
             json_str: str = fp.read(f"{protocol_name}.json")
-            metadata_str: str = fp.read(f"metadata.json")
+            metadata_str: str = fp.read("metadata.json")
         metadata: dict = json.loads(metadata_str)
         utterances: list[dict] = json.loads(json_str)
         return metadata, utterances
+
 
 class SpeechTextRepository:
 
@@ -105,20 +114,18 @@ class SpeechTextRepository:
 
     def __init__(
         self,
+        *,
         source: str | Loader,
-        riksprot_metadata: md.IRiksprotMetaData = None,
+        person_codecs: md.PersonCodecs,
+        document_index: pd.DataFrame,
         template: Template = None,
         merger: IMergeStrategy = None,
     ):
 
         self.template: Template = template or default_template
         self.source: Loader = source if isinstance(source, Loader) else ZipLoader(source)
-        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
-        self.role_type_translation: dict = {
-            'member': 'riksdagsman',
-            'speaker': 'talman',
-            'minister': 'minister',
-        }
+        self.person_codecs: md.PersonCodecs = person_codecs
+        self.document_index: pd.DataFrame = document_index
         self.subst_puncts = re.compile(r'\s([,?.!"%\';:`](?:\s|$))')
         self.release_tags: list[str] = self.get_github_tags()
         self.merger: IMergeStrategy = merger or DefaultMergeStrategy()
@@ -130,20 +137,34 @@ class SpeechTextRepository:
         metadata, utterances = self.source.load(protocol_name)
         return self.merger.merge(utterances=utterances, metadata=metadata)
 
+    def get_speech_info(self, speech_id: str) -> dict:
+        """FIXME: Get speaker-info from document index and person table"""
+        # FIXME: verify index to use
+        document: pd.DataFrame = self.document_index.loc[self.document_index.speech_id==speech_id]
+        speech_info: dict = document.to_dict('records')[0] if len(document) > 0 else {}
+        # FIXME: Verify if person_id or pid is index
+        speaker_name: str = self.person_codecs.person.loc[speech_info['who']].name if speech_info else "unknown"
+        speech_info.update(name=speaker_name)
+        return speech_info
+
     def speech(self, speech_name: str, mode: Literal['dict', 'text', 'html']) -> dict | str:
         try:
+            """Load speech data from speech corpus"""
             protocol_name: str = speech_name.split('_')[0]
             speech_index: int = int(speech_name.split('_')[1])
-            metadata, utterances = self.source.load(protocol_name)
-            speech: dict = self.merger.nth(utterances, n=speech_index-1, metadata=metadata)
-            try:
-                speaker: dict = self.riksprot_metadata.get_member(speech.get('who'))
-                speech.update(**speaker)
-            except md.MemberNotFoundError:
-                speech.update(md.unknown_member())
 
-            speech["role_type"] = self.role_type_translation.get(speech["role_type"], speech["role_type"])
-        except:
+            metadata, utterances = self.source.load(protocol_name)
+            speech: dict = self.merger.nth(utterances, n=speech_index - 1, metadata=metadata)
+            #  FIXME Verify what indexes to use
+            speech_info: dict = self.get_speech_info(speech["u_id"])
+            speech.update(**speech_info)
+
+            speech["office_type"] = self.person_codecs.office_type2name.get(speech["office_type_id"], "unknown")
+            speech["sub_office_type"] = self.person_codecs.sub_office_type2name.get(speech["sub_office_type_id"], "unknown")
+            speech["gender"] = self.person_codecs.gender2name.get(speech["gender_id"], "unknown")
+            speech["party_abbrev"] = self.person_codecs.party_abbrev2name.get(speech["party_id"], "unknown")
+
+        except:  # pylint: disable=bare-except
             speech = {"name": "speech not found"}
 
         if mode == 'html':
