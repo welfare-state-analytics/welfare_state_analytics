@@ -69,7 +69,7 @@ class IRiksprotMetaData(abc.ABC):
                 'government': read_sql_table("government", db),
             }
 
-        return data
+            return data
 
     def set_indexes(self) -> IRiksprotMetaData:
 
