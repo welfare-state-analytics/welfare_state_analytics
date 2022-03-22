@@ -179,7 +179,7 @@ class IRiksprotMetaData(abc.ABC):
             dict(text_name='gender', id_name='gender_id', values=self.gender2id),
             dict(text_name='office_type', id_name='office_type_id', values=self.office_type2id),
             dict(text_name='sub_office_type', id_name='sub_office_type_id', values=self.sub_office_type2id),
-            dict(text_name='party_abbrev', id_name='party_abbrev_id', values=self.party_abbrev2id),
+            dict(text_name='party_abbrev', id_name='party_id', values=self.party_abbrev2id),
             dict(text_name='person_id', id_name='pid', values=self.person_id2pid),
         ]
 
@@ -193,7 +193,7 @@ class IRiksprotMetaData(abc.ABC):
         columns = (
             columns
             if columns is not None
-            else ['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id']
+            else ['person_id', 'gender_id', 'party_id', 'role_type_id']
             if encoded
             else ['gender', 'party_abbrev', 'role_type']
         )
@@ -214,9 +214,9 @@ class IRiksprotMetaData(abc.ABC):
         mx: pd.DataFrame = self.members
         mx['who'] = mx.index
         mx = mx.assign(
-            who_id=mx['who'].apply(self.who2id.get).astype(np.int32),
+            person_id=mx['who'].apply(self.who2id.get).astype(np.int32),
             gender_id=mx['gender'].apply(self.gender2id.get).astype(np.int8),
-            party_abbrev_id=mx['party_abbrev'].apply(self.party_abbrev2id.get).astype(np.int8),
+            party_id=mx['party_abbrev'].apply(self.party_abbrev2id.get).astype(np.int8),
             role_type_id=mx['role_type'].apply(self.role_type2id.get),
         )
         mx = mx.drop(columns=['who', 'gender', 'party_abbrev', 'role_type'])
@@ -227,12 +227,12 @@ class IRiksprotMetaData(abc.ABC):
             df['role_type'] = df['role_type_id'].apply(self.role_type2name.get)
         if 'gender_id' in df.columns:
             df['gender'] = df['gender_id'].apply(self.gender2name.get)
-        if 'party_abbrev_id' in df.columns:
-            df['party_abbrev'] = df['party_abbrev_id'].apply(self.party_abbrev2name.get)
-        if 'who_id' in df.columns:
-            df['who'] = df['who_id'].apply(self.id2who.get)
+        if 'party_id' in df.columns:
+            df['party_abbrev'] = df['party_id'].apply(self.party_abbrev2name.get)
+        if 'person_id' in df.columns:
+            df['who'] = df['person_id'].apply(self.id2who.get)
         if drop:
-            df.drop(columns=['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'], inplace=True, errors='ignore')
+            df.drop(columns=['person_id', 'gender_id', 'party_id', 'role_type_id'], inplace=True, errors='ignore')
         return df
 
 
