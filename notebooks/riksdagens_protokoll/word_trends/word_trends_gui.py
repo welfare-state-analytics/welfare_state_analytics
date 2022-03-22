@@ -12,7 +12,7 @@ from penelope.notebook import mixins as mx
 from penelope.notebook import utility as nu
 from penelope.notebook import word_trends as wt
 
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 view = w.Output(layout={'border': '2px solid green'})
 
@@ -43,9 +43,9 @@ class ComputeOpts(wt.TrendsComputeOpts):
 
 
 class TrendsData(wt.TrendsData):
-    def __init__(self, corpus: pc.VectorizedCorpus, riksproto_metadata: md.IRiksprotMetaData, n_top: int = 100000):
+    def __init__(self, corpus: pc.VectorizedCorpus, person_codecs: md.PersonCodecs, n_top: int = 100000):
         super().__init__(corpus, n_top=n_top)
-        self.riksproto_metadata: md.IRiksprotMetaData = riksproto_metadata
+        self.person_codecs: md.PersonCodecs = person_codecs
         self._compute_opts: ComputeOpts = ComputeOpts(
             normalize=False,
             keyness=KeynessMetric.TF,
@@ -63,8 +63,8 @@ class TrendsData(wt.TrendsData):
     def update_document_index(self, opts: ComputeOpts, document_index: pd.DataFrame) -> pd.DataFrame:
         if not opts.pivot_keys_id_names:
             return document_index
-        di: pd.DataFrame = self.riksproto_metadata.decode_members_data(document_index, drop=False)
-        pivot_keys_text_names = self.riksproto_metadata.map_id2text_names(opts.pivot_keys_id_names)
+        di: pd.DataFrame = self.person_codecs.decode(document_index, drop=False)
+        pivot_keys_text_names = self.person_codecs.translate_key_names(opts.pivot_keys_id_names)
         di['document_name'] = di[pivot_keys_text_names].apply(lambda x: '_'.join(x).lower(), axis=1)
         di['filename'] = di.document_name
         di['time_period'] = di[opts.temporal_key]
@@ -75,7 +75,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
     def __init__(
         self,
         *,
-        riksprot_metadata: md.IRiksprotMetaData,
+        person_codecs: md.PersonCodecs,
         pivot_key_specs: mx.PivotKeySpecArg = None,
         default_folder: str,
         n_top_count: int = 1000,
@@ -83,11 +83,11 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         defaults: dict = None,
     ):
         if pivot_key_specs is None:
-            pivot_key_specs = riksprot_metadata.member_property_specs if riksprot_metadata is not None else {}
+            pivot_key_specs = person_codecs.property_values_specs if person_codecs is not None else {}
 
         super().__init__(pivot_key_specs=pivot_key_specs, n_top_count=n_top_count)
 
-        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
+        self.person_codecs: md.PersonCodecs = person_codecs
         self.data: pd.DataFrame = None
 
         self.default_folder: str = default_folder
@@ -119,9 +119,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         try:
             self.alert("😐 Loading DTM...")
             corpus: pc.VectorizedCorpus = self.load_corpus(overload=True)
-            self.trends_data: TrendsData = TrendsData(
-                corpus=corpus, riksproto_metadata=self.riksprot_metadata, n_top=self.n_top
-            )
+            self.trends_data: TrendsData = TrendsData(corpus=corpus, person_codecs=self.person_codecs, n_top=self.n_top)
             if compute:
                 self.transform()
             self.alert("✅")
@@ -150,15 +148,21 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
         corpus: pc.VectorizedCorpus = pc.VectorizedCorpus.load(folder=folder, tag=tags[0])
         if overload:
-            if self.riksprot_metadata is None:
+            if self.person_codecs is None:
                 raise ValueError("unable to overload, riksprot metadata not set!")
-            corpus = self.assign_metadata(corpus, self.riksprot_metadata)
+            corpus = self.assign_metadata(corpus, self.person_codecs)
         return corpus
 
-    def assign_metadata(self, corpus: pc.VectorizedCorpus, metadata: md.IRiksprotMetaData) -> pc.VectorizedCorpus:
-        document_index: pd.DataFrame = metadata.overload_by_member_data(
-            corpus.document_index, encoded=self.encoded, drop=True
-        )
+    def assign_metadata(self, corpus: pc.VectorizedCorpus, person_codecs: md.PersonCodecs) -> pc.VectorizedCorpus:
+
+        document_index: pd.DataFrame = corpus.document_index
+
+        if 'gender_id' not in document_index.columns:
+            raise ValueError("gender_id not in document index!")
+
+        if not self.encoded:
+            document_index = person_codecs.decode(document_index, drop=True)
+
         document_index['lustrum'] = document_index.year - document_index.year % 5
         document_index['decade'] = document_index.year - document_index.year % 10
         document_index['tokens'] = document_index.n_raw_tokens

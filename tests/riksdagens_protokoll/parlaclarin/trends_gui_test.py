@@ -1,6 +1,5 @@
 import os
 from types import MethodType
-from typing import List, Set
 from unittest import mock
 
 import pytest
@@ -9,25 +8,24 @@ from penelope import utility as pu
 from penelope.common.keyness.metrics import KeynessMetric
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
-from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 # pylint: disable=protected-access,redefined-outer-name,(too-many-locals
 
-# FIXME: Create smaller test data
-TEST_FOLDER: str = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+TEST_FOLDER: str = "./tests/test_data/riksprot/main/dtm_test.5files"
+METADATA_FILENAME: str = "./tests/test_data/riksprot/main/riksprot_metadata.db"
 
 
 @pytest.fixture
-def riksprot_metadata() -> md.IRiksprotMetaData:
-    return sample_riksprot_metadata()
+def person_codecs() -> md.PersonCodecs:
+    return md.PersonCodecs().load(source=METADATA_FILENAME)
 
 
 @pytest.mark.long_running
 def test_trends_gui_create_without_pivot_keys():
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-        pivot_key_specs=None, riksprot_metadata=None, default_folder=TEST_FOLDER, encoded=True
+        pivot_key_specs=None, person_codecs=None, default_folder=TEST_FOLDER, encoded=True
     )
 
     gui = gui.setup()
@@ -35,7 +33,7 @@ def test_trends_gui_create_without_pivot_keys():
     assert os.path.isdir(gui.source_folder)
     assert gui.source_folder == gui.options.source_folder == gui._source_folder.selected_path
 
-    assert gui.riksprot_metadata is None
+    assert gui.person_codecs is None
     assert isinstance(gui.pivot_keys_text_names, list)
     assert isinstance(gui.pivot_keys_id_names, list)
     assert len(gui.pivot_keys_text_names) == 0
@@ -46,45 +44,40 @@ def test_trends_gui_create_without_pivot_keys():
 
 
 @pytest.mark.long_running
-def test_trends_gui_create_with_metadata(riksprot_metadata: md.IRiksprotMetaData):
+def test_trends_gui_create_with_metadata(person_codecs: md.PersonCodecs):
 
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-        default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
-    ).setup()
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
-    assert gui.riksprot_metadata is not None
-    assert gui.riksprot_metadata.members is not None
+    assert gui.person_codecs is not None
 
 
 @pytest.mark.long_running
-def test_trends_gui_corpus_assign_metadata(riksprot_metadata: md.IRiksprotMetaData):
+def test_trends_gui_corpus_assign_metadata(person_codecs: md.PersonCodecs):
 
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-        default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
-    ).setup()
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     corpus: pc.VectorizedCorpus = gui.load_corpus(overload=False)
-    corpus = gui.assign_metadata(corpus, gui.riksprot_metadata)
+    # corpus = gui.assign_metadata(corpus, gui.person_codecs)
 
     assert 'gender_id' in corpus.document_index.columns
-    assert 'party_abbrev_id' in corpus.document_index.columns
-    assert 'role_type_id' in corpus.document_index.columns
+    assert 'party_id' in corpus.document_index.columns
+    assert 'office_type_id' in corpus.document_index.columns
 
 
 @pytest.mark.long_running
-def test_trends_gui_create_with_pivot_keys(riksprot_metadata: md.IRiksprotMetaData):
+def test_trends_gui_create_with_pivot_keys(person_codecs: md.PersonCodecs):
 
-    expected_keys: Set[str] = {'role_type', 'who', 'None', 'party_abbrev', 'gender'}
+    expected_keys: set[str] = {'sub_office_type', 'office_type', 'name', 'None', 'party_abbrev', 'gender'}
 
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata)
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs)
 
     assert set(gui._multi_pivot_keys_picker.options) == expected_keys
     assert set(gui.pivot_keys_id_names) == set() == set(gui.options.pivot_keys_id_names)
 
 
-def test_trends_gui_update_picker(riksprot_metadata: md.IRiksprotMetaData):
+def test_trends_gui_update_picker(person_codecs: md.PersonCodecs):
 
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata)
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs)
 
     it_was_called = False
 
@@ -100,6 +93,7 @@ def test_trends_gui_update_picker(riksprot_metadata: md.IRiksprotMetaData):
     assert len(gui._displayers) == len(gui._tab.children)
 
     gui.load()
+    assert gui._alert.value == '✅'
     gui.observe(True)
     gui._words.value = "APA"
     assert it_was_called
@@ -113,17 +107,15 @@ def test_trends_gui_update_picker(riksprot_metadata: md.IRiksprotMetaData):
     gui.observe(False)
 
     assert gui.options is not None
-    assert gui.options.source_folder.endswith(gui.default_folder)
+    assert gui.options.source_folder.endswith(os.path.normpath(gui.default_folder))
     assert gui.options.unstack_tabular == gui._unstack_tabular.value
     assert gui.options.pivot_keys_id_names == []
 
 
 @pytest.mark.long_running
-def test_trends_gui_load(riksprot_metadata: md.IRiksprotMetaData):
+def test_trends_gui_load(person_codecs: md.PersonCodecs):
 
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-        default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
-    ).setup()
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     gui.load()
 
@@ -136,27 +128,27 @@ def test_trends_gui_load(riksprot_metadata: md.IRiksprotMetaData):
     [
         # ([], None),
         ('decade', False, False, False, ['gender_id'], None, ["information"]),
-        ('decade', False, False, False, ['gender_id', 'party_abbrev_id'], None, ["information"]),
+        ('decade', False, False, False, ['gender_id', 'party_id'], None, ["information"]),
         (
             'decade',
             False,
             False,
             False,
-            ['gender_id', 'party_abbrev_id'],
+            ['gender_id', 'party_id'],
             pu.PropertyValueMaskingOpts(gender_id=2),
             ["information"],
         ),
     ],
 )
 def test_trends_gui_transform(
-    riksprot_metadata: md.IRiksprotMetaData,
+    person_codecs: md.PersonCodecs,
     temporal_key: str,
     normalize: bool,
     smooth: bool,
     fill_gaps: bool,
-    pivot_keys_id_names: List[str],
+    pivot_keys_id_names: list[str],
     filter_opts: pu.PropertyValueMaskingOpts,
-    picked_tokens: List[str],
+    picked_tokens: list[str],
 ):
 
     class_name: str = "notebooks.riksdagens_protokoll.word_trends.word_trends_gui.RiksProtTrendsGUI"
@@ -180,18 +172,18 @@ def test_trends_gui_transform(
             opts.pivot_keys_id_names = pivot_keys_id_names
             opts.filter_opts = filter_opts
             opts.temporal_key = temporal_key
-            pivot_keys_text_names: List[str] = riksprot_metadata.map_id2text_names(pivot_keys_id_names)
+            pivot_keys_text_names: list[str] = person_codecs.translate_key_names(pivot_keys_id_names)
 
             mocked_options.return_value = opts
 
             gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-                default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
+                default_folder=TEST_FOLDER, person_codecs=person_codecs
             ).setup()
 
             gui.load(compute=False)
             gui.observe(False)
 
-            picked_indices: List[int] = [gui.trends_data.corpus.token2id[t] for t in picked_tokens]
+            picked_indices: list[int] = [gui.trends_data.corpus.token2id[t] for t in picked_tokens]
             mocked_picked_indices.return_value = picked_indices
 
             gui.transform()
@@ -217,16 +209,14 @@ def test_trends_gui_transform(
             assert set(unstacked.columns).intersection(pivot_keys_id_names + pivot_keys_text_names) == set()
 
             """DOCUMENT INDEX"""
-            result_columns: Set[str] = set(gui.trends_data.transformed_corpus.document_index.columns)
+            result_columns: set[str] = set(gui.trends_data.transformed_corpus.document_index.columns)
 
             assert set(pivot_keys_id_names).intersection(set(result_columns)) == set(pivot_keys_id_names)
             assert set(pivot_keys_text_names).intersection(set(result_columns)) == set(pivot_keys_text_names)
 
 
-def test_trends_gui_bugcheck(riksprot_metadata: md.IRiksprotMetaData):
-    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
-        default_folder=TEST_FOLDER, riksprot_metadata=riksprot_metadata
-    ).setup()
+def test_trends_gui_bugcheck(person_codecs: md.PersonCodecs):
+    gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     gui.load()
     gui.transform()
@@ -234,7 +224,7 @@ def test_trends_gui_bugcheck(riksprot_metadata: md.IRiksprotMetaData):
     gui.invalidate(False)
 
     gui.plot()
-    gui._multi_pivot_keys_picker.value = ['gender', 'role_type']
+    gui._multi_pivot_keys_picker.value = ['gender', 'office_type']
     gui._temporal_key.value = 'decade'
 
     words = ['herr']
@@ -250,11 +240,11 @@ def test_trends_gui_bugcheck(riksprot_metadata: md.IRiksprotMetaData):
 # @pytest.mark.parametrize(
 #     'folder,encoded,expected_columns_added',
 #     [
-#         (TEST_FOLDER, True, set({'who_id', 'gender_id', 'party_abbrev_id', 'role_type_id'})),
-#         (TEST_FOLDER, False, set({'gender', 'party_abbrev', 'role_type'})),
+#         (TEST_FOLDER, True, set({'person_id', 'gender_id', 'party_id', 'office_type_id'})),
+#         (TEST_FOLDER, False, set({'gender', 'party_abbrev', 'office_type'})),
 #     ],
 # )
-# def test_pos_count_gui_prepare(folder: str, encoded: bool, expected_columns_added: Set[str]):
+# def test_pos_count_gui_prepare(folder: str, encoded: bool, expected_columns_added: set[str]):
 
 #     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded).setup(load_data=False).load(folder)
 
@@ -296,11 +286,11 @@ def test_trends_gui_bugcheck(riksprot_metadata: md.IRiksprotMetaData):
 #     [
 #         (TEST_FOLDER, 'decade', True, [], 11),
 #         (TEST_FOLDER, 'decade', True, ['gender_id'], 11),
-#         (TEST_FOLDER, 'decade', True, ['gender_id', 'party_abbrev_id'], 11),
+#         (TEST_FOLDER, 'decade', True, ['gender_id', 'party_id'], 11),
 #     ],
 # )
 # def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
-#     folder: str, temporal_key: str, encoded: bool, pivot_keys: List[str], expected_count: int
+#     folder: str, temporal_key: str, encoded: bool, pivot_keys: list[str], expected_count: int
 # ):
 
 #     #expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]

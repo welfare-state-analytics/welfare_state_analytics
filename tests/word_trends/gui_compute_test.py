@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import pandas as pd
 import pytest
@@ -9,8 +10,8 @@ from penelope.workflows.vectorize import dtm as workflow
 # pylint: disable=protected-access
 
 OUTPUT_FOLDER = "./tests/output"
-TEST_DATA_FOLDER = "./tests/test_data/riksdagens_protokoll/kb_labb"
-CONFIG_FILENAME = "./tests/test_data/riksdagens_protokoll/kb_labb/riksdagens-protokoll.yml"
+TEST_DATA_FOLDER = "./tests/test_data/riksprot/kb_labb"
+CONFIG_FILENAME = "./tests/test_data/riksprot/kb_labb/riksdagens-protokoll.yml"
 
 jj = os.path.join
 
@@ -35,7 +36,7 @@ def test_compute_gui_compute_dry_run():
         done_callback=monkey_patch,
     )
 
-    gui._corpus_tag.value = 'CERES'
+    gui._corpus_tag.value = f"{str(uuid.uuid4())[:8]}"
     gui._target_folder.reset(path=OUTPUT_FOLDER)  # , filename='output.txt')
     gui._target_folder._apply_selection()
     gui._corpus_filename.reset(path=TEST_DATA_FOLDER, filename='proto.2files.2sentences.sparv4.csv.zip')
@@ -50,7 +51,7 @@ def test_compute_gui_compute_dry_run():
 @pytest.mark.long_running
 def test_compute_gui_compute_hot_run():
 
-    corpus_tag = 'CERES'
+    corpus_tag: str = f"{str(uuid.uuid4())[:8]}"
     gui: ComputeGUI = create_compute_gui(
         corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
@@ -67,7 +68,7 @@ def test_compute_gui_compute_hot_run():
     gui._corpus_filename._apply_selection()
     gui._compute_handler(gui._compute_button)
 
-    assert os.path.isfile(os.path.join(OUTPUT_FOLDER, corpus_tag, f'{corpus_tag}_vectorizer_data.pickle'))
+    assert os.path.isfile(os.path.join(OUTPUT_FOLDER, corpus_tag, f'{corpus_tag}_vector_data.npz'))
 
 
 def test_allo_allo():

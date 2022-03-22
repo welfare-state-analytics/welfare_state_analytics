@@ -62,14 +62,17 @@ from bokeh.io import output_notebook
 from IPython.display import display
 
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
-default_folder = jj(__paths__.data_folder, 'riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20')
+data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
+
 output_notebook()  # resources=INLINE)
 
-riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=jj(default_folder, 'person_index.zip'))
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=jj(data_folder, 'metadata/riksprot_metadata.main.db'))
 
-gui = wt.RiksProtTrendsGUI(default_folder=default_folder, riksprot_metadata=riksprot_metadata).setup()
+gui = wt.RiksProtTrendsGUI(
+    default_folder=jj(data_folder, "dtm_041.1500000.TF20.mask"), person_codecs=person_codecs
+).setup()
 
 display(gui.layout())
 gui.load()
