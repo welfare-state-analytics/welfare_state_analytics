@@ -38,18 +38,21 @@ from bokeh.io import output_notebook
 from IPython.display import display
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as ps
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 importlib.reload(ps)
 output_notebook()
 
 pd.set_option('display.max_rows', 2000)
-data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20")
-riksprot_metadata: md.IRiksprotMetaData = md.IRiksprotMetaData.load(
-    database_filename=jj(data_folder, 'riksprot_metadata.db')
-)
 
-gui = ps.PoSCountGUI(default_folder=data_folder, riksprot_metadata=riksprot_metadata).setup(load_data=True)
+data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=jj(data_folder, 'metadata/riksprot_metadata.main.db'))
+
+gui = ps.PoSCountGUI(
+    default_folder=jj(data_folder, "dtm_041.1500000.TF20.mask"),
+    person_codecs=person_codecs,
+).setup(load_data=True)
+
 display(gui.layout())
 
 # %%

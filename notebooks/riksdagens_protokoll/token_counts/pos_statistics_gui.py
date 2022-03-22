@@ -4,37 +4,40 @@ from typing import List, Union
 
 import pandas as pd
 from ipydatagrid import DataGrid
+from penelope import utility as pu
 from penelope.notebook import token_counts as tc
 
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 # pylint: disable=unused-argument
 
 
 class PoSCountGUI(tc.BasicDTMGUI):
-    def __init__(self, *, default_folder: str, riksprot_metadata: md.IRiksprotMetaData, encoded: bool = True):
+    def __init__(self, *, default_folder: str, person_codecs: md.PersonCodecs, encoded: bool = True):
         self.DATA = None
         self.encoded: bool = encoded
-        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
-        member_property_spec: dict = self.riksprot_metadata.member_property_specs
-        super().__init__(default_folder=default_folder, pivot_key_specs=member_property_spec)
+        self.person_codecs: md.PersonCodecs = person_codecs
+        pivot_keys: dict = self.person_codecs.property_values_specs
+        self._keep_columns: list[str] = pu.flatten([[k['text_name'], k['id_name']] for k in pivot_keys]) + ['who']
+        super().__init__(default_folder=default_folder, pivot_key_specs=pivot_keys)
 
     def keep_columns(self) -> List[str]:
-        return super().keep_columns() + ['who']
+        return super().keep_columns() + self._keep_columns
 
     def prepare(self) -> "PoSCountGUI":
         super().prepare()
-        self.document_index = self.riksprot_metadata.overload_by_member_data(self.document_index, encoded=self.encoded)
         return self
 
     def load(self, source: Union[str, pd.DataFrame]) -> "PoSCountGUI":
         super().load(source)
+        if not self.encoded:
+            self.document_index = self.person_codecs.decode(self.document_index, drop=True)
         return self
 
     def compute(self) -> pd.DataFrame:
         data: pd.DataFrame = super().compute()
         if data is not None and self.encoded:
-            data = self.riksprot_metadata.decode_members_data(data)
+            data = self.person_codecs.decode(data)
         self.DATA = data
         return data
 
