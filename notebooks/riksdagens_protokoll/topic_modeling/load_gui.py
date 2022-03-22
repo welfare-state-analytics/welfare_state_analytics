@@ -18,9 +18,3 @@ class RiksprotLoadGUI(ntm.LoadGUI):
     ):
         super().__init__(corpus_folder, state, corpus_config, slim)
         self.person_codecs: md.PersonCodecs = person_codecs
-
-    def load(self):
-        super().load()
-
-        if 'gender_id' not in self.document_index.columns:
-            raise ValueError("gender_id missing in document index, might be a config.yml error")
