@@ -34,6 +34,9 @@ def test_db():
     data: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
     assert data
 
+def test_inferred_topics() -> tm.InferredTopicsData:
+    data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
+    assert data
 
 @pytest.fixture
 def person_codecs() -> md.PersonCodecs:
@@ -291,7 +294,7 @@ def test_pivot_topic_network(
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: tm_ui.PivotTopicNetworkGUI = tm_ui.PivotTopicNetworkGUI(
-        pivot_key_specs=person_codecs.member_property_specs, state=state
+        pivot_key_specs=person_codecs.property_values_specs, state=state
     )
 
     ui.setup()
