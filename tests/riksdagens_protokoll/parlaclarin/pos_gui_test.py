@@ -6,7 +6,6 @@ from unittest.mock import patch
 import ipywidgets as widgets
 import pandas as pd
 import pytest
-from penelope import utility as pu
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
 from westac.riksprot.parlaclarin import codecs as md
