@@ -5,7 +5,7 @@ from penelope import utility as pu
 from penelope.notebook import mixins as mx
 from penelope.notebook import topic_modelling as tm
 
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 from westac.riksprot.parlaclarin import speech_text as st
 
 from .mixins import RiksProtMetaDataMixIn
@@ -16,13 +16,13 @@ from .mixins import RiksProtMetaDataMixIn
 class RiksprotTopicTopicGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, tm.TopicTopicGUI):
     def __init__(
         self,
-        riksprot_metadata: md.IRiksprotMetaData,
+        person_codecs: md.PersonCodecs,
         speech_repository: st.SpeechTextRepository,
         state: tm.TopicModelContainer | dict,
     ):
         super(RiksprotTopicTopicGUI, self).__init__(  # pylint: disable=super-with-arguments
-            pivot_key_specs=riksprot_metadata.member_property_specs,
-            riksprot_metadata=riksprot_metadata,
+            pivot_key_specs=person_codecs.property_values_specs,
+            person_codecs=person_codecs,
             speech_repository=speech_repository,
             state=state,
         )

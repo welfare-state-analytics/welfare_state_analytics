@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.6
+#       jupytext_version: 1.13.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -22,6 +22,7 @@
 import __paths__  # pylint: disable=unused-import
 import os
 
+import pandas as pd
 from bokeh.io import output_notebook
 from IPython.display import display
 from penelope import utility as pu
@@ -29,7 +30,7 @@ from penelope.notebook import topic_modelling as ntm
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
 output_notebook()
@@ -37,16 +38,18 @@ pu.set_default_options()
 
 current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
 data_folder: str = jj(__paths__.corpus_folder, "riksdagen_corpus_data")
-members_filename: str = jj(data_folder, 'dtm_1920-2020_v0.3.0.tf20/person_index.zip')
+database_filename: str = jj(data_folder, 'metadata/riksprot_metadata.main.db')
 
-riksprot_metadata: md.ProtoMetaData = md.ProtoMetaData(members=members_filename)
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=database_filename)
+speech_index: pd.DataFrame = pd.read_feather(
+    jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
+)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=jj(data_folder, "tagged_frames_v0.3.0_20201218"),
-    riksprot_metadata=riksprot_metadata,
+    source=jj(data_folder, "tagged_frames_v0.4.1_speeches.feather"),
+    person_codecs=person_codecs,
+    document_index=speech_index,
 )
-default_args: dict = dict(
-    riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=current_state()
-)
+default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_repository, state=current_state())
 
 # %%
 # # ! jupytext --to py:percent explore.ipynb
@@ -58,7 +61,7 @@ default_args: dict = dict(
 
 # %%
 load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
-    riksprot_metadata, corpus_folder=data_folder, state=current_state(), slim=True
+    person_codecs, corpus_folder=data_folder, state=current_state(), slim=True
 ).setup()
 display(load_gui.layout())
 # %% [markdown]
@@ -126,7 +129,7 @@ display(wtm.RiksprotTopicTopicGUI(**default_args).setup().layout())
 
 # %%
 display(
-    ntm.PivotTopicNetworkGUI(pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state())
+    ntm.PivotTopicNetworkGUI(pivot_key_specs=person_codecs.property_values_specs, state=current_state())
     .setup()
     .layout()
 )
@@ -137,7 +140,7 @@ display(
 
 # %%
 display(
-    ntm.FocusTopicDocumentNetworkGui(pivot_key_specs=riksprot_metadata.member_property_specs, state=current_state())
+    ntm.FocusTopicDocumentNetworkGui(pivot_key_specs=person_codecs.property_values_specs, state=current_state())
     .setup()
     .layout()
 )

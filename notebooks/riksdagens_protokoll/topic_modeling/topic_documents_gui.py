@@ -6,7 +6,7 @@ from penelope import utility as pu
 from penelope.notebook import mixins as mx
 from penelope.notebook import topic_modelling as ntm
 
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 from westac.riksprot.parlaclarin import speech_text as st
 
 from .mixins import RiksProtMetaDataMixIn
@@ -17,14 +17,14 @@ from .mixins import RiksProtMetaDataMixIn
 class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.BrowseTopicDocumentsGUI):
     def __init__(
         self,
-        riksprot_metadata: md.IRiksprotMetaData,
+        person_codecs: md.PersonCodecs,
         speech_repository: st.SpeechTextRepository,
         state: ntm.TopicModelContainer | dict,
     ):
         super().__init__(
-            riksprot_metadata=riksprot_metadata,
+            person_codecs=person_codecs,
             speech_repository=speech_repository,
-            pivot_key_specs=riksprot_metadata.member_property_specs,
+            pivot_key_specs=person_codecs.property_values_specs,
             state=state,
         )
 
@@ -44,8 +44,8 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
         _ = super().update()
         """note: at this point dtw is equal to calculator.data"""
         calculator: tx.DocumentTopicsCalculator = self.inferred_topics.calculator
-        data: pd.DataFrame = self.riksprot_metadata.decode_members_data(
-            calculator.overload(includes="protocol_name,document_name,gender_id,party_abbrev_id,who_id").value,
+        data: pd.DataFrame = self.person_codecs.decode(
+            calculator.overload(includes="protocol_name,document_name,gender_id,party_id,person_id").value,
             drop=True,
         )
         return data
@@ -54,14 +54,14 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
 class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, ntm.FindTopicDocumentsGUI):
     def __init__(
         self,
-        riksprot_metadata: md.IRiksprotMetaData,
+        person_codecs: md.PersonCodecs,
         speech_repository: st.SpeechTextRepository,
         state: ntm.TopicModelContainer | dict,
     ):
         super().__init__(
-            riksprot_metadata=riksprot_metadata,
+            person_codecs=person_codecs,
             speech_repository=speech_repository,
-            pivot_key_specs=riksprot_metadata.member_property_specs,
+            pivot_key_specs=person_codecs.property_values_specs,
             state=state,
         )
 
@@ -78,15 +78,15 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
 
     def update(self) -> pd.DataFrame:
         _ = super().update()
-        return overload_decoded_member_data(self.riksprot_metadata, self.inferred_topics.calculator)
+        return overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
 
 
 def overload_decoded_member_data(
-    riksprot_metadata: md.IRiksprotMetaData, calculator: tx.DocumentTopicsCalculator
+    person_codecs: md.PersonCodecs, calculator: tx.DocumentTopicsCalculator
 ) -> pd.DataFrame:
     """note: at this point dtw is equal to calculator.data"""
-    data: pd.DataFrame = riksprot_metadata.decode_members_data(
-        calculator.overload(includes="protocol_name,document_name,gender_id,party_abbrev_id,who_id").value,
+    data: pd.DataFrame = person_codecs.decode(
+        calculator.overload(includes="protocol_name,document_name,gender_id,party_id,person_id").value,
         drop=True,
     )
     return data

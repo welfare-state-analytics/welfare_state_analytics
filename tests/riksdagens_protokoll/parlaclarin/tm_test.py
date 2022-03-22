@@ -12,104 +12,95 @@ from penelope.notebook.topic_modelling import mixins as mx
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
 
-DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data/"
-MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/")
-MEMBER_FILENAME: str = jj(DATA_FOLDER, 'dtm_1920-2020_v0.3.0.tf20', 'person_index.zip')
-TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.3.0_20201218")
+# pylint: disable=redefined-outer-name,protected-access
 
-# MODEL_FOLDER: str = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/"
+# DATA_FOLDER: str = "/data/riksdagen_corpus_data/"
+# MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/")
+# DATABASE_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feather', 'riksprot_metadata.v0.4.1.db')
+# TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
 
-# pylint: disable=protected-access,redefined-outer-name
+DATA_FOLDER: str = "./tests/test_data/riksprot/main"
+MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
+DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
+TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
+SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
 
-# import pandas as pd
-# import numpy as np
-# import zipfile
 
-# def test_investigate_load():
-#     data = {}
-
-#     """Load previously stored aggregate"""
-#     folder = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/"
-
-#     # document_index: pd.DataFrame = (
-#     #     pd.read_feather(jj(folder, "documents.feather")).set_index('document_name', drop=False).rename_axis('')
-#     # )
-#     # assert document_index is not None
-
-#     # data['dictionary'] = pd.read_feather(jj(folder, "dictionary.feather")).set_index('token_id', drop=True)
-#     # data['dictionary'].drop(columns='dfs', inplace=True)
-#     # assert data['dictionary'] is not None
-#     with zipfile.ZipFile(jj(folder, 'topic_token_weights.zip'), "r") as zp:
-#         ts = zp.read('topic_token_weights.csv')
-
-#     csv_opts: dict = dict(sep='\t', header=0, index_col=0, na_filter=False)
-
-#     topic_token_weights=pd.read_csv(jj(folder, 'topic_token_weights.zip'), **csv_opts)
-#     data['topic_token_weights'] = pd.read_feather(jj(folder, "topic_token_weights.feather")).set_index('token_id', drop=True)
-
-#     if 'token_id' not in  data['topic_token_weights'].columns:
-#         data['topic_token_weights'] = data['topic_token_weights'].head().reset_index().set_index('topic_id')
-#     if 'token' in data['topic_token_weights']:
-#         data['topic_token_weights'].drop(columns='token', inplace=True)
-#     # FIXME Varför är Weights så stora tal???
-
-#     assert data['topic_token_weights'] is not None
-
-#     # topic_token_weights=pd.read_feather(jj(folder, "topic_token_weights.feather"))
-#     # document_topic_weights=pd.read_feather(jj(folder, "document_topic_weights.feather"))
-#     # topic_token_overview=pd.read_feather(jj(folder, "topic_token_overview.feather")).set_index( 'topic_id', drop=True )
-
-# FIXME: Use **way** smaller corpus!
+def test_db():
+    data: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
+    assert data
 
 
 @pytest.fixture
-def riksprot_metadata() -> md.ProtoMetaData:
-    data: md.ProtoMetaData = md.ProtoMetaData(members=MEMBER_FILENAME)
+def person_codecs() -> md.PersonCodecs:
+    data: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
     return data
 
 
 @pytest.fixture
-def inferred_topics(riksprot_metadata: md.ProtoMetaData) -> tm.InferredTopicsData:
+def inferred_topics() -> tm.InferredTopicsData:
     data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
-    data.document_index = riksprot_metadata.overload_by_member_data(data.document_index, encoded=True, drop=True)
     return data
 
 
 @pytest.fixture
-def speech_repository(riksprot_metadata: md.ProtoMetaData) -> sr.SpeechTextRepository:
+def speech_index() -> pd.DataFrame:
+    di: pd.DataFrame = pd.read_feather(SPEECH_INDEX_FILENAME)
+    return di
+
+
+@pytest.fixture
+def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame) -> sr.SpeechTextRepository:
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER, riksprot_metadata=riksprot_metadata
+        source=TAGGED_CORPUS_FOLDER,
+        person_codecs=person_codecs,
+        document_index=speech_index,
     )
     return repository
 
 
-def test_load_gui(
-    riksprot_metadata: md.ProtoMetaData,
-    inferred_topics: tm.InferredTopicsData,
-):
+def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     state = dict(inferred_topics=inferred_topics)
-    ui = wtm_ui.RiksprotLoadGUI(
-        riksprot_metadata, corpus_folder=DATA_FOLDER, corpus_config=None, state=state, slim=True
-    )
+    ui = wtm_ui.RiksprotLoadGUI(person_codecs, corpus_folder=DATA_FOLDER, corpus_config=None, state=state, slim=True)
     assert ui is not None
     ui.setup()
     ui.load()
 
 
+def test_loaded_gui(
+    inferred_topics: tm.InferredTopicsData,
+):
+    topic_tokens_overview: pd.DataFrame = inferred_topics.topic_token_overview
+    topic_tokens_overview['tokens'] = inferred_topics.get_topic_titles(n_tokens=500)
+    topic_proportions = inferred_topics.calculator.topic_proportions()
+    if topic_proportions is not None:
+        topic_tokens_overview['score'] = topic_proportions
+
+    search_text: str = "riksdag"
+    n_top: int = 200
+    truncate_tokens: bool = False
+
+    _: pd.DataFrame = tm.filter_topic_tokens_overview(
+        topic_tokens_overview, search_text=search_text, n_top=n_top, truncate_tokens=truncate_tokens
+    )
+
+    # ui = tm_ui.PandasTopicTitlesGUI(topics=topic_tokens_overview, n_tokens=n_top)
+
+
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_find_documents_gui(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
 
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
-        riksprot_metadata, speech_repository, state
+        person_codecs, speech_repository, state
     )
     """
     Protokoll: prot-198586--152 sidan 5, Enkammarriksdagen
@@ -167,14 +158,14 @@ def test_find_documents_gui(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_browse_documents_gui(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
 
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
-        riksprot_metadata, speech_repository, state
+        person_codecs, speech_repository, state
     )
 
     ui.setup()
@@ -221,7 +212,7 @@ def test_browse_documents_gui(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends_overview(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
@@ -230,7 +221,7 @@ def test_topic_trends_overview(
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
     ui: wtm_ui.RiksprotTopicTrendsOverviewGUI = wtm_ui.RiksprotTopicTrendsOverviewGUI(
-        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+        person_codecs=person_codecs, speech_repository=speech_repository, state=state
     )
 
     ui.setup()
@@ -242,7 +233,7 @@ def test_topic_trends_overview(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
@@ -251,7 +242,7 @@ def test_topic_trends(
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
     ui: wtm_ui.RiksprotTopicTrendsGUI = wtm_ui.RiksprotTopicTrendsGUI(
-        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+        person_codecs=person_codecs, speech_repository=speech_repository, state=state
     )
 
     ui.setup()
@@ -263,7 +254,7 @@ def test_topic_trends(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_topic_network(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
@@ -272,21 +263,27 @@ def test_topic_topic_network(
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(
-        riksprot_metadata=riksprot_metadata, speech_repository=speech_repository, state=state
+        person_codecs=person_codecs, speech_repository=speech_repository, state=state
     )
 
     ui.setup()
+    _ = ui.layout()
+
+    # ui.pacify(False)
+    ui._threshold.value = 0.05
+    ui._year_range.value = (1920, 2020)
+    ui._n_docs.value = 2
+    # ui.pacify(True)
 
     ui.update_handler()
-    _ = ui.layout()
-    ui._compute.click()
+    # ui._compute.click()
 
     assert ui is not None
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pivot_topic_network(
-    riksprot_metadata: md.ProtoMetaData,
+    person_codecs: md.PersonCodecs,
     inferred_topics: tm.InferredTopicsData,
 ):
 
@@ -294,7 +291,7 @@ def test_pivot_topic_network(
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: tm_ui.PivotTopicNetworkGUI = tm_ui.PivotTopicNetworkGUI(
-        pivot_key_specs=riksprot_metadata.member_property_specs, state=state
+        pivot_key_specs=person_codecs.member_property_specs, state=state
     )
 
     ui.setup()
@@ -356,13 +353,17 @@ def test_get_github_tags(speech_repository: sr.SpeechTextRepository):
     assert len(links) > 0
 
 
-def test_speech_repository(
-    riksprot_metadata: md.ProtoMetaData,
-):
+def test_speech_repository(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     loader: sr.Loader = sr.ZipLoader(folder=TAGGED_CORPUS_FOLDER)
-    repository1: sr.SpeechTextRepository = sr.SpeechTextRepository(source=loader, riksprot_metadata=riksprot_metadata)
+    repository1: sr.SpeechTextRepository = sr.SpeechTextRepository(
+        source=loader,
+        person_codecs=person_codecs,
+        document_index=inferred_topics.document_index,
+    )
     repository2: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER, riksprot_metadata=riksprot_metadata
+        source=TAGGED_CORPUS_FOLDER,
+        person_codecs=person_codecs,
+        document_index=inferred_topics.document_index,
     )
 
     for metadata, utterances in [
@@ -404,7 +405,7 @@ def test_speech_repository(
     assert speech['who'] == 'ingemund_bengtsson_talman'
     assert speech['num_words'] == 1
     assert speech['protocol_name'] == 'prot-198586--152'
-    assert speech['role_type'] == 'talman'
+    assert speech['office_type'] == 'talman'
     assert int(speech['page_number']) == 15
     assert int(speech['page_number2']) == 15
 
@@ -413,3 +414,46 @@ def test_speech_repository(
 
     speech = repository1.speech('prot-198586--152_002', mode='text')
     assert isinstance(speech, str)
+
+
+# pylint: disable=protected-access,redefined-outer-name
+
+# import pandas as pd
+# import numpy as np
+# import zipfile
+
+# def test_investigate_load():
+#     data = {}
+
+#     """Load previously stored aggregate"""
+#     folder = "/data/westac/riksdagen_corpus_data/tm_1920-2020_500-topics-mallet/"
+
+#     # document_index: pd.DataFrame = (
+#     #     pd.read_feather(jj(folder, "documents.feather")).set_index('document_name', drop=False).rename_axis('')
+#     # )
+#     # assert document_index is not None
+
+#     # data['dictionary'] = pd.read_feather(jj(folder, "dictionary.feather")).set_index('token_id', drop=True)
+#     # data['dictionary'].drop(columns='dfs', inplace=True)
+#     # assert data['dictionary'] is not None
+#     with zipfile.ZipFile(jj(folder, 'topic_token_weights.zip'), "r") as zp:
+#         ts = zp.read('topic_token_weights.csv')
+
+#     csv_opts: dict = dict(sep='\t', header=0, index_col=0, na_filter=False)
+
+#     topic_token_weights=pd.read_csv(jj(folder, 'topic_token_weights.zip'), **csv_opts)
+#     data['topic_token_weights'] = pd.read_feather(jj(folder, "topic_token_weights.feather")).set_index('token_id', drop=True)
+
+#     if 'token_id' not in  data['topic_token_weights'].columns:
+#         data['topic_token_weights'] = data['topic_token_weights'].head().reset_index().set_index('topic_id')
+#     if 'token' in data['topic_token_weights']:
+#         data['topic_token_weights'].drop(columns='token', inplace=True)
+#     # FIXME Varför är Weights så stora tal???
+
+#     assert data['topic_token_weights'] is not None
+
+#     # topic_token_weights=pd.read_feather(jj(folder, "topic_token_weights.feather"))
+#     # document_topic_weights=pd.read_feather(jj(folder, "document_topic_weights.feather"))
+#     # topic_token_overview=pd.read_feather(jj(folder, "topic_token_overview.feather")).set_index( 'topic_id', drop=True )
+
+# FIXME: Use **way** smaller corpus!

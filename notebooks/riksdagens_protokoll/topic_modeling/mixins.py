@@ -5,17 +5,17 @@ from typing import Any
 import ipywidgets as w
 import pandas as pd
 
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 from westac.riksprot.parlaclarin import speech_text as st
 
 # pylint: disable=too-many-instance-attributes
 
 
 class RiksProtMetaDataMixIn:
-    def __init__(self, riksprot_metadata: md.IRiksprotMetaData, speech_repository: st.SpeechTextRepository, **kwargs):
+    def __init__(self, person_codecs: md.PersonCodecs, speech_repository: st.SpeechTextRepository, **kwargs):
         super().__init__(**kwargs)
 
-        self.riksprot_metadata: md.IRiksprotMetaData = riksprot_metadata
+        self.person_codecs: md.PersonCodecs = person_codecs
         self.speech_repository: st.SpeechTextRepository = speech_repository
 
         """Display speech text stuff"""
