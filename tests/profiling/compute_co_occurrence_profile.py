@@ -8,7 +8,7 @@ from penelope import pipeline, utility
 from penelope.co_occurrence import ContextOpts
 from penelope.workflows.interface import ComputeOpts
 
-DATA_FOLDER = "./tests/test_data/riksdagens_protokoll/kb_labb"
+DATA_FOLDER = "./tests/test_data/riksprot/kb_labb"
 CONCEPT = set()  # {'information'}
 
 SUC_SCHEMA: utility.PoS_Tag_Scheme = utility.PoS_Tag_Schemes.SUC

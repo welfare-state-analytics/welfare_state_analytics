@@ -10,12 +10,12 @@ from penelope import utility as pu
 
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
 from tests.riksdagens_protokoll.parlaclarin.fixtures import sample_riksprot_metadata
-from westac.riksprot.parlaclarin import metadata as md
+from westac.riksprot.parlaclarin import codecs as md
 
 # pylint: disable=protected-access,redefined-outer-name
 
 # FIXME: Create smaller test data
-TEST_FOLDER: str = '/data/westac/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
+TEST_FOLDER: str = '/data/riksdagen_corpus_data/dtm_1920-2020_v0.3.0.tf20'
 
 
 @pytest.fixture
