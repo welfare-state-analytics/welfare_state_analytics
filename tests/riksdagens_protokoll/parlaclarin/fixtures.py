@@ -1,10 +1,8 @@
-from io import StringIO
 from typing import List
 
 import pandas as pd
-from penelope import corpus as pc
 
-from westac.riksprot.parlaclarin.metadata import ProtoMetaData
+from westac.riksprot.parlaclarin import codecs as md
 
 SAMPLE_MEMBERS: str = [
     'id\trole_type\tborn\tchamber\tdistrict\tstart\tend\tgender\tname\toccupation\tparty\tparty_abbrev',
@@ -51,17 +49,27 @@ DOCUMENT_INDEX: str = """\tyear\tdocument_name\tfilename\tn_tokens\twho\tdocumen
 2018_jimmie_akesson_5a69d8\t2018\t2018_jimmie_akesson_5a69d8\t2018_jimmie_akesson_5a69d8.csv\t12960\tjimmie_akesson_5a69d8\t30563\t816\t1685\t907\t0\t2976\t91\t22\t1296\t2576\t2591\t12960
 """
 
-ID_COLUMNS: List[str] = ['who_id', 'gender_id', 'party_abbrev_id', 'role_type_id']
-NAME_COLUMNS: List[str] = ['gender', 'party_abbrev', 'role_type']
-
-
-def sample_document_index() -> pd.DataFrame:
-    return pc.DocumentIndexHelper.load(StringIO(DOCUMENT_INDEX)).document_index
-
-
-def sample_members() -> pd.DataFrame:
-    return ProtoMetaData.load_members(StringIO('\n'.join(SAMPLE_MEMBERS)))
+ID_COLUMNS: List[str] = ['person_id', 'gender_id', 'party_id', 'office_type_id']
+NAME_COLUMNS: List[str] = ['gender', 'party_abbrev', 'office_type']
 
 
 def sample_riksprot_metadata():
-    return ProtoMetaData(members=sample_members())
+
+    chambers: pd.DataFrame = None
+    gender: pd.DataFrame = None
+    office_type: pd.DataFrame = None
+    sub_office_type: pd.DataFrame = None
+    persons: pd.DataFrame = None
+    terms_of_office: pd.DataFrame = None
+    government: pd.DataFrame = None
+
+    data: dict = {
+        'chambers': chambers,
+        'gender': gender,
+        'office_type': office_type,
+        'sub_office_type': sub_office_type,
+        'persons': persons,
+        'terms_of_office': terms_of_office,
+        'government': government,
+    }
+    return md.PersonCodecs().load(source=data)
