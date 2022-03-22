@@ -2,7 +2,7 @@
     "corpus_type": 3,
     "input_filename": "/home/roger/source/welfare-state-analytics/pyriksprot/tests/test_data/source/main/tagged_frames_speeches.feather/",
     "output_folder": "./data",
-    "output_tag": "dtm_5files.test",
+    "output_tag": "dtm_test.5files",
     "vectorize_opts": {
         "already_tokenized": true,
         "lowercase": false,
