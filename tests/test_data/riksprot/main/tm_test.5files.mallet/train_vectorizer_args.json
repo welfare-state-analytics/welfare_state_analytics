@@ -1,0 +1,13 @@
+{
+    "tf_type": "linear",
+    "apply_idf": false,
+    "idf_type": "smooth",
+    "norm": "l2",
+    "min_df": 1,
+    "max_df": 1.0,
+    "already_tokenized": true,
+    "lowercase": false,
+    "stop_words": null,
+    "min_tf": 1,
+    "max_tokens": 500000
+}

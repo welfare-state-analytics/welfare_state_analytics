@@ -1,0 +1,197 @@
+person_id,name,primary_name
+Q1375199,Per Erik Gunnar Westerberg,False
+Q1375199,Per Westerberg,True
+Q1635136,Hugo Hegeland,True
+Q1635136,Hugo Oscar Hegeland,False
+Q179493,Bertil G Ohlin,False
+Q179493,Bertil Gotthard Ohlin,False
+Q179493,Bertil Ohlin,True
+Q179493,Ohlin,False
+Q18243057,Eric Johanson,True
+Q18243057,Eric Johansson,False
+Q1830351,Per Unckel,True
+Q2021126,Olof Johansson,True
+Q2744062,Gerda Höjer,True
+Q2744062,Höjer,False
+Q297850,Beatrice Ask,True
+Q297850,Beatris Ask,False
+Q3162739,Hjalmarson,False
+Q3162739,Jarl Harald Hjalmarsson,False
+Q3162739,Jarl Hjalmarson,True
+Q316519,Einhorn,False
+Q316519,Jerzy Einhorn,True
+Q3496488,Olle Schmidt,True
+Q4692974,Agne Hansson,True
+Q4916267,Birgit Friggebo,True
+Q4916267,Birgit Irma Gunborg Friggebo,False
+Q4931118,Bo Könberg,True
+Q4935815,Ingrid Andersson,True
+Q4939882,Gunhild A M Bolander,False
+Q4939882,Gunhild Bolander,True
+Q4944305,Inger Davidson,True
+Q4944305,Inger Davidsson,False
+Q4944305,Inger Margareta Davidson,False
+Q4945703,Margitta Edgren,True
+Q4946072,Maud Ekendahl,True
+Q4946541,Brita Elmén,True
+Q4946998,Berith Eriksson,True
+Q4949792,Margit Gennser,True
+Q4953330,Chris Heister,True
+Q4953330,Gun Christina Heister,False
+Q4955378,Doris Håvik,True
+Q4955378,Inga Doris Helena Håvik,False
+Q4956970,Eva Johansson,True
+Q4962152,Edith Liljedahl,True
+Q4962481,Gullan Birgit Kristina Lindblad,False
+Q4962481,Gullan Lindblad,True
+Q4969616,Gerda Maria Nilsson,False
+Q4969616,Gerda Nilsson,True
+Q4970689,Ingrid Näslund,True
+Q4972780,Ulla Pettersson,True
+Q4975999,Yvonne Ruwaida,True
+Q4976961,Ragnhild Maria Andrea Sandström,False
+Q4976961,Ragnhild Sandström,True
+Q4981243,Britta Sundin,True
+Q4987905,Lisbet Calner,True
+Q4990210,Kerstin Warnerbring,True
+Q4990781,Liselotte Wågö,True
+Q4990909,Eva Birgitta Zetterberg,False
+Q4990909,Eva Zetterberg,True
+Q5005171,Börje Hörnlund,True
+Q5389786,Erling Bager,True
+Q5535667,Georg Carlsson,True
+Q5535667,Johan Ernst Carlsson,False
+Q5551491,Erik Adamsson,True
+Q5551491,Erik Selmer Johan Adamsson,False
+Q5554160,Birger Andersson,True
+Q5555011,John Andersson,True
+Q5555011,John Olov Andersson,False
+Q5555679,Olof Andersson,False
+Q5555679,Olof Andersson,True
+Q5556026,Sten Andersson,False
+Q5556026,Sten Andersson,True
+Q5556026,Sten Christer Andersson,False
+Q5557659,Sven Antby,True
+Q5561242,Asp,False
+Q5561242,Einar Asp,True
+Q5562029,Kenneth Attefors,True
+Q5571477,Leif Arne Ludvig Bergdahl,False
+Q5571477,Leif Bergdahl,True
+Q5571910,Berggren,False
+Q5571910,Erik Berggren,True
+Q5571910,Erik Natanael Berggren,False
+Q5576113,Knut Billing,True
+Q5577761,Ulf Björklund,True
+Q5587157,Johan Axel Brohult,False
+Q5587157,Johan Brohult,True
+Q5602918,Leif Carlson,True
+Q5603051,Carl Walfrid Carlsson,True
+Q5603051,Carlsson,False
+Q5603264,Kent Carlsson,True
+Q5604541,Cassel,False
+Q5604541,Leif Cassel,True
+Q5604541,Leif Delling Cassel,False
+Q5627474,Edström,False
+Q5627474,Walter Edström,True
+Q5627474,Walter Simon Edström,False
+Q5715273,Ericsson,False
+Q5715273,John August Ericsson,False
+Q5715273,John Ericsson,False
+Q5715273,John Ericsson,True
+Q5715293,Kjell Ericsson,True
+Q5719585,Gustaf von Essen,True
+Q5777699,Hans Gustafsson,False
+Q5777699,Hans Gustafsson,True
+Q5777699,Hans Ingvar Gustafsson,False
+Q5777951,Nils-Olof Gustafsson,True
+Q5781896,Erik Hagberg,True
+Q5781896,Erik Rudolf Hagberg,False
+Q5781896,Hagberg,False
+Q5781951,Harry Lars-Ove Hagberg,False
+Q5781951,Lars-Ove Hagberg,True
+Q5787447,Yngve Hamrin,True
+Q5789491,Hansson,False
+Q5789491,Nils G. Hansson,True
+Q5789491,Nils Gunnar Hansson,False
+Q5796375,Lennart Hedquist,True
+Q5801470,Henriksson,False
+Q5801470,Sture Henriksson,True
+Q5801470,Sture Hertvig Henriksson,False
+Q5804686,Tom Heyman,True
+Q5817672,Bengt Hurtig,True
+Q5817672,Bengt Valter Hurtig,False
+Q5820191,Per Olof Håkansson,True
+Q5826637,Per Jacobsson,False
+Q5826637,Per Jacobsson,True
+Q5879846,Jansson,False
+Q5879846,Robert Jansson,True
+Q5879846,Robert Leander Jansson,False
+Q5886385,Ivar Johansson,True
+Q5886385,Johansson,False
+Q5886385,Nils Ivar Johansson,False
+Q5908653,Stefan Kihlberg,True
+Q5917908,Gustaf Kollberg,True
+Q5923219,Filip Kristensson,True
+Q5923219,Kristensson,False
+Q5956968,Oskar Lindkvist,True
+Q5956968,Oskar Villiam Lindkvist,False
+Q5958560,Helge Börge Lindström,False
+Q5958560,Helge Börje Lindström,False
+Q5958560,Helge Lindström,True
+Q5965908,John Inge Lundberg,False
+Q5965908,John Lundberg,True
+Q5967484,Artur Lundqvist,True
+Q5969883,Johan Lönnroth,True
+Q5983926,Ulf Melin,True
+Q6004883,Eric Nelander,True
+Q6011486,Olof Nilsson,True
+Q6019228,Olaus Nyberg,True
+Q6026379,Adolv Olsson,True
+Q6026379,Gustav Adolv Olsson,False
+Q6026379,Olsson,False
+Q6042992,Ivar Persson,False
+Q6042992,Ivar Persson,True
+Q6042992,Persson,False
+Q6046613,Anders Pettersson,False
+Q6046613,Anders Pettersson,True
+Q6090670,Björn Samuelson,True
+Q6151901,Malmborg,False
+Q6151901,Oscar Johan Natanael Malmborg,False
+Q6151901,Oscar Malmborg,True
+Q6168430,Carl Schmidt,True
+Q6168430,Carl Sixtensson Schmidt,False
+Q6172705,Knut Erik Valdemar Senander,False
+Q6172705,Knut Senander,True
+Q6172705,Senander,False
+Q6173314,Torgil Gabriel Alexander von Seth,False
+Q6173314,Torgil von Seth,True
+Q6173314,von Seth,False
+Q6175674,Sven-Gösta Signell,True
+Q6178806,Bengt Sjölin,True
+Q6180686,Per Edvin Sköld,True
+Q6180686,Sköld,False
+Q6186253,Harry Staaf,True
+Q6190697,Lars Gunnar Stjernkvist,False
+Q6190697,Lars Stjernkvist,True
+Q6196710,Walter Sundström,True
+Q6199126,Karl Rikard Svensson,False
+Q6199126,Rikard Svensson,True
+Q6199126,Svensson,False
+Q6199190,Sven Svensson,True
+Q6199190,Svensson,False
+Q6199259,Svensson,False
+Q6199259,Waldemar Svensson,True
+Q6224947,Andersson,False
+Q6224947,Sven Johan Vigelsbo,False
+Q6224947,Sven Vigelsbo,True
+Q6240050,Arthur Widén,True
+Q6240050,Lars Arthur Widén,False
+Q6240050,Widén,False
+Q6241402,Pontus Napoleon Wiklund,False
+Q6241402,Pontus Wiklund,True
+Q6254949,Hjalmar Åhman,True
+Q719015,Mikael Odelberg,False
+Q719015,Mikael Odenberg,True
+Q719015,Odenberg,False
+Q887398,Bo Holmberg,True
+Q887398,Bo Lindor Holmberg,False

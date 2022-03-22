@@ -1,0 +1,21 @@
+{
+    "method": "gensim_mallet-lda",
+    "perplexity_score": 0,
+    "coherence_score": -1.4211807602680615,
+    "engine_options": {
+        "alpha": "asymmetric",
+        "chunk_size": 1000,
+        "max_iter": 500,
+        "num_top_words": 200,
+        "minimum_probability": 0.002,
+        "n_topics": 10,
+        "passes": 1,
+        "per_word_topics": false,
+        "update_every": 1,
+        "work_folder": "./data/tm_test.5files.mallet",
+        "workers": 1
+    },
+    "extra_options": {
+        "tfidf_weighing": false
+    }
+}
