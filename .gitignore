@@ -1,15 +1,12 @@
 *.pyc
 *.swp
 *.swo
-*.gz
 *.bin
 *.pickle
 *.pickel
 *.npy
 *.xlsx
-*.csv
 *.log
-*.zip
 userlist
 .env*
 .env
