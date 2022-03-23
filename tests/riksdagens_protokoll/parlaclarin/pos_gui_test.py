@@ -60,7 +60,7 @@ def test_pos_count_gui_load(folder: str, encoded: bool, person_codecs: md.Person
     assert gui.document_index is not None
     assert len(gui.document_index) > 0
     assert 'Noun' in gui.document_index
-    assert all(key in gui.document_index for key in {'who', 'gender_id', 'party_id', 'office_type_id'})
+    assert all(key in gui.document_index for key in ['who', 'gender_id', 'party_id', 'office_type_id'])
 
     member_columns: set = set({'person_id', 'pid', 'gender', 'party_abbrev', 'office_type'})
 
