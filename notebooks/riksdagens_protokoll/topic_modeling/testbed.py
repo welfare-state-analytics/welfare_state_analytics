@@ -32,7 +32,10 @@ import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm  # pylint: disable=unused-import
 
-# IPython.Application.instance().kernel.do_shutdown(True)
+try:
+    IPython.Application.instance().kernel.do_shutdown(True)
+except:  # pylint: disable=bare-except
+    ...
 
 output_notebook(hide_banner=True)
 pu.set_default_options()
@@ -130,8 +133,6 @@ display(ui.layout())
 
 
 # ui.update_handler()
-
-pass
 
 
 # -
