@@ -40,6 +40,7 @@ bqplot = "^0.12.32"
 PyGithub = "^1.55"
 plotly = "^5.5.0"
 bar-chart-race = "^0.1.0"
+humlab-penelope = {extras = ["full"], version = "^0.7.3"}
 
 [tool.poetry.dev-dependencies]
 black = "==20.*,>=20.8.0.b1"
