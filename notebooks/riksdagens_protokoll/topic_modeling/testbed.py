@@ -15,7 +15,6 @@
 # +
 
 
-
 from __future__ import annotations
 
 import __paths__
@@ -49,7 +48,9 @@ data_folder: str = jj(__paths__.root_folder, "tests/test_data/riksprot")
 tagged_frames_folder: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main/tagged_frames")
 model_folder: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main/tm_test.5files.mallet")
 codecs_filename: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main/riksprot_metadata.db")
-speech_index_filename: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main/tagged_frames_speeches.feather/document_index.feather")
+speech_index_filename: str = jj(
+    __paths__.root_folder, "tests/test_data/riksprot/main/tagged_frames_speeches.feather/document_index.feather"
+)
 corpus_folder: str = jj(data_folder, "main")
 
 # FIXME #166 Load fails if topic models if topic model is slimmed-
@@ -86,25 +87,35 @@ wtm.RiksprotLoadGUI(
 # ui.update_handler()
 
 # ui: ntm.TopicOverviewGUI = ntm.TopicOverviewGUI(state=state).setup()
-ui: wtm.RiksprotTopicTrendsOverviewGUI = wtm.RiksprotTopicTrendsOverviewGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+ui: wtm.RiksprotTopicTrendsOverviewGUI = wtm.RiksprotTopicTrendsOverviewGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
 ui.update_handler()
 
 ui: ntm.TopicTrendsGUI = ntm.TopicTrendsGUI(state=state).setup()
 ui.update_handler()
 
-ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
 ui.update_handler()
 
 ui: ntm.TopicTopicGUI = ntm.TopicTopicGUI(state=state).setup()
 ui.update_handler()
 
-ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
 ui.update_handler()
 
-ui: ntm.PivotTopicNetworkGUI = ntm.PivotTopicNetworkGUI(pivot_key_specs=person_codecs.property_values_specs, state=state).setup()
+ui: ntm.PivotTopicNetworkGUI = ntm.PivotTopicNetworkGUI(
+    pivot_key_specs=person_codecs.property_values_specs, state=state
+).setup()
 ui.update_handler()
 
-ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
 ui.update_handler()
 
 # ui: ntm.EditTopicLabelsGUI = ntm.EditTopicLabelsGUI(folder=model_folder, state=state).setup()
