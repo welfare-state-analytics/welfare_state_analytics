@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import uuid
 from unittest import mock
 
@@ -34,9 +35,11 @@ def test_db():
     data: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
     assert data
 
+
 def test_inferred_topics() -> tm.InferredTopicsData:
     data: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
     assert data
+
 
 @pytest.fixture
 def person_codecs() -> md.PersonCodecs:
@@ -357,65 +360,81 @@ def test_get_github_tags(speech_repository: sr.SpeechTextRepository):
 
 
 def test_speech_repository(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
-    loader: sr.Loader = sr.ZipLoader(folder=TAGGED_CORPUS_FOLDER)
+
+    protocol_name: str = "prot-199192--127"
+
+    """loader wants data in sub folders"""
+    work_folder: str = f"tests/output/{str(uuid.uuid1())[:8]}"
+    sub_folder: str = protocol_name.split("-")[1]
+    os.makedirs(jj(work_folder, sub_folder))
+    shutil.copy(
+        jj(TAGGED_CORPUS_FOLDER, f"{protocol_name}.zip"),
+        jj(work_folder, sub_folder, f"{protocol_name}.zip"),
+    )
+
+    loader: sr.Loader = sr.ZipLoader(folder=work_folder)
     repository1: sr.SpeechTextRepository = sr.SpeechTextRepository(
         source=loader,
         person_codecs=person_codecs,
         document_index=inferred_topics.document_index,
     )
     repository2: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER,
+        source=work_folder,
         person_codecs=person_codecs,
         document_index=inferred_topics.document_index,
     )
 
     for metadata, utterances in [
-        loader.load('prot-198586--152'),
-        repository1.load_protocol('prot-198586--152'),
-        repository2.load_protocol('prot-198586--152'),
+        loader.load(protocol_name),
+        repository1.load_protocol(protocol_name),
+        repository2.load_protocol(protocol_name),
     ]:
         assert isinstance(metadata, dict)
         assert isinstance(utterances, list)
-        assert metadata['name'] == "prot-198586--152"
-        assert len(utterances) == 270
-        assert utterances[7]['who'] == 'gothe_knutson_2fa077'
-        assert utterances[7]["u_id"] == "i-78c036a7f9e08229-3"
+        assert metadata['name'] == protocol_name
+        assert len(utterances) == 274
+        assert utterances[7]['who'] == 'Q4946998'
+        assert utterances[7]["u_id"] == "i-4946a79dbcd35844-0"
 
-    metadata, utterances = repository1.load_protocol('prot-198586--152')
+    metadata, utterances = repository1.load_protocol(protocol_name)
 
     merger: sr.DefaultMergeStrategy = sr.DefaultMergeStrategy()
-    groups: list[str, list[dict]] = merger.groups(utterances)
-    assert len(groups) == 70
+    groups: list[tuple[str, list[dict]]] = merger.groups(utterances)
+    assert len(groups) == 222
 
-    assert [(g[0], len(g[1])) for g in groups][:7] == [
-        ('karl-anders_petersson_8c3cb6', 2),
-        ('inger_hestvik_ddc26f', 3),
-        ('gothe_knutson_2fa077', 3),
-        ('elver_jonsson_e67379', 7),
-        ('ingemund_bengtsson_talman', 1),
-        ('per-olof_strindberg_a2107a', 10),
-        ('ulla_orring_dac7cf', 12),
+    assert [
+        ('6cb28761', 1),
+        ('e8dc8b2f', 1),
+        ('8028ef00', 1),
+        ('353b2727', 1),
+        ('0b05f8f4', 1),
+        ('59437d17', 1),
+        ('3b5aaf83', 2),
     ]
 
     speech: dict = merger.to_speech(groups[5][1], metadata=metadata)
     assert speech is not None
-    assert speech['who'] == 'per-olof_strindberg_a2107a'
-    assert len(speech['paragraphs']) == 35
-    assert int(speech['page_number']) == 15
-    assert int(speech['page_number2']) == 19
+    assert speech['who'] == 'Q5571477'
+    assert len(speech['paragraphs']) == 3
+    assert speech['page_number'] == '?'
+    assert speech['page_number2'] == '?'
 
-    speech = repository1.speech('prot-198586--152_005', mode='dict')
-    assert speech['who'] == 'ingemund_bengtsson_talman'
-    assert speech['num_words'] == 1
-    assert speech['protocol_name'] == 'prot-198586--152'
-    assert speech['office_type'] == 'talman'
-    assert int(speech['page_number']) == 15
-    assert int(speech['page_number2']) == 15
+    speech = repository1.speech(f'{protocol_name}_004', mode='dict')
+    assert speech['who'] == 'Q5571477'
+    assert speech['name'] == 'Leif Bergdahl'
+    assert speech['num_words'] == 74
+    assert speech['protocol_name'] == protocol_name
+    assert speech['office_type'] == 'Ledamot'
+    assert speech['office_type_id'] == 1
+    assert speech['sub_office_type'] == 'ledamot av Sveriges riksdag'
+    assert speech['gender'] == 'man'
+    assert speech['page_number'] == '?'
+    assert speech['page_number2'] == '?'
 
-    speech = repository1.speech('prot-198586--152_004', mode='html')
+    speech = repository1.speech(f'{protocol_name}_004', mode='html')
     assert isinstance(speech, str)
 
-    speech = repository1.speech('prot-198586--152_002', mode='text')
+    speech = repository1.speech(f'{protocol_name}_004', mode='text')
     assert isinstance(speech, str)
 
 

@@ -5,6 +5,7 @@ import json
 import os
 import re
 import types
+import uuid
 import zipfile
 from collections import namedtuple
 from itertools import groupby
@@ -57,10 +58,15 @@ class DefaultMergeStrategy(IMergeStrategy):
     def merge(self, utterances: list[dict], metadata: dict) -> Iterable[dict]:
         return [self.to_speech(us, metadata=metadata) for _, us in self.groups(utterances)]
 
+    def get_speaker_hash(self, item: dict) -> str:
+        value: str = item.get("speaker_hash")
+        if value:
+            return value
+        return f"[{str(uuid.uuid4())[:8]}]"
+
     def groups(self, utterances: list[dict]) -> list[tuple[str, list[dict]]]:
-        return [
-            (speaker_hash, [u for u in us]) for speaker_hash, us in groupby(utterances, key=lambda x: x['speaker_hash'])
-        ]
+        fx = self.get_speaker_hash
+        return [(speaker_hash, [u for u in us]) for speaker_hash, us in groupby(utterances, key=fx)]
 
     def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
         return self.to_speech(self.groups(utterances=utterances)[n][1], metadata=metadata)
@@ -129,6 +135,9 @@ class SpeechTextRepository:
         self.subst_puncts = re.compile(r'\s([,?.!"%\';:`](?:\s|$))')
         self.release_tags: list[str] = self.get_github_tags()
         self.merger: IMergeStrategy = merger or DefaultMergeStrategy()
+        self.document_name2id: dict[str, int] = (
+            document_index.reset_index().set_index('document_name')['document_id'].to_dict()
+        )
 
     def load_protocol(self, protocol_name: str) -> tuple[dict, list[dict]]:
         return self.source.load(protocol_name)
@@ -137,13 +146,17 @@ class SpeechTextRepository:
         metadata, utterances = self.source.load(protocol_name)
         return self.merger.merge(utterances=utterances, metadata=metadata)
 
-    def get_speech_info(self, speech_id: str) -> dict:
-        """FIXME: Get speaker-info from document index and person table"""
-        # FIXME: verify index to use
-        document: pd.DataFrame = self.document_index.loc[self.document_index.speech_id==speech_id]
-        speech_info: dict = document.to_dict('records')[0] if len(document) > 0 else {}
-        # FIXME: Verify if person_id or pid is index
-        speaker_name: str = self.person_codecs.person.loc[speech_info['who']].name if speech_info else "unknown"
+    def get_speech_info(self, speech_id: int | str) -> dict:
+        """Get speaker-info from document index and person table"""
+        speech_id: int = self.document_name2id.get(speech_id) if isinstance(speech_id, str) else speech_id
+        try:
+            speech_info: dict = self.document_index.loc[speech_id].to_dict()
+        except KeyError as ex:
+            raise KeyError(f"Speech {speech_id} not found in index") from ex
+        try:
+            speaker_name: str = self.person_codecs.person.loc[speech_info['who']]['name'] if speech_info else "unknown"
+        except KeyError:
+            speaker_name: str = speech_info['who']
         speech_info.update(name=speaker_name)
         return speech_info
 
@@ -156,16 +169,18 @@ class SpeechTextRepository:
             metadata, utterances = self.source.load(protocol_name)
             speech: dict = self.merger.nth(utterances, n=speech_index - 1, metadata=metadata)
             #  FIXME Verify what indexes to use
-            speech_info: dict = self.get_speech_info(speech["u_id"])
+            speech_info: dict = self.get_speech_info(speech_name)
             speech.update(**speech_info)
 
             speech["office_type"] = self.person_codecs.office_type2name.get(speech["office_type_id"], "unknown")
-            speech["sub_office_type"] = self.person_codecs.sub_office_type2name.get(speech["sub_office_type_id"], "unknown")
+            speech["sub_office_type"] = self.person_codecs.sub_office_type2name.get(
+                speech["sub_office_type_id"], "unknown"
+            )
             speech["gender"] = self.person_codecs.gender2name.get(speech["gender_id"], "unknown")
             speech["party_abbrev"] = self.person_codecs.party_abbrev2name.get(speech["party_id"], "unknown")
 
-        except:  # pylint: disable=bare-except
-            speech = {"name": "speech not found"}
+        except Exception as ex:  # pylint: disable=bare-except
+            speech = {"name": "speech not found", "error": str(ex)}
 
         if mode == 'html':
             return self.to_html(speech)
