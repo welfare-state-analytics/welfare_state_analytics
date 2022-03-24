@@ -39,7 +39,7 @@ pu.set_default_options()
 current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
 codecs_filename: str = jj(data_folder, "metadata/riksprot_metadata.main.db")
-speech_index_filename: str =  jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
+speech_index_filename: str = jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
 
 person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
