@@ -22,8 +22,8 @@ repository = "https://github.com/welfare-state-analytics/welfare_state_analytics
 [tool.poetry.dependencies]
 bokeh = "*"
 click = "*"
-ipywidgets = "==7.6.3"
-jupyterlab = "==3.0.16"
+ipywidgets = "*"
+jupyterlab = "*"
 loguru = "^0.5.3"
 matplotlib = "*"
 msgpack = "^1.0.2"
@@ -111,7 +111,7 @@ to = { format = "poetry", path = "pyproject.toml" }
 
 [tool.black]
 line-length = 120
-target-version = ["py38"]
+target-version = ["py39"]
 skip-string-normalization = true
 # include = '\.pyi?$'
 exclude = '''
