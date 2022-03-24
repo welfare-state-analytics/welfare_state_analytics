@@ -37,18 +37,18 @@ output_notebook()
 pu.set_default_options()
 
 current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
-data_folder: str = jj(__paths__.corpus_folder, "riksdagen_corpus_data")
-database_filename: str = jj(data_folder, 'metadata/riksprot_metadata.main.db')
+data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
+codecs_filename: str = jj(data_folder, "metadata/riksprot_metadata.main.db")
+speech_index_filename: str =  jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
 
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=database_filename)
-speech_index: pd.DataFrame = pd.read_feather(
-    jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
-)
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
+speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=jj(data_folder, "tagged_frames_v0.4.1_speeches.feather"),
+    source=speech_index_filename,
     person_codecs=person_codecs,
     document_index=speech_index,
 )
+
 default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_repository, state=current_state())
 
 # %%
