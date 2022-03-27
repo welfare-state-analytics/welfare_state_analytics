@@ -237,8 +237,8 @@ class SpeechTextRepository:
         xml_urls: list[GithubUrl] = []
         tags: list[str] = [t for t in self.release_tags if ignores not in t] if ignores else self.release_tags
         for tag in tags:
-            url: str = f"{self.GITHUB_REPOSITORY_URL}/blob/{tag}/corpus/{sub_folder}/{protocol_name}.xml"
-            raw_url: str = f"{self.GITHUB_REPOSITORY_RAW_URL}/{tag}/corpus/{sub_folder}/{protocol_name}.xml"
+            url: str = f"{self.GITHUB_REPOSITORY_URL}/blob/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
+            raw_url: str = f"{self.GITHUB_REPOSITORY_RAW_URL}/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
             xml_urls.append(GithubUrl(name=tag, url=url))
             xml_urls.append(GithubUrl(name=f"({tag})", url=raw_url))
         return xml_urls
