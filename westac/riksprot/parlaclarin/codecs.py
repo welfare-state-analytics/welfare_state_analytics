@@ -42,8 +42,10 @@ class Codecs:
         self.party: pd.DataFrame = null_frame
         self.sub_office_type: pd.DataFrame = null_frame
         self.extra_codecs: list[Codec] = []
+        self.source_filename: str|None = None
 
-    def load(self, source: str | sqlite3.Connection | dict) -> Codecs:
+    def load(self, source: str | sqlite3.Connection | str) -> Codecs:
+        self.source_filename = source if isinstance(source, str) else None
         with (sqlite3.connect(database=source) if isinstance(source, str) else nullcontext(source)) as db:
             tables: dict[str, pd.DataFrame] = load_tables(self.tablenames(), db=db)
             for table_name, table in tables.items():
