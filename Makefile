@@ -11,6 +11,10 @@ endif
 # ifndef RIKSPROT_REPOSITORY_TAG
 # $(error RIKSPROT_REPOSITORY_TAG is undefined)
 # endif
+RIKSPROT_XML_PATTERN=/data/westac/riksdagen_corpus_data/riksdagen-corpus/corpus/protocols/*/*.xml
+riksprot-speaker-notes:
+	@xmlstarlet sel -N x="http://www.tei-c.org/ns/1.0" -t -m "//x:note[@type='speaker']" \
+		-v "concat(@type,';',@n,';','\"',normalize-space(translate(text(),';','')),'\"')" -nl $(RIKSPROT_XML_PATTERN)
 
 PYRIKSPROT_VERSION=main
 PYRIKSPROT_TESTDATA_TAR=riksprot_sample_testdata.$(PYRIKSPROT_VERSION).tar.gz
