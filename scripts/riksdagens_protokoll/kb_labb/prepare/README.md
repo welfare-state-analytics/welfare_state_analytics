@@ -1,8 +1,6 @@
 
 ## How to prepare Riksdagens Protokoll for TA
 
-TODO Move to Westac Data
-
 ### Download package content from KB-LAB API (JSON)
 
 The Python script `extract_json_text.py` downloads `content.json` and `meta.json` for all packages having tag "protocoll" (query `{ "tags": "protokoll" }`).
