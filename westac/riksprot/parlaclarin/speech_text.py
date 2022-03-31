@@ -4,20 +4,22 @@ import abc
 import json
 import os
 import re
+import sqlite3
 import types
-import uuid
 import zipfile
 from collections import namedtuple
-from itertools import groupby
+from functools import cached_property
 from os.path import join as jj
 from typing import Iterable, Literal
 
+import numpy as np
+import pandas as pd
 from jinja2 import Template
 from loguru import logger
-import pandas as pd
 from penelope import utility as pu
 
 from . import codecs as md
+from .utility import read_sql_table
 
 try:
     import github as gh
@@ -32,6 +34,7 @@ default_template: Template = Template(
 <b>Talare:</b> {{name}}, {{ party }}, {{ district }} ({{ gender}}) <br/>
 <b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}),  uid: {{u_id}}, who: {{who}} ) <br/>
 <h3> Anförande av {{ office_type }} {{ sub_office_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
+<h2> {{ speaker_note }} </h2>
 <span style="color: blue;line-height:50%;">
 {% for n in paragraphs %}
 {{n}}
@@ -44,39 +47,36 @@ GithubUrl = namedtuple('GithubUrl', 'name url')
 
 # pylint: disable=unused-argument
 
+class SpeechTextService:
+    """Reconstitute text using information stored in the document (speech) index """
 
-class IMergeStrategy(abc.ABC):
-    @abc.abstractmethod
-    def merge(self, utterances: list[dict], metadata: dict) -> list[dict]:
-        ...
+    def __init__(self, document_index: pd.DataFrame):
+        self.speech_index: pd.DataFrame = document_index
+        self.speech_index['protocol_name'] = self.speech_index['document_name'].str.split('_').str[0]
+        self.speech_index.rename(columns={'speach_index': 'speech_index'}, inplace=True, errors='ignore')
 
-    def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
-        ...
+    @cached_property
+    def name2info(self) ->dict[str, dict]:
+        """Create a map protcol name to list of dict of relevant properties"""
+        si: pd.DataFrame = self.speech_index.set_index('protocol_name', drop=True)[['u_id', 'speech_index', 'speaker_hash', 'n_utterances']]
+        return si.assign(data=si.to_dict('records')).groupby(si.index).agg(list)['data'].to_dict()
 
+    def speeches(self, *, metadata: dict, utterances: list[dict]) -> list[dict]:
+        """Create list of speeches for all speeches in protocol"""
+        speech_infos: dict = self.name2info.get(metadata.get("name"))
+        speech_lengths: np.ndarray = np.array([s.get("n_utterances",0) for s in speech_infos])
+        speech_starts: np.ndarray = np.append([0], np.cumsum(speech_lengths))
+        speeches = [self._create_speech(metadata=metadata, utterances=utterances[speech_starts[i]:speech_starts[i+1]]) for i in range(0, len(speech_infos))]
+        return speeches
 
-class DefaultMergeStrategy(IMergeStrategy):
-    def merge(self, utterances: list[dict], metadata: dict) -> Iterable[dict]:
-        return [self.to_speech(us, metadata=metadata) for _, us in self.groups(utterances)]
+    def nth(self, *, metadata: dict, utterances: list[dict], n: int) -> dict:
+        # speech_infos: dict = self.name2info.get(metadata.get("name"))
+        # u_idx: int = [u['u_id'] for u in utterances].index(speech_infos['u_id'])
+        # self._create_speech(metadata, utterances[u_idx:u_idx+speech_infos['n_utterances']])
+        return self.speeches(metadata=metadata, utterances=utterances)[n]
 
-    def get_speaker_hash(self, item: dict) -> str:
-        value: str = item.get("speaker_hash")
-        if value:
-            return value
-        return f"[{str(uuid.uuid4())[:8]}]"
-
-    def groups(self, utterances: list[dict]) -> list[tuple[str, list[dict]]]:
-        fx = self.get_speaker_hash
-        return [(speaker_hash, [u for u in us]) for speaker_hash, us in groupby(utterances, key=fx)]
-
-    def nth(self, utterances: list[dict], n: int, metadata: dict) -> dict:
-        return self.to_speech(self.groups(utterances=utterances)[n][1], metadata=metadata)
-
-    def to_speech(self, utterances: list[dict], metadata: dict) -> dict:
-        utterances = list(utterances or [])
-        metadata = metadata or {}
-        if len(utterances) == 0:
-            return {}
-        speech: dict = dict(
+    def _create_speech(self, *, metadata: dict, utterances: list[dict]) -> dict:
+        return {} if len(list(utterances or [])) == 0 else dict(
             speaker_hash=utterances[0]['speaker_hash'],
             who=utterances[0]['who'],
             u_id=utterances[0]['u_id'],
@@ -85,11 +85,9 @@ class DefaultMergeStrategy(IMergeStrategy):
             num_words=sum(x['num_words'] for x in utterances),
             page_number=utterances[0]["page_number"] or "?",
             page_number2=utterances[-1]["page_number"] or "?",
-            protocol_name=metadata.get("name", "?"),
-            date=metadata.get("date", "?"),
+            protocol_name=(metadata or {}).get("name", "?"),
+            date=(metadata or {}).get("date", "?"),
         )
-        return speech
-
 
 class Loader(abc.ABC):
     @abc.abstractmethod
@@ -104,14 +102,16 @@ class ZipLoader(Loader):
     def load(self, protocol_name: str) -> tuple[dict, list[dict]]:
         """Loads tagged protocol data from archive"""
         sub_folder: str = protocol_name.split('-')[1]
-        filename: str = jj(self.folder, sub_folder, f"{protocol_name}.zip")
-        with zipfile.ZipFile(filename, "r") as fp:
-            json_str: str = fp.read(f"{protocol_name}.json")
-            metadata_str: str = fp.read("metadata.json")
-        metadata: dict = json.loads(metadata_str)
-        utterances: list[dict] = json.loads(json_str)
-        return metadata, utterances
-
+        for filename in [jj(self.folder, sub_folder, f"{protocol_name}.zip"), jj(self.folder, f"{protocol_name}.zip"),]:
+            if not os.path.isfile(filename):
+                continue
+            with zipfile.ZipFile(filename, "r") as fp:
+                json_str: str = fp.read(f"{protocol_name}.json")
+                metadata_str: str = fp.read("metadata.json")
+            metadata: dict = json.loads(metadata_str)
+            utterances: list[dict] = json.loads(json_str)
+            return metadata, utterances
+        raise FileNotFoundError(protocol_name)
 
 class SpeechTextRepository:
 
@@ -125,7 +125,7 @@ class SpeechTextRepository:
         person_codecs: md.PersonCodecs,
         document_index: pd.DataFrame,
         template: Template = None,
-        merger: IMergeStrategy = None,
+        service: SpeechTextService = None,
     ):
 
         self.template: Template = template or default_template
@@ -134,7 +134,7 @@ class SpeechTextRepository:
         self.document_index: pd.DataFrame = document_index
         self.subst_puncts = re.compile(r'\s([,?.!"%\';:`](?:\s|$))')
         self.release_tags: list[str] = self.get_github_tags()
-        self.merger: IMergeStrategy = merger or DefaultMergeStrategy()
+        self.service: SpeechTextService = service or SpeechTextService(self.document_index)
         self.document_name2id: dict[str, int] = (
             document_index.reset_index().set_index('document_name')['document_id'].to_dict()
         )
@@ -144,33 +144,60 @@ class SpeechTextRepository:
 
     def speeches(self, protocol_name: str) -> Iterable[dict]:
         metadata, utterances = self.source.load(protocol_name)
-        return self.merger.merge(utterances=utterances, metadata=metadata)
+        return self.service.speeches(utterances=utterances, metadata=metadata)
 
-    def get_speech_info(self, speech_id: int | str) -> dict:
+    def _get_speech_info(self, speech_id: int | str) -> dict:
         """Get speaker-info from document index and person table"""
+
         speech_id: int = self.document_name2id.get(speech_id) if isinstance(speech_id, str) else speech_id
+
         try:
             speech_info: dict = self.document_index.loc[speech_id].to_dict()
         except KeyError as ex:
             raise KeyError(f"Speech {speech_id} not found in index") from ex
+
         try:
             speaker_name: str = self.person_codecs.person.loc[speech_info['who']]['name'] if speech_info else "unknown"
         except KeyError:
             speaker_name: str = speech_info['who']
+
         speech_info.update(name=speaker_name)
+
+        try:
+            speech_info: dict = self.document_index.loc[speech_id].to_dict()
+        except KeyError as ex:
+            raise KeyError(f"Speech {speech_id} not found in index") from ex
+
+        speech_info["speaker_note"] = self.speaker_hash2note.get(speech_info.get("speaker_hash"), "(introductory note not found)")
+
         return speech_info
+
+
+    @cached_property
+    def speaker_hash2note(self) -> dict:
+        try:
+            if not self.person_codecs.source_filename:
+                return {}
+            with sqlite3.connect(database=self.person_codecs.source_filename) as db:
+                speaker_notes: pd.DataFrame = read_sql_table("speaker_notes", db)
+                speaker_notes.set_index("speaker_hash", inplace=True)
+                return speaker_notes['speaker_note'].to_dict()
+        except Exception as ex:
+            logger.error(f"unable to read speaker_notes: {ex}")
+            return {}
 
     def speech(self, speech_name: str, mode: Literal['dict', 'text', 'html']) -> dict | str:
         try:
             """Load speech data from speech corpus"""
             protocol_name: str = speech_name.split('_')[0]
-            speech_index: int = int(speech_name.split('_')[1])
+            speech_nr: int = int(speech_name.split('_')[1])
 
             metadata, utterances = self.source.load(protocol_name)
-            speech: dict = self.merger.nth(utterances, n=speech_index - 1, metadata=metadata)
-            #  FIXME Verify what indexes to use
-            speech_info: dict = self.get_speech_info(speech_name)
+            speech: dict = self.service.nth(metadata=metadata, utterances=utterances, n=speech_nr - 1)
+
+            speech_info: dict = self._get_speech_info(speech_name)
             speech.update(**speech_info)
+            speech.update(protocol_name=protocol_name)
 
             speech["office_type"] = self.person_codecs.office_type2name.get(speech["office_type_id"], "unknown")
             speech["sub_office_type"] = self.person_codecs.sub_office_type2name.get(

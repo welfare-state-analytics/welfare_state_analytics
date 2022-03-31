@@ -215,6 +215,8 @@ def test_trends_gui_transform(
             assert set(pivot_keys_text_names).intersection(set(result_columns)) == set(pivot_keys_text_names)
 
 
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
+@mock.patch('bokeh.io.push_notebook', lambda *_, **__: None)
 def test_trends_gui_bugcheck(person_codecs: md.PersonCodecs):
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 

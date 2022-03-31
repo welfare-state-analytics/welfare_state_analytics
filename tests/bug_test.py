@@ -4,6 +4,7 @@ import os
 import shutil
 import uuid
 
+import pandas as pd
 import pytest
 from penelope.co_occurrence import ContextOpts
 from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
@@ -13,9 +14,42 @@ from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, Pipeline
 from penelope.workflows import co_occurrence as workflow
 from penelope.workflows.interface import ComputeOpts
 
+import westac.riksprot.parlaclarin.codecs as md
+import westac.riksprot.parlaclarin.speech_text as sr
+
 KB_LABB_DATA_FOLDER = './tests/test_data/riksprot/kb_labb'
 
 jj = os.path.join
+
+
+@pytest.mark.skip("bug fixed")
+def test_Q4956353_faulty_speaker_info():
+
+    protocol_name: str = "prot-199192--120"
+    data_folder: str = "/data/riksdagen_corpus_data/"
+    tagged_speeches_folder: str = jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather')
+    database_filename: str = jj(data_folder, "metadata", 'riksprot_metadata.main.db')
+    speech_index_filename: str = jj(tagged_speeches_folder, "document_index.feather")
+    tagged_corpus_folder: str = jj(data_folder, "tagged_frames_v0.4.1")
+
+    person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=database_filename)
+    speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
+    speech_index['name'] = speech_index['who'].apply(person_codecs.person_id2name.get)
+
+    faulty_speech = speech_index[
+        (speech_index.protocol_name == protocol_name) & (speech_index.u_id == 'i-75fc5b8da0ea11b0-3')
+    ].iloc[0]
+
+    repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
+        source=tagged_corpus_folder,
+        person_codecs=person_codecs,
+        document_index=speech_index,
+    )
+    speeches: list[dict] = repository.speeches(protocol_name)
+    speech: dict = speeches[faulty_speech.speach_index - 1]
+
+    assert speech['who'] == faulty_speech.who == "Q4956353"
+    assert speech['u_id'] == faulty_speech.u_id
 
 
 @pytest.mark.skip("bug fixed")

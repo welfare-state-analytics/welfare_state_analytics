@@ -58,6 +58,16 @@ def speech_index() -> pd.DataFrame:
     return di
 
 
+@pytest.fixture
+def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame) -> sr.SpeechTextRepository:
+    repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
+        source=TAGGED_CORPUS_FOLDER,
+        person_codecs=person_codecs,
+        document_index=speech_index,
+    )
+    return repository
+
+
 def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     state = dict(inferred_topics=inferred_topics)
     ui = wtm_ui.RiksprotLoadGUI(person_codecs, corpus_folder=DATA_FOLDER, corpus_config=None, state=state, slim=True)
