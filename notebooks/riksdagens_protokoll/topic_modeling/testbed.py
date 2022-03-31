@@ -20,7 +20,6 @@ from __future__ import annotations
 import __paths__
 from os.path import join as jj
 
-import IPython
 import pandas as pd
 from bokeh.io import output_notebook
 from IPython.display import display
@@ -32,10 +31,12 @@ import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm  # pylint: disable=unused-import
 
-try:
-    IPython.Application.instance().kernel.do_shutdown(True)
-except:  # pylint: disable=bare-except
-    ...
+# pylint: disable=protected-access
+
+# try:
+#     IPython.Application.instance().kernel.do_shutdown(True)
+# except:  # pylint: disable=bare-except
+#     ...
 
 output_notebook(hide_banner=True)
 pu.set_default_options()
@@ -90,34 +91,33 @@ wtm.RiksprotLoadGUI(
 # ui.update_handler()
 
 # ui: ntm.TopicOverviewGUI = ntm.TopicOverviewGUI(state=state).setup()
-ui: wtm.RiksprotTopicTrendsOverviewGUI = wtm.RiksprotTopicTrendsOverviewGUI(
-    person_codecs, speech_repository=speech_repository, state=state
-).setup()
-ui.update_handler()
+# ui: wtm.RiksprotTopicTrendsOverviewGUI = wtm.RiksprotTopicTrendsOverviewGUI(
+#     person_codecs, speech_repository=speech_repository, state=state
+# ).setup()
+# ui.update_handler()
 
-ui: ntm.TopicTrendsGUI = ntm.TopicTrendsGUI(state=state).setup()
-ui.update_handler()
+# ui: ntm.TopicTrendsGUI = ntm.TopicTrendsGUI(state=state).setup()
+# ui.update_handler()
 
-ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(
-    person_codecs, speech_repository=speech_repository, state=state
-).setup()
-ui.update_handler()
+# ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(
+#     person_codecs, speech_repository=speech_repository, state=state
+# ).setup()
+# ui.update_handler()
 
-ui: ntm.TopicTopicGUI = ntm.TopicTopicGUI(state=state).setup()
-ui.update_handler()
+# ui: ntm.TopicTopicGUI = ntm.TopicTopicGUI(state=state).setup()
+# ui.update_handler()
 
 ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
     person_codecs, speech_repository=speech_repository, state=state
 ).setup()
+ui._output_format.value = "table"
+ui._year_range.value = (1920, 2020)
+ui._threshold.value = 0.001
+ui._n_docs.value = 1
 ui.update_handler()
 
 ui: ntm.PivotTopicNetworkGUI = ntm.PivotTopicNetworkGUI(
     pivot_key_specs=person_codecs.property_values_specs, state=state
-).setup()
-ui.update_handler()
-
-ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
-    person_codecs, speech_repository=speech_repository, state=state
 ).setup()
 ui.update_handler()
 
