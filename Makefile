@@ -19,13 +19,16 @@ riksprot-speaker-notes:
 PYRIKSPROT_VERSION=main
 PYRIKSPROT_TESTDATA_TAR=riksprot_sample_testdata.$(PYRIKSPROT_VERSION).tar.gz
 riksprot-test-data:
+	@mv -f tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/dtm_test.5files /tmp
+	@mv -f tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/tm_test.5files.mallet /tmp
 	@rm -rf tests/test_data/riksprot/$(PYRIKSPROT_VERSION)
 	@wget -O /tmp/$(PYRIKSPROT_TESTDATA_TAR) https://raw.githubusercontent.com/welfare-state-analytics/pyriksprot/dev/tests/test_data/dists/$(PYRIKSPROT_TESTDATA_TAR)
 	@tar -C tests/test_data/riksprot --strip 3 -xvf /tmp/$(PYRIKSPROT_TESTDATA_TAR) tests/test_data/source/$(PYRIKSPROT_VERSION)
 	@rm -f /tmp/$(PYRIKSPROT_TESTDATA_TAR)
-	@cp -f tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/tagged_frames/*.db tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/
 	@cp -f tests/test_data/riksprot/corpus.id.yml tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/corpus.yml
 	@echo "NOTE: test tm model and dtm model must also be updated"
+	@mv -f /tmp/dtm_test.5files tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/
+	@mv -f /tmp/tm_test.5files.mallet tests/test_data/riksprot/$(PYRIKSPROT_VERSION)/
 
 riksprot-test-topic-model:
 	@echo "FIXME: this is not complete, TM must be created by penelope and copied to tests/test_data/riksprot/$(PYRIKSPROT_VERSION)"
