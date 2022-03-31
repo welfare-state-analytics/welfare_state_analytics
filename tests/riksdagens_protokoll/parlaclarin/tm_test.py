@@ -370,12 +370,9 @@ def test_NextPrevTopicMixIn(inferred_topics: tm.InferredTopicsData):
 #         data['topic_token_weights'] = data['topic_token_weights'].head().reset_index().set_index('topic_id')
 #     if 'token' in data['topic_token_weights']:
 #         data['topic_token_weights'].drop(columns='token', inplace=True)
-#     # FIXME Varför är Weights så stora tal???
 
 #     assert data['topic_token_weights'] is not None
 
 #     # topic_token_weights=pd.read_feather(jj(folder, "topic_token_weights.feather"))
 #     # document_topic_weights=pd.read_feather(jj(folder, "document_topic_weights.feather"))
 #     # topic_token_overview=pd.read_feather(jj(folder, "topic_token_overview.feather")).set_index( 'topic_id', drop=True )
-
-# FIXME: Use **way** smaller corpus!

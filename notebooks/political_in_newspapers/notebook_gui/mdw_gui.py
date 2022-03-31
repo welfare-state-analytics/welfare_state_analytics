@@ -25,7 +25,6 @@ def get_group_indicies(
     group_index: pd.DataFrame = document_index[document_index.year.between(*period)]
 
     if len(pub_ids or []) > 0:
-        # TODO: #90 Make groupings more generic and move to penelope
         group_index = group_index[group_index.publication_id.isin(pub_ids)]
 
     return group_index.index
