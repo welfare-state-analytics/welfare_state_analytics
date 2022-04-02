@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.0
+#       jupytext_version: 1.13.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -42,7 +42,7 @@ corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-load_gui = ntm.create_load_topic_model_gui(corpus_config, corpus_folder, current_state())
+load_gui = ntm.create_load_topic_model_gui(corpus_folder=corpus_folder, corpus_config=corpus_config, state=current_state(), slim=True)
 display(load_gui.layout())
 
 # %% [markdown]
@@ -51,7 +51,7 @@ display(load_gui.layout())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup().layout())
+display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state()).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -59,13 +59,13 @@ display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state).setup
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state).setup().layout())
+display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-ntm.display_topic_wordcloud_gui(current_state())
+ntm.display_topic_wordcloud_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -78,7 +78,7 @@ ntm.display_topic_word_distribution_gui(current_state())
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-ntm.display_topic_trends_gui(current_state())
+ntm.display_topic_trends_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -87,7 +87,7 @@ ntm.display_topic_trends_gui(current_state())
 # - [Stanford’s Termite software](http://vis.stanford.edu/papers/termite) uses a similar visualization.
 
 # %%
-ntm.display_topic_trends_overview_gui(current_state())
+ntm.display_topic_trends_overview_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -95,7 +95,7 @@ ntm.display_topic_trends_overview_gui(current_state())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %% code_folding=[0]
-ntm.display_topic_topic_network_gui(current_state())
+ntm.display_topic_topic_network_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Document Topic Network<span style='color: red; float: right'>TRY IT</span>
