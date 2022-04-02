@@ -30,7 +30,7 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
 
         self._threshold.value = 0.20
         self._year_range.value = (1990, 1992)
-        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '200px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
@@ -66,7 +66,7 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
         )
 
         self._threshold.value = 0.20
-        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '200px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
