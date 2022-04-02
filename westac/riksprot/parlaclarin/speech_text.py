@@ -29,12 +29,11 @@ except ImportError:
 
 default_template: Template = Template(
     """
-<b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }} <br/>
+<b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }}, {{ date }} <br/>
 <b>Källa (XML):</b> {{parlaclarin_links}} <br/>
-<b>Talare:</b> {{name}}, {{ party }}, {{ district }} ({{ gender}}) <br/>
-<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}),  uid: {{u_id}}, who: {{who}} ) <br/>
-<h3> Anförande av {{ office_type }} {{ sub_office_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
-<h2> {{ speaker_note }} </h2>
+<b>Talare:</b> {{name}}, {{ party_abbrev }}, {{ office_type }}, {{ sub_office_type }}, {{ district }}, {{ gender}}<br/>
+<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}), uid: {{u_id}}, who: {{who}} <br/>
+<h3> {{ speaker_note }} </h3>
 <span style="color: blue;line-height:50%;">
 {% for n in paragraphs %}
 {{n}}
@@ -162,11 +161,6 @@ class SpeechTextRepository:
             speaker_name: str = speech_info['who']
 
         speech_info.update(name=speaker_name)
-
-        try:
-            speech_info: dict = self.document_index.loc[speech_id].to_dict()
-        except KeyError as ex:
-            raise KeyError(f"Speech {speech_id} not found in index") from ex
 
         speech_info["speaker_note"] = self.speaker_hash2note.get(speech_info.get("speaker_hash"), "(introductory note not found)")
 
