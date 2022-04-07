@@ -207,7 +207,14 @@ def plot_word_distribution(x_corpus: VectorizedCorpus, df: pd.DataFrame):  # pyl
 
     color = next(colors)
 
-    plot = figure(plot_width=800, plot_height=400, title="Word distribution", x_range=years, name="token_plot_01")
+    plot = figure(
+        plot_width=800,
+        plot_height=400,
+        sizing_mode='scale_width',
+        title="Word distribution",
+        x_range=years,
+        name="token_plot_01",
+    )
 
     plot.xgrid.grid_line_color = None
     plot.xaxis.axis_label = "Year"
