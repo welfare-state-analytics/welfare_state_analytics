@@ -30,7 +30,7 @@ except ImportError:
 default_template: Template = Template(
     """
 <b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }}, {{ date }} <br/>
-<b>Källa (XML):</b> {{parlaclarin_links}} {{ wikidata_link }} <br/>
+<b>Källor:</b> {{parlaclarin_links}} {{ wikidata_link }} {{ kb_labb_link }} <br/>
 <b>Talare:</b> {{name}}, {{ party_abbrev }}, {{ office_type }}, {{ sub_office_type }}, {{ district }}, {{ gender}}<br/>
 <b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}), uid: {{u_id}}, who: {{who}} <br/>
 <h3> {{ speaker_note }} </h3>
@@ -223,6 +223,7 @@ class SpeechTextRepository:
         try:
             speech['parlaclarin_links'] = self.to_parla_clarin_urls(speech["protocol_name"])
             speech['wikidata_link'] = self.to_wikidata_link(speech["who"])
+            speech['kb_labb_link'] = self.to_kb_labb_link(speech["protocol_name"], speech["page_number"])
             return self.template.render(speech)
         except Exception as ex:
             return f"render failed: {ex}"
@@ -240,7 +241,20 @@ class SpeechTextRepository:
             return ""
         height, width = 20, int(20 * 1.41)
         img_src = f'<img width={width} heigh={height} src="https://commons.wikimedia.org/wiki/File:Wikidata-logo-en.svg#/media/File:Wikidata-logo_S.svg"/>'
-        return f'<a href="https://www.wikidata.org/wiki/{who}" target="_blank" style="font-weight: bold;color: blue;">{img_src}</a>&nbsp;',
+        return f'<a href="https://www.wikidata.org/wiki/{who}" target="_blank" style="font-weight: bold;color: blue;">{img_src}</a>&nbsp;'
+
+    def to_kb_labb_link(self, protocol_name: str, page_number: str) -> str:
+
+        if not bool(protocol_name):
+            return ""
+
+        page_url: str = f"{protocol_name}-{str(page_number).zfill(3)}.jp2/"  if page_number.isnumeric() else ""
+
+        url: str = f"https://betalab.kb.se/{protocol_name}/{page_url}_view"
+
+        return f'<a href="{url}" target="_blank" style="font-weight: bold;color: blue;">KB</a>&nbsp;'
+
+
 
     def get_github_tags(self, github_access_token: str = None) -> list[str]:
         release_tags: list[str] = ["main", "dev"]
