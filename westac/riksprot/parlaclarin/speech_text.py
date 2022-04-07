@@ -30,7 +30,7 @@ except ImportError:
 default_template: Template = Template(
     """
 <b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }}, {{ date }} <br/>
-<b>Källa (XML):</b> {{parlaclarin_links}} <br/>
+<b>Källa (XML):</b> {{parlaclarin_links}} {{ wikidata_link }} <br/>
 <b>Talare:</b> {{name}}, {{ party_abbrev }}, {{ office_type }}, {{ sub_office_type }}, {{ district }}, {{ gender}}<br/>
 <b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}), uid: {{u_id}}, who: {{who}} <br/>
 <h3> {{ speaker_note }} </h3>
@@ -222,6 +222,7 @@ class SpeechTextRepository:
     def to_html(self, speech: dict) -> str:
         try:
             speech['parlaclarin_links'] = self.to_parla_clarin_urls(speech["protocol_name"])
+            speech['wikidata_link'] = self.to_wikidata_link(speech["who"])
             return self.template.render(speech)
         except Exception as ex:
             return f"render failed: {ex}"
@@ -234,14 +235,21 @@ class SpeechTextRepository:
             )
         )
 
+    def to_wikidata_link(self, who: str) -> str:
+        if not bool(who) or who == "unknown":
+            return ""
+        height, width = 20, int(20 * 1.41)
+        img_src = f'<img width={width} heigh={height} src="https://commons.wikimedia.org/wiki/File:Wikidata-logo-en.svg#/media/File:Wikidata-logo_S.svg"/>'
+        return f'<a href="https://www.wikidata.org/wiki/{who}" target="_blank" style="font-weight: bold;color: blue;">{img_src}</a>&nbsp;',
+
     def get_github_tags(self, github_access_token: str = None) -> list[str]:
         release_tags: list[str] = ["main", "dev"]
         try:
 
             access_token: str = github_access_token or os.environ.get("GITHUB_ACCESS_TOKEN", None)
 
-            if access_token is None:
-                logger.info("GITHUB_ACCESS_TOKEN not set")
+            #if access_token is None:
+            #    logger.info("GITHUB_ACCESS_TOKEN not set")
 
             github: gh.Github = gh.Github(access_token)
 
