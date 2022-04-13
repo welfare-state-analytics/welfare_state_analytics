@@ -43,11 +43,13 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
     def update(self) -> pd.DataFrame:
         _ = super().update()
         """note: at this point dtw is equal to calculator.data"""
+        self.alert("preparing data, please wait...")
         calculator: tx.DocumentTopicsCalculator = self.inferred_topics.calculator
         data: pd.DataFrame = self.person_codecs.decode(
             calculator.overload(includes="protocol_name,document_name,gender_id,party_id,person_id").value,
             drop=True,
         )
+        self.alert("Done!")
         return data
 
 
@@ -78,7 +80,10 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
 
     def update(self) -> pd.DataFrame:
         _ = super().update()
-        return overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
+        self.alert("preparing data, please wait...")
+        data: pd.DataFrame = overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
+        self.alert("Done!")
+        return data
 
 
 def overload_decoded_member_data(
