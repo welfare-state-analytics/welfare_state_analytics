@@ -240,7 +240,7 @@ class SpeechTextRepository:
         if not bool(who) or who == "unknown":
             return ""
         height, width = 20, int(20 * 1.41)
-        img_src = f'<img width={width} heigh={height} src="https://commons.wikimedia.org/wiki/File:Wikidata-logo-en.svg#/media/File:Wikidata-logo_S.svg"/>'
+        img_src = f'<img width={width} heigh={height} src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Wikidata-logo.svg"/>'
         return f'<a href="https://www.wikidata.org/wiki/{who}" target="_blank" style="font-weight: bold;color: blue;">{img_src}</a>&nbsp;'
 
     def to_kb_labb_link(self, protocol_name: str, page_number: str) -> str:
@@ -274,12 +274,12 @@ class SpeechTextRepository:
             ...
         return release_tags
 
-    def get_github_xml_urls(self, protocol_name: str, ignores: str = None) -> list[GithubUrl]:
+    def get_github_xml_urls(self, protocol_name: str, ignores: str = None, n: int = 2) -> list[GithubUrl]:
         protocol_name: str = pu.strip_extensions(protocol_name)
         sub_folder: str = protocol_name.split('-')[1]
         xml_urls: list[GithubUrl] = []
         tags: list[str] = [t for t in self.release_tags if ignores not in t] if ignores else self.release_tags
-        for tag in tags:
+        for tag in tags[:n]:
             url: str = f"{self.GITHUB_REPOSITORY_URL}/blob/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
             raw_url: str = f"{self.GITHUB_REPOSITORY_RAW_URL}/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
             xml_urls.append(GithubUrl(name=tag, url=url))
