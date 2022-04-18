@@ -12,6 +12,7 @@ from penelope.notebook.topic_modelling import mixins as mx
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
+from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
 from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
@@ -252,6 +253,29 @@ def test_topic_trends(
 
     ui.setup()
 
+    ui.update_handler()
+
+    assert ui is not None
+
+
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
+def test_topic_multi_trends(
+    person_codecs: md.PersonCodecs,
+    speech_repository: sr.SpeechTextRepository,
+    inferred_topics: tm.InferredTopicsData,
+):
+
+    state = dict(inferred_topics=inferred_topics)
+
+    ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
+        person_codecs=person_codecs, speech_repository=speech_repository, state=state
+    )
+
+    ui.setup()
+    ui.add_line(name="man", values=["gender: man"])
+    ui.add_line(name="kvinna", values=["gender: woman"])
+    ui._year_range.value = (1920, 2020)
+    ui._topic_id.value = 56
     ui.update_handler()
 
     assert ui is not None

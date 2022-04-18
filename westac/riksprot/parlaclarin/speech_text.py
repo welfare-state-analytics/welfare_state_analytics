@@ -29,12 +29,11 @@ except ImportError:
 
 default_template: Template = Template(
     """
-<b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }} <br/>
-<b>Källa (XML):</b> {{parlaclarin_links}} <br/>
-<b>Talare:</b> {{name}}, {{ party }}, {{ district }} ({{ gender}}) <br/>
-<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}),  uid: {{u_id}}, who: {{who}} ) <br/>
-<h3> Anförande av {{ office_type }} {{ sub_office_type }} {{ name }} ({{ party_abbrev }}) {{ date }}</h3>
-<h2> {{ speaker_note }} </h2>
+<b>Protokoll:</b> {{protocol_name}} sidan {{ page_number }}, {{ chamber }}, {{ date }} <br/>
+<b>Källor:</b> {{parlaclarin_links}} {{ wikidata_link }} {{ kb_labb_link }} <br/>
+<b>Talare:</b> {{name}}, {{ party_abbrev }}, {{ office_type }}, {{ sub_office_type }}, {{ district }}, {{ gender}}<br/>
+<b>Antal tokens:</b> {{ num_tokens }} ({{ num_words }}), uid: {{u_id}}, who: {{who}} <br/>
+<h3> {{ speaker_note }} </h3>
 <span style="color: blue;line-height:50%;">
 {% for n in paragraphs %}
 {{n}}
@@ -163,11 +162,6 @@ class SpeechTextRepository:
 
         speech_info.update(name=speaker_name)
 
-        try:
-            speech_info: dict = self.document_index.loc[speech_id].to_dict()
-        except KeyError as ex:
-            raise KeyError(f"Speech {speech_id} not found in index") from ex
-
         speech_info["speaker_note"] = self.speaker_hash2note.get(speech_info.get("speaker_hash"), "(introductory note not found)")
 
         return speech_info
@@ -228,6 +222,8 @@ class SpeechTextRepository:
     def to_html(self, speech: dict) -> str:
         try:
             speech['parlaclarin_links'] = self.to_parla_clarin_urls(speech["protocol_name"])
+            speech['wikidata_link'] = self.to_wikidata_link(speech["who"])
+            speech['kb_labb_link'] = self.to_kb_labb_link(speech["protocol_name"], speech["page_number"])
             return self.template.render(speech)
         except Exception as ex:
             return f"render failed: {ex}"
@@ -240,14 +236,34 @@ class SpeechTextRepository:
             )
         )
 
+    def to_wikidata_link(self, who: str) -> str:
+        if not bool(who) or who == "unknown":
+            return ""
+        height, width = 20, int(20 * 1.41)
+        img_src = f'<img width={width} heigh={height} src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Wikidata-logo.svg"/>'
+        return f'<a href="https://www.wikidata.org/wiki/{who}" target="_blank" style="font-weight: bold;color: blue;">{img_src}</a>&nbsp;'
+
+    def to_kb_labb_link(self, protocol_name: str, page_number: str) -> str:
+
+        if not bool(protocol_name):
+            return ""
+
+        page_url: str = f"{protocol_name}-{str(page_number).zfill(3)}.jp2/"  if page_number.isnumeric() else ""
+
+        url: str = f"https://betalab.kb.se/{protocol_name}/{page_url}_view"
+
+        return f'<a href="{url}" target="_blank" style="font-weight: bold;color: blue;">KB</a>&nbsp;'
+
+
+
     def get_github_tags(self, github_access_token: str = None) -> list[str]:
         release_tags: list[str] = ["main", "dev"]
         try:
 
             access_token: str = github_access_token or os.environ.get("GITHUB_ACCESS_TOKEN", None)
 
-            if access_token is None:
-                logger.info("GITHUB_ACCESS_TOKEN not set")
+            #if access_token is None:
+            #    logger.info("GITHUB_ACCESS_TOKEN not set")
 
             github: gh.Github = gh.Github(access_token)
 
@@ -258,12 +274,12 @@ class SpeechTextRepository:
             ...
         return release_tags
 
-    def get_github_xml_urls(self, protocol_name: str, ignores: str = None) -> list[GithubUrl]:
+    def get_github_xml_urls(self, protocol_name: str, ignores: str = None, n: int = 2) -> list[GithubUrl]:
         protocol_name: str = pu.strip_extensions(protocol_name)
         sub_folder: str = protocol_name.split('-')[1]
         xml_urls: list[GithubUrl] = []
         tags: list[str] = [t for t in self.release_tags if ignores not in t] if ignores else self.release_tags
-        for tag in tags:
+        for tag in tags[:n]:
             url: str = f"{self.GITHUB_REPOSITORY_URL}/blob/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
             raw_url: str = f"{self.GITHUB_REPOSITORY_RAW_URL}/{tag}/corpus/protocols/{sub_folder}/{protocol_name}.xml"
             xml_urls.append(GithubUrl(name=tag, url=url))

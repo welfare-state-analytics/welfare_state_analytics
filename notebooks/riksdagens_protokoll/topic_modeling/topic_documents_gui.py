@@ -30,7 +30,7 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
 
         self._threshold.value = 0.20
         self._year_range.value = (1990, 1992)
-        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '200px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
@@ -43,11 +43,13 @@ class RiksprotBrowseTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, 
     def update(self) -> pd.DataFrame:
         _ = super().update()
         """note: at this point dtw is equal to calculator.data"""
+        self.alert("preparing data, please wait...")
         calculator: tx.DocumentTopicsCalculator = self.inferred_topics.calculator
         data: pd.DataFrame = self.person_codecs.decode(
             calculator.overload(includes="protocol_name,document_name,gender_id,party_id,person_id").value,
             drop=True,
         )
+        self.alert("Done!")
         return data
 
 
@@ -66,7 +68,7 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
         )
 
         self._threshold.value = 0.20
-        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '180px'}, rows=8)
+        self._extra_placeholder = self.default_pivot_keys_layout(layout={'width': '200px'}, rows=8)
 
     def setup(self, **kwargs):  # pylint: disable=useless-super-delegation
         return super().setup(**kwargs)
@@ -78,7 +80,10 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
 
     def update(self) -> pd.DataFrame:
         _ = super().update()
-        return overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
+        self.alert("preparing data, please wait...")
+        data: pd.DataFrame = overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
+        self.alert("Done!")
+        return data
 
 
 def overload_decoded_member_data(

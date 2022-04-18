@@ -110,6 +110,21 @@ display(wtm.RiksprotBrowseTopicDocumentsGUI(**default_args).setup().layout())
 display(wtm.RiksprotTopicTrendsGUI(**default_args).setup().layout())
 
 # %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span>Topic Trends over Time (Multiple Lines)<span style='color: red; float: right'>RUN</span>
+
+# %%
+ui: wtm.RiksprotTopicMultiTrendsGUI = wtm.RiksprotTopicMultiTrendsGUI(**default_args).setup()
+display(ui.layout())
+
+# ui._topic_id.value = 1
+# ui._year_range.value = (ui._year_range.min, ui._year_range.max + 1)
+# ui.add_line(name="(S)", values=["party_abbrev: S"])
+# ui.add_line(name="(M)", values=["party_abbrev: M"])
+# ui.add_line(name="(C)", values=["party_abbrev: C"])
+# ui.add_line(name="(L)", values=["party_abbrev: L"])
+# ui.add_line(name="(SD)", values=["party_abbrev: SD"])
+
+# %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
 # The topic shares  displayed as a scattered heatmap plot using gradient color based on topic's weight in documen (see [Stanford’s Termite software](http://vis.stanford.edu/papers/termite).
 #

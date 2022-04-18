@@ -228,11 +228,11 @@ write-to-ipynb:
 	@-poetry run jupytext --to ipynb $(PY_FILES)
 
 .PHONY: git-ipynb
-git-ipynb: guard-clean-working-repository
+git-ipynb:
 	@poetry run jupytext --quiet --to notebook $(PY_FILES) &> /dev/null
 	@status="$$(git status --porcelain)"
 	@if [[ "$$status" != "" ]]; then
-		@git add .
+		@git add $(IPYNB_FILES)
 		@git commit -m "📌 make git-ipynb"
 		@git push
 	fi
