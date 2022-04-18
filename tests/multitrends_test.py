@@ -4,10 +4,10 @@ import os
 
 import pandas as pd
 from penelope import topic_modelling as tm
+from penelope.plot import plot_multiple_value_series2 as plot_multiple_value_series
 
 import westac.riksprot.parlaclarin.speech_text as sr
-from notebooks.riksdagens_protokoll.topic_modeling.multitrends.plot import plot_multiple_value_series
-from notebooks.riksdagens_protokoll.topic_modeling.multitrends.trends_gui import RiksprotTopicMultiTrendsGUI
+from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
 from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
