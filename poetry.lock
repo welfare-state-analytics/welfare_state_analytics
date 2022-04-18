@@ -553,41 +553,46 @@ version = "0.7.8"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = ">=3.9.0,<3.10.0"
+python-versions = "==3.9.*"
+develop = true
 
 [package.dependencies]
 bokeh = "*"
-click = {version = "8.0.4", optional = true, markers = "extra == \"full\""}
+click = {version = "8.0.4", optional = true}
 ftfy = "*"
-gensim = {version = "*", optional = true, markers = "extra == \"full\""}
+gensim = {version = "*", optional = true}
 ipycytoscape = "*"
-ipydatagrid = ">=1.1.8,<2.0.0"
+ipydatagrid = "^1.1.8"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = ">=0.3.1,<0.4.0"
-more_itertools = ">=8.5.0,<9.0.0"
-msgpack = ">=1.0.2,<2.0.0"
-nltk = ">=3.5,<4.0"
+memoization = "^0.3.1"
+more_itertools = "^8.5.0"
+msgpack = "^1.0.2"
+nltk = "^3.5"
 numpy = "*"
-openpyxl = ">=3.0.5,<4.0.0"
+openpyxl = "^3.0.5"
 pandas = "*"
-pyarrow = {version = "*", optional = true, markers = "extra == \"full\""}
-python-louvain = {version = "*", optional = true, markers = "extra == \"full\""}
-PyYAML = {version = "*", optional = true, markers = "extra == \"full\""}
-requests = ">=2.24.0,<3.0.0"
+pyarrow = {version = "*", optional = true}
+python-louvain = {version = "*", optional = true}
+PyYAML = {version = "*", optional = true}
+requests = "^2.24.0"
 scipy = "*"
-smart-open = ">=5.2.1,<6.0.0"
-spacy = {version = "*", optional = true, markers = "extra == \"full\""}
-textacy = {version = "*", optional = true, markers = "extra == \"full\""}
-toml = ">=0.10.2,<0.11.0"
-tqdm = ">=4.62.3,<5.0.0"
-wordcloud = {version = "*", optional = true, markers = "extra == \"full\""}
+smart-open = "^5.2.1"
+spacy = {version = "*", optional = true}
+textacy = {version = "*", optional = true}
+toml = "^0.10.2"
+tqdm = "^4.62.3"
+wordcloud = {version = "*", optional = true}
 
 [package.extras]
-full = ["gensim", "spacy", "pyarrow", "textacy", "wordcloud", "pyyaml", "python-louvain", "click (==8.0.4)"]
+full = ["pyarrow", "textacy", "spacy", "gensim", "wordcloud", "pyyaml", "click (==8.0.4)", "python-louvain"]
+
+[package.source]
+type = "directory"
+url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -2600,7 +2605,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.9.*"
-content-hash = "e4cc298648d8c6dda3a121400573953c1d5e4b359deff6728079900bbab51a53"
+content-hash = "02fafb0db4da4185e057b5d100c290d0e9216d3a1635a09e313dae7e86452baa"
 
 [metadata.files]
 anyio = [
@@ -2958,10 +2963,7 @@ gensim = [
     {file = "gensim-4.1.2-cp39-cp39-win_amd64.whl", hash = "sha256:39139be83c3128e234216189a094f959ac2b052a808911b0b56d980d5f96981f"},
     {file = "gensim-4.1.2.tar.gz", hash = "sha256:1932c257de4eccbb64cc40d46e8577a25f5f47b94b96019a969fb36150f11d15"},
 ]
-humlab-penelope = [
-    {file = "humlab-penelope-0.7.8.tar.gz", hash = "sha256:b01663551a2ac2e6c0a0724e94f82694b9a943bca3c2b843175e003f585c7eb3"},
-    {file = "humlab_penelope-0.7.8-py3-none-any.whl", hash = "sha256:1c0be324925e3c660567fcd15c4a8c784fe5c2318301d3653850c0b96246a540"},
-]
+humlab-penelope = []
 identify = [
     {file = "identify-2.4.12-py2.py3-none-any.whl", hash = "sha256:5f06b14366bd1facb88b00540a1de05b69b310cbc2654db3c7e07fa3a4339323"},
     {file = "identify-2.4.12.tar.gz", hash = "sha256:3f3244a559290e7d3deb9e9adc7b33594c1bc85a9dd82e0f1be519bf12a1ec17"},
