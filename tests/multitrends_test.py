@@ -28,7 +28,6 @@ SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feat
 # SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
 
 
-
 @mock.patch('bokeh.io.show', lambda *_, **__: None)
 def test_topic_multitrends():
     speech_index: pd.DataFrame = pd.read_feather(SPEECH_INDEX_FILENAME)
