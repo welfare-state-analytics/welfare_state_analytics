@@ -19,10 +19,10 @@
 
 from __future__ import annotations
 
-import __paths__
+import __paths__  # pylint: disable=unused-import
 from os.path import join as jj
 
-import pandas as pd
+import pandas as pd  # pylint: disable=unused-import
 from bokeh.io import output_notebook
 from bokeh.models import FuncTickFormatter
 
@@ -37,6 +37,7 @@ import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm  # pylint: disable=unused-import
 from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
 
+# pylint: disable=protected-access
 output_notebook(hide_banner=True)
 pu.set_default_options()
 

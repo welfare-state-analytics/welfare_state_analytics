@@ -17,6 +17,8 @@ import westac.riksprot.parlaclarin.speech_text as sr
 
 from .mixins import RiksProtMetaDataMixIn
 
+# pylint: disable=too-many-ancestors, no-member
+
 
 class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMixIn, ntm.TopicTrendsGUI):
     def __init__(

@@ -365,7 +365,6 @@ class TNextPrevTopicMixIn(mx.NextPrevTopicMixIn):
 
 
 def test_NextPrevTopicMixIn(inferred_topics: tm.InferredTopicsData):
-    ...
     ctrl: TNextPrevTopicMixIn = TNextPrevTopicMixIn(inferred_topics)
     assert ctrl is not None
     ctrl.topic_id = (0, inferred_topics.n_topics - 1, inferred_topics.topic_labels)
