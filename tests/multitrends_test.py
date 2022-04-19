@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import os
+from unittest import mock
 
 import pandas as pd
 from penelope import topic_modelling as tm
-from penelope.plot import plot_multiple_value_series2 as plot_multiple_value_series
+from penelope.plot import plot_multiple_value_series
 
 import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
@@ -27,6 +28,8 @@ SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feat
 # SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
 
 
+
+@mock.patch('bokeh.io.show', lambda *_, **__: None)
 def test_topic_multitrends():
     speech_index: pd.DataFrame = pd.read_feather(SPEECH_INDEX_FILENAME)
     person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
@@ -47,7 +50,7 @@ def test_topic_multitrends():
     ui.add_line(name="man", values=["gender: man"])
     ui.add_line(name="kvinna", values=["gender: woman"])
     ui._year_range.value = (1920, 2020)
-    ui._topic_id.value = 56
+    ui._topic_id.value = 8
 
     # ytw: pd.DataFrame = ui.update()
 

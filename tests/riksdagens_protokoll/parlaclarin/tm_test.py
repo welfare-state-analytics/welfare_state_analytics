@@ -275,7 +275,7 @@ def test_topic_multi_trends(
     ui.add_line(name="man", values=["gender: man"])
     ui.add_line(name="kvinna", values=["gender: woman"])
     ui._year_range.value = (1920, 2020)
-    ui._topic_id.value = 56
+    ui._topic_id.value = 5
     ui.update_handler()
 
     assert ui is not None
