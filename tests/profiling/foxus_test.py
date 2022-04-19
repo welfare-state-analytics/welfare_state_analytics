@@ -48,7 +48,7 @@ def xtest_sou():
 
     assert inferred_topics
 
-    ## ntm.display_topic_topic_network_gui(state);
+    # ntm.display_topic_topic_network_gui(state);
     gui: ntm.TopicTopicGUI = ntm.TopicTopicGUI(state=state).setup()
     _ = gui.layout()
     gui.update_handler()
@@ -59,7 +59,7 @@ def xtest_sou():
     calculator.threshold(threshold=gui.threshold)
     calculator.filter_by_topics(topic_ids=gui.topic_ids, negate=gui.exclude_mode)
     calculator.to_topic_topic_network(gui.n_docs, topic_labels=gui.topic_labels)
-    data = calculator.value
+    _ = calculator.value
 
     # data = (
     #     gui.inferred_topics.calculator.reset()
