@@ -115,7 +115,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                         category_name='year',
                         columns=None,
                         smooth=('smooth' in self.output_format.lower()),
-                        fig_opts={'title': f'Topic {self.topic_label.get(self.topic_id)} prevalence'},
+                        fig_opts={'title': f'Topic {self.topic_label(self.topic_id)} prevalence'},
                     )
             # self.alert("✅")
         except Exception as ex:
