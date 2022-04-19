@@ -12,6 +12,7 @@ DATA_FOLDER: str = "/data/westac/riksdagen_corpus_data"
 CODECS_FILENAME: str = jj(DATA_FOLDER, "metadata/riksprot_metadata.main.db")
 MODEL_NAME: str = "tm_v041.1920-2020_500-TF5-MP0.02.500000.lemma.mallet"
 
+# pylint: disable=protected-access
 
 def xtest_focus_topics():
     model_folder: str = jj(DATA_FOLDER, MODEL_NAME)
