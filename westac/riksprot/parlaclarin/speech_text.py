@@ -248,7 +248,7 @@ class SpeechTextRepository:
         if not bool(protocol_name):
             return ""
 
-        page_url: str = f"{protocol_name}-{str(page_number).zfill(3)}.jp2/"  if page_number.isnumeric() else ""
+        page_url: str = f"{protocol_name.replace('-', '_')}-{str(page_number).zfill(3)}.jp2/"  if page_number.isnumeric() else ""
 
         url: str = f"https://betalab.kb.se/{protocol_name}/{page_url}_view"
 
