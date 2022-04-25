@@ -70,7 +70,7 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 
 state = dict(inferred_topics=inferred_topics)
 wtm.RiksprotLoadGUI(
-    person_codecs, corpus_folder=corpus_folder, corpus_config=None, state=state, slim=True
+    person_codecs, corpus_folder=corpus_folder, state=state, slim=True
 ).setup().load()
 
 # ui: ntm.WordcloudGUI = ntm.WordcloudGUI(state).setup()

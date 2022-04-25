@@ -103,7 +103,7 @@
 import __paths__
 
 from bokeh.plotting import output_notebook
-from IPython.core.display import display
+from IPython.display import display
 from penelope.notebook.co_occurrence import main_gui
 
 # utility.CLEAR_OUTPUT = False
