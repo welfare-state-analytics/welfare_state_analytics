@@ -14,6 +14,7 @@ from penelope.plot import plot_multiple_value_series2
 
 import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
+import westac.riksprot.parlaclarin.utility as ru
 
 from .mixins import RiksProtMetaDataMixIn
 
@@ -29,6 +30,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
     ):
         super(RiksprotTopicMultiTrendsGUI, self).__init__(  # pylint: disable=super-with-arguments
             pivot_key_specs=person_codecs.property_values_specs,
+            color_presets=ru.PARTY_COLOR_BY_ABBREV,
             person_codecs=person_codecs,
             speech_repository=speech_repository,
             state=state,
@@ -45,15 +47,15 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
         return self
 
     @property
-    def lines_filter_opts(self) -> dict[str, pu.PropertyValueMaskingOpts]:
+    def lines_filter_opts(self) -> list[tuple[str, str, pu.PropertyValueMaskingOpts]]:
         """Returns lines' filter key/values as a name-to-values mapping."""
-        lines_opts = {}
-        for key, opts in self.lines:
+        lines_opts: list[tuple[str, str, pu.PropertyValueMaskingOpts]] = []
+        for key, color, opts in self.lines:
             key_values = defaultdict(list)
             value_tuples: tuple[str, str] = [x.split(': ') for x in opts]
             for k, v in value_tuples:
                 key_values[k].append(v)
-            lines_opts[key] = self.pivot_keys.create_filter_key_values_dict(key_values, decode=True)
+            lines_opts.append((key, color, self.pivot_keys.create_filter_key_values_dict(key_values, decode=True)))
         return lines_opts
 
     def update(self) -> pd.DataFrame:
@@ -65,8 +67,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
             .threshold(self.threshold)
         ).value
         # .overload(includes="gender_id,party_id,office_type_id,sub_office_type_id,person_id")
-        for name, opts in self.lines_filter_opts.items():
-            # logger.info(opts.opts)
+        for name, _, opts in self.lines_filter_opts:
             try:
                 ytw_line: pd.DataFrame = (
                     (
@@ -83,7 +84,6 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                 ytw_line.columns = [name]
                 ytw = ytw.merge(ytw_line[name], how='left', left_index=True, right_index=True)
                 ytw[name].fillna(0, inplace=True)
-                # logger.info(f"{name}: {len(ytw_line)}")
             except pu.EmptyDataError as ex:
                 logger.info(ex)
                 ytw[name] = 0
@@ -109,6 +109,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                     g = table_widget(self.yearly_topic_weights, handler=self.click_handler)
                     display(g)
                 else:
+                    colors: list[str] = [color for _, color, _ in self.lines]
                     plot_multiple_value_series2(
                         kind=self.output_format.lower(),
                         data=self.yearly_topic_weights.reset_index(),
@@ -116,6 +117,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                         columns=None,
                         smooth=('smooth' in self.output_format.lower()),
                         fig_opts={'title': f'Topic {self.topic_label(self.topic_id)} prevalence'},
+                        colors=colors,
                     )
             # self.alert("✅")
         except Exception as ex:

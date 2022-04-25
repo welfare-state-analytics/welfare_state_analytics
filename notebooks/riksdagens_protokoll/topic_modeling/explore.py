@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.7
+#       jupytext_version: 1.13.8
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -52,10 +52,6 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 )
 
 default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_repository, state=current_state())
-
-# %%
-# # ! jupytext --to py:percent explore.ipynb
-# # ! cat /data/westac/riksdagen_corpus_data/tm_1920-2020_500-TF5-MP0.02.500000.lemma.mallet/topic_token_overview_label.csv
 
 # %% [markdown]
 # ### <span style='color: green'>SETUP </span> Load Model<span style='float: right; color: red'>MANDATORY</span>

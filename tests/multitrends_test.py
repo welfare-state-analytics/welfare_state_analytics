@@ -15,17 +15,17 @@ jj = os.path.join
 
 # pylint: disable=redefined-outer-name,protected-access
 
-DATA_FOLDER: str = "/data/riksdagen_corpus_data/"
-MODEL_FOLDER: str = jj(DATA_FOLDER, "/data/riksdagen_corpus_data/tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
-DATABASE_FILENAME: str = jj(DATA_FOLDER, 'metadata/riksprot_metadata.main.db')
-TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
-SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
+# DATA_FOLDER: str = "/data/riksdagen_corpus_data/"
+# MODEL_FOLDER: str = jj(DATA_FOLDER, "/data/riksdagen_corpus_data/tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
+# DATABASE_FILENAME: str = jj(DATA_FOLDER, 'metadata/riksprot_metadata.main.db')
+# TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
+# SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
 
-# DATA_FOLDER: str = "./tests/test_data/riksprot/main"
-# MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
-# DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
-# TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
-# SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
+DATA_FOLDER: str = "./tests/test_data/riksprot/main"
+MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
+DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
+TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
+SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
@@ -46,8 +46,8 @@ def test_topic_multitrends():
     )
 
     ui.setup()
-    ui.add_line(name="man", values=["gender: man"])
-    ui.add_line(name="kvinna", values=["gender: woman"])
+    ui.add_line(name="man", color="#00ff00", values=["gender: man"])
+    ui.add_line(name="kvinna", color="#ff0000", values=["gender: woman"])
     ui._year_range.value = (1920, 2020)
     ui._topic_id.value = 8
 
@@ -64,7 +64,7 @@ def test_topic_multitrends():
     # .overload(includes="gender_id,party_id,office_type_id,sub_office_type_id,person_id")
 
     topic_data: pd.DataFrame = calculator.value
-    for name, opts in ui.lines_filter_opts.items():
+    for name, _, opts in ui.lines_filter_opts:
         calculator.reset(topic_data)
         calculator.filter_by_keys(**opts.opts)
         calculator.yearly_topic_weights(ui.get_result_threshold(), n_top_relevance=None, topic_ids=ui.topic_id)

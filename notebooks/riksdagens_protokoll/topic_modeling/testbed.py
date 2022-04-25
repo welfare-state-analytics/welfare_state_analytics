@@ -70,16 +70,19 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 
 state = dict(inferred_topics=inferred_topics)
 wtm.RiksprotLoadGUI(
-    person_codecs, corpus_folder=corpus_folder, corpus_config=None, state=state, slim=True
+    person_codecs, corpus_folder=corpus_folder, state=state, slim=True
 ).setup().load()
 
 # ui: ntm.WordcloudGUI = ntm.WordcloudGUI(state).setup()
 # display(ui.layout())
 # ui.update_handler()
 
-# ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
-# ui._find_text.value = "byggnad"
-# ui._compute.click()
+ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
+ui._find_text.value = "byggnad"
+ui._compute.click()
+display(ui.layout())
 
 # ui: wtm.RiksprotBrowseTopicDocumentsGUI = wtm.RiksprotBrowseTopicDocumentsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
 # ui.update_handler()
@@ -107,19 +110,19 @@ wtm.RiksprotLoadGUI(
 # ui: ntm.TopicTopicGUI = ntm.TopicTopicGUI(state=state).setup()
 # ui.update_handler()
 
-ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
-    person_codecs, speech_repository=speech_repository, state=state
-).setup()
-ui._output_format.value = "table"
-ui._year_range.value = (1920, 2020)
-ui._threshold.value = 0.001
-ui._n_docs.value = 1
-ui.update_handler()
+# ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
+#     person_codecs, speech_repository=speech_repository, state=state
+# ).setup()
+# ui._output_format.value = "table"
+# ui._year_range.value = (1920, 2020)
+# ui._threshold.value = 0.001
+# ui._n_docs.value = 1
+# ui.update_handler()
 
-ui: ntm.PivotTopicNetworkGUI = ntm.PivotTopicNetworkGUI(
-    pivot_key_specs=person_codecs.property_values_specs, state=state
-).setup()
-ui.update_handler()
+# ui: ntm.PivotTopicNetworkGUI = ntm.PivotTopicNetworkGUI(
+#     pivot_key_specs=person_codecs.property_values_specs, state=state
+# ).setup()
+# ui.update_handler()
 
 # ui: ntm.EditTopicLabelsGUI = ntm.EditTopicLabelsGUI(folder=model_folder, state=state).setup()
 
@@ -129,7 +132,8 @@ ui.update_handler()
 # ui: ntm.FocusTopicDocumentNetworkGui = ntm.FocusTopicDocumentNetworkGui(
 #     pivot_key_specs=person_codecs.property_values_specs, state=state
 # ).setup()
-display(ui.layout())
+
+# display(ui.layout())
 
 # ui.update_handler()
 

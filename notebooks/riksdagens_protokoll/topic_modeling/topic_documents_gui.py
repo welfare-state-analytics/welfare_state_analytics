@@ -80,7 +80,7 @@ class RiksprotFindTopicDocumentsGUI(RiksProtMetaDataMixIn, mx.PivotKeysMixIn, nt
 
     def update(self) -> pd.DataFrame:
         _ = super().update()
-        self.alert("preparing data, please wait...")
+        self.alert("Preparing data, please wait...")
         data: pd.DataFrame = overload_decoded_member_data(self.person_codecs, self.inferred_topics.calculator)
         self.alert("Done!")
         return data

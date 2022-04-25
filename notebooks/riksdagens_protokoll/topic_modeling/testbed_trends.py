@@ -43,7 +43,7 @@ pu.set_default_options()
 
 data_folder: str = "/data/westac/riksdagen_corpus_data"
 codecs_filename: str = jj(data_folder, "metadata/riksprot_metadata.main.db")
-model_folder: str = jj(data_folder, "tm_v041.1920-2020_500-TF5-MP0.02.500000.lemma.mallet")
+model_folder: str = jj(data_folder, "tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
 tagged_frames_folder: str = jj(data_folder, "tagged_frames_v0.4.1")
 
 # data_folder: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main")
@@ -73,13 +73,15 @@ display(ui.layout())
 
 ui._topic_id.value = 1
 ui._year_range.value = (ui._year_range.min, ui._year_range.max + 1)
-ui.add_line(name="(S)", values=["party_abbrev: S"])
-ui.add_line(name="(M)", values=["party_abbrev: M"])
-ui.add_line(name="(C)", values=["party_abbrev: C"])
-ui.add_line(name="(L)", values=["party_abbrev: L"])
-ui.add_line(name="(SD)", values=["party_abbrev: SD"])
+ui.add_line(name="(S)", color='red', values=["party_abbrev: S"])
+ui.add_line(name="(M)", color='blue', values=["party_abbrev: M"])
+ui.add_line(name="(C)", color='green', values=["party_abbrev: C"])
+
+# ui.add_line(name="(L)", values=["party_abbrev: L"])
+# ui.add_line(name="(SD)", values=["party_abbrev: SD"])
 
 
+# %%
 fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
 years = ["2015", "2016", "2017"]
 colors = ["#c9d9d3", "#718dbf", "#e84d60"]

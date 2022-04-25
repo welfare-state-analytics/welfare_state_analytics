@@ -33,7 +33,7 @@
 import __paths__  # pylint: disable=unused-import
 
 # %% tags=[]
-from IPython.core.display import display
+from IPython.display import display
 from penelope.notebook.token_counts import pipeline_gui
 
 gui = pipeline_gui.create_token_count_gui(
