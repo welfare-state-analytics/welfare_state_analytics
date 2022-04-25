@@ -15,17 +15,17 @@ jj = os.path.join
 
 # pylint: disable=redefined-outer-name,protected-access
 
-DATA_FOLDER: str = "/data/riksdagen_corpus_data/"
-MODEL_FOLDER: str = jj(DATA_FOLDER, "/data/riksdagen_corpus_data/tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
-DATABASE_FILENAME: str = jj(DATA_FOLDER, 'metadata/riksprot_metadata.main.db')
-TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
-SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
+# DATA_FOLDER: str = "/data/riksdagen_corpus_data/"
+# MODEL_FOLDER: str = jj(DATA_FOLDER, "/data/riksdagen_corpus_data/tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
+# DATABASE_FILENAME: str = jj(DATA_FOLDER, 'metadata/riksprot_metadata.main.db')
+# TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
+# SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
 
-# DATA_FOLDER: str = "./tests/test_data/riksprot/main"
-# MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
-# DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
-# TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
-# SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
+DATA_FOLDER: str = "./tests/test_data/riksprot/main"
+MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
+DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
+TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
+SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
