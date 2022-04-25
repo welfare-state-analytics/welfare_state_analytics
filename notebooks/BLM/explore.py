@@ -39,9 +39,7 @@ corpus_folder: str = "/data/westac/blm"
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-load_gui: ntm.LoadGUI = ntm.LoadGUI(
-    corpus_folder=corpus_folder, state=current_state(), slim=True
-).setup()
+load_gui: ntm.LoadGUI = ntm.LoadGUI(corpus_folder=corpus_folder, state=current_state(), slim=True).setup()
 
 display(load_gui.layout())
 
@@ -65,7 +63,7 @@ display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).s
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-ntm.display_topic_wordcloud_gui(current_state());
+ntm.display_topic_wordcloud_gui(current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>

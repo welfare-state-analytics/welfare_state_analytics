@@ -45,9 +45,7 @@ corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources
 # load_gui = ntm.create_load_topic_model_gui(
 #     corpus_folder=corpus_folder, corpus_config=corpus_config, state=current_state(), slim=True
 # )
-load_gui: ntm.LoadGUI = ntm.LoadGUI(
-    corpus_folder=corpus_folder, state=current_state(), slim=True
-).setup()
+load_gui: ntm.LoadGUI = ntm.LoadGUI(corpus_folder=corpus_folder, state=current_state(), slim=True).setup()
 
 display(load_gui.layout())
 

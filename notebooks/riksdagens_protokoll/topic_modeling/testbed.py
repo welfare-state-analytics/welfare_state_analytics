@@ -77,7 +77,9 @@ wtm.RiksprotLoadGUI(
 # display(ui.layout())
 # ui.update_handler()
 
-ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(
+    person_codecs, speech_repository=speech_repository, state=state
+).setup()
 ui._find_text.value = "byggnad"
 ui._compute.click()
 display(ui.layout())

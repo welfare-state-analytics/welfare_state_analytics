@@ -14,6 +14,7 @@ MODEL_NAME: str = "tm_v041.1920-2020_500-TF5-MP0.02.500000.lemma.mallet"
 
 # pylint: disable=protected-access
 
+
 def xtest_focus_topics():
     model_folder: str = jj(DATA_FOLDER, MODEL_NAME)
     person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=CODECS_FILENAME)
