@@ -46,8 +46,8 @@ def test_topic_multitrends():
     )
 
     ui.setup()
-    ui.add_line(name="man", values=["gender: man"])
-    ui.add_line(name="kvinna", values=["gender: woman"])
+    ui.add_line(name="man", color="#00ff00", values=["gender: man"])
+    ui.add_line(name="kvinna", color="#ff0000", values=["gender: woman"])
     ui._year_range.value = (1920, 2020)
     ui._topic_id.value = 8
 
@@ -64,7 +64,7 @@ def test_topic_multitrends():
     # .overload(includes="gender_id,party_id,office_type_id,sub_office_type_id,person_id")
 
     topic_data: pd.DataFrame = calculator.value
-    for name, opts in ui.lines_filter_opts.items():
+    for name, _, opts in ui.lines_filter_opts:
         calculator.reset(topic_data)
         calculator.filter_by_keys(**opts.opts)
         calculator.yearly_topic_weights(ui.get_result_threshold(), n_top_relevance=None, topic_ids=ui.topic_id)
