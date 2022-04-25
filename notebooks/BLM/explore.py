@@ -21,30 +21,24 @@
 # %%
 
 import __paths__  # pylint: disable=unused-import
-import os
 from typing import Callable
 
 import bokeh.plotting
 import penelope.notebook.topic_modelling as ntm
 from IPython.display import display
 from penelope import utility as pu
-from penelope.pipeline.config import CorpusConfig
 
 bokeh.plotting.output_notebook()
 pu.set_default_options()
 
 current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
-corpus_folder: str = "/data/westac/sou_kb_labb"
-corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
+corpus_folder: str = "/data/westac/blm"
 
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-# load_gui = ntm.create_load_topic_model_gui(
-#     corpus_folder=corpus_folder, corpus_config=corpus_config, state=current_state(), slim=True
-# )
 load_gui: ntm.LoadGUI = ntm.LoadGUI(
     corpus_folder=corpus_folder, state=current_state(), slim=True
 ).setup()
@@ -71,7 +65,7 @@ display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).s
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-ntm.display_topic_wordcloud_gui(current_state())
+ntm.display_topic_wordcloud_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -120,9 +114,12 @@ display(ntm.FocusTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state
 
 # %%
 
-corpus_folder: str = "/data/westac/sou_kb_labb"
+corpus_folder: str = "/data/westac/blm"
 custom_styles = {'edges': {'curve-style': 'haystack'}}
 w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
 display(w.layout())
+
+# %%
+# !ls /data/westac/blm
 
 # %%

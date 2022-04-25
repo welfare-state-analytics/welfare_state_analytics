@@ -56,7 +56,7 @@ def test_Q4956353_faulty_speaker_info():
 def test_bug_load_word_trends():
     corpus_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
     data_folder: str = '/home/roger/source/welfare-state-analytics/welfare_state_analytics/data'
-    corpus_config: CorpusConfig = CorpusConfig(
+    corpus_config: CorpusConfig = CorpusConfig.create(
         corpus_name='riksdagens-protokoll',
         corpus_type=CorpusType.SparvCSV,
         corpus_pattern='*sparv4.csv.zip',

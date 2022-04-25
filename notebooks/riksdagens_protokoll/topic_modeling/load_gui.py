@@ -12,8 +12,7 @@ class RiksprotLoadGUI(ntm.LoadGUI):
         person_codecs: md.PersonCodecs,
         corpus_folder: str,
         state: ntm.TopicModelContainer,
-        corpus_config: pp.CorpusConfig | None = None,
         slim: bool = False,
     ):
-        super().__init__(corpus_folder, state, corpus_config, slim)
+        super().__init__(corpus_folder, state, slim)
         self.person_codecs: md.PersonCodecs = person_codecs
