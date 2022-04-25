@@ -25,7 +25,6 @@ from bokeh.io import output_notebook
 from IPython.display import display
 from penelope import topic_modelling as tm
 from penelope import utility as pu
-from penelope.notebook import topic_modelling as ntm
 
 import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
@@ -69,9 +68,7 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
 )
 
 state = dict(inferred_topics=inferred_topics)
-wtm.RiksprotLoadGUI(
-    person_codecs, corpus_folder=corpus_folder, state=state, slim=True
-).setup().load()
+wtm.RiksprotLoadGUI(person_codecs, corpus_folder=corpus_folder, state=state, slim=True).setup().load()
 
 # ui: ntm.WordcloudGUI = ntm.WordcloudGUI(state).setup()
 # display(ui.layout())
@@ -80,7 +77,7 @@ wtm.RiksprotLoadGUI(
 ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(
     person_codecs, speech_repository=speech_repository, state=state
 ).setup()
-ui._find_text.value = "byggnad"
+ui._find_text.value = "byggnad"  # pylint: disable=
 ui._compute.click()
 display(ui.layout())
 
