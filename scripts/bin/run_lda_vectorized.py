@@ -93,7 +93,7 @@ def run_model(
     max_iter=None,
     work_folder=None,
 ):
-    """ runner """
+    """runner"""
 
     if corpus_tag is None and corpus_folder is None:
         click.echo("usage: either corpus-folder or corpus filename must be specified")

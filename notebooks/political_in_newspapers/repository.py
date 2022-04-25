@@ -213,7 +213,7 @@ class SourceRepository:
 
     @staticmethod
     def load_document_index(folder, force=False):
-        """ Load document_index data, source "dtm1.rds", arrays drm$dimnames[1] """
+        """Load document_index data, source "dtm1.rds", arrays drm$dimnames[1]"""
 
         processed_filename: str = os.path.join(folder, DOCUMENT_PROCESSED_FILENAME)
 
@@ -270,7 +270,7 @@ class SourceRepository:
 
     @staticmethod
     def _load_censured_text(folder: str) -> pd.DataFrame:
-        """ Load censored corpus data """
+        """Load censored corpus data"""
 
         filename: str = os.path.join(folder, CENSORED_CORPUS_FILENAME)
 
@@ -286,7 +286,7 @@ class SourceRepository:
 
     @staticmethod
     def load_meta_text_blocks(folder: str) -> pd.DataFrame:
-        """ Load censored corpus data """
+        """Load censored corpus data"""
 
         filename: str = os.path.join(folder, META_TEXTBLOCKS_FILENAME)
         meta_data: pd.DataFrame = pd.read_csv(
@@ -357,7 +357,7 @@ def mean_tokens_per_year(document_index: pd.DataFrame) -> pd.DataFrame:
 class ExtractDN68:
     @staticmethod
     def extract_to_excel(folder: str, document_index: pd.DataFrame):
-        """ Load DN 68 and write reconstructed text to Excel file and zip file"""
+        """Load DN 68 and write reconstructed text to Excel file and zip file"""
         dn68: pd.DataFrame = document_index[
             (document_index.publication == 'DAGENS NYHETER') & (document_index.year == 1968)
         ]
