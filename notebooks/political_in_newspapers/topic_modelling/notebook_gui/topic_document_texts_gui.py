@@ -10,7 +10,7 @@ from ipywidgets import HTML, Button, Dropdown, FloatSlider, HBox, IntProgress, I
 from penelope.corpus import bow2text
 from penelope.notebook import topic_modelling as ntm
 
-import notebooks.political_in_newspapers.repository as repository
+import notebooks.political_in_newspapers.topic_modelling.repository as repository
 
 TEXT_ID = 'topic_document_text'
 

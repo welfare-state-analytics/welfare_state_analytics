@@ -20,7 +20,7 @@
 
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
-from notebooks.political_in_newspapers import repository
+from notebooks.political_in_newspapers.topic_modelling import repository
 
 CORPUS_FOLDER = '/data/westac/textblock_politisk'
 

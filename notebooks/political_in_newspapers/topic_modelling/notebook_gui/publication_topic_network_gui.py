@@ -14,7 +14,7 @@ from penelope.network.networkx import utility as network_utility
 from penelope.notebook import topic_modelling as ntm
 from penelope.notebook import widgets_utils
 
-from notebooks.political_in_newspapers import repository
+from notebooks.political_in_newspapers.topic_modelling import repository
 
 TEXT_ID = 'nx_pub_topic'
 LAYOUT_OPTIONS = ['Circular', 'Kamada-Kawai', 'Fruchterman-Reingold']

@@ -34,7 +34,7 @@
 import os
 import sys
 
-from .notebook_gui import mdw_gui
+from . import mdw_gui
 
 
 def get_root_folder():

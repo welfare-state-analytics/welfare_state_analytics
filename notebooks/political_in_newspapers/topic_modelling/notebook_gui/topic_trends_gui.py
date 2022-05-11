@@ -3,7 +3,7 @@ from IPython.display import display
 from ipywidgets import Dropdown
 from penelope.notebook.topic_modelling import TopicModelContainer, TopicTrendsGUI
 
-import notebooks.political_in_newspapers.repository as repository
+import notebooks.political_in_newspapers.topic_modelling.repository as repository
 
 
 class PoliticalTopicTrendsGUI(TopicTrendsGUI):

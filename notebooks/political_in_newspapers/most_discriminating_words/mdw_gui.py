@@ -10,7 +10,7 @@ from loguru import logger
 from penelope.corpus import VectorizedCorpus
 from penelope.vendor import textacy_api as mdw
 
-from notebooks.political_in_newspapers import repository
+from notebooks.political_in_newspapers.topic_modelling import repository
 
 # pylint: disable=too-many-instance-attributes
 

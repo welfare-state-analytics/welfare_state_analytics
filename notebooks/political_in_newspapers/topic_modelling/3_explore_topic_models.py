@@ -28,11 +28,11 @@ import penelope.notebook.topic_modelling as gui
 from IPython.core.interactiveshell import InteractiveShell
 from IPython.display import display
 
-import notebooks.political_in_newspapers.notebook_gui.publication_topic_network_gui as publication_topic_network_gui
-import notebooks.political_in_newspapers.notebook_gui.topic_document_texts_gui as texts_gui
-import notebooks.political_in_newspapers.notebook_gui.topic_topic_network_gui as topic_topic_gui
-import notebooks.political_in_newspapers.notebook_gui.topic_trends_gui as trends_gui
-import notebooks.political_in_newspapers.notebook_gui.topic_trends_overview_gui as overview_gui
+import notebooks.political_in_newspapers.topic_modelling.notebook_gui.publication_topic_network_gui as publication_topic_network_gui
+import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_document_texts_gui as texts_gui
+import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_topic_network_gui as topic_topic_gui
+import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_trends_gui as trends_gui
+import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_trends_overview_gui as overview_gui
 
 InteractiveShell.ast_node_interactivity = "all"
 
