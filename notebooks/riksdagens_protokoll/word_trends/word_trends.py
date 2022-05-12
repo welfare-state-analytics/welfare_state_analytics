@@ -70,7 +70,9 @@ corpus_version: str = "v0.4.1"
 
 output_notebook()  # resources=INLINE)
 
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db'))
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(
+    source=jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db')
+)
 
 gui = wt.RiksProtTrendsGUI(
     default_folder=jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask"), person_codecs=person_codecs
