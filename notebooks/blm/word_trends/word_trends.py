@@ -63,10 +63,10 @@ from IPython.display import display
 
 output_notebook()
 gui = main_gui.create_to_dtm_gui(
-    corpus_config="riksdagens-protokoll",
+    corpus_config="bolima",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
-    resources_folder=__paths__.resources_folder,
+    resources_folder='..',
 )
 display(gui)
 # %%
