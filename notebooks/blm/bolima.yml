@@ -1,0 +1,38 @@
+corpus_name: BLM
+corpus_pattern: '*'
+corpus_type: 3
+language: swedish
+pipelines:
+  topic_modeling_pipeline:
+    class_name: 'penelope.pipeline.topic_model.pipelines.from_id_tagged_frame_pipeline'
+    options:
+      id_to_token: false
+      file_pattern: '**/BLM-*.feather'
+      tagged_column: lemma_id
+  tagged_frame_pipeline:
+    class_name: penelope.pipeline.topic_model.pipelines.load_id_tagged_frame_pipeline
+    options:
+      id_to_token: false
+      file_pattern: '**/BLM-*.feather'
+pipeline_payload:
+  source: null
+  document_index_source: /data/westac/blm/bolima_tagged_220422.feather/document_index.feather
+  filenames: null
+  pos_schema_name: SUC
+  memory_store:
+    lang: se
+    tagger: Sparv
+    sparv_version: 4
+    text_column: token
+    lemma_column: lemma
+    pos_column: pos
+filter_opts:
+text_reader_opts:
+  as_binary: false
+  filename_fields:
+   - "year:BLM-(\\d{4}).*"
+  filename_filter: null
+  filename_pattern: '**/BLM-*.feather'
+  index_field: null
+  sep: "\t"
+  quoting: 3
