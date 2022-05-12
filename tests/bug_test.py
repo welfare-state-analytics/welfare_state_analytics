@@ -25,12 +25,13 @@ jj = os.path.join
 @pytest.mark.skip("bug fixed")
 def test_Q4956353_faulty_speaker_info():
 
+    corpus_version: str = "v0.4.1"
     protocol_name: str = "prot-199192--120"
     data_folder: str = "/data/riksdagen_corpus_data/"
-    tagged_speeches_folder: str = jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather')
-    database_filename: str = jj(data_folder, "metadata", 'riksprot_metadata.main.db')
+    tagged_speeches_folder: str = jj(data_folder, f'tagged_frames_{corpus_version}_speeches.feather')
+    database_filename: str = jj(data_folder, "metadata", 'riksprot_metadata.{corpus_version}.db')
     speech_index_filename: str = jj(tagged_speeches_folder, "document_index.feather")
-    tagged_corpus_folder: str = jj(data_folder, "tagged_frames_v0.4.1")
+    tagged_corpus_folder: str = jj(data_folder, f"tagged_frames_{corpus_version}")
 
     person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=database_filename)
     speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)

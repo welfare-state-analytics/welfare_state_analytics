@@ -41,10 +41,11 @@ from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import Rikspr
 output_notebook(hide_banner=True)
 pu.set_default_options()
 
+corpus_version: str = "v0.4.1"
 data_folder: str = "/data/westac/riksdagen_corpus_data"
-codecs_filename: str = jj(data_folder, "metadata/riksprot_metadata.main.db")
+codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{corpus_version}.db")
 model_folder: str = jj(data_folder, "tm_v041.1920-2020_100-TF5-MP0.02.500000.lemma.mallet")
-tagged_frames_folder: str = jj(data_folder, "tagged_frames_v0.4.1")
+tagged_frames_folder: str = jj(data_folder, f"tagged_frames_{corpus_version}")
 
 # data_folder: str = jj(__paths__.root_folder, "tests/test_data/riksprot/main")
 # codecs_filename: str = jj(data_folder, "riksprot_metadata.db")
