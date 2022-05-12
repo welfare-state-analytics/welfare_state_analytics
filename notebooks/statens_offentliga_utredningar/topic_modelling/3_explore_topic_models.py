@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.7
+#       jupytext_version: 1.13.8
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -35,18 +35,13 @@ pu.set_default_options()
 
 current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
 corpus_folder: str = "/data/westac/sou_kb_labb"
-corpus_config: CorpusConfig = CorpusConfig.load(os.path.join(__paths__.resources_folder, 'sou_sparv4.yml'))
 
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-# load_gui = ntm.create_load_topic_model_gui(
-#     corpus_folder=corpus_folder, corpus_config=corpus_config, state=current_state(), slim=True
-# )
 load_gui: ntm.LoadGUI = ntm.LoadGUI(corpus_folder=corpus_folder, state=current_state(), slim=True).setup()
-
 display(load_gui.layout())
 
 # %% [markdown]
@@ -55,7 +50,8 @@ display(load_gui.layout())
 # Displays topics in which given token is among toplist of dominant words.
 
 # %%
-display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state()).setup().layout())
+find_gui = ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state()).setup()
+display(find_gui.layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
@@ -63,7 +59,8 @@ display(ntm.topic_documents_gui.FindTopicDocumentsGUI(state=current_state()).set
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).setup().layout())
+browse_gui = ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).setup()
+display(browse_gui.layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
@@ -106,7 +103,8 @@ ntm.display_topic_topic_network_gui(current_state())
 #
 
 # %%
-display(ntm.DefaultTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state()).setup().layout())
+doc_topic_gui = ntm.DefaultTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state()).setup()
+display(doc_topic_gui.layout())
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>
 #
@@ -117,10 +115,7 @@ display(ntm.FocusTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
 # %%
-
 corpus_folder: str = "/data/westac/sou_kb_labb"
 custom_styles = {'edges': {'curve-style': 'haystack'}}
 w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
 display(w.layout())
-
-# %%
