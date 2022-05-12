@@ -7,9 +7,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.13.8
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -86,8 +86,6 @@
 #
 #
 # %%
-
-
 import __paths__
 
 import penelope.notebook.word_trends.main_gui as main_gui
@@ -96,10 +94,10 @@ from IPython.display import display
 
 output_notebook()
 gui = main_gui.create_to_dtm_gui(
-    corpus_config="riksdagens-protokoll",
+    corpus_config="riksprot_1867-2019",
     corpus_folder=__paths__.corpus_folder,
     data_folder=__paths__.data_folder,
-    resources_folder=__paths__.resources_folder,
+    resources_folder="..",
 )
 display(gui)
 

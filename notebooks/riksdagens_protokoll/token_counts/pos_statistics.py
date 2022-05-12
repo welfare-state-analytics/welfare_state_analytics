@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.5
+#       jupytext_version: 1.13.8
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -45,11 +45,15 @@ output_notebook()
 
 pd.set_option('display.max_rows', 2000)
 
+corpus_version: str = "v0.4.1"
+
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=jj(data_folder, 'metadata/riksprot_metadata.main.db'))
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(
+    source=jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db')
+)
 
 gui = ps.PoSCountGUI(
-    default_folder=jj(data_folder, "dtm_041.1500000.TF20.mask"),
+    default_folder=jj(data_folder, f"dtm_041.1500000.TF20.mask"),
     person_codecs=person_codecs,
 ).setup(load_data=True)
 
