@@ -20,7 +20,7 @@ checkpoint_opts:
 pipelines:
   tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.to_tagged_frame_pipeline
 pipeline_payload:
-  source: riksdagens-protokoll.1920-2019.sparv4.csv.zip
+  source: /data/westac/riksdagens-protokoll.1920-2019.sparv4.csv.zip
   document_index_source: null
   document_index_sep: "\t"
   filenames: null
