@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.0
+#       jupytext_version: 1.13.8
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -19,8 +19,6 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-# pylint: disable=wrong-import-position
-
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 
 import bokeh.plotting
@@ -28,17 +26,19 @@ import penelope.notebook.topic_modelling as gui
 from IPython.core.interactiveshell import InteractiveShell
 from IPython.display import display
 
-import notebooks.political_in_newspapers.topic_modelling.notebook_gui.publication_topic_network_gui as publication_topic_network_gui
-import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_document_texts_gui as texts_gui
-import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_topic_network_gui as topic_topic_gui
-import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_trends_gui as trends_gui
-import notebooks.political_in_newspapers.topic_modelling.notebook_gui.topic_trends_overview_gui as overview_gui
+from notebooks.political_in_newspapers import (
+    overview_gui,
+    publication_topic_network_gui,
+    texts_gui,
+    topic_topic_gui,
+    trends_gui,
+)
 
 InteractiveShell.ast_node_interactivity = "all"
 
 # %matplotlib inline
 
-current_state = gui.TopicModelContainer.singleton
+current_state = lambda: gui.TopicModelContainer.singleton
 bokeh.plotting.output_notebook()
 
 # %% [markdown]
@@ -102,5 +102,3 @@ texts_gui.display_gui(current_state())
 
 # %% code_folding=[0]
 topic_topic_gui.display_gui(current_state())
-
-# %%

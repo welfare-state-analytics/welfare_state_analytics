@@ -7,9 +7,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.7.1
+#       jupytext_version: 1.13.8
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -47,7 +47,6 @@ corpus_folder = os.path.join(root_folder, "output")
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-
 output_notebook()
 
 # hv.extension("bokeh")
@@ -77,7 +76,6 @@ output_notebook()
 #
 
 # %% tags=[]
-
 y_corpus = load_corpus(
     tag="SOU_test_L0_+N_+S",
     folder=os.path.join(root_folder, "output"),

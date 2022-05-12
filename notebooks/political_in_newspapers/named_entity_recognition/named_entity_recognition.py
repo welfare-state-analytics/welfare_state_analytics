@@ -6,10 +6,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.7.1
+#       jupytext_version: 1.13.8
 #   kernelspec:
-#     display_name: 'Python 3.7.5 64-bit (''welfare_state_analytics'': pipenv)'
-#     name: python37564bitwelfarestateanalyticspipenvb857bd21a5fc4575b483276067dc0241
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
 # ---
 
 # %%
