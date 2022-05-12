@@ -1,0 +1,104 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.13.8
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %% [markdown]
+# ## Text Analysis - Topic Modelling
+# ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
+
+# %%
+import __paths__  # isort:skip pylint: disable=import-error, unused-import
+
+import bokeh.plotting
+import penelope.notebook.topic_modelling as gui
+from IPython.core.interactiveshell import InteractiveShell
+from IPython.display import display
+
+from notebooks.political_in_newspapers import (
+    overview_gui,
+    publication_topic_network_gui,
+    texts_gui,
+    topic_topic_gui,
+    trends_gui,
+)
+
+InteractiveShell.ast_node_interactivity = "all"
+
+# %matplotlib inline
+
+current_state = lambda: gui.TopicModelContainer.singleton
+bokeh.plotting.output_notebook()
+
+# %% [markdown]
+# ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
+
+# %%
+load_gui: gui.LoadGUI = gui.LoadGUI(corpus_folder='/data/westac/textblock_politisk', state=current_state())
+display(load_gui.layout())
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
+
+# %%
+gui.display_topic_wordcloud_gui(current_state())
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
+#
+
+# %%
+gui.display_topic_word_distribution_gui(current_state())
+# topic_word_distribution_gui.display_topic_tokens(current_state(), topic_id=0, n_words=100, output_format='Chart')
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
+
+
+# %%
+trends_gui.display_gui(current_state())
+# trends_gui.display_topic_trend(current_state().inferred_topics.document_topic_weights, topic_id=0, year=None, year_aggregate='mean', output_format='Table')
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
+#
+# - The topic shares  displayed as a scattered heatmap plot using gradient color based on topic's weight in document.
+# - [Stanford’s Termite software](http://vis.stanford.edu/papers/termite) uses a similar visualization.
+
+# %%
+overview_gui.display_gui(current_state())
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Publication Topic Network<span style='color: red; float: right'>TRY IT</span>
+# The green nodes are documents, and blue nodes are topics. The edges (lines) indicates the strength of a topic in the connected document. The width of the edge is proportinal to the strength of the connection. Note that only edges with a strength above the certain threshold are displayed.
+
+# %%
+publication_topic_network_gui.display_gui(current_state())
+
+# %% [markdown]
+# ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
+#
+# Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring if they both exists  in the same document both having weights above threshold. Weight are number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus (normalized document) length, and are computed in accordance to how node sizes are computed in LDAvis.
+
+# %%
+texts_gui.display_gui(current_state())
+
+# %% [markdown]
+# ### <span style='color: green;'>VISUALIZE</span> Topic-Topic Network<span style='color: red; float: right'>TRY IT</span>
+#
+# Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
+
+
+# %% code_folding=[0]
+topic_topic_gui.display_gui(current_state())

@@ -77,7 +77,7 @@ wtm.RiksprotLoadGUI(person_codecs, corpus_folder=corpus_folder, state=state, sli
 ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(
     person_codecs, speech_repository=speech_repository, state=state
 ).setup()
-ui._find_text.value = "byggnad"  # pylint: disable=
+ui._find_text.value = "byggnad"  # pylint: disable=no-member
 ui._compute.click()
 display(ui.layout())
 

@@ -1,0 +1,36 @@
+corpus_name: sou_sparv4
+corpus_pattern: '*.sparv.xml.zip'
+corpus_type: 6
+language: swedish
+# checkpoint_opts:
+#     content_type_code: 1
+#     sep: "\t"
+#     quoting: 3
+#     document_index_name: document_index.csv
+#     document_index_sep: "\t"
+#     custom_serializer_classname: penelope.pipeline.sparv.convert.SparvXmlSerializer
+pipelines:
+  # FIXME: Create reader that transforms XML to CSV to Pandas (XML to CSV already exists)
+  tagged_frame_pipeline: penelope.pipeline.sparv.pipelines.xml_to_tagged_frame_pipeline
+pipeline_payload:
+  source:
+  document_index_source: null
+  document_index_sep: "\t"
+  filenames: null
+  memory_store:
+    lang: se
+    tagger: Sparv
+    output_type: xml
+    sparv_version: 4
+    # text_column: token
+    # lemma_column: baseform
+    # pos_column: pos
+  pos_schema_name: SUC
+text_reader_opts:
+  as_binary: true
+  filename_fields:
+   - "year:_:1"
+   - "number:_:2"
+  filename_filter: null
+  filename_pattern: '*.xml'
+  index_field: null

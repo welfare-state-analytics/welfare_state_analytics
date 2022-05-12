@@ -38,10 +38,12 @@ pu.set_default_options()
 
 current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
 
+current_version: str = "v0.4.1"
+
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
-codecs_filename: str = jj(data_folder, "metadata/riksprot_metadata.main.db")
-speech_index_filename: str = jj(data_folder, 'tagged_frames_v0.4.1_speeches.feather/document_index.feather')
-speech_folder: str = jj(data_folder, 'tagged_frames_v0.4.1')
+codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{current_version}.db")
+speech_index_filename: str = jj(data_folder, f'tagged_frames_{current_version}_speeches.feather/document_index.feather')
+speech_folder: str = jj(data_folder, f'tagged_frames_{current_version}')
 
 person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
@@ -111,14 +113,6 @@ display(wtm.RiksprotTopicTrendsGUI(**default_args).setup().layout())
 # %%
 ui: wtm.RiksprotTopicMultiTrendsGUI = wtm.RiksprotTopicMultiTrendsGUI(**default_args).setup()
 display(ui.layout())
-
-# ui._topic_id.value = 1
-# ui._year_range.value = (ui._year_range.min, ui._year_range.max + 1)
-# ui.add_line(name="(S)", values=["party_abbrev: S"])
-# ui.add_line(name="(M)", values=["party_abbrev: M"])
-# ui.add_line(name="(C)", values=["party_abbrev: C"])
-# ui.add_line(name="(L)", values=["party_abbrev: L"])
-# ui.add_line(name="(SD)", values=["party_abbrev: SD"])
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>

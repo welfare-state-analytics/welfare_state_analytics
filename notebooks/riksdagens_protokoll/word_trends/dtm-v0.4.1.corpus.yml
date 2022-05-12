@@ -1,0 +1,19 @@
+corpus_name: riksdagens-protocol-parlaclarin
+corpus_pattern: '*.zip'
+corpus_type: 3
+language: swedish
+checkpoint_opts:
+pipelines:
+pipeline_payload:
+  source: /data/riksdagen_corpus_data/dtm_041.1500000.TF20.mask/dtm_041.1500000.TF20.mask_vector_data.npz
+  document_index_source: /data/riksdagen_corpus_data/dtm_041.1500000.TF20.mask/dtm_041.1500000.TF20.mask_document_index.csv.gz
+  document_index_sep: ";"
+  filenames: null
+  memory_store:
+    lang: se
+    tagger: Stanza
+    text_column: text
+    lemma_column: lemma
+    pos_column: pos
+  pos_schema_name: Universal
+text_reader_opts:
