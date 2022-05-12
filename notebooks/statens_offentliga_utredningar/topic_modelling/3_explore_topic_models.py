@@ -21,14 +21,12 @@
 # %%
 
 import __paths__  # pylint: disable=unused-import
-import os
 from typing import Callable
 
 import bokeh.plotting
 import penelope.notebook.topic_modelling as ntm
 from IPython.display import display
 from penelope import utility as pu
-from penelope.pipeline.config import CorpusConfig
 
 bokeh.plotting.output_notebook()
 pu.set_default_options()
