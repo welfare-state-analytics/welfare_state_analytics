@@ -232,7 +232,7 @@ traittypes = ">=0.0.6"
 
 [[package]]
 name = "cachetools"
-version = "5.0.0"
+version = "5.1.0"
 description = "Extensible memoizing collections and decorators"
 category = "main"
 optional = false
@@ -579,45 +579,50 @@ test-win = ["pytest", "pytest-cov", "mock", "cython", "testfixtures", "pyemd", "
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.13"
+version = "0.7.14"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = ">=3.9.0,<3.10.0"
+python-versions = "==3.9.*"
+develop = true
 
 [package.dependencies]
 bokeh = "*"
-click = {version = "8.0.4", optional = true, markers = "extra == \"full\""}
+click = {version = "8.0.4", optional = true}
 ftfy = "*"
-gensim = {version = "*", optional = true, markers = "extra == \"full\""}
+gensim = {version = "*", optional = true}
 ipycytoscape = "*"
-ipydatagrid = ">=1.1.8,<2.0.0"
+ipydatagrid = "^1.1.8"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = ">=0.3.1,<0.4.0"
-more_itertools = ">=8.5.0,<9.0.0"
-msgpack = ">=1.0.2,<2.0.0"
-nltk = ">=3.5,<4.0"
+memoization = "^0.3.1"
+more_itertools = "^8.5.0"
+msgpack = "^1.0.2"
+nltk = "^3.5"
 numpy = "*"
-openpyxl = ">=3.0.5,<4.0.0"
+openpyxl = "^3.0.5"
 pandas = "*"
-pyarrow = {version = "*", optional = true, markers = "extra == \"full\""}
-python-louvain = {version = "*", optional = true, markers = "extra == \"full\""}
-PyYAML = {version = "*", optional = true, markers = "extra == \"full\""}
-requests = ">=2.24.0,<3.0.0"
+pyarrow = {version = "*", optional = true}
+python-louvain = {version = "*", optional = true}
+PyYAML = {version = "*", optional = true}
+requests = "^2.24.0"
 scipy = "*"
-smart-open = ">=5.2.1,<6.0.0"
-spacy = {version = "*", optional = true, markers = "extra == \"full\""}
-textacy = {version = "*", optional = true, markers = "extra == \"full\""}
-toml = ">=0.10.2,<0.11.0"
-tqdm = ">=4.62.3,<5.0.0"
-wordcloud = {version = "*", optional = true, markers = "extra == \"full\""}
+smart-open = "^5.2.1"
+spacy = {version = "*", optional = true}
+textacy = {version = "*", optional = true}
+toml = "^0.10.2"
+tqdm = "^4.62.3"
+wordcloud = {version = "*", optional = true}
 
 [package.extras]
-full = ["gensim", "spacy", "pyarrow", "textacy", "wordcloud", "pyyaml", "python-louvain", "click (==8.0.4)"]
+full = ["pyarrow", "textacy", "spacy", "gensim", "wordcloud", "pyyaml", "click (==8.0.4)", "python-louvain"]
+
+[package.source]
+type = "directory"
+url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -1386,7 +1391,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "networkx"
-version = "2.8"
+version = "2.8.1"
 description = "Python package for creating and manipulating graphs and networks"
 category = "main"
 optional = false
@@ -1395,7 +1400,7 @@ python-versions = ">=3.8"
 [package.extras]
 default = ["numpy (>=1.19)", "scipy (>=1.8)", "matplotlib (>=3.4)", "pandas (>=1.3)"]
 developer = ["pre-commit (>=2.18)", "mypy (>=0.942)"]
-doc = ["sphinx (>=4.5)", "pydata-sphinx-theme (>=0.8.1)", "sphinx-gallery (>=0.10)", "numpydoc (>=1.2)", "pillow (>=9.1)", "nb2plots (>=0.6)", "texext (>=0.6.6)"]
+doc = ["sphinx (>=4.5)", "pydata-sphinx-theme (>=0.8.1)", "sphinx-gallery (>=0.10)", "numpydoc (>=1.3)", "pillow (>=9.1)", "nb2plots (>=0.6)", "texext (>=0.6.6)"]
 extra = ["lxml (>=4.6)", "pygraphviz (>=1.9)", "pydot (>=1.4.2)", "sympy (>=1.10)"]
 test = ["pytest (>=7.1)", "pytest-cov (>=3.0)", "codecov (>=2.1)"]
 
@@ -2689,7 +2694,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.9.*"
-content-hash = "8db603fcb47498eaaf398f439c884e8bb9efc58a83c39a6ecdb81202299d1dda"
+content-hash = "9cd9a1befcb155065033b30f21b60e3157832d46c6291c71fc0eaf49fce023c0"
 
 [metadata.files]
 anyio = [
@@ -2815,8 +2820,8 @@ bqplot = [
     {file = "bqplot-0.12.33.tar.gz", hash = "sha256:a37f94752f01e75dd431c2f62c7849c28ad7020105121852816d2903d8b92c3e"},
 ]
 cachetools = [
-    {file = "cachetools-5.0.0-py3-none-any.whl", hash = "sha256:8fecd4203a38af17928be7b90689d8083603073622229ca7077b72d8e5a976e4"},
-    {file = "cachetools-5.0.0.tar.gz", hash = "sha256:486471dfa8799eb7ec503a8059e263db000cdda20075ce5e48903087f79d5fd6"},
+    {file = "cachetools-5.1.0-py3-none-any.whl", hash = "sha256:4ebbd38701cdfd3603d1f751d851ed248ab4570929f2d8a7ce69e30c420b141c"},
+    {file = "cachetools-5.1.0.tar.gz", hash = "sha256:8b3b8fa53f564762e5b221e9896798951e7f915513abf2ba072ce0f07f3f5a98"},
 ]
 catalogue = [
     {file = "catalogue-2.0.7-py3-none-any.whl", hash = "sha256:cab4feda641fe05da1e6a1a9d123b0869d5ca324dcd93d4a5c384408ab62e7fb"},
@@ -3076,10 +3081,7 @@ gensim = [
     {file = "gensim-4.2.0-cp39-cp39-win_amd64.whl", hash = "sha256:8ff2c9e8e7470701b26b994d29fdf4d77bb3b290b6303dee61859a776bfeeeee"},
     {file = "gensim-4.2.0.tar.gz", hash = "sha256:995ebd2970a31d47c100aaac10212f47e2bf12e2b06536d38883c951ff34eef1"},
 ]
-humlab-penelope = [
-    {file = "humlab-penelope-0.7.13.tar.gz", hash = "sha256:ad673ea2a4b75853bf25a21578cfc27d036a6ab67be96fbafb744dd96438ef06"},
-    {file = "humlab_penelope-0.7.13-py3-none-any.whl", hash = "sha256:92c8864ba9b52e58d5ddb98b6b4e2c2084ea23c14489bafaedd5e87fe9a716f8"},
-]
+humlab-penelope = []
 identify = [
     {file = "identify-2.5.0-py2.py3-none-any.whl", hash = "sha256:3acfe15a96e4272b4ec5662ee3e231ceba976ef63fd9980ed2ce9cc415df393f"},
     {file = "identify-2.5.0.tar.gz", hash = "sha256:c83af514ea50bf2be2c4a3f2fb349442b59dc87284558ae9ff54191bff3541d2"},
@@ -3579,8 +3581,8 @@ nest-asyncio = [
     {file = "nest_asyncio-1.5.5.tar.gz", hash = "sha256:e442291cd942698be619823a17a86a5759eabe1f8613084790de189fe9e16d65"},
 ]
 networkx = [
-    {file = "networkx-2.8-py3-none-any.whl", hash = "sha256:1a1e8fe052cc1b4e0339b998f6795099562a264a13a5af7a32cad45ab9d4e126"},
-    {file = "networkx-2.8.tar.gz", hash = "sha256:4a52cf66aed221955420e11b3e2e05ca44196b4829aab9576d4d439212b0a14f"},
+    {file = "networkx-2.8.1-py3-none-any.whl", hash = "sha256:07b89bb42483d385ae31f110b3da873b98639ae00b7dbc05bf0da706e2d10459"},
+    {file = "networkx-2.8.1.tar.gz", hash = "sha256:b79b7eadff294d6d121ac3908bfd3fbe1069657e2fb30ced7ad49d67a06ad3b5"},
 ]
 nltk = [
     {file = "nltk-3.7-py3-none-any.whl", hash = "sha256:ba3de02490308b248f9b94c8bc1ac0683e9aa2ec49ee78536d8667afb5e3eec8"},

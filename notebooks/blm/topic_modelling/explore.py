@@ -31,7 +31,7 @@ bokeh.plotting.output_notebook()
 pu.set_default_options()
 
 current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
-corpus_folder: str = "/data/westac/blm"
+corpus_folder: str = "/data/blm"
 
 
 # %% [markdown]
@@ -62,7 +62,7 @@ display(ntm.topic_documents_gui.BrowseTopicDocumentsGUI(state=current_state()).s
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-ntm.display_topic_wordcloud_gui(current_state())
+ntm.display_topic_wordcloud_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
@@ -84,7 +84,7 @@ ntm.display_topic_trends_gui(current_state())
 # - [Stanford’s Termite software](http://vis.stanford.edu/papers/termite) uses a similar visualization.
 
 # %%
-ntm.display_topic_trends_overview_gui(current_state())
+ntm.display_topic_trends_overview_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -92,7 +92,7 @@ ntm.display_topic_trends_overview_gui(current_state())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %% code_folding=[0]
-ntm.display_topic_topic_network_gui(current_state())
+ntm.display_topic_topic_network_gui(current_state());
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Document Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -110,13 +110,9 @@ display(ntm.FocusTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
 # %%
-
-corpus_folder: str = "/data/westac/blm"
+corpus_folder: str = "/data/blm"
 custom_styles = {'edges': {'curve-style': 'haystack'}}
 w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
 display(w.layout())
-
-# %%
-# !ls /data/westac/blm
 
 # %%

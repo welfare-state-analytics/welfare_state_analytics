@@ -59,26 +59,10 @@ import __paths__
 from os.path import join as jj
 
 from bokeh.io import output_notebook
-from IPython.display import display
-
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
-from westac.riksprot.parlaclarin import codecs as md
-
-data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
-
-corpus_version: str = "v0.4.1"
 
 output_notebook()  # resources=INLINE)
 
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(
-    source=jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db')
-)
-
-gui = wt.RiksProtTrendsGUI(
-    default_folder=jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask"), person_codecs=person_codecs
-).setup()
-
-display(gui.layout())
-gui.load()
+wt.display_gui(jj(__paths__.data_folder, "riksdagen_corpus_data"), ["v0.4.1", "v0.4.2", "v0.4.3"])
 
 # %%

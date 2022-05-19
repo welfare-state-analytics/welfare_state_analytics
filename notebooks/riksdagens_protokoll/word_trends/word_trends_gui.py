@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from typing import List
 
 import ipywidgets as w
@@ -207,3 +208,40 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
             # + ([self._unstack_tabular] if len(self.pivot_keys.text_names) > 0 else [])
         )
         return super().layout()
+
+
+from os.path import join as jj
+from IPython.display import display
+
+
+def display_gui(data_folder: str, versions: list[str]):
+
+    corpus_versions: w.Dropdown = w.Dropdown(options=versions, value=None)
+    gui_output = w.Output()
+
+    def corpus_version_handler(*_):
+
+        gui_output.clear_output()
+        corpus_version: str = corpus_versions.value
+
+        metadata_filename: str = jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db')
+        dtm_folder: str = jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask")
+
+        with gui_output:
+
+            if not os.path.isfile(metadata_filename):
+                print(f"error: metadata file '{metadata_filename}' not found")
+                return
+
+            if not os.path.isdir(dtm_folder):
+                print(f"error: DTM folder '{dtm_folder}' not found")
+                return
+
+            person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=metadata_filename)
+            gui = RiksProtTrendsGUI(default_folder=dtm_folder, person_codecs=person_codecs).setup()
+
+            display(gui.layout())
+            gui.load()
+
+    corpus_versions.observe(corpus_version_handler, names='value')
+    display(w.VBox([corpus_versions, gui_output]))
