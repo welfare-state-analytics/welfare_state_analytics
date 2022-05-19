@@ -59,6 +59,7 @@ import __paths__
 from os.path import join as jj
 
 from bokeh.io import output_notebook
+
 from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 
 output_notebook()  # resources=INLINE)

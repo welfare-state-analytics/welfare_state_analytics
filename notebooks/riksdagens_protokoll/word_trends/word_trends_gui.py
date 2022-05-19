@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
+from os.path import join as jj
 from typing import List
 
 import ipywidgets as w
 import pandas as pd
+from IPython.display import display
 from ipywidgets import HTML
 from penelope import corpus as pc
 from penelope.common.keyness import KeynessMetric
@@ -210,8 +212,6 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         return super().layout()
 
 
-from os.path import join as jj
-from IPython.display import display
 
 
 def display_gui(data_folder: str, versions: list[str]):
