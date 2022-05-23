@@ -212,8 +212,6 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         return super().layout()
 
 
-
-
 def display_gui(data_folder: str, versions: list[str]):
 
     corpus_versions: w.Dropdown = w.Dropdown(options=versions, value=None)
