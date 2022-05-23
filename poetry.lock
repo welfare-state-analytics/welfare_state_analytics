@@ -579,50 +579,45 @@ test-win = ["pytest", "pytest-cov", "mock", "cython", "testfixtures", "pyemd", "
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.14"
+version = "0.7.15"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
-python-versions = "==3.9.*"
-develop = true
+python-versions = ">=3.9.0,<3.10.0"
 
 [package.dependencies]
 bokeh = "*"
-click = {version = "8.0.4", optional = true}
+click = {version = "8.0.4", optional = true, markers = "extra == \"full\""}
 ftfy = "*"
-gensim = {version = "*", optional = true}
+gensim = {version = "*", optional = true, markers = "extra == \"full\""}
 ipycytoscape = "*"
-ipydatagrid = "^1.1.8"
+ipydatagrid = ">=1.1.8,<2.0.0"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = "^0.3.1"
-more_itertools = "^8.5.0"
-msgpack = "^1.0.2"
-nltk = "^3.5"
+memoization = ">=0.3.1,<0.4.0"
+more_itertools = ">=8.5.0,<9.0.0"
+msgpack = ">=1.0.2,<2.0.0"
+nltk = ">=3.5,<4.0"
 numpy = "*"
-openpyxl = "^3.0.5"
+openpyxl = ">=3.0.5,<4.0.0"
 pandas = "*"
-pyarrow = {version = "*", optional = true}
-python-louvain = {version = "*", optional = true}
-PyYAML = {version = "*", optional = true}
-requests = "^2.24.0"
+pyarrow = {version = "*", optional = true, markers = "extra == \"full\""}
+python-louvain = {version = "*", optional = true, markers = "extra == \"full\""}
+PyYAML = {version = "*", optional = true, markers = "extra == \"full\""}
+requests = ">=2.24.0,<3.0.0"
 scipy = "*"
-smart-open = "^5.2.1"
-spacy = {version = "*", optional = true}
-textacy = {version = "*", optional = true}
-toml = "^0.10.2"
-tqdm = "^4.62.3"
-wordcloud = {version = "*", optional = true}
+smart-open = ">=5.2.1,<6.0.0"
+spacy = {version = "*", optional = true, markers = "extra == \"full\""}
+textacy = {version = "*", optional = true, markers = "extra == \"full\""}
+toml = ">=0.10.2,<0.11.0"
+tqdm = ">=4.62.3,<5.0.0"
+wordcloud = {version = "*", optional = true, markers = "extra == \"full\""}
 
 [package.extras]
-full = ["pyarrow", "textacy", "spacy", "gensim", "wordcloud", "pyyaml", "click (==8.0.4)", "python-louvain"]
-
-[package.source]
-type = "directory"
-url = "../../penelope"
+full = ["gensim", "spacy", "pyarrow", "textacy", "wordcloud", "pyyaml", "python-louvain", "click (==8.0.4)"]
 
 [[package]]
 name = "identify"
@@ -1391,7 +1386,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "networkx"
-version = "2.8.1"
+version = "2.8.2"
 description = "Python package for creating and manipulating graphs and networks"
 category = "main"
 optional = false
@@ -1488,7 +1483,7 @@ python-versions = ">=3.8"
 
 [[package]]
 name = "openpyxl"
-version = "3.0.9"
+version = "3.0.10"
 description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
 category = "main"
 optional = false
@@ -2365,7 +2360,7 @@ viz = ["matplotlib (>=3.0.0)"]
 
 [[package]]
 name = "thinc"
-version = "8.0.15"
+version = "8.0.16"
 description = "A refreshing functional take on deep learning, compatible with your favorite libraries"
 category = "main"
 optional = false
@@ -2694,7 +2689,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.9.*"
-content-hash = "9cd9a1befcb155065033b30f21b60e3157832d46c6291c71fc0eaf49fce023c0"
+content-hash = "80f5a115e081d8bb5674cec93dc127393fbfaa9b540dbb7e1308e02d2c63364c"
 
 [metadata.files]
 anyio = [
@@ -3081,7 +3076,10 @@ gensim = [
     {file = "gensim-4.2.0-cp39-cp39-win_amd64.whl", hash = "sha256:8ff2c9e8e7470701b26b994d29fdf4d77bb3b290b6303dee61859a776bfeeeee"},
     {file = "gensim-4.2.0.tar.gz", hash = "sha256:995ebd2970a31d47c100aaac10212f47e2bf12e2b06536d38883c951ff34eef1"},
 ]
-humlab-penelope = []
+humlab-penelope = [
+    {file = "humlab-penelope-0.7.15.tar.gz", hash = "sha256:8b2a6c942f1d7b093e91848b5d181c53941c09338271968f22c1a2d906677e4b"},
+    {file = "humlab_penelope-0.7.15-py3-none-any.whl", hash = "sha256:7382e9a61e4042a1cef7638a4fe9d9c5cd66956181a1b3da18580b9cfc7bb317"},
+]
 identify = [
     {file = "identify-2.5.0-py2.py3-none-any.whl", hash = "sha256:3acfe15a96e4272b4ec5662ee3e231ceba976ef63fd9980ed2ce9cc415df393f"},
     {file = "identify-2.5.0.tar.gz", hash = "sha256:c83af514ea50bf2be2c4a3f2fb349442b59dc87284558ae9ff54191bff3541d2"},
@@ -3581,8 +3579,8 @@ nest-asyncio = [
     {file = "nest_asyncio-1.5.5.tar.gz", hash = "sha256:e442291cd942698be619823a17a86a5759eabe1f8613084790de189fe9e16d65"},
 ]
 networkx = [
-    {file = "networkx-2.8.1-py3-none-any.whl", hash = "sha256:07b89bb42483d385ae31f110b3da873b98639ae00b7dbc05bf0da706e2d10459"},
-    {file = "networkx-2.8.1.tar.gz", hash = "sha256:b79b7eadff294d6d121ac3908bfd3fbe1069657e2fb30ced7ad49d67a06ad3b5"},
+    {file = "networkx-2.8.2-py3-none-any.whl", hash = "sha256:51d6ae63c24dcd33901357688a2ad20d6bcd38f9a4c5307720048d3a8081059c"},
+    {file = "networkx-2.8.2.tar.gz", hash = "sha256:ae99c9b0d35e5b4a62cf1cfea01e5b3633d8d02f4a0ead69685b6e7de5b85eab"},
 ]
 nltk = [
     {file = "nltk-3.7-py3-none-any.whl", hash = "sha256:ba3de02490308b248f9b94c8bc1ac0683e9aa2ec49ee78536d8667afb5e3eec8"},
@@ -3623,8 +3621,8 @@ numpy = [
     {file = "numpy-1.22.3.zip", hash = "sha256:dbc7601a3b7472d559dc7b933b18b4b66f9aa7452c120e87dfb33d02008c8a18"},
 ]
 openpyxl = [
-    {file = "openpyxl-3.0.9-py2.py3-none-any.whl", hash = "sha256:8f3b11bd896a95468a4ab162fc4fcd260d46157155d1f8bfaabb99d88cfcf79f"},
-    {file = "openpyxl-3.0.9.tar.gz", hash = "sha256:40f568b9829bf9e446acfffce30250ac1fa39035124d55fc024025c41481c90f"},
+    {file = "openpyxl-3.0.10-py2.py3-none-any.whl", hash = "sha256:0ab6d25d01799f97a9464630abacbb34aafecdcaa0ef3cba6d6b3499867d0355"},
+    {file = "openpyxl-3.0.10.tar.gz", hash = "sha256:e47805627aebcf860edb4edf7987b1309c1b3632f3750538ed962bbcc3bd7449"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
@@ -4339,22 +4337,25 @@ textacy = [
     {file = "textacy-0.12.0.tar.gz", hash = "sha256:2c92bdd6b47305447b64e4cb6cc43c11675f021f910a8074bc8149dbf5325e5b"},
 ]
 thinc = [
-    {file = "thinc-8.0.15-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0368c0b279492c0ed0b5b1bc79614e8a335ae1ccc3b1617de46f04eb74dc9a43"},
-    {file = "thinc-8.0.15-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a4276b64a8cd91197f30382c0874f59fa6c94ef533150d845b2f30998aae87cc"},
-    {file = "thinc-8.0.15-cp310-cp310-win_amd64.whl", hash = "sha256:72cec290eb1b54ba6144b05d96f3247ea34eb41c66842961b05b408b93f2ba9b"},
-    {file = "thinc-8.0.15-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:a4ee24a6505d63b6f0161f25d0f73f87ab569e0e1a9799a6baca97352788a91f"},
-    {file = "thinc-8.0.15-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:376b196da6c69c8efaaf26fb99f6997543d80ea4bc5f4ab8600e9d1d521a7dc9"},
-    {file = "thinc-8.0.15-cp36-cp36m-win_amd64.whl", hash = "sha256:bed92be72516b1511fecaf616ea31ff1c2e972a7ec4ad991c212f9b2f5c94183"},
-    {file = "thinc-8.0.15-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:42641f021f4fdc47eaec4b9ff66246b153b9783ef24e2c266bf0f51eccd40db5"},
-    {file = "thinc-8.0.15-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0557791e73865fa81f09623dd1f9b98b6d4ab80c63fca5f141530536516aac98"},
-    {file = "thinc-8.0.15-cp37-cp37m-win_amd64.whl", hash = "sha256:f9ba4e4dac98e166950e004c87a0f57b8f8796ecd0e3b6973beb6febc20257ff"},
-    {file = "thinc-8.0.15-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:489521ca3cca469d67432fc30f14c7c13c17320b179bf8e362319313feaafbb7"},
-    {file = "thinc-8.0.15-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8ddda1aa1432eef8bab5c83e4cf2020f1ed891771a6dd86729f1aa6078f25f2c"},
-    {file = "thinc-8.0.15-cp38-cp38-win_amd64.whl", hash = "sha256:70781a0802fbb62a27217ccb80e744e80a5b43f9107ac596c5cd2dc9878ae258"},
-    {file = "thinc-8.0.15-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:a1f19dd9a7121d332d16446db39b4999abb4f040ce7c71bc86ea05664c86d361"},
-    {file = "thinc-8.0.15-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ecd8eab82598b079e901f16567818dc955481326c01d84b819c3c05801b97e07"},
-    {file = "thinc-8.0.15-cp39-cp39-win_amd64.whl", hash = "sha256:5d98e6b3bf220c1068442d09d7c34dd8e52bbdfa43ea32f773747c5909a1c011"},
-    {file = "thinc-8.0.15.tar.gz", hash = "sha256:2e315020da85c3791e191fbf37c4a2433f57cf322e27380da0cd4de99d96053b"},
+    {file = "thinc-8.0.16-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:2a57e163205c73df8b0507fc74e06b34b74827832541c1d41efc1975b6fcb818"},
+    {file = "thinc-8.0.16-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:122d29a289bc8bcae75dbc0cb0d382256ef68ba6946a44891cda5ca9a071aa3e"},
+    {file = "thinc-8.0.16-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:90a38c846c8597ad5636f9c50f8f6ecd9655662d6fea14b28dde1d91e71591fe"},
+    {file = "thinc-8.0.16-cp310-cp310-win_amd64.whl", hash = "sha256:1caaf36b2dd2d0281e0ee0e68e496a875b64d52524b31ae3771d73431aa3ba11"},
+    {file = "thinc-8.0.16-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:5a2136c9c3712b0854437698932b48e532c1f3bbaaea7c048eec79fc4901f22d"},
+    {file = "thinc-8.0.16-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:24ebf1ff4057a7844e0ad31588128a81b7f746984f8ba5f256262091d536cad4"},
+    {file = "thinc-8.0.16-cp36-cp36m-win_amd64.whl", hash = "sha256:30f5d16491e5c476b0712c9501d6c7b28fbdb046a321b1397cf5be527442b505"},
+    {file = "thinc-8.0.16-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2fca903aa2844bf7caa4e3709e1ffe193e8dbc2834e1cd8c1534707316866546"},
+    {file = "thinc-8.0.16-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a3bba61bddf1c26edb131b9433ec20b3dd580b19f02a2bfa4d0abe4816fabd63"},
+    {file = "thinc-8.0.16-cp37-cp37m-win_amd64.whl", hash = "sha256:72888464081460a6764fcce9bcbc49e5d0ce99658993f01044051f7f8383e481"},
+    {file = "thinc-8.0.16-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:05dbe98419c226d3904d178f968873f6be3d36dd4c6ae8baf716f5ba4a4a7fd9"},
+    {file = "thinc-8.0.16-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:61f57435206d2a1c9900d5c9eb754ec4040e55ef79077cc9a88fbb2851d02944"},
+    {file = "thinc-8.0.16-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e544febd6adaa936e57432b1bba84328d51b6071695044b7844c63460c048f97"},
+    {file = "thinc-8.0.16-cp38-cp38-win_amd64.whl", hash = "sha256:151e2667cef683a87aba4ada41b1ef3e8a79417b8e2151d8832dd2e65d611693"},
+    {file = "thinc-8.0.16-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:ca13f31a35d62b16546cee6f6d874e6a64481be02aa6fb7f0bf7462b61cfc2ed"},
+    {file = "thinc-8.0.16-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:ae1c765dc7ce87033f2137ccf33b75b8ba1493320ccf0eea11e1a144fbe2450a"},
+    {file = "thinc-8.0.16-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:885945d971f65432f2e06796dd9e1632aa84530e2ac2f0dd3ac57e71f2cb140f"},
+    {file = "thinc-8.0.16-cp39-cp39-win_amd64.whl", hash = "sha256:5b14aa6fddeb15076222f8df84a42050e49e9615e0f4e9a6df454f26a70f23d6"},
+    {file = "thinc-8.0.16.tar.gz", hash = "sha256:4bc781a51a8789ac402b36ef2e07d17636d12a7890002754f8d70f05bb68df51"},
 ]
 threadpoolctl = [
     {file = "threadpoolctl-3.1.0-py3-none-any.whl", hash = "sha256:8b99adda265feb6773280df41eece7b2e6561b772d21ffd52e372f999024907b"},
