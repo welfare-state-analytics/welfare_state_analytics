@@ -18,11 +18,13 @@ def baseform(x: dict) -> Optional[str]:
     return saldo_baseform
 
 
-def convert(source_filename: str, target_filename: str):
+def convert(source_filename: str, target_filename: str, compresslevel: int = 9):
 
     with zipfile.ZipFile(source_filename, "r") as sfp:
 
-        with zipfile.ZipFile(target_filename, "w") as tfp:
+        with zipfile.ZipFile(
+            target_filename, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=compresslevel
+        ) as tfp:
 
             filenames: List[str] = sfp.namelist()
 
@@ -38,7 +40,7 @@ def convert(source_filename: str, target_filename: str):
 
                 data: str = tagged_frame.to_csv(sep='\t', index=False)
 
-                tfp.writestr(filename, data, compresslevel=zipfile.ZIP_DEFLATED)
+                tfp.writestr(filename, data)
 
 
 if __name__ == "__main__":
