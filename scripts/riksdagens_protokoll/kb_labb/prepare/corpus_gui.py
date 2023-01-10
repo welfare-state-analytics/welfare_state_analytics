@@ -20,7 +20,10 @@ def get_corpus_tags(corpus_folder):
 def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_axis=None, year_range=(1922, 1989)):
 
     try:
-        year_filter = lambda x: year_range[0] <= x['year'] <= year_range[1]
+
+        def year_filter(x):
+            return year_range[0] <= x['year'] <= year_range[1]
+
         x_corpus = (
             VectorizedCorpus.load(tag=corpus_tag, folder=corpus_folder)
             .filter(year_filter)

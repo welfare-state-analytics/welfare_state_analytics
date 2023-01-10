@@ -17,16 +17,15 @@
 # %load_ext autoreload
 # %autoreload 2
 
+import __paths__
 import glob
 import os
-import sys
 import zipfile
 
 import numpy as np
 import pandas as pd
 
-root_folder = (lambda x: os.path.join(os.getcwd().split(x)[0], x))("welfare_state_analytics")
-sys.path.append(root_folder)
+root_folder = __paths__.root_folder
 
 
 # %% [markdown]

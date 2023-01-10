@@ -72,7 +72,6 @@ def test_topic_multitrends():
         ytw_line.columns = [name]
         ytw = ytw.merge(ytw_line[name], how='left', left_index=True, right_index=True)
         ytw[name].fillna(0, inplace=True)
-    # endregion
 
     plot_multiple_value_series(kind='multi_line', data=ytw.reset_index(), category_name='year', columns=None)
     # ui.update_handler()
