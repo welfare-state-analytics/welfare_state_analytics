@@ -560,14 +560,14 @@ test = ["pytest"]
 
 [[package]]
 name = "confection"
-version = "0.0.3"
+version = "0.0.4"
 description = "The sweetest config system for Python"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "confection-0.0.3-py3-none-any.whl", hash = "sha256:51af839c1240430421da2b248541ebc95f9d0ee385bcafa768b8acdbd2b0111d"},
-    {file = "confection-0.0.3.tar.gz", hash = "sha256:4fec47190057c43c9acbecb8b1b87a9bf31c469caa0d6888a5b9384432fdba5a"},
+    {file = "confection-0.0.4-py3-none-any.whl", hash = "sha256:aeac5919ba770c7b281aa5863bb6b0efed42568a7ad8ea26b6cb632154503fb2"},
+    {file = "confection-0.0.4.tar.gz", hash = "sha256:b1ddf5885da635f0e260a40b339730806dfb1bd17d30e08764f35af841b04ecf"},
 ]
 
 [package.dependencies]
@@ -1278,7 +1278,7 @@ test-win = ["POT", "cython", "mock", "nmslib", "pytest", "pytest-cov", "testfixt
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.18"
+version = "0.7.19"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
