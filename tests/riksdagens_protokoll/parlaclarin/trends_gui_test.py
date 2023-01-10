@@ -231,8 +231,8 @@ def test_trends_gui_bugcheck(person_codecs: md.PersonCodecs):
 
     words = ['herr']
     gui.observe(False)
-    gui._picker.options = words
-    gui._picker.value = words
+    gui._words_picker.options = words
+    gui._words_picker.value = words
     for i in range(0, len(gui._displayers)):
         gui._tab.selected_index = i
         gui.plot()

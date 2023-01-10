@@ -193,7 +193,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
             # tab = Tab(children=[self._multi_pivot_keys_picker, self._filter_keys])
             # tab.titles = ["Pivot by", "Filter by"]
-            self._picker.rows = 15
+            self._words_picker.rows = 15
             self._sidebar_ctrls = (
                 # [tab]
                 [HTML("<b>Pivot by</b>"), self._multi_pivot_keys_picker]
