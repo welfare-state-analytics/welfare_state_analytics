@@ -163,3 +163,8 @@ df2
 # %%
 df2.reset_index().to_dict(orient='records')
 # %%
+
+import pandas as pd
+
+state_filename = '\\\\portal1.humlab.umu.se\\data\\westac\\riksdagen_corpus_data\\tmp\\100\mallet\\state.mallet.gz'
+data = pd.read_csv(state_filename, compression='gzip', sep=' ', skiprows=[1,2] )
