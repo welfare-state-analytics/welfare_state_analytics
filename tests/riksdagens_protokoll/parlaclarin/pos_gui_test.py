@@ -25,7 +25,7 @@ def person_codecs():
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True), (TEST_FOLDER, False)])
 def test_pos_count_gui_load_create(folder: str, encoded: bool, person_codecs: md.PersonCodecs):
-    """See also tc.BaseDTMGUI test case in penelope"""
+    """See also tc.BaseTokenCountGUI test case in penelope"""
 
     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded, person_codecs=person_codecs)
     assert gui is not None
@@ -133,8 +133,8 @@ def test_pos_count_gui_compute_without_pivot_keys(
         (TEST_FOLDER, 'decade', True, ['gender_id', 'party_id'], 29, 3),
     ],
 )
-@patch('penelope.notebook.token_counts.plot.plot_multiline', lambda *_, **__: None)
-@patch('penelope.notebook.token_counts.plot.plot_stacked_bar', lambda *_, **__: None)
+@patch('penelope.plot.plot_multiline', lambda *_, **__: None)
+@patch('penelope.plot.plot_stacked_bar', lambda *_, **__: None)
 def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     folder: str,
     temporal_key: str,
@@ -169,8 +169,8 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
 
 
 @pytest.mark.long_running
-@patch('penelope.notebook.token_counts.plot.plot_multiline', lambda *_, **__: None)
-@patch('penelope.notebook.token_counts.plot.plot_stacked_bar', lambda *_, **__: None)
+@patch('penelope.notebook.plot.plot_multiline', lambda *_, **__: None)
+@patch('penelope.notebook.plot.plot_stacked_bar', lambda *_, **__: None)
 def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
 
     computed_data: pd.DataFrame = None
