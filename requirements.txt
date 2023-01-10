@@ -21,7 +21,7 @@ charset-normalizer==2.1.1 ; python_full_version >= "3.9.0" and python_full_versi
 click==8.0.4 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
 colorama==0.4.6 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0" and platform_system == "Windows" or python_full_version >= "3.9.0" and python_full_version < "3.10.0" and sys_platform == "win32"
 comm==0.1.2 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
-confection==0.0.3 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
+confection==0.0.4 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
 contourpy==1.0.6 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
 cycler==0.11.0 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
 cymem==2.0.7 ; python_full_version >= "3.9.0" and python_full_version < "3.10.0"
