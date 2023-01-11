@@ -2,8 +2,6 @@ import csv
 import hashlib
 from collections import defaultdict
 
-# pylint: skip-file
-
 # %%
 from io import StringIO
 
@@ -14,6 +12,8 @@ import numpy as np
 # %%
 import pandas as pd
 from penelope.co_occurrence import Bundle
+
+# pylint: skip-file
 
 bundle = Bundle.load(
     folder='/data/westac/shared/v2_information_w1_VB_PASSTHROUGH_TF10_LEMMA_KEEPSTOPS',
@@ -120,7 +120,6 @@ dd
 # %%
 
 
-
 tagged_csv_str = (
     "token\tlemma\tpos\txpos\n"
     "Hej\thej\tIN\tIN\n"
@@ -179,5 +178,5 @@ df2.reset_index().to_dict(orient='records')
 # %%
 
 
-state_filename = '\\\\portal1.humlab.umu.se\\data\\westac\\riksdagen_corpus_data\\tmp\\100\mallet\\state.mallet.gz'
-data = pd.read_csv(state_filename, compression='gzip', sep=' ', skiprows=[1, 2])
+# state_filename = '\\\\portal1.humlab.umu.se\\data\\westac\\riksdagen_corpus_data\\tmp\\100\mallet\\state.mallet.gz'
+# data = pd.read_csv(state_filename, compression='gzip', sep=' ', skiprows=[1, 2])
