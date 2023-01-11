@@ -2,6 +2,8 @@ import csv
 import hashlib
 from collections import defaultdict
 
+# pylint: skip-file
+
 # %%
 from io import StringIO
 
