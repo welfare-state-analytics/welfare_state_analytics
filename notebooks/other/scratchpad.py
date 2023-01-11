@@ -1,10 +1,21 @@
+import csv
+import hashlib
+from collections import defaultdict
+
+# %%
+from io import StringIO
+
+# %%
+import numpy as np
+
+# %%
 # %%
 import pandas as pd
 from penelope.co_occurrence import Bundle
 
 bundle = Bundle.load(
     folder='/data/westac/shared/v2_information_w1_VB_PASSTHROUGH_TF10_LEMMA_KEEPSTOPS',
-    tag='v2_information_w1_VB_PASSTHROUGH_TF10_LEMMA_KEEPSTOPS'
+    tag='v2_information_w1_VB_PASSTHROUGH_TF10_LEMMA_KEEPSTOPS',
 )
 
 # %%
@@ -38,12 +49,14 @@ bundle.concept_corpus.data.shape
 bundle.corpus.data.data.nbytes
 # %%
 
+
 def nbytes(corpus):
     try:
-        #return corpus.data.data.nbytes + corpus.data.indptr.nbytes + corpus.data.indices.nbytes
+        # return corpus.data.data.nbytes + corpus.data.indptr.nbytes + corpus.data.indices.nbytes
         return (corpus.data.nbytes + corpus.indptr.nbytes + corpus.indices.nbytes) / 1024
     except:
         return None
+
 
 def mask_nonzero_other(self, other) -> None:
 
@@ -66,7 +79,7 @@ print(nbytes(B))
 
 # %%
 
-B[:,bundle.concept_corpus.data.nonzero()[0]] = 0
+B[:, bundle.concept_corpus.data.nonzero()[0]] = 0
 print(B.shape)
 # https://stackoverflow.com/questions/41505416/efficient-way-to-set-elements-to-zero-where-mask-is-true-on-scipy-sparse-matrix
 # %%
@@ -75,14 +88,15 @@ B = bundle.corpus.data - bundle.corpus.data.multiply(mask)
 
 # %%
 nbytes(mask)
-# %%
-import numpy as np
+
 A = np.array([1, 2, 9, 3, 5, 1, 6, 4])
+
 
 def nlargest(a, n_top: int) -> np.ndarray:
     return np.argpartition(a, -n_top)[-n_top:]
 
-print(nlargest(A,3))
+
+print(nlargest(A, 3))
 
 indices = np.argpartition(A, -3)[-3:]
 
@@ -93,21 +107,17 @@ print([A[i] for i in indices])
 
 # %%
 
-from collections import defaultdict
+
 dd = defaultdict()
 dd.default_factory = dd.__len__
 
-pairs = ((i,i+1) for i in range(0,5))
+pairs = ((i, i + 1) for i in range(0, 5))
 for p in pairs:
     _ = dd[p]
 dd
 # %%
 
 
-# %%
-import pandas as pd
-import csv
-import hashlib
 
 tagged_csv_str = (
     "token\tlemma\tpos\txpos\n"
@@ -130,7 +140,10 @@ write_opts = dict(
     sep='\t',
 )
 
-data = [ {'id': i, 'checksum': hashlib.sha1(tagged_csv_str.encode('utf-8')).hexdigest(), 'text': tagged_csv_str } for i in range(0,1)]
+data = [
+    {'id': i, 'checksum': hashlib.sha1(tagged_csv_str.encode('utf-8')).hexdigest(), 'text': tagged_csv_str}
+    for i in range(0, 1)
+]
 df = pd.DataFrame(data).set_index('id')
 df.to_csv('APA.csv', **write_opts)
 
@@ -149,12 +162,11 @@ df2.info()
 print(df)
 # %%
 
-# %%
-from io import StringIO
+
 tagged_csv_str2 = str(df2.loc[0].text)
 pd.read_csv(tagged_csv_str2)
 # %%
-#tagged_csv_str2
+# tagged_csv_str2
 
 'token\tlemma\tpos\txpos\nHej\thej\tIN\tIN\n!\t!\tMID\tMID\nDetta\tdetta\tPN\tPN.NEU.SIN.DEF.SUB+OBJ\när\tvara\tVB\tVB.PRS.AKT\nett\ten\tDT\tDT.NEU.SIN.IND\ntest\ttest\tNN\tNN.NEU.SIN.IND.NOM\n!\t!\tMAD\tMAD\n\'\t\tMAD\tMAD\n"\t\tMAD\tMAD'
 
@@ -164,7 +176,6 @@ df2
 df2.reset_index().to_dict(orient='records')
 # %%
 
-import pandas as pd
 
 state_filename = '\\\\portal1.humlab.umu.se\\data\\westac\\riksdagen_corpus_data\\tmp\\100\mallet\\state.mallet.gz'
-data = pd.read_csv(state_filename, compression='gzip', sep=' ', skiprows=[1,2] )
+data = pd.read_csv(state_filename, compression='gzip', sep=' ', skiprows=[1, 2])
