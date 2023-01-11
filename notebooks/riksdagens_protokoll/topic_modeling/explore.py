@@ -77,7 +77,7 @@ display(ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=curren
 # %%
 wc_ui = ntm.WordcloudGUI(current_state()).setup()
 display(wc_ui.layout())
-wc_ui.update_handler();
+wc_ui.update_handler()
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Find topic's documents by token<span style='color: red; float: right'>TRY IT</span>
