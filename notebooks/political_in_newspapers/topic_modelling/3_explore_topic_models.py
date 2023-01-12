@@ -45,7 +45,7 @@ bokeh.plotting.output_notebook()
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-load_gui: gui.LoadGUI = gui.LoadGUI(corpus_folder='/data/westac/textblock_politisk', state=current_state())
+load_gui: gui.LoadGUI = gui.LoadGUI(data_folder='/data/westac/textblock_politisk', state=current_state())
 display(load_gui.layout())
 
 # %% [markdown]

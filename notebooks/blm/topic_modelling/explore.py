@@ -31,14 +31,14 @@ bokeh.plotting.output_notebook()
 pu.set_default_options()
 
 current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
-corpus_folder: str = "/data/blm"
+data_folder: str = "/data/blm"
 
 
 # %% [markdown]
 # ### <span style='color: green'>PREPARE</span> Load Topic Model <span style='float: right; color: red'>MANDATORY</span>
 
 # %%
-load_gui: ntm.LoadGUI = ntm.LoadGUI(corpus_folder=corpus_folder, state=current_state(), slim=True).setup()
+load_gui: ntm.LoadGUI = ntm.LoadGUI(data_folder=data_folder, state=current_state(), slim=True).setup()
 
 display(load_gui.layout())
 
@@ -110,9 +110,9 @@ display(ntm.FocusTopicDocumentNetworkGui(pivot_key_specs={}, state=current_state
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>
 
 # %%
-corpus_folder: str = "/data/blm"
+data_folder: str = "/data/blm"
 custom_styles = {'edges': {'curve-style': 'haystack'}}
-w = ntm.create_topics_token_network_gui(data_folder=corpus_folder, custom_styles=custom_styles)
+w = ntm.create_topics_token_network_gui(data_folder=data_folder, custom_styles=custom_styles)
 display(w.layout())
 
 # %%
