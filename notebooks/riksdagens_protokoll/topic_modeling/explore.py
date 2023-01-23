@@ -21,6 +21,7 @@
 # %%
 import __paths__  # pylint: disable=unused-import
 import os
+from typing import Callable
 
 import pandas as pd
 from bokeh.io import output_notebook
@@ -36,7 +37,7 @@ jj = os.path.join
 output_notebook()
 pu.set_default_options()
 
-current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
+current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
 
 current_version: str = "v0.4.3"
 
@@ -61,7 +62,7 @@ default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_
 
 # %%
 load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
-    person_codecs, corpus_folder=data_folder, state=current_state(), slim=True
+    person_codecs, data_folder=data_folder, state=current_state(), slim=True
 ).setup()
 display(load_gui.layout())
 # %% [markdown]
@@ -69,7 +70,7 @@ display(load_gui.layout())
 #
 
 # %%
-display(ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=current_state()).setup().layout())
+display(ntm.EditTopicLabelsGUI(folder=load_gui.model_info.folder, state=current_state()).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>

@@ -72,7 +72,7 @@ def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame
 
 def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     state = dict(inferred_topics=inferred_topics)
-    ui = wtm_ui.RiksprotLoadGUI(person_codecs, corpus_folder=DATA_FOLDER, state=state, slim=True)
+    ui = wtm_ui.RiksprotLoadGUI(person_codecs, data_folder=DATA_FOLDER, state=state, slim=True)
     assert ui is not None
     ui.setup()
     ui._model_name.value = MODEL_NAME
