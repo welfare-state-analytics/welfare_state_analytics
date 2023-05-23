@@ -11,7 +11,7 @@ classifiers = [
     'Topic :: Software Development',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.11',
 ]
 license = "Apache-2.0"
 readme = "README.md"
@@ -28,19 +28,22 @@ loguru = "^0.5.3"
 matplotlib = "*"
 msgpack = "^1.0.2"
 nltk = "*"
-pandas = "*"
+# Pinning Pandas due to build failure 2.0.0
+pandas = "<2.0.0"
 pandas-bokeh = "*"
-python = "==3.9.*"
+python = "==3.11.*"
 scikit-learn = "*"
 scipy = "*"
-sklearn = "*"
 tqdm = "*"
 ipydatagrid = "^1.1.8"
 bqplot = "^0.12.32"
 PyGithub = "^1.55"
 plotly = "^5.5.0"
 bar-chart-race = "^0.1.0"
-humlab-penelope = {extras = ["full"], version = "^0.7.15"}
+humlab-penelope = {extras = ["full"], path = "../../penelope", develop = true}
+
+# Pinning urllib3 to 1.26.15 due to build failues with 1.26.6
+urllib3 = "1.26.15"
 
 [tool.poetry.dev-dependencies]
 black = "*"
@@ -150,5 +153,5 @@ show_missing = true
 sort = "Name"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
