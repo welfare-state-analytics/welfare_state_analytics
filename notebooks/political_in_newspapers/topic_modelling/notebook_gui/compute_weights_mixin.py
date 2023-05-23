@@ -22,13 +22,11 @@ def memoize(f):
 
 class YearlyMeanTopicWeightsProxy:
     def __init__(self):
-
         self._current_data: pd.DataFrame = None
         self._current_filters: dict = {}
         self._current_threshold: float = 0.0
 
     def compute(self, inferred_topics: pd.DataFrame, filters: dict, threshold: float = 0.0) -> pd.DataFrame:
-
         if self._current_filters != filters or threshold != self._current_threshold:
             self._current_filters = filters
             self._current_threshold = threshold

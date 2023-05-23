@@ -39,7 +39,6 @@ class PoliticalTopicTopicGUI(TopicTopicGUI):
 
 
 def display_gui(state: TopicModelContainer):
-
     gui: PoliticalTopicTopicGUI = PoliticalTopicTopicGUI(state).setup()
     display(gui.layout())
     gui.update_handler()

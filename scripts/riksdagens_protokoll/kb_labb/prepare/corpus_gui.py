@@ -11,14 +11,12 @@ logger = get_logger()
 
 
 def get_corpus_tags(corpus_folder):
-
     filenames = [os.path.basename(x) for x in glob.glob(os.path.join(corpus_folder, "*_vectorizer_data.pickle"))]
     tags = [x[0 : len(x) - len("_vectorizer_data.pickle")] for x in filenames]
     return tags
 
 
 def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_axis=None, year_range=(1922, 1989)):
-
     try:
         year_filter = lambda x: year_range[0] <= x['year'] <= year_range[1]
         x_corpus = (
@@ -40,7 +38,6 @@ def load_vectorized_corpus(corpus_folder, corpus_tag, n_count, n_top, normalize_
 
 
 def display_gui(corpus_folder, container=None):
-
     corpus_tags = get_corpus_tags(corpus_folder)
 
     if len(corpus_tags) == 0:
@@ -81,11 +78,9 @@ def display_gui(corpus_folder, container=None):
     )
 
     def load(*args):  # pylint: disable=unused-argument
-
         gui.output.clear_output()
 
         with gui.output:
-
             gui.load.disabled = True
             gui.load.description = 'Wait...'
             gui.corpus_tag.disabled = True

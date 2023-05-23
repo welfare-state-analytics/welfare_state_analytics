@@ -21,7 +21,6 @@ class PoliticalTopicOverviewGUI(TopicTrendsOverviewGUI):
         return self
 
     def layout(self) -> VBox:
-
         return VBox(
             [
                 HBox([self._aggregate, self._publication_id, self._output_format, self._flip_axis]),
@@ -32,7 +31,6 @@ class PoliticalTopicOverviewGUI(TopicTrendsOverviewGUI):
 
 
 def display_gui(state: TopicModelContainer):
-
     gui: PoliticalTopicOverviewGUI = PoliticalTopicOverviewGUI(state=state).setup()
     display(gui.layout())
     gui.update_handler()

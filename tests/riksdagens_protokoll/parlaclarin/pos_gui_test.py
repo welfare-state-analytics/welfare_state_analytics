@@ -52,7 +52,6 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, person_codecs: md
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True)])
 def test_pos_count_gui_load(folder: str, encoded: bool, person_codecs: md.PersonCodecs):
-
     gui = tc.PoSCountGUI(default_folder=folder, encoded=encoded, person_codecs=person_codecs).setup(load_data=False)
 
     gui.load(gui.source_folder)
@@ -78,7 +77,6 @@ def test_pos_count_gui_load(folder: str, encoded: bool, person_codecs: md.Person
 def test_pos_count_gui_prepare(
     folder: str, encoded: bool, expected_columns_added: Set[str], person_codecs: md.PersonCodecs
 ):
-
     gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, person_codecs=person_codecs)
         .setup(load_data=False)
@@ -108,7 +106,6 @@ def test_pos_count_gui_prepare(
 def test_pos_count_gui_compute_without_pivot_keys(
     folder: str, temporal_key: str, encoded: bool, expected_count: int, person_codecs: md.PersonCodecs
 ):
-
     gui = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, person_codecs=person_codecs)
         .setup(load_data=False)
@@ -144,7 +141,6 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     expected_unstacked_count: int,
     person_codecs: md.PersonCodecs,
 ):
-
     # expected_pivot_keys = [x.rstrip('_id') for x in pivot_keys]
 
     gui: tc.PoSCountGUI = (
@@ -172,7 +168,6 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
 @patch('penelope.notebook.token_counts.plot.plot_multiline', lambda *_, **__: None)
 @patch('penelope.notebook.token_counts.plot.plot_stacked_bar', lambda *_, **__: None)
 def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
-
     computed_data: pd.DataFrame = None
     compute_calls: int = 0
 
@@ -226,7 +221,6 @@ def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
 @pytest.mark.long_running
 @pytest.mark.parametrize('folder,encoded', [(TEST_FOLDER, True)])
 def test_pos_count_gui_display(folder: str, encoded: bool, person_codecs: md.PersonCodecs):
-
     gui: tc.PoSCountGUI = (
         tc.PoSCountGUI(default_folder=folder, encoded=encoded, person_codecs=person_codecs)
         .setup(load_data=False)

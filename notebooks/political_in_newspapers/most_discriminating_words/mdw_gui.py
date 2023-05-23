@@ -18,7 +18,6 @@ from notebooks.political_in_newspapers.topic_modelling import repository
 def get_group_indicies(
     document_index: pd.DataFrame, period: Sequence[int], pub_ids: Sequence[int] | int = None
 ) -> pd.Index:
-
     if isinstance(pub_ids, int):
         pub_ids = list(pub_ids)
 
@@ -108,7 +107,6 @@ def display_mwd(mdw_data: pd.DataFrame):
 
 class MDWGUI:
     def __init__(self, corpus: VectorizedCorpus, document_index: pd.DataFrame):
-
         self.corpus: VectorizedCorpus = corpus
         self.document_index: pd.DataFrame = document_index
 
@@ -165,7 +163,6 @@ class MDWGUI:
         self.output = ipywidgets.Output(layout={"border": "1px solid black"})
 
     def setup(self) -> "MDWGUI":
-
         min_year, max_year = (self.document_index.year.min(), self.document_index.year.max())
 
         self.period1.min, self.period1.max = min_year, max_year
@@ -191,7 +188,6 @@ class MDWGUI:
         return self
 
     def layout(self) -> ipywidgets.VBox:
-
         return ipywidgets.VBox(
             children=[
                 ipywidgets.HBox(
@@ -235,7 +231,6 @@ class MDWGUI:
 
 
 def display_gui(corpus: VectorizedCorpus, documents: pd.DataFrame):
-
     gui = MDWGUI(corpus, documents).setup()
 
     display(gui.layout())

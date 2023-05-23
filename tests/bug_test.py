@@ -24,7 +24,6 @@ jj = os.path.join
 
 @pytest.mark.skip("bug fixed")
 def test_Q4956353_faulty_speaker_info():
-
     corpus_version: str = "v0.4.1"
     protocol_name: str = "prot-199192--120"
     data_folder: str = "/data/riksdagen_corpus_data/"
@@ -212,7 +211,6 @@ def test_bug():
 
 @pytest.mark.long_running
 def test_checkpoint_feather():
-
     config_filename = jj(KB_LABB_DATA_FOLDER, 'riksdagens-protokoll.yml')
     corpus_config = CorpusConfig.load(config_filename).folders(KB_LABB_DATA_FOLDER)
     feather_folder: str = f'./tests/output/{uuid.uuid1()}'

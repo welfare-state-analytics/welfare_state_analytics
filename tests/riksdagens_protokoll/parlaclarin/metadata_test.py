@@ -25,7 +25,6 @@ def test_load_data():
 
 
 def test_load_riksprot_netadata():
-
     person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=METADATA_FILENAME)
 
     assert isinstance(person_codecs, md.PersonCodecs)

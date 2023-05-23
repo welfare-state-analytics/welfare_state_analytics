@@ -37,7 +37,6 @@ root_folder = os.getcwd().split("notebooks")[0]
 
 
 def create_corpus(source_filename: str, periods):
-
     df = pd.read_csv(source_filename, sep="\t")[["year", "txt"]]
 
     reader = PandasCorpusReader(df, column_filters={"year": periods})

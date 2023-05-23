@@ -54,7 +54,6 @@ NAME_COLUMNS: List[str] = ['gender', 'party_abbrev', 'office_type']
 
 
 def sample_riksprot_metadata():
-
     chambers: pd.DataFrame = None
     gender: pd.DataFrame = None
     office_type: pd.DataFrame = None

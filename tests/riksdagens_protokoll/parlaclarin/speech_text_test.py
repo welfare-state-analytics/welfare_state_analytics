@@ -79,7 +79,6 @@ def test_loader():
     ],
 )
 def test_speech_text_service(speech_index: pd.DataFrame, protocol_name: str, n_utterances: int, n_speeches: int):
-
     loader: sr.Loader = sr.ZipLoader(folder=TAGGED_CORPUS_FOLDER)
 
     strategy: sr.SpeechTextService = sr.SpeechTextService(speech_index)
@@ -94,7 +93,6 @@ def test_speech_text_service(speech_index: pd.DataFrame, protocol_name: str, n_u
     'protocol_name', ['prot-1933--fk--5', 'prot-1955--ak--22', 'prot-199192--127', 'prot-199192--21', 'prot-199596--35']
 )
 def test_speech_to_dict(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame, protocol_name: str):
-
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
         source=TAGGED_CORPUS_FOLDER,
         person_codecs=person_codecs,
@@ -106,7 +104,6 @@ def test_speech_to_dict(person_codecs: md.PersonCodecs, speech_index: pd.DataFra
     )
 
     for speech_info in speech_infos:
-
         speech = repository.speech(speech_name=speech_info['document_name'], mode='dict')
 
         assert all(speech[k] == speech_info[k] for k in set(speech.keys()).intersection(speech_info.keys()))

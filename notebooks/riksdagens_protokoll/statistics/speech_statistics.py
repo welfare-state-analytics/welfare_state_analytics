@@ -82,7 +82,6 @@ def compute_statistics(temporal_key: str, party: str, normalize: bool):
 
 @dataclass
 class CaseOneGUI:
-
     partys = Dropdown(description='Party', options=[''] + PARTYS, layout={'width': '150px'})
     period = Dropdown(description='Period', options=['year', 'decade'], value='decade', layout={'width': '180px'})
     kind = Dropdown(
@@ -102,7 +101,6 @@ class CaseOneGUI:
         return self
 
     def update(self):
-
         data: pd.DataFrame = compute_statistics(self.period.value, self.partys.value, self.normalize.value)
 
         self.output.clear_output()

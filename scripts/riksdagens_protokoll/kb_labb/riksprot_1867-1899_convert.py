@@ -19,15 +19,11 @@ def baseform(x: dict) -> Optional[str]:
 
 
 def convert(source_filename: str, target_filename: str):
-
     with zipfile.ZipFile(source_filename, "r") as sfp:
-
         with zipfile.ZipFile(target_filename, "w") as tfp:
-
             filenames: List[str] = sfp.namelist()
 
             for filename in tqdm(filenames):
-
                 content: str = sfp.read(filename).decode('utf-8')
                 tagged_frame: pd.DataFrame = pd.read_csv(
                     io.StringIO(content), sep='\t', comment='#', quoting=csv.QUOTE_NONE
@@ -42,7 +38,6 @@ def convert(source_filename: str, target_filename: str):
 
 
 if __name__ == "__main__":
-
     source_file: str = '/home/roger/source/penelope/data/riksprot_1800.csv.zip'
     target_file: str = '/home/roger/source/penelope/data/riksdagens_protokoll_1867-1899.csv.zip'
 

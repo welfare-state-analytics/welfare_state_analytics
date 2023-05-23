@@ -33,7 +33,6 @@ def create_bigger_vectorized_corpus(
     tf_threshold: int = 5,
     tf_threshold_mask: bool = False,
 ):
-
     args: interface.ComputeOpts = interface.ComputeOpts(
         corpus_type=pipeline.CorpusType.SparvCSV,
         corpus_source=corpus_source,

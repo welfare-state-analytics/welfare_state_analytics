@@ -75,7 +75,6 @@ def mdw_run(
     top_n_terms: int,
     group: Any,
 ):
-
     if len(group) != 2:
         print("please specify two groups")
         return
@@ -113,7 +112,6 @@ def mdw_run(
     )
 
     if df is not None:
-
         filename = "mdw_{}_{}-{}_vs_{}_{}-{}.xlsx".format(*group[0], *group[1])
         df.to_excel(filename)
 

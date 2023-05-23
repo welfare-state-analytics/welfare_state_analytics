@@ -51,7 +51,6 @@ def compute_for_period_newpaper(df, period, newspaper, options):
 
 
 def compute_co_occurrence_for_periods(source_filename, newspapers, periods, target_filename, **options):
-
     columns = ['newspaper', 'period', 'w1', 'w2', 'value', 'value_n_d', 'value_n_t']
 
     df = pd.read_csv(source_filename, sep='\t')[['newspaper', 'year', 'txt']]  # type: ignore

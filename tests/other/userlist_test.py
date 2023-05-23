@@ -1,6 +1,5 @@
 def test_read_userlist_test():
     with open("userlist", "w") as fo:
-
         userlist = ['# Users follows', "", "", "roger admin", "kalle ", "  kula", "  # no more users", ""]
         fo.write('\n'.join(userlist))
 

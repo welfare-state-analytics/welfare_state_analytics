@@ -56,7 +56,6 @@ def plot_pivot(data: pd.DataFrame, kind: str):
 def compute_statistics(
     *, temporal_key: str, pivot_key: str, pivot_sub_key: str, pivot_value: str, normalize: bool, mode: str
 ):
-
     data: pd.DataFrame = SPEECH_INDEX.copy()
 
     if pivot_value:
@@ -86,7 +85,6 @@ def compute_statistics(
 
 @dataclass
 class CaseOneGUI:
-
     pivot_key: str = None
     pivot_sub_key: str = None
     pivot_values = Dropdown(description='Pivot', options=[], layout={'width': '160px'})
@@ -115,7 +113,6 @@ class CaseOneGUI:
         return self
 
     def update(self):
-
         opts: dict = dict(
             temporal_key=self.period.value,
             pivot_key=self.pivot_key,

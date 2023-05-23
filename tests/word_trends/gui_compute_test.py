@@ -21,7 +21,6 @@ def monkey_patch(*_, **__):
 
 
 def test_compute_gui_compute_dry_run():
-
     compute_called = False
 
     def compute_patch(*_, **__):
@@ -50,7 +49,6 @@ def test_compute_gui_compute_dry_run():
 
 @pytest.mark.long_running
 def test_compute_gui_compute_hot_run():
-
     corpus_tag: str = f"{str(uuid.uuid4())[:8]}"
     gui: ComputeGUI = create_compute_gui(
         corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
@@ -72,7 +70,6 @@ def test_compute_gui_compute_hot_run():
 
 
 def test_allo_allo():
-
     df = pd.DataFrame(
         data={'token': ['apor', 'kaninen', 'hundar'], 'baseform': ['|apa|xxx|', '|kanin|xxx|', '|hund|xxx|']}
     )

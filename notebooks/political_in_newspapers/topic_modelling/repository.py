@@ -37,7 +37,6 @@ class SourceCorpus:
         vocabulary: pd.DataFrame,
         document_index: pd.DataFrame,
     ):
-
         self.folder: str = folder
         self.corpus: pd.DataFrame | sp.spmatrix | Sparse2Corpus = corpus
         self.vocabulary: pd.DataFrame = vocabulary
@@ -78,7 +77,6 @@ class SourceCorpus:
         return self
 
     def slice_by_document_ids(self, document_index: pd.DataFrame, inplace=True) -> "SourceCorpus":
-
         if not sp.issparse(self.corpus):
             raise ValueError("slice_by_document_ids only allowed for sparse corpus")
 
@@ -111,7 +109,6 @@ class SourceCorpus:
             raise ValueError("slice_by_publications only allowed for sparse corpus")
 
         if publication_ids:
-
             document_index: pd.DataFrame = self.document_index[self.document_index.publication_id.isin(publication_ids)]
 
             return self.slice_by_document_ids(document_index, inplace)
@@ -135,7 +132,6 @@ class SourceCorpus:
 
     @deprecated
     def to_gensim_sparse_corpus2(self, publication_ids: List[str] = None, inplace=True) -> "SourceCorpus":
-
         return (
             self.to_coo_corpus(inplace).slice_by_publications(publication_ids, inplace).to_gensim_sparse_corpus(inplace)
         )
@@ -154,7 +150,6 @@ class SourceCorpus:
         return self.document_index[['publication_id', 'year']].copy()
 
     def info(self) -> None:
-
         print('Corpus metrics, source "dtm1.rds", arrays drm$i, drm$j, drm$v')
         print("  {} max document ID".format(self.corpus.document_id.max()))
         print("  {} unique document ID".format(self.corpus.document_id.unique().shape[0]))
@@ -175,7 +170,6 @@ class SourceCorpus:
 class SourceRepository:
     @staticmethod
     def load(folder: str) -> "SourceCorpus":
-
         corpus: pd.DataFrame = SourceRepository._load_source_dtm(folder)
         vocabulary: pd.DataFrame = SourceRepository._load_source_vocabulary(folder)
         document_index: pd.DataFrame = SourceRepository.load_document_index(folder)
@@ -218,7 +212,6 @@ class SourceRepository:
         processed_filename: str = os.path.join(folder, DOCUMENT_PROCESSED_FILENAME)
 
         if not os.path.isfile(processed_filename) or force:
-
             filename = os.path.join(folder, DOCUMENT_DATASET_FILENAME)
 
             document_index: pd.DataFrame = pd.read_csv(
@@ -318,7 +311,6 @@ class SourceRepository:
 
 
 def plot_document_size_distribution(document_index: pd.DataFrame) -> pd.DataFrame:
-
     tf: pd.DataFrame = document_index.groupby("tf").size()
     dx = pd.DataFrame({"tf": list(range(0, tf.index.max() + 1))}).set_index("tf")
     tf: pd.DataFrame = dx.join(tf.rename("x"), how="left").fillna(0).astype(np.int)
@@ -380,7 +372,6 @@ class ExtractDN68:
 
 
 def migrate_document_index(folder: str = '/data/westac/textblock_politisk'):
-
     model_name: str = 'gensim_mallet-lda.topics.100.AB.DN'
     model_path: str = os.path.join(folder, model_name)
     source_name: str = os.path.join(model_path, 'documents.zip')

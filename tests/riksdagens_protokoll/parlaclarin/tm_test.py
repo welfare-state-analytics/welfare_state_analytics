@@ -103,7 +103,6 @@ def test_find_documents_gui(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
         person_codecs, speech_repository, state
@@ -168,7 +167,6 @@ def test_browse_documents_gui(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
         person_codecs, speech_repository, state
@@ -222,7 +220,6 @@ def test_topic_trends_overview(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
@@ -243,7 +240,6 @@ def test_topic_trends(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
@@ -264,7 +260,6 @@ def test_topic_multi_trends(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
 
     ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
@@ -287,7 +282,6 @@ def test_topic_topic_network(
     speech_repository: sr.SpeechTextRepository,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
@@ -315,7 +309,6 @@ def test_pivot_topic_network(
     person_codecs: md.PersonCodecs,
     inferred_topics: tm.InferredTopicsData,
 ):
-
     state = dict(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
@@ -334,7 +327,6 @@ def test_pivot_topic_network(
 
 
 def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
-
     folder: str = f'tests/output/{str(uuid.uuid4())[:6]}'
     os.makedirs(folder)
 

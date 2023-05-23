@@ -28,7 +28,6 @@ TEMPORAL_GROUP_BY = ['decade', 'lustrum', 'year']
 
 @dataclass
 class ComputeOpts(wt.TrendsComputeOpts):
-
     source_folder: str = None
 
     def invalidates_corpus(self, other: "ComputeOpts") -> bool:
@@ -142,7 +141,6 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
     #             ipydisplay(d)
 
     def load_corpus(self, overload: bool = False) -> pc.VectorizedCorpus:
-
         folder: str = self.source_folder
         tags: List[str] = pc.VectorizedCorpus.find_tags(folder=folder)
 
@@ -157,7 +155,6 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         return corpus
 
     def assign_metadata(self, corpus: pc.VectorizedCorpus, person_codecs: md.PersonCodecs) -> pc.VectorizedCorpus:
-
         document_index: pd.DataFrame = corpus.document_index
 
         if 'gender_id' not in document_index.columns:
@@ -193,7 +190,6 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         self._filter_keys.layout = {'width': '180px'}
         self._multi_pivot_keys_picker.layout = {'width': '180px'}
         if self.pivot_keys.has_pivot_keys:
-
             # tab = Tab(children=[self._multi_pivot_keys_picker, self._filter_keys])
             # tab.titles = ["Pivot by", "Filter by"]
             self._picker.rows = 15
@@ -213,12 +209,10 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
 
 def display_gui(data_folder: str, versions: list[str]):
-
     corpus_versions: w.Dropdown = w.Dropdown(options=versions, value=None)
     gui_output = w.Output()
 
     def corpus_version_handler(*_):
-
         gui_output.clear_output()
         corpus_version: str = corpus_versions.value
 
@@ -226,7 +220,6 @@ def display_gui(data_folder: str, versions: list[str]):
         dtm_folder: str = jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask")
 
         with gui_output:
-
             if not os.path.isfile(metadata_filename):
                 print(f"error: metadata file '{metadata_filename}' not found")
                 return

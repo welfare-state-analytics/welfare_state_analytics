@@ -33,7 +33,6 @@ class PoliticalTopicTrendsGUI(TopicTrendsGUI):
 
 
 def display_gui(state: TopicModelContainer, extra_filter=None):  # pylint: disable=unused-argument
-
     gui = PoliticalTopicTrendsGUI(state=state).setup()
 
     display(gui.layout())

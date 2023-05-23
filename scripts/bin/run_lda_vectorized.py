@@ -110,7 +110,6 @@ def run_model(
         sys.exit(1)
 
     if corpus_type == 'vectorized':
-
         assert corpus_tag is not None, 'error: Corpus dump name-tag not specified for vectorized corpus'
         assert VectorizedCorpus.dump_exists(tag=corpus_tag, folder=corpus_folder), 'error: no dump for given tag exists'
 
@@ -127,7 +126,6 @@ def run_model(
     #     reader = sparv_reader.SparvXmlCorpusSourceReader(corpus_tag, **opts)
 
     else:
-
         dtm, document_index, id2token = corpus_data.load_as_dtm2(corpus_folder, [1, 3])
 
     target_folder = os.path.join(corpus_folder, name)

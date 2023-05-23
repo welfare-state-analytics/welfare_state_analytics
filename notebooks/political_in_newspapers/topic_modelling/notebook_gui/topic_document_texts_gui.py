@@ -20,7 +20,6 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 def reconstitue_texts_for_topic(df: pd.DataFrame, corpus, id2token, n_top=500) -> pd.DataFrame:
-
     df['text'] = df.document_id.apply(lambda x: bow2text(corpus[x], id2token))
     df['pub'] = df.publication_id.apply(lambda x: repository.ID2PUB[x])
     df = df.drop(['topic_id', 'year', 'publication_id'], axis=1).set_index('document_id')
@@ -37,7 +36,6 @@ def display_texts(
     output_format: str = 'Table',
     n_top: int = 500,
 ):
-
     # if state.train_corpus is None:
     #     print("Corpus is not avaliable. Please store model with corpus!")
     #     return
@@ -91,7 +89,6 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
         self.next_topic_id: Button = widgets_utils.button_with_next_callback(self, 'topic_id', self.inferred_n_topics)
 
     def setup(self) -> "TopicDocumentTextGUI":
-
         self.topic_id.observe(self.update_handler, names='value')
         self.year.observe(self.update_handler, names='value')
         self.publication_id.observe(self.update_handler, names='value')
@@ -102,7 +99,6 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
         return self
 
     def topic_changed(self, topic_id: int):
-
         if self.n_topics != self.inferred_n_topics:
             self.n_topics = self.inferred_n_topics
             self.topic_id.value = 0
@@ -113,11 +109,9 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
         self.text.value = 'ID {}: {}'.format(topic_id, tokens)
 
     def update_handler(self, *_):
-
         self.output.clear_output()
 
         with self.output:
-
             self.topic_changed(self.topic_id.value)
 
             display_texts(
@@ -133,7 +127,6 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
             )
 
     def layout(self) -> VBox:
-
         return VBox(
             [
                 HBox(
@@ -151,7 +144,6 @@ class TopicDocumentTextGUI(ntm.TopicsStateGui):
 
 
 def display_gui(state: ntm.TopicModelContainer):
-
     gui: TopicDocumentTextGUI = TopicDocumentTextGUI(state).setup()
 
     display(gui.layout())

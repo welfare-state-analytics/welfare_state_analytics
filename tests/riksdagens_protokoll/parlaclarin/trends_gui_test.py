@@ -23,7 +23,6 @@ def person_codecs() -> md.PersonCodecs:
 
 @pytest.mark.long_running
 def test_trends_gui_create_without_pivot_keys():
-
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(
         pivot_key_specs=None, person_codecs=None, default_folder=TEST_FOLDER, encoded=True
     )
@@ -45,7 +44,6 @@ def test_trends_gui_create_without_pivot_keys():
 
 @pytest.mark.long_running
 def test_trends_gui_create_with_metadata(person_codecs: md.PersonCodecs):
-
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     assert gui.person_codecs is not None
@@ -53,7 +51,6 @@ def test_trends_gui_create_with_metadata(person_codecs: md.PersonCodecs):
 
 @pytest.mark.long_running
 def test_trends_gui_corpus_assign_metadata(person_codecs: md.PersonCodecs):
-
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     corpus: pc.VectorizedCorpus = gui.load_corpus(overload=False)
@@ -66,7 +63,6 @@ def test_trends_gui_corpus_assign_metadata(person_codecs: md.PersonCodecs):
 
 @pytest.mark.long_running
 def test_trends_gui_create_with_pivot_keys(person_codecs: md.PersonCodecs):
-
     expected_keys: set[str] = {'sub_office_type', 'office_type', 'name', 'None', 'party_abbrev', 'gender'}
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs)
@@ -76,7 +72,6 @@ def test_trends_gui_create_with_pivot_keys(person_codecs: md.PersonCodecs):
 
 
 def test_trends_gui_update_picker(person_codecs: md.PersonCodecs):
-
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs)
 
     it_was_called = False
@@ -114,7 +109,6 @@ def test_trends_gui_update_picker(person_codecs: md.PersonCodecs):
 
 @pytest.mark.long_running
 def test_trends_gui_load(person_codecs: md.PersonCodecs):
-
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs).setup()
 
     gui.load()
@@ -150,7 +144,6 @@ def test_trends_gui_transform(
     filter_opts: pu.PropertyValueMaskingOpts,
     picked_tokens: list[str],
 ):
-
     class_name: str = "notebooks.riksdagens_protokoll.word_trends.word_trends_gui.RiksProtTrendsGUI"
 
     opts: wt.ComputeOpts = wt.ComputeOpts(
@@ -166,9 +159,7 @@ def test_trends_gui_transform(
     )
 
     with mock.patch(f'{class_name}.options', new_callable=mock.PropertyMock) as mocked_options:
-
         with mock.patch(f'{class_name}.picked_indices', new_callable=mock.PropertyMock) as mocked_picked_indices:
-
             opts.pivot_keys_id_names = pivot_keys_id_names
             opts.filter_opts = filter_opts
             opts.temporal_key = temporal_key

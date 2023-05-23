@@ -10,7 +10,7 @@ def compile_mallet_document_topics(model, minimum_probability=0.001):
     def document_topics_iter(model, minimum_probability=0.001) -> Iterable[Tuple[int, int, float]]:
         data_iter = enumerate(model.load_document_topics())
         for document_id, topic_weights in data_iter:
-            for (topic_id, weight) in (
+            for topic_id, weight in (
                 (topic_id, weight) for (topic_id, weight) in topic_weights if weight >= minimum_probability
             ):
                 yield (document_id, topic_id, weight)
@@ -24,7 +24,6 @@ def compile_mallet_document_topics(model, minimum_probability=0.001):
 
 
 def fix_int32_overflow(data_folder, model_name):
-
     target_folder = os.path.join(data_folder, model_name)
 
     model_filename = os.path.join(target_folder, 'model', 'gensim.model')

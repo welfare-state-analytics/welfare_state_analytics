@@ -40,7 +40,6 @@ def xtest_focus_topics():
 
 
 def xtest_sou():
-
     model_folder: str = jj("/data/westac/sou_kb_labb", "gensim_mallet-lda.topics.100.sou_kb-labb_1945-1989_nn")
     trained_model: tm.InferredModel = tm.InferredModel.load(folder=model_folder, lazy=True)
     inferred_topics: tm.InferredTopicsData = tm.InferredTopicsData.load(

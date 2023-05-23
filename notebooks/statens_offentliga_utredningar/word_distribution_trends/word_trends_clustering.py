@@ -117,12 +117,10 @@ n_corpus = y_corpus.normalize(axis=0)
 
 
 def display_uniformity_metrics(x_corpus, df_gof, df_most_deviating):
-
     output_row = [ipywidgets.Output(), ipywidgets.Output()]
     display(ipywidgets.HBox(children=output_row))
 
     with output_row[0]:
-
         columns = [
             "token",
             "word_count",

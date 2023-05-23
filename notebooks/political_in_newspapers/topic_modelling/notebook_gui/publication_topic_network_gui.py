@@ -37,7 +37,6 @@ def display_document_topic_network(
     layout_algorithm: str,
     tick=utility.noop,
 ):
-
     tick(1)
 
     weights = compute_weights(document_topic_weights, document_threshold, mean_threshold, period, ignores, aggregate)
@@ -45,24 +44,20 @@ def display_document_topic_network(
     tick()
 
     if len(weights) == 0:
-
         print('No data! Please change selection.')
         return
 
     if output_format == 'network':
-
         titles: pd.DataFrame = topic_modelling.get_topic_titles(topic_token_weights=topic_token_weights)
         display_network(weights, layout_algorithm, scale, titles)
 
     else:
-
         display_tabular(weights, output_format)
 
     tick(0)
 
 
 def display_tabular(weights: pd.DataFrame, output_format):
-
     weights = weights[['publication', 'topic_id', 'weight', 'mean', 'max']]
     weights.columns = ['Source', 'Target', 'weight', 'mean', 'max']
 
@@ -174,12 +169,10 @@ class PublicationTopicNetworkGUI(ntm.TopicsStateGui):
         return self
 
     def compute_handler(self, *_):
-
         self.output.clear_output()
         self.tick(1)
 
         with self.output:
-
             display_document_topic_network(
                 document_topic_weights=self.inferred_topics.document_topic_weights,
                 topic_token_weights=self.inferred_topics.topic_token_weights,
