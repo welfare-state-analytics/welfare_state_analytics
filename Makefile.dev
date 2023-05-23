@@ -206,9 +206,6 @@ requirements.txt-to-git: requirements.txt
 IPYNB_FILES := $(shell find ./notebooks -name "*.ipynb" -type f ! -path "./notebooks/legacy/*" \( ! -name "*checkpoint*" \) -print)
 PY_FILES := $(IPYNB_FILES:.ipynb=.py)
 
-apa:
-	echo $(PY_FILES)
-
 unpair-ipynb:
 	@for ipynb_path in $(IPYNB_FILES) ; do \
         echo "info: unpairing $$ipynb_path..." ;\
