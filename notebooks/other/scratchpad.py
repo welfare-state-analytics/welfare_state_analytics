@@ -61,7 +61,6 @@ def nbytes(corpus):
 
 
 def mask_nonzero_other(self, other) -> None:
-
     mask = other > 0
     B = bundle.corpus.data
     B = B.multiply(mask)

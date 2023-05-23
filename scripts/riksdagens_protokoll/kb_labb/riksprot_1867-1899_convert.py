@@ -19,13 +19,10 @@ def baseform(x: dict) -> Optional[str]:
 
 
 def convert(source_filename: str, target_filename: str, compresslevel: int = 9):
-
     with zipfile.ZipFile(source_filename, "r") as sfp:
-
         with zipfile.ZipFile(
             target_filename, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=compresslevel
         ) as tfp:
-
             filenames: List[str] = sfp.namelist()
 
             for filename in tqdm(filenames):
