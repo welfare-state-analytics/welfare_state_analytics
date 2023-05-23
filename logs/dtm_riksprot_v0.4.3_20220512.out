@@ -1,0 +1,53 @@
+Usage: vectorize-id [OPTIONS] [CONFIG_FILENAME] [CORPUS_SOURCE]
+                    [OUTPUT_FOLDER] [OUTPUT_TAG]
+Try 'vectorize-id --help' for help.
+
+Error: No such option: --config-filename Did you mean --options-filename?
+nohup: ignoring input
+2022-05-12 17:22:36.612 | ERROR    | penelope.scripts.dtm.vectorize_id:process:163 - [Errno 2] No such file or directory: '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml'
+Traceback (most recent call last):
+
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/bin/vectorize-id", line 8, in <module>
+    sys.exit(main())
+    │   │    └ <Command main>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/click/core.py", line 1128, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x7fe03c836a60>
+           └ <Command main>
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/click/core.py", line 1053, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x7fe03cb253a0>
+         │    └ <function Command.invoke at 0x7fe03c83a550>
+         └ <Command main>
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/click/core.py", line 1395, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'options_filename': './opts/dtm_riksprot.yml', 'config_filename': '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches...
+           │   │      │    │           └ <click.core.Context object at 0x7fe03cb253a0>
+           │   │      │    └ <function main at 0x7fdf83ccc3a0>
+           │   │      └ <Command main>
+           │   └ <function Context.invoke at 0x7fe03c836310>
+           └ <click.core.Context object at 0x7fe03cb253a0>
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/click/core.py", line 754, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'options_filename': './opts/dtm_riksprot.yml', 'config_filename': '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches...
+                       └ ()
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/penelope/scripts/dtm/vectorize_id.py", line 69, in main
+    process(**arguments)
+    │         └ {'config_filename': '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml', 'corpus_source': '/data/r...
+    └ <function process at 0x7fe03ca7d670>
+> File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/penelope/scripts/dtm/vectorize_id.py", line 99, in process
+    corpus_config: CorpusConfig = CorpusConfig.load(config_filename).folders(corpus_source, method='replace')
+                                  │            │    │                        └ '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather'
+                                  │            │    └ '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml'
+                                  │            └ <staticmethod object at 0x7fdf83d72a90>
+                                  └ <class 'penelope.pipeline.config.CorpusConfig'>
+  File "/home/roger/.cache/pypoetry/virtualenvs/humlab-westac-O7wB9ikj-py3.9/lib/python3.9/site-packages/penelope/pipeline/config.py", line 146, in load
+    with open(path, "r") as fp:
+              └ '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml'
+
+FileNotFoundError: [Errno 2] No such file or directory: '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml'
+[Errno 2] No such file or directory: '/data/riksdagen_corpus_data/tagged_frames_v0.4.3_speeches.feather/corpus.yml'

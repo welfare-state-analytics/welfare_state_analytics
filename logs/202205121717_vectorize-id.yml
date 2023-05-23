@@ -1,0 +1,23 @@
+append_pos: false
+config_filename: null
+corpus_source: null
+create_subfolder: true
+deserialize_processes: 4
+filename_pattern: null
+keep_numerals: true
+keep_symbols: true
+lemmatize: true
+max_tokens: null
+max_word_length: null
+min_word_length: 1
+output_folder: null
+output_tag: null
+phrase: !!python/tuple []
+phrase_file: null
+pos_excludes: ''
+pos_includes: ''
+pos_paddings: ''
+remove_stopwords: null
+tf_threshold: 1
+tf_threshold_mask: null
+to_lower: true
