@@ -10,7 +10,7 @@ from loguru import logger
 from penelope import utility as pu
 from penelope.notebook import topic_modelling as ntm
 from penelope.notebook.grid_utility import table_widget
-from penelope.plot import plot_multiple_value_series2
+from penelope.plot import plot_multiple_value_series
 
 import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
@@ -86,7 +86,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                 ytw[name].fillna(0, inplace=True)
             except pu.EmptyDataError as ex:
                 logger.info(ex)
-                ytw[name] = 0
+                ytw[name] = 0  # pylint: disable=unsupported-assignment-operation
         return ytw
 
     def display_handler(self, *_):
@@ -110,7 +110,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                     display(g)
                 else:
                     colors: list[str] = [color for _, color, _ in self.lines]
-                    plot_multiple_value_series2(
+                    plot_multiple_value_series(
                         kind=self.output_format.lower(),
                         data=self.yearly_topic_weights.reset_index(),
                         category_name='year',

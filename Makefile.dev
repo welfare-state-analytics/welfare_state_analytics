@@ -107,8 +107,15 @@ tools:
 	@poetry run pip install --upgrade pip --quiet
 	@poetry run pip install poetry --upgrade --quiet
 
-penelope-production-mode: penelope-uninstall
-	@poetry add humlab-penelope[full]
+penelope-production-mode:
+	@if grep -xqe "^humlab-penelope.*develop.*\$$" pyproject.toml ; \
+	then \
+		poetry remove humlab-penelope; \
+		poetry run pip uninstall humlab-penelope --yes; \
+		poetry add humlab-penelope[full];
+	else \
+		poetry update humlab-penelope[full]; \
+	fi
 
 .ONESHELL: penelope-edit-mode
 penelope-edit-mode:

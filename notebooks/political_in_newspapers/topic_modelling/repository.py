@@ -362,7 +362,7 @@ class ExtractDN68:
         dn68_text.to_excel('dn68_text.xlsx')
         # dn68_text.to_csv('dn68_text.csv', sep='\t')
 
-        with zipfile.ZipFile('dn68.zip', 'w', zipfile.ZIP_DEFLATED) as out:
+        with zipfile.ZipFile('dn68.zip', 'w', compression=zipfile.ZIP_DEFLATED) as out:
             i = 0
             for index, row in dn68_text.iterrows():
                 i += 1

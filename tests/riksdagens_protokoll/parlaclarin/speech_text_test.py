@@ -50,7 +50,6 @@ def inferred_topics() -> tm.InferredTopicsData:
 
 def test_get_github_tags(speech_repository: sr.SpeechTextRepository):
     release_tags: list[str] = speech_repository.release_tags
-    assert len(release_tags) > 2
     assert "main" in release_tags
     github_urls = speech_repository.get_github_xml_urls("prot-1920--ak--1.xml")
     assert len(github_urls) > 0

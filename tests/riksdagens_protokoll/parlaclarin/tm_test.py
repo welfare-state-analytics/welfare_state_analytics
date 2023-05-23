@@ -25,7 +25,8 @@ jj = os.path.join
 # TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames_v0.4.1")
 
 DATA_FOLDER: str = "./tests/test_data/riksprot/main"
-MODEL_FOLDER: str = jj(DATA_FOLDER, "tm_test.5files.mallet")
+MODEL_NAME: str = "tm_test.5files.mallet"
+MODEL_FOLDER: str = jj(DATA_FOLDER, MODEL_NAME)
 DATABASE_FILENAME: str = jj(DATA_FOLDER, 'riksprot_metadata.db')
 TAGGED_CORPUS_FOLDER: str = jj(DATA_FOLDER, "tagged_frames")
 SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/document_index.feather")
@@ -71,9 +72,10 @@ def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame
 
 def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     state = dict(inferred_topics=inferred_topics)
-    ui = wtm_ui.RiksprotLoadGUI(person_codecs, corpus_folder=DATA_FOLDER, state=state, slim=True)
+    ui = wtm_ui.RiksprotLoadGUI(person_codecs, data_folder=DATA_FOLDER, state=state, slim=True)
     assert ui is not None
     ui.setup()
+    ui._model_name.value = MODEL_NAME
     ui.load()
 
 

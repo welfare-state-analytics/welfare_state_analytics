@@ -46,26 +46,35 @@ GithubUrl = namedtuple('GithubUrl', 'name url')
 
 # pylint: disable=unused-argument
 
+
 class SpeechTextService:
-    """Reconstitute text using information stored in the document (speech) index """
+    """Reconstitute text using information stored in the document (speech) index"""
 
     def __init__(self, document_index: pd.DataFrame):
         self.speech_index: pd.DataFrame = document_index
         self.speech_index['protocol_name'] = self.speech_index['document_name'].str.split('_').str[0]
         self.speech_index.rename(columns={'speach_index': 'speech_index'}, inplace=True, errors='ignore')
 
+        """Name of speaker note reference was changed from v0.4.3 (speaker_hash => speaker_note_id)"""
+        self.id_name = 'speaker_note_id' if 'speaker_note_id' in self.speech_index.columns else 'speaker_hash'
+
     @cached_property
-    def name2info(self) ->dict[str, dict]:
+    def name2info(self) -> dict[str, dict]:
         """Create a map protcol name to list of dict of relevant properties"""
-        si: pd.DataFrame = self.speech_index.set_index('protocol_name', drop=True)[['u_id', 'speech_index', 'speaker_hash', 'n_utterances']]
+        si: pd.DataFrame = self.speech_index.set_index('protocol_name', drop=True)[
+            ['u_id', 'speech_index', self.id_name, 'n_utterances']
+        ]
         return si.assign(data=si.to_dict('records')).groupby(si.index).agg(list)['data'].to_dict()
 
     def speeches(self, *, metadata: dict, utterances: list[dict]) -> list[dict]:
         """Create list of speeches for all speeches in protocol"""
         speech_infos: dict = self.name2info.get(metadata.get("name"))
-        speech_lengths: np.ndarray = np.array([s.get("n_utterances",0) for s in speech_infos])
+        speech_lengths: np.ndarray = np.array([s.get("n_utterances", 0) for s in speech_infos])
         speech_starts: np.ndarray = np.append([0], np.cumsum(speech_lengths))
-        speeches = [self._create_speech(metadata=metadata, utterances=utterances[speech_starts[i]:speech_starts[i+1]]) for i in range(0, len(speech_infos))]
+        speeches = [
+            self._create_speech(metadata=metadata, utterances=utterances[speech_starts[i] : speech_starts[i + 1]])
+            for i in range(0, len(speech_infos))
+        ]
         return speeches
 
     def nth(self, *, metadata: dict, utterances: list[dict], n: int) -> dict:
@@ -75,18 +84,23 @@ class SpeechTextService:
         return self.speeches(metadata=metadata, utterances=utterances)[n]
 
     def _create_speech(self, *, metadata: dict, utterances: list[dict]) -> dict:
-        return {} if len(list(utterances or [])) == 0 else dict(
-            speaker_hash=utterances[0]['speaker_hash'],
-            who=utterances[0]['who'],
-            u_id=utterances[0]['u_id'],
-            paragraphs=[p for u in utterances for p in u['paragraphs']],
-            num_tokens=sum(x['num_tokens'] for x in utterances),
-            num_words=sum(x['num_words'] for x in utterances),
-            page_number=utterances[0]["page_number"] or "?",
-            page_number2=utterances[-1]["page_number"] or "?",
-            protocol_name=(metadata or {}).get("name", "?"),
-            date=(metadata or {}).get("date", "?"),
+        return (
+            {}
+            if len(list(utterances or [])) == 0
+            else dict(
+                speaker_note_id=utterances[0][self.id_name],
+                who=utterances[0]['who'],
+                u_id=utterances[0]['u_id'],
+                paragraphs=[p for u in utterances for p in u['paragraphs']],
+                num_tokens=sum(x['num_tokens'] for x in utterances),
+                num_words=sum(x['num_words'] for x in utterances),
+                page_number=utterances[0]["page_number"] or "?",
+                page_number2=utterances[-1]["page_number"] or "?",
+                protocol_name=(metadata or {}).get("name", "?"),
+                date=(metadata or {}).get("date", "?"),
+            )
         )
+
 
 class Loader(abc.ABC):
     @abc.abstractmethod
@@ -101,7 +115,10 @@ class ZipLoader(Loader):
     def load(self, protocol_name: str) -> tuple[dict, list[dict]]:
         """Loads tagged protocol data from archive"""
         sub_folder: str = protocol_name.split('-')[1]
-        for filename in [jj(self.folder, sub_folder, f"{protocol_name}.zip"), jj(self.folder, f"{protocol_name}.zip"),]:
+        for filename in [
+            jj(self.folder, sub_folder, f"{protocol_name}.zip"),
+            jj(self.folder, f"{protocol_name}.zip"),
+        ]:
             if not os.path.isfile(filename):
                 continue
             with zipfile.ZipFile(filename, "r") as fp:
@@ -111,6 +128,7 @@ class ZipLoader(Loader):
             utterances: list[dict] = json.loads(json_str)
             return metadata, utterances
         raise FileNotFoundError(protocol_name)
+
 
 class SpeechTextRepository:
 
@@ -162,19 +180,20 @@ class SpeechTextRepository:
 
         speech_info.update(name=speaker_name)
 
-        speech_info["speaker_note"] = self.speaker_hash2note.get(speech_info.get("speaker_hash"), "(introductory note not found)")
+        speech_info["speaker_note"] = self.speaker_note_id2note.get(
+            speech_info.get(self.service.id_name), "(introductory note not found)"
+        )
 
         return speech_info
 
-
     @cached_property
-    def speaker_hash2note(self) -> dict:
+    def speaker_note_id2note(self) -> dict:
         try:
             if not self.person_codecs.source_filename:
                 return {}
             with sqlite3.connect(database=self.person_codecs.source_filename) as db:
                 speaker_notes: pd.DataFrame = read_sql_table("speaker_notes", db)
-                speaker_notes.set_index("speaker_hash", inplace=True)
+                speaker_notes.set_index(self.service.id_name, inplace=True)
                 return speaker_notes['speaker_note'].to_dict()
         except Exception as ex:
             logger.error(f"unable to read speaker_notes: {ex}")
@@ -248,13 +267,13 @@ class SpeechTextRepository:
         if not bool(protocol_name):
             return ""
 
-        page_url: str = f"{protocol_name.replace('-', '_')}-{str(page_number).zfill(3)}.jp2/"  if page_number.isnumeric() else ""
+        page_url: str = (
+            f"{protocol_name.replace('-', '_')}-{str(page_number).zfill(3)}.jp2/" if page_number.isnumeric() else ""
+        )
 
         url: str = f"https://betalab.kb.se/{protocol_name}/{page_url}_view"
 
         return f'<a href="{url}" target="_blank" style="font-weight: bold;color: blue;">KB</a>&nbsp;'
-
-
 
     def get_github_tags(self, github_access_token: str = None) -> list[str]:
         release_tags: list[str] = ["main", "dev"]
@@ -262,7 +281,7 @@ class SpeechTextRepository:
 
             access_token: str = github_access_token or os.environ.get("GITHUB_ACCESS_TOKEN", None)
 
-            #if access_token is None:
+            # if access_token is None:
             #    logger.info("GITHUB_ACCESS_TOKEN not set")
 
             github: gh.Github = gh.Github(access_token)

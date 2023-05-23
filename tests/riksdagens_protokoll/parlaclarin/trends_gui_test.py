@@ -90,12 +90,12 @@ def test_trends_gui_update_picker(person_codecs: md.PersonCodecs):
     gui.load()
     assert gui._alert.value == '✅'
     gui.observe(True)
-    gui._words.value = "APA"
+    gui._words_to_find.value = "APA"
     assert it_was_called
 
     it_was_called = False
     gui.observe(False)
-    gui._words.value = "BANAN"
+    gui._words_to_find.value = "BANAN"
     assert not it_was_called
 
     gui.observe(True)
@@ -222,8 +222,8 @@ def test_trends_gui_bugcheck(person_codecs: md.PersonCodecs):
 
     words = ['herr']
     gui.observe(False)
-    gui._picker.options = words
-    gui._picker.value = words
+    gui._words_picker.options = words
+    gui._words_picker.value = words
     for i in range(0, len(gui._displayers)):
         gui._tab.selected_index = i
         gui.plot()

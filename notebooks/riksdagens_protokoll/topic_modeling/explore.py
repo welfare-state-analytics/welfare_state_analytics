@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -21,6 +21,7 @@
 # %%
 import __paths__  # pylint: disable=unused-import
 import os
+from typing import Callable
 
 import pandas as pd
 from bokeh.io import output_notebook
@@ -36,9 +37,9 @@ jj = os.path.join
 output_notebook()
 pu.set_default_options()
 
-current_state: ntm.TopicModelContainer = ntm.TopicModelContainer.singleton
+current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
 
-current_version: str = "v0.4.1"
+current_version: str = "v0.4.3"
 
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
 codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{current_version}.db")
@@ -61,7 +62,7 @@ default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_
 
 # %%
 load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
-    person_codecs, corpus_folder=data_folder, state=current_state(), slim=True
+    person_codecs, data_folder=data_folder, state=current_state(), slim=True
 ).setup()
 display(load_gui.layout())
 # %% [markdown]
@@ -69,7 +70,7 @@ display(load_gui.layout())
 #
 
 # %%
-display(ntm.EditTopicLabelsGUI(folder=load_gui.loaded_model_folder, state=current_state()).setup().layout())
+display(ntm.EditTopicLabelsGUI(folder=load_gui.model_info.folder, state=current_state()).setup().layout())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>

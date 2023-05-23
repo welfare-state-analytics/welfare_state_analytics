@@ -12,7 +12,7 @@ from westac.riksprot.parlaclarin import codecs as md
 # pylint: disable=unused-argument
 
 
-class PoSCountGUI(tc.BasicDTMGUI):
+class PoSCountGUI(tc.TokenCountGUI):
     def __init__(self, *, default_folder: str, person_codecs: md.PersonCodecs, encoded: bool = True):
         self.DATA = None
         self.encoded: bool = encoded
