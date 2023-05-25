@@ -53,14 +53,17 @@ class Codecs:
         return self
 
     def tablenames(self) -> dict[str, str]:
+        """Returns a mapping from code table name to id column name"""
         return CODE_TABLENAMES
 
     @cached_property
     def gender2name(self) -> dict:
+        """Returns a mapping from gender ID to gender name"""
         return self.gender['gender'].to_dict()
 
     @cached_property
     def gender2id(self) -> dict:
+        """Returns a mapping from gender name to gender ID"""
         return pu.revdict(self.gender2name)
 
     @cached_property

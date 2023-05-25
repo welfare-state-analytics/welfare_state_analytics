@@ -174,7 +174,7 @@ def test_trends_gui_transform(
             gui.load(compute=False)
             gui.observe(False)
 
-            picked_indices: list[int] = [gui.trends_data.corpus.token2id[t] for t in picked_tokens]
+            picked_indices: list[int] = [gui.trends_service.corpus.token2id[t] for t in picked_tokens]
             mocked_picked_indices.return_value = picked_indices
 
             gui.transform()
@@ -200,7 +200,7 @@ def test_trends_gui_transform(
             assert set(unstacked.columns).intersection(pivot_keys_id_names + pivot_keys_text_names) == set()
 
             """DOCUMENT INDEX"""
-            result_columns: set[str] = set(gui.trends_data.transformed_corpus.document_index.columns)
+            result_columns: set[str] = set(gui.trends_service.transformed_corpus.document_index.columns)
 
             assert set(pivot_keys_id_names).intersection(set(result_columns)) == set(pivot_keys_id_names)
             assert set(pivot_keys_text_names).intersection(set(result_columns)) == set(pivot_keys_text_names)

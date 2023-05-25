@@ -41,16 +41,12 @@ class ComputeOpts(wt.TrendsComputeOpts):
         return obj
 
 
-class TrendsData(wt.TrendsData):
+class TrendsService(wt.TrendsService):
     def __init__(self, corpus: pc.VectorizedCorpus, person_codecs: md.PersonCodecs, n_top: int = 100000):
         super().__init__(corpus, n_top=n_top)
         self.person_codecs: md.PersonCodecs = person_codecs
-        self._compute_opts: ComputeOpts = ComputeOpts(
-            normalize=False,
-            keyness=KeynessMetric.TF,
-            temporal_key='decade',
-            top_count=None,
-            words=None,
+        self._transform_opts: ComputeOpts = ComputeOpts(
+            normalize=False, keyness=KeynessMetric.TF, temporal_key='decade', top_count=None, words=None
         )
 
     def _transform_corpus(self, opts: ComputeOpts) -> pc.VectorizedCorpus:
@@ -109,8 +105,8 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         self._source_folder.register_callback(self._load)
         return self
 
-    def plot(self, trends_data: TrendsData = None):
-        return super().plot(trends_data)
+    def plot(self, trends_service: TrendsService = None):
+        return super().plot(trends_service)
 
     @view.capture(clear_output=CLEAR_OUTPUT)
     def load(self, compute: bool = True) -> RiksProtTrendsGUI:
@@ -118,7 +114,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         try:
             self.alert("😐 Loading DTM...")
             corpus: pc.VectorizedCorpus = self.load_corpus(overload=True)
-            self.trends_data: TrendsData = TrendsData(corpus=corpus, person_codecs=self.person_codecs, n_top=self.n_top)
+            self.trends_service: TrendsService = TrendsService(corpus=corpus, person_codecs=self.person_codecs, n_top=self.n_top)
             if compute:
                 self.transform()
             self.alert("✅")
@@ -175,12 +171,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
     @property
     def options(self) -> ComputeOpts:
-        opts: ComputeOpts = ComputeOpts(
-            **super().options.__dict__,
-            **{
-                'source_folder': self.source_folder,
-            },
-        )
+        opts: ComputeOpts = ComputeOpts(**super().options.__dict__, **{'source_folder': self.source_folder})
         return opts
 
     def layout(self) -> w.HBox:
