@@ -40,10 +40,10 @@ bqplot = "^0.12.32"
 PyGithub = "^1.55"
 plotly = "^5.5.0"
 bar-chart-race = "^0.1.0"
-humlab-penelope = {extras = ["full"], path = "../../penelope", develop = true}
 
 # Pinning urllib3 to 1.26.15 due to build failues with 1.26.6
 urllib3 = "1.26.15"
+humlab-penelope = {extras = ["full"], version = "^0.7.22"}
 
 [tool.poetry.dev-dependencies]
 black = "*"

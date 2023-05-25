@@ -1384,52 +1384,50 @@ test-win = ["POT", "cython", "mock", "pytest", "pytest-cov", "testfixtures"]
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.21"
+version = "0.7.22"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 category = "main"
 optional = false
 python-versions = "==3.11.*"
-files = []
-develop = true
+files = [
+    {file = "humlab_penelope-0.7.22-py3-none-any.whl", hash = "sha256:ee1c155d51110f6097395d715136f1f63cb9ef998636bd563bdd3716a718a397"},
+    {file = "humlab_penelope-0.7.22.tar.gz", hash = "sha256:3d85c9b1787b3e4a3eb3b57a4646f065b2e0a0039a556366908836d84814420c"},
+]
 
 [package.dependencies]
 bokeh = "*"
-click = {version = "8.0.4", optional = true}
+click = {version = "8.0.4", optional = true, markers = "extra == \"full\""}
 ftfy = "*"
-gensim = {version = "*", optional = true}
+gensim = {version = "*", optional = true, markers = "extra == \"full\""}
 ipycytoscape = "*"
-ipydatagrid = "^1.1.8"
+ipydatagrid = ">=1.1.8,<2.0.0"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
-memoization = "^0.3.1"
-more_itertools = "^8.5.0"
-msgpack = "^1.0.2"
-nltk = "^3.5"
+memoization = ">=0.3.1,<0.4.0"
+more_itertools = ">=8.5.0,<9.0.0"
+msgpack = ">=1.0.2,<2.0.0"
+nltk = ">=3.5,<4.0"
 numpy = "*"
-openpyxl = "^3.0.5"
+openpyxl = ">=3.0.5,<4.0.0"
 pandas = "<2.0.0"
-pyarrow = {version = "*", optional = true}
-python-dotenv = "^1.0.0"
-python-louvain = {version = "*", optional = true}
-PyYAML = {version = "*", optional = true}
-requests = "^2.24.0"
+pyarrow = {version = "*", optional = true, markers = "extra == \"full\""}
+python-dotenv = ">=1.0.0,<2.0.0"
+python-louvain = {version = "*", optional = true, markers = "extra == \"full\""}
+PyYAML = {version = "*", optional = true, markers = "extra == \"full\""}
+requests = ">=2.24.0,<3.0.0"
 scipy = "*"
-smart-open = "^5.2.1"
-spacy = {version = "*", optional = true}
-textacy = {version = "*", optional = true}
-toml = "^0.10.2"
-tqdm = "^4.62.3"
-wordcloud = {version = "*", optional = true}
+smart-open = ">=5.2.1,<6.0.0"
+spacy = {version = "*", optional = true, markers = "extra == \"full\""}
+textacy = {version = "*", optional = true, markers = "extra == \"full\""}
+toml = ">=0.10.2,<0.11.0"
+tqdm = ">=4.62.3,<5.0.0"
+wordcloud = {version = "*", optional = true, markers = "extra == \"full\""}
 
 [package.extras]
 full = ["PyYAML", "click (==8.0.4)", "gensim", "pyarrow", "python-louvain", "spacy", "textacy", "wordcloud"]
-
-[package.source]
-type = "directory"
-url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -5556,4 +5554,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "==3.11.*"
-content-hash = "0aa159fe7d165a9ca1a2b3baed1ac7bb60b91aa3a980739c81859a4f6f5db949"
+content-hash = "9769525f00d7a614aadd6a7dfd9e8d6c24d26b420a45745e56ecec08054cab6c"
