@@ -43,8 +43,8 @@ current_version: str = "v0.4.3"
 
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
 codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{current_version}.db")
-speech_index_filename: str = jj(data_folder, current_version, f'tagged_frames.feather/document_index.feather')
-speech_folder: str = jj(data_folder, current_version, f'tagged_frames')
+speech_index_filename: str = jj(data_folder, current_version, 'tagged_frames.feather/document_index.feather')
+speech_folder: str = jj(data_folder, current_version, 'tagged_frames')
 
 person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)

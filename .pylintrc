@@ -52,6 +52,6 @@ notes=
 
 [EXCEPTIONS]
 
-overgeneral-exceptions=BaseException
+overgeneral-exceptions=builtins.BaseException
     #, Exception
 
