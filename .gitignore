@@ -21,7 +21,6 @@ output.xml
 **/secrets/
 **/data
 .ipynb_checkpoints/
-.vscode/
 .spyproject/
 .coverage*
 desktop.ini
