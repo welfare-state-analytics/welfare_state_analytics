@@ -1,0 +1,11 @@
+{
+    "peacock.remoteColor": "#4e673c",
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.pytestEnabled": true,
+    "sqltools.detectNodeRuntime": false,
+}
