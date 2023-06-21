@@ -21,7 +21,7 @@ class RiksProtMetaDataMixIn:
         """Display speech text stuff"""
         self._content: w.HTML = w.HTML(layout={'width': '48%', 'background-color': 'lightgreen'})
         self._content_placeholder: w.VBox = self._content
-        self.click_handler = self.on_row_click
+        self._document_click_handler = self.on_row_click
 
     def on_row_click(self, item: pd.Series, g: Any):  # pylint: disable=unused-argument
         try:

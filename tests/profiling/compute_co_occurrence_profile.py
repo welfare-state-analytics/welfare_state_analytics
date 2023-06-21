@@ -27,19 +27,7 @@ compute_opts = ComputeOpts(
     target_folder='/home/roger/source/welfare-state-analytics/welfare_state_analytics/data/APA',
     corpus_tag='APA',
     transform_opts=corpora.TokensTransformOpts(
-        only_alphabetic=False,
-        only_any_alphanumeric=False,
-        to_lower=True,
-        to_upper=False,
-        min_len=1,
-        max_len=None,
-        remove_accents=False,
-        remove_stopwords=True,
-        stopwords=None,
-        extra_stopwords=['örn'],
-        language='swedish',
-        keep_numerals=True,
-        keep_symbols=True,
+        dict(to_lower=True, remove_stopwords='swedish'), extra_stopwords=['örn']
     ),
     text_reader_opts=corpora.TextReaderOpts(
         filename_pattern='*.csv',
@@ -74,24 +62,14 @@ compute_opts = ComputeOpts(
     tf_threshold_mask=False,
     create_subfolder=True,
     persist=True,
-    context_opts=ContextOpts(
-        context_width=1,
-        concept=CONCEPT,
-        ignore_concept=False,
-        partition_keys=['year'],
-    ),
+    context_opts=ContextOpts(context_width=1, concept=CONCEPT, ignore_concept=False, partition_keys=['year']),
     enable_checkpoint=True,
     force_checkpoint=False,
 )
 
-corpus_config.pipeline_payload.files(
-    source=compute_opts.corpus_source,
-    document_index_source=None,
-)
+corpus_config.pipeline_payload.files(source=compute_opts.corpus_source, document_index_source=None)
 bundle = workflow.compute(
-    args=compute_opts,
-    corpus_config=corpus_config,
-    tagged_corpus_source='./tests/output/test.zip',
+    args=compute_opts, corpus_config=corpus_config, tagged_corpus_source='./tests/output/test.zip'
 )
 
 assert bundle is not None
