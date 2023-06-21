@@ -75,20 +75,7 @@ print("OK!")
 
 def read_conll_ner_tag(filename, only_ner_tags=True):
     df = pd.read_csv(filename, sep="\t", header=None, index_col=0, skip_blank_lines=True, quoting=3)  # type: ignore
-    df.columns = [
-        "token",
-        "lemma",
-        "pos",
-        "F4",
-        "pos2",
-        "F6",
-        "F7",
-        "F8",
-        "F9",
-        "tag",
-        "type",
-        "id",
-    ]
+    df.columns = ["token", "lemma", "pos", "F4", "pos2", "F6", "F7", "F8", "F9", "tag", "type", "id"]
     df = df[["id", "token", "pos", "tag", "type"]]
 
     df["parts"] = df.id.str.split("_")

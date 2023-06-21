@@ -132,13 +132,7 @@ tagged_csv_str = (
     '"\t\tMAD\tMAD'
 )
 
-write_opts = dict(
-    quoting=csv.QUOTE_MINIMAL,
-    escapechar="\\",
-    doublequote=False,
-    index=False,
-    sep='\t',
-)
+write_opts = dict(quoting=csv.QUOTE_MINIMAL, escapechar="\\", doublequote=False, index=False, sep='\t')
 
 data = [
     {'id': i, 'checksum': hashlib.sha1(tagged_csv_str.encode('utf-8')).hexdigest(), 'text': tagged_csv_str}

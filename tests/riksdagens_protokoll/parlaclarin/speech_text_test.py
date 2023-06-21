@@ -23,9 +23,7 @@ SPEECH_INDEX_FILENAME: str = jj(DATA_FOLDER, "tagged_frames_speeches.feather/doc
 @pytest.fixture
 def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame) -> sr.SpeechTextRepository:
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER,
-        person_codecs=person_codecs,
-        document_index=speech_index,
+        source=TAGGED_CORPUS_FOLDER, person_codecs=person_codecs, document_index=speech_index
     )
     return repository
 
@@ -93,9 +91,7 @@ def test_speech_text_service(speech_index: pd.DataFrame, protocol_name: str, n_u
 )
 def test_speech_to_dict(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame, protocol_name: str):
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER,
-        person_codecs=person_codecs,
-        document_index=speech_index,
+        source=TAGGED_CORPUS_FOLDER, person_codecs=person_codecs, document_index=speech_index
     )
 
     speech_infos: list[str] = speech_index[speech_index['document_name'].str.startswith(protocol_name)].to_dict(

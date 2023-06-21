@@ -63,9 +63,7 @@ def speech_index() -> pd.DataFrame:
 @pytest.fixture
 def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame) -> sr.SpeechTextRepository:
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER,
-        person_codecs=person_codecs,
-        document_index=speech_index,
+        source=TAGGED_CORPUS_FOLDER, person_codecs=person_codecs, document_index=speech_index
     )
     return repository
 
@@ -79,9 +77,7 @@ def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTo
     ui.load()
 
 
-def test_loaded_gui(
-    inferred_topics: tm.InferredTopicsData,
-):
+def test_loaded_gui(inferred_topics: tm.InferredTopicsData,):
     topic_tokens_overview: pd.DataFrame = inferred_topics.topic_token_overview
     topic_tokens_overview['tokens'] = inferred_topics.get_topic_titles(n_tokens=500)
     topic_proportions = inferred_topics.calculator.topic_proportions()
@@ -101,9 +97,7 @@ def test_loaded_gui(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_find_documents_gui(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
@@ -165,9 +159,7 @@ def test_find_documents_gui(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_browse_documents_gui(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
@@ -218,9 +210,7 @@ def test_browse_documents_gui(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends_overview(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
 
@@ -238,9 +228,7 @@ def test_topic_trends_overview(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_trends(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
 
@@ -258,9 +246,7 @@ def test_topic_trends(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_multi_trends(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
 
@@ -280,9 +266,7 @@ def test_topic_multi_trends(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_topic_topic_network(
-    person_codecs: md.PersonCodecs,
-    speech_repository: sr.SpeechTextRepository,
-    inferred_topics: tm.InferredTopicsData,
+    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
     state = dict(inferred_topics=inferred_topics)
 
@@ -307,10 +291,7 @@ def test_topic_topic_network(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_pivot_topic_network(
-    person_codecs: md.PersonCodecs,
-    inferred_topics: tm.InferredTopicsData,
-):
+def test_pivot_topic_network(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
     state = dict(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()

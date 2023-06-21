@@ -53,8 +53,7 @@ person_codecs: md.PersonCodecs = md.PersonCodecs().load(
 )
 
 gui = ps.PoSCountGUI(
-    default_folder=jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask"),
-    person_codecs=person_codecs,
+    default_folder=jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask"), person_codecs=person_codecs
 ).setup(load_data=True)
 
 display(gui.layout())

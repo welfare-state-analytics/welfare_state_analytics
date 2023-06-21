@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,15 +43,13 @@ current_version: str = "v0.4.3"
 
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
 codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{current_version}.db")
-speech_index_filename: str = jj(data_folder, f'tagged_frames_{current_version}_speeches.feather/document_index.feather')
-speech_folder: str = jj(data_folder, f'tagged_frames_{current_version}')
+speech_index_filename: str = jj(data_folder, current_version, f'tagged_frames.feather/document_index.feather')
+speech_folder: str = jj(data_folder, current_version, f'tagged_frames')
 
 person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=speech_folder,
-    person_codecs=person_codecs,
-    document_index=speech_index,
+    source=speech_folder, person_codecs=person_codecs, document_index=speech_index
 )
 
 default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_repository, state=current_state())

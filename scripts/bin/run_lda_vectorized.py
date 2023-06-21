@@ -32,15 +32,9 @@ ENGINE_OPTIONS = [
 @click.argument('name')  # , help='Model name.')
 @click.option('--n-topics', default=50, help='Number of topics.', type=click.INT)
 @click.option('--corpus-folder', default='.', help='Corpus folder.')
+@click.option('--corpus-type', default='R', type=click.Choice(['R', 'vectorized', 'sparv-xml'], case_sensitive=False))
 @click.option(
-    '--corpus-type',
-    default='R',
-    type=click.Choice(['R', 'vectorized', 'sparv-xml'], case_sensitive=False),
-)
-@click.option(
-    '--corpus-name',
-    default='.',
-    help='Corpus filename (if text corpus or Sparv XML). Corpus tag if vectorized corpus.',
+    '--corpus-name', default='.', help='Corpus filename (if text corpus or Sparv XML). Corpus tag if vectorized corpus.'
 )
 @click.option('--engine', default="gensim_lda-multicore", help='LDA implementation')
 @click.option('--passes', default=None, help='Number of passes.', type=click.INT)
@@ -133,16 +127,11 @@ def run_model(
         os.mkdir(target_folder)
 
     train_corpus = topic_modelling.TrainingCorpus(
-        terms=None,
-        doc_term_matrix=dtm,
-        id2token=id2token,
-        document_index=document_index,
+        terms=None, doc_term_matrix=dtm, id2token=id2token, document_index=document_index
     )
 
     trained_model: topic_modelling.InferredModel = topic_modelling.train_model(
-        train_corpus=train_corpus,
-        method=engine,
-        engine_args=topic_modeling_opts,
+        train_corpus=train_corpus, method=engine, engine_args=topic_modeling_opts
     )
 
     trained_model.topic_model.save(jj(target_folder, 'gensim.model'))

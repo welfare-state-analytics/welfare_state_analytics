@@ -77,11 +77,7 @@ output_notebook()
 
 # %% tags=[]
 y_corpus = load_corpus(
-    tag="SOU_test_L0_+N_+S",
-    folder=os.path.join(root_folder, "output"),
-    n_top=50000,
-    axis=1,
-    keep_magnitude=False,
+    tag="SOU_test_L0_+N_+S", folder=os.path.join(root_folder, "output"), n_top=50000, axis=1, keep_magnitude=False
 )
 
 n_corpus = y_corpus.normalize(axis=0)
@@ -121,16 +117,7 @@ def display_uniformity_metrics(x_corpus, df_gof, df_most_deviating):
     display(ipywidgets.HBox(children=output_row))
 
     with output_row[0]:
-        columns = [
-            "token",
-            "word_count",
-            "l2_norm",
-            "slope",
-            "chi2_stats",
-            "earth_mover",
-            "kld",
-            "skew",
-        ]
+        columns = ["token", "word_count", "l2_norm", "slope", "chi2_stats", "earth_mover", "kld", "skew"]
         display(df_gof.nlargest(10000, columns=["word_count"])[columns])
 
     with output_row[1]:

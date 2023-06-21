@@ -41,14 +41,7 @@ def create_corpus(source_filename: str, periods):
 
     reader = PandasCorpusReader(df, column_filters={"year": periods})
 
-    transform_opts = TokensTransformOpts(
-        to_lower=True,
-        remove_accents=False,
-        min_len=1,
-        max_len=None,
-        keep_numerals=False,
-        only_any_alphanumeric=False,
-    )
+    transform_opts = TokensTransformOpts(transforms={'to-lower': True, 'remove_numerals': True})
     corpus = TokenizedCorpus(reader, transform_opts=transform_opts)
     return corpus
 

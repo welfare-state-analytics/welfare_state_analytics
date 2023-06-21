@@ -41,9 +41,7 @@ def test_Q4956353_faulty_speaker_info():
     ].iloc[0]
 
     repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=tagged_corpus_folder,
-        person_codecs=person_codecs,
-        document_index=speech_index,
+        source=tagged_corpus_folder, person_codecs=person_codecs, document_index=speech_index
     )
     speeches: list[dict] = repository.speeches(protocol_name)
     speech: dict = speeches[faulty_speech.speach_index - 1]
@@ -113,6 +111,7 @@ def test_bug_load_word_trends():
             effective_document_index=None,
         ),
         language='swedish',
+        extra_opts={},
     )
     compute_callback = None
     done_callback = None
@@ -121,11 +120,7 @@ def test_bug_load_word_trends():
         default_corpus_path=corpus_folder,
         default_corpus_filename=(corpus_config.pipeline_payload.source or ''),
         default_data_folder=data_folder,
-    ).setup(
-        config=corpus_config,
-        compute_callback=compute_callback,
-        done_callback=done_callback,
-    )
+    ).setup(config=corpus_config, compute_callback=compute_callback, done_callback=done_callback)
 
     assert gui is not None
 
@@ -142,19 +137,7 @@ def test_bug():
         target_folder='./tests/output',
         corpus_tag=f'{uuid.uuid1()}',
         transform_opts=TokensTransformOpts(
-            only_alphabetic=False,
-            only_any_alphanumeric=False,
-            to_lower=True,
-            to_upper=False,
-            min_len=1,
-            max_len=None,
-            remove_accents=False,
-            remove_stopwords=True,
-            stopwords=None,
-            extra_stopwords=['örn'],
-            language='swedish',
-            keep_numerals=True,
-            keep_symbols=True,
+            transforms=dict(to_lower=True, remove_stopwords='swedish'), extra_stopwords=['örn']
         ),
         text_reader_opts=TextReaderOpts(
             filename_pattern='*.csv',
@@ -187,23 +170,14 @@ def test_bug():
         vectorize_opts=VectorizeOpts(already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1),
         create_subfolder=True,
         persist=True,
-        context_opts=ContextOpts(
-            context_width=1,
-            concept={'information'},
-            ignore_concept=False,
-        ),
+        context_opts=ContextOpts(context_width=1, concept={'information'}, ignore_concept=False),
         enable_checkpoint=True,
         force_checkpoint=False,
     )
 
-    corpus_config.pipeline_payload.files(
-        source=compute_opts.corpus_source,
-        document_index_source=None,
-    )
+    corpus_config.pipeline_payload.files(source=compute_opts.corpus_source, document_index_source=None)
     bundle = workflow.compute(
-        args=compute_opts,
-        corpus_config=corpus_config,
-        tagged_corpus_source='./tests/output/test.zip',
+        args=compute_opts, corpus_config=corpus_config, tagged_corpus_source='./tests/output/test.zip'
     )
 
     assert bundle is not None
@@ -220,19 +194,8 @@ def test_checkpoint_feather():
         target_folder='./tests/output/PROPAGANDA',
         corpus_tag='PROPAGANDA',
         transform_opts=TokensTransformOpts(
-            only_alphabetic=False,
-            only_any_alphanumeric=True,
-            to_lower=True,
-            to_upper=False,
-            min_len=2,
-            max_len=None,
-            remove_accents=False,
-            remove_stopwords=True,
-            stopwords=None,
+            transforms={'only-any-alphanumeric': True, 'to-lower': True, 'min-chars': 2, 'remove_stopwords': 'swedish'},
             extra_stopwords=['örn'],
-            language='swedish',
-            keep_numerals=True,
-            keep_symbols=True,
         ),
         text_reader_opts=TextReaderOpts(
             filename_pattern='*.csv',
@@ -260,13 +223,7 @@ def test_checkpoint_feather():
             global_tf_threshold_mask=False,
             **corpus_config.pipeline_payload.tagged_columns_names,
         ),
-        vectorize_opts=VectorizeOpts(
-            already_tokenized=True,
-            lowercase=False,
-            stop_words=None,
-            max_df=1.0,
-            min_df=1,
-        ),
+        vectorize_opts=VectorizeOpts(already_tokenized=True, lowercase=False, stop_words=None, max_df=1.0, min_df=1),
         tf_threshold=1,
         tf_threshold_mask=False,
         create_subfolder=True,
@@ -274,22 +231,14 @@ def test_checkpoint_feather():
         enable_checkpoint=True,
         force_checkpoint=False,
         context_opts=ContextOpts(
-            context_width=2,
-            concept={'propaganda'},
-            ignore_concept=False,
-            partition_keys=['year'],
+            context_width=2, concept={'propaganda'}, ignore_concept=False, partition_keys=['year']
         ),
     )
 
     corpus_config.checkpoint_opts.feather_folder = feather_folder
-    corpus_config.pipeline_payload.files(
-        source=compute_opts.corpus_source,
-        document_index_source=None,
-    )
+    corpus_config.pipeline_payload.files(source=compute_opts.corpus_source, document_index_source=None)
     bundle = workflow.compute(
-        args=compute_opts,
-        corpus_config=corpus_config,
-        tagged_corpus_source='./tests/output/test.zip',
+        args=compute_opts, corpus_config=corpus_config, tagged_corpus_source='./tests/output/test.zip'
     )
 
     assert bundle is not None

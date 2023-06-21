@@ -5,11 +5,7 @@ import penelope.topic_modelling as tm
 
 
 def memoize(f):
-    memo: dict = {
-        'filters': {},
-        'threshold': {},
-        'data': {},
-    }
+    memo: dict = {'filters': {}, 'threshold': {}, 'data': {}}
 
     @wraps(f)
     def wrapper(x):

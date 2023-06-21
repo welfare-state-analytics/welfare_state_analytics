@@ -61,9 +61,7 @@ state = {
     ),
 }
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=tagged_frames_folder,
-    person_codecs=person_codecs,
-    document_index=state.get('inferred_topics').document_index,
+    source=tagged_frames_folder, person_codecs=person_codecs, document_index=state.get('inferred_topics').document_index
 )
 
 ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(

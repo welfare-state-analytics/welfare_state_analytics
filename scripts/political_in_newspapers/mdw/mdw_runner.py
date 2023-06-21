@@ -21,36 +21,15 @@ pubs2ids = lambda pubs: [repository.PUB2ID[x] for x in pubs]
 
 @click.command()
 @click.option("--corpus-folder", default=CORPUS_FOLDER, help="Corpus folder")
+@click.option("--max-n-terms", default=2000, help="Filter out token if DF is not within the top max_n_terms", type=int)
 @click.option(
-    "--max-n-terms",
-    default=2000,
-    help="Filter out token if DF is not within the top max_n_terms",
-    type=int,
+    "--min-df", default=None, help="Filter out tokens if DF fraction < ``min_df``.", type=click.FloatRange(0.0, 1.0)
 )
 @click.option(
-    "--min-df",
-    default=None,
-    help="Filter out tokens if DF fraction < ``min_df``.",
-    type=click.FloatRange(0.0, 1.0),
+    "--max-df", default=None, help="Filter out tokens if DF fraction > ``max_df``.", type=click.FloatRange(0.0, 1.0)
 )
-@click.option(
-    "--max-df",
-    default=None,
-    help="Filter out tokens if DF fraction > ``max_df``.",
-    type=click.FloatRange(0.0, 1.0),
-)
-@click.option(
-    "--min-abs-df",
-    default=None,
-    help="Filter out tokens if DF < ``min_abs_df``.",
-    type=int,
-)
-@click.option(
-    "--max-abs-df",
-    default=None,
-    help="Filter out tokens where DF > ``max_abs_df``.",
-    type=int,
-)
+@click.option("--min-abs-df", default=None, help="Filter out tokens if DF < ``min_abs_df``.", type=int)
+@click.option("--max-abs-df", default=None, help="Filter out tokens where DF > ``max_abs_df``.", type=int)
 @click.option(
     "--top-n-terms",
     default=250,

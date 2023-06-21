@@ -80,9 +80,7 @@ def compute_mdw(corpus: VectorizedCorpus, opts: ComputeOpts) -> pd.DataFrame:
     logger.info("Slicing corpus...")
 
     sliced_corpus: VectorizedCorpus = corpus.slice_by_document_frequency(
-        min_df=filter_opts.min_df,
-        max_df=filter_opts.max_df,
-        max_n_terms=filter_opts.max_n_terms,
+        min_df=filter_opts.min_df, max_df=filter_opts.max_df, max_n_terms=filter_opts.max_n_terms
     )
 
     mdw_data: pd.DataFrame = mdw.compute_most_discriminating_terms(
@@ -126,20 +124,10 @@ class MDWGUI:
             tooltip="Only consider tokens whose DF is within the top # terms out of all terms",
         )
         self.min_df = ipywidgets.FloatSlider(
-            description="Min DF%",
-            min=0.0,
-            max=100.0,
-            value=3.0,
-            step=0.1,
-            layout={'width': "250px"},
+            description="Min DF%", min=0.0, max=100.0, value=3.0, step=0.1, layout={'width': "250px"}
         )
         self.max_df = ipywidgets.FloatSlider(
-            description="Max DF%",
-            min=0.0,
-            max=100.0,
-            value=95.0,
-            step=0.1,
-            layout={'width': "250px"},
+            description="Max DF%", min=0.0, max=100.0, value=95.0, step=0.1, layout={'width': "250px"}
         )
         self.period1 = ipywidgets.IntRangeSlider(description="Period", min=0, max=100, layout={'width': "250px"})
         self.period2 = ipywidgets.IntRangeSlider(description="Period", layout={'width': "250px"})
@@ -195,12 +183,7 @@ class MDWGUI:
                         ipywidgets.VBox(children=[self.period1, self.publication_ids1]),
                         ipywidgets.VBox(children=[self.period2, self.publication_ids2]),
                         ipywidgets.VBox(
-                            children=[
-                                self.top_n_terms,
-                                self.max_n_terms,
-                                self.min_df,
-                                self.max_df,
-                            ],
+                            children=[self.top_n_terms, self.max_n_terms, self.min_df, self.max_df],
                             layout=ipywidgets.Layout(align_items="flex-end"),
                         ),
                         ipywidgets.VBox(children=[self.compute]),
@@ -213,14 +196,8 @@ class MDWGUI:
     @property
     def opts(self) -> ComputeOpts:
         return ComputeOpts(
-            group1=ComputeOpts.GroupOpts(
-                pub_ids=self.publication_ids1.value,
-                period=self.period1.value,
-            ),
-            group2=ComputeOpts.GroupOpts(
-                pub_ids=self.publication_ids2.value,
-                period=self.period2.value,
-            ),
+            group1=ComputeOpts.GroupOpts(pub_ids=self.publication_ids1.value, period=self.period1.value),
+            group2=ComputeOpts.GroupOpts(pub_ids=self.publication_ids2.value, period=self.period2.value),
             filter_opts=ComputeOpts.FilterOpts(
                 min_df=self.min_df.value / 100.0,
                 max_df=self.max_df.value / 100.0,

@@ -35,12 +35,7 @@ def test_load_riksprot_netadata():
     # assert person_codecs.gender.index.dtype == np.int8
     assert set(person_codecs.chamber.columns) == {"chamber"}
     assert set(person_codecs.office_type.columns) == {"role", "office"}
-    assert set(person_codecs.sub_office_type.columns) == {
-        'identifier',
-        'description',
-        'chamber_id',
-        'office_type_id',
-    }
+    assert set(person_codecs.sub_office_type.columns) == {'identifier', 'description', 'chamber_id', 'office_type_id'}
 
     assert person_codecs.pid2person_id.get(2) == 'Q5005171'
     assert person_codecs.person_id2pid.get('Q5005171') == 2

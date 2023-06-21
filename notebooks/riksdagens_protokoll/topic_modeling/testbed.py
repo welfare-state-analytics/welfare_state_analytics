@@ -62,9 +62,7 @@ inferred_topics: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=model
 speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
 
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=tagged_frames_folder,
-    person_codecs=person_codecs,
-    document_index=inferred_topics.document_index,
+    source=tagged_frames_folder, person_codecs=person_codecs, document_index=inferred_topics.document_index
 )
 
 state = dict(inferred_topics=inferred_topics)

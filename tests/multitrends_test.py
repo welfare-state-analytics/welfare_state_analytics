@@ -33,9 +33,7 @@ def test_topic_multitrends():
     speech_index: pd.DataFrame = pd.read_feather(SPEECH_INDEX_FILENAME)
     person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=DATABASE_FILENAME)
     speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER,
-        person_codecs=person_codecs,
-        document_index=speech_index,
+        source=TAGGED_CORPUS_FOLDER, person_codecs=person_codecs, document_index=speech_index
     )
     inferred_topics: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
 

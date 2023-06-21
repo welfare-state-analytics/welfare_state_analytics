@@ -22,12 +22,7 @@ from .mixins import RiksProtMetaDataMixIn
 
 
 class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMixIn, ntm.TopicTrendsGUI):
-    def __init__(
-        self,
-        person_codecs: md.PersonCodecs,
-        speech_repository: sr.SpeechTextRepository,
-        state: dict,
-    ):
+    def __init__(self, person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, state: dict):
         super(RiksprotTopicMultiTrendsGUI, self).__init__(  # pylint: disable=super-with-arguments
             pivot_key_specs=person_codecs.property_values_specs,
             color_presets=ru.PARTY_COLOR_BY_ABBREV,
@@ -106,7 +101,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                     with pd.option_context("display.max_rows", None, "display.max_columns", None):
                         display(self.yearly_topic_weights)
                 elif self.output_format.lower() == "table":
-                    g = table_widget(self.yearly_topic_weights, handler=self.click_handler)
+                    g = table_widget(self.yearly_topic_weights, handler=self._document_click_handler)
                     display(g)
                 else:
                     colors: list[str] = [color for _, color, _ in self.lines]
@@ -151,25 +146,11 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
             [
                 w.HBox(
                     ([self._extra_placeholder] if self._extra_placeholder is not None else [])
+                    + [w.VBox([self._year_range_label, self._year_range, self._threshold_label, self._threshold])]
                     + [
                         w.VBox(
-                            [
-                                self._year_range_label,
-                                self._year_range,
-                                self._threshold_label,
-                                self._threshold,
-                            ]
-                        ),
-                    ]
-                    + [
-                        w.VBox(
-                            [
-                                w.HTML("<b>Aggregate</b>"),
-                                self._aggregate,
-                                w.HTML("<b>Output</b>"),
-                                self._output_format,
-                            ]
-                        ),
+                            [w.HTML("<b>Aggregate</b>"), self._aggregate, w.HTML("<b>Output</b>"), self._output_format]
+                        )
                     ]
                     + [
                         w.VBox(
@@ -180,7 +161,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
                                 w.HBox([self._compute, self._auto_compute]),
                                 self._alert,
                             ]
-                        ),
+                        )
                     ]
                 ),
                 w.HBox([self._output], layout=box_layout),

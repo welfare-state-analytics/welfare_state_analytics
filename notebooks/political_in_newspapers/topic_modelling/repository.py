@@ -61,7 +61,9 @@ class SourceCorpus:
         """Create a sparse matrix"""
         filename: str = os.path.join(self.folder, SPARSE_MATRIX_FILENAME)
         if not os.path.isfile(filename):
-            dtm: sp.coo_matrix = sp.coo_matrix((self.corpus.tf, (self.corpus.document_id, self.corpus.token_id)))  # type: ignore
+            dtm: sp.coo_matrix = sp.coo_matrix(
+                (self.corpus.tf, (self.corpus.document_id, self.corpus.token_id))
+            )  # type: ignore
             sp.save_npz(filename, dtm, compressed=True)  # type: ignore
         else:
             dtm: sp.coo_matrix = sp.load_npz(filename)  # type: ignore
@@ -303,7 +305,9 @@ class SourceRepository:
             )
             reconstructed_text.to_csv(filename, compression='zip', header=0, sep=',', quotechar='"')  # type: ignore
         else:
-            reconstructed_text: pd.DataFrame = pd.read_csv(filename, compression='zip', header=None, sep=',', quotechar='"')  # type: ignore
+            reconstructed_text: pd.DataFrame = pd.read_csv(
+                filename, compression='zip', header=None, sep=',', quotechar='"'
+            )  # type: ignore
             reconstructed_text.columns = ['document_id', 'text']
             reconstructed_text = reconstructed_text.set_index('document_id')
 

@@ -114,7 +114,9 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         try:
             self.alert("😐 Loading DTM...")
             corpus: pc.VectorizedCorpus = self.load_corpus(overload=True)
-            self.trends_service: TrendsService = TrendsService(corpus=corpus, person_codecs=self.person_codecs, n_top=self.n_top)
+            self.trends_service: TrendsService = TrendsService(
+                corpus=corpus, person_codecs=self.person_codecs, n_top=self.n_top
+            )
             if compute:
                 self.transform()
             self.alert("✅")

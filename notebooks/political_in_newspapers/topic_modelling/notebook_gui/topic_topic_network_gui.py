@@ -30,12 +30,7 @@ class PoliticalTopicTopicGUI(TopicTopicGUI):
         return self
 
     def extra_widgets(self) -> VBox:
-        return VBox(
-            [
-                HTML("<b>Publication</b>"),
-                self._publication_id,
-            ]
-        )
+        return VBox([HTML("<b>Publication</b>"), self._publication_id])
 
 
 def display_gui(state: TopicModelContainer):
