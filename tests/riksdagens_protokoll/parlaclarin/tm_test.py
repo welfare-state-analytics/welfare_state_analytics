@@ -77,7 +77,7 @@ def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTo
     ui.load()
 
 
-def test_loaded_gui(inferred_topics: tm.InferredTopicsData,):
+def test_loaded_gui(inferred_topics: tm.InferredTopicsData):
     topic_tokens_overview: pd.DataFrame = inferred_topics.topic_token_overview
     topic_tokens_overview['tokens'] = inferred_topics.get_topic_titles(n_tokens=500)
     topic_proportions = inferred_topics.calculator.topic_proportions()
