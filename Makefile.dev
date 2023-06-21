@@ -65,6 +65,11 @@ retest:
 init: tools
 	@poetry install
 
+local-venv:
+	@poetry config virtualenvs.in-project true --local
+
+global-venv:
+	@poetry config virtualenvs.in-project --unset
 
 TYPINGS_PACKAGES=scipy numpy statsmodels pandas bokeh sklearn gensim ipywidgets
 
