@@ -196,16 +196,16 @@ def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
     """No display triggered by _filter_keys_picker"""
     assert compute_calls == 0
 
-    assert set(gui._filter_values.options) == gender_value_pairs
-    assert set(gui._filter_values.value) == set()
+    assert set(gui._filter_values_picker.options) == gender_value_pairs
+    assert set(gui._filter_values_picker.value) == set()
 
-    gui._filter_values.value = gui._filter_values.options
+    gui._filter_values_picker.value = gui._filter_values_picker.options
     assert set(gui.filter_opts.opts.keys()) == {'gender_id'} and set(gui.filter_opts.gender_id) == {0, 1, 2}
 
     gui._filter_keys_picker.value = ['None']
 
-    assert set(gui._filter_values.options) == set()
-    assert set(gui._filter_values.value) == set()
+    assert set(gui._filter_values_picker.options) == set()
+    assert set(gui._filter_values_picker.value) == set()
 
     assert compute_calls == 2
     assert computed_data is not None
@@ -214,7 +214,7 @@ def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
     gui._filter_keys_picker.value = ['gender']
     assert compute_calls == 2
 
-    gui._filter_values.value = ['gender: woman']
+    gui._filter_values_picker.value = ['gender: woman']
     assert compute_calls == 3
 
 

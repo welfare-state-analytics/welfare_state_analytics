@@ -38,7 +38,7 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
     def setup(self, **kwargs):
         super().setup(**kwargs)
         key_values_options: set[str] = self.pivot_keys.key_values_str(self.pivot_keys.text_names)
-        self._filter_values.options = key_values_options
+        self._filter_values_picker.options = key_values_options
         return self
 
     @property

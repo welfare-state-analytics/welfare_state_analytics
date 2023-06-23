@@ -142,7 +142,7 @@ def test_find_documents_gui(
         was_called = True
 
     ui.observe(handler=handler, value=True)
-    ui._filter_values.value = ["gender: woman"]
+    ui._filter_values_picker.value = ["gender: woman"]
     ui._find_text.value = "film"
 
     assert was_called
@@ -196,7 +196,7 @@ def test_browse_documents_gui(
         was_called = True
 
     ui.observe(handler=handler, value=True)
-    ui._filter_values.value = ["gender: woman"]
+    ui._filter_values_picker.value = ["gender: woman"]
 
     assert was_called
     assert ui.filter_opts.data == {'gender_id': [2], 'year': (1990, 1992)}
