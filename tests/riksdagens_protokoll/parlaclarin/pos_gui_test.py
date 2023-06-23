@@ -45,7 +45,7 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, person_codecs: md
     assert gui.document_index is None
 
     assert gui.opts.document_index is None
-    assert set(gui._multi_pivot_keys_picker.options) == set(['None'] + list(gui.pivot_keys.text_names))
+    assert set(gui._filter_keys_picker.options) == set(['None'] + list(gui.pivot_keys.text_names))
     assert set(gui.pivot_keys_id_names) == set() == set(gui.opts.pivot_keys_id_names)
 
 
@@ -153,7 +153,7 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     gui.observe(False)
 
     gui._temporal_key.value = temporal_key
-    gui._multi_pivot_keys_picker.value = [gui.pivot_keys.key_id2key_name.get(x) for x in pivot_keys]
+    gui._filter_keys_picker.value = [gui.pivot_keys.key_id2key_name.get(x) for x in pivot_keys]
 
     data: pd.DataFrame = gui.compute()
     assert len(data) == expected_stacked_count
@@ -191,30 +191,30 @@ def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
     assert computed_data is None
 
     gui._temporal_key.value = "decade"
-    gui._multi_pivot_keys_picker.value = ['gender']
+    gui._filter_keys_picker.value = ['gender']
 
-    """No display triggered by _multi_pivot_keys_picker"""
+    """No display triggered by _filter_keys_picker"""
     assert compute_calls == 0
 
-    assert set(gui._filter_keys.options) == gender_value_pairs
-    assert set(gui._filter_keys.value) == set()
+    assert set(gui._filter_values.options) == gender_value_pairs
+    assert set(gui._filter_values.value) == set()
 
-    gui._filter_keys.value = gui._filter_keys.options
+    gui._filter_values.value = gui._filter_values.options
     assert set(gui.filter_opts.opts.keys()) == {'gender_id'} and set(gui.filter_opts.gender_id) == {0, 1, 2}
 
-    gui._multi_pivot_keys_picker.value = ['None']
+    gui._filter_keys_picker.value = ['None']
 
-    assert set(gui._filter_keys.options) == set()
-    assert set(gui._filter_keys.value) == set()
+    assert set(gui._filter_values.options) == set()
+    assert set(gui._filter_values.value) == set()
 
     assert compute_calls == 2
     assert computed_data is not None
     assert len(computed_data) == 3  # Unstacked
 
-    gui._multi_pivot_keys_picker.value = ['gender']
+    gui._filter_keys_picker.value = ['gender']
     assert compute_calls == 2
 
-    gui._filter_keys.value = ['gender: woman']
+    gui._filter_values.value = ['gender: woman']
     assert compute_calls == 3
 
 

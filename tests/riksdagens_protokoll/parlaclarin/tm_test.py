@@ -126,14 +126,14 @@ def test_find_documents_gui(
     assert ui.pivot_keys_text_names == []
 
     """Make a selection"""
-    ui._multi_pivot_keys_picker.value = ["gender"]
+    ui._filter_keys_picker.value = ["gender"]
     assert ui.pivot_keys_id_names == ["gender_id"]
     assert ui.pivot_keys_text_names == ["gender"]
 
     """No filter added yet"""
     assert ui.filter_opts.data == {'year': (1990, 1992)}
 
-    assert set(ui.filter_key_values) == {"gender: unknown", "gender: woman", "gender: man"}
+    assert set(ui.filter_opts.options) == {"gender: unknown", "gender: woman", "gender: man"}
 
     was_called: bool = False
 
@@ -142,7 +142,7 @@ def test_find_documents_gui(
         was_called = True
 
     ui.observe(handler=handler, value=True)
-    ui._filter_keys.value = ["gender: woman"]
+    ui._filter_values.value = ["gender: woman"]
     ui._find_text.value = "film"
 
     assert was_called
@@ -180,14 +180,14 @@ def test_browse_documents_gui(
     assert ui.pivot_keys_text_names == []
 
     """Make a selection"""
-    ui._multi_pivot_keys_picker.value = ["gender"]
+    ui._filter_keys_picker.value = ["gender"]
     assert ui.pivot_keys_id_names == ["gender_id"]
     assert ui.pivot_keys_text_names == ["gender"]
 
     """No filter added yet"""
     assert ui.filter_opts.data == {'year': (1990, 1992)}
 
-    assert set(ui.filter_key_values) == {"gender: unknown", "gender: woman", "gender: man"}
+    assert set(ui.filter_opts.options) == {"gender: unknown", "gender: woman", "gender: man"}
 
     was_called: bool = False
 
@@ -196,7 +196,7 @@ def test_browse_documents_gui(
         was_called = True
 
     ui.observe(handler=handler, value=True)
-    ui._filter_keys.value = ["gender: woman"]
+    ui._filter_values.value = ["gender: woman"]
 
     assert was_called
     assert ui.filter_opts.data == {'gender_id': [2], 'year': (1990, 1992)}

@@ -67,7 +67,7 @@ def test_trends_gui_create_with_pivot_keys(person_codecs: md.PersonCodecs):
 
     gui: wt.RiksProtTrendsGUI = wt.RiksProtTrendsGUI(default_folder=TEST_FOLDER, person_codecs=person_codecs)
 
-    assert set(gui._multi_pivot_keys_picker.options) == expected_keys
+    assert set(gui._filter_keys_picker.options) == expected_keys
     assert set(gui.pivot_keys_id_names) == set() == set(gui.options.pivot_keys_id_names)
 
 
@@ -217,7 +217,7 @@ def test_trends_gui_bugcheck(person_codecs: md.PersonCodecs):
     gui.invalidate(False)
 
     gui.plot()
-    gui._multi_pivot_keys_picker.value = ['gender', 'office_type']
+    gui._filter_keys_picker.value = ['gender', 'office_type']
     gui._temporal_key.value = 'decade'
 
     words = ['herr']
