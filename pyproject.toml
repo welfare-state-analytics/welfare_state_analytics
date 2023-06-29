@@ -23,7 +23,7 @@ repository = "https://github.com/welfare-state-analytics/welfare_state_analytics
 bokeh = "*"
 click = "*"
 ipywidgets = "*"
-jupyterlab = "*"
+jupyterlab = "==3.*.*"
 loguru = "^0.5.3"
 matplotlib = "*"
 msgpack = "^1.0.2"
