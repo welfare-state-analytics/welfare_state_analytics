@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import functools
 import json
 import os
 import re
@@ -112,6 +113,7 @@ class ZipLoader(Loader):
     def __init__(self, folder: str):
         self.folder: str = folder
 
+    @functools.lru_cache(maxsize=10)
     def load(self, protocol_name: str) -> tuple[dict, list[dict]]:
         """Loads tagged protocol data from archive"""
         sub_folder: str = protocol_name.split('-')[1]

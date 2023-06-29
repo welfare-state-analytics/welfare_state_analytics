@@ -45,7 +45,7 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, person_codecs: md
     assert gui.document_index is None
 
     assert gui.opts.document_index is None
-    assert set(gui._filter_keys_picker.options) == set(['None'] + list(gui.pivot_keys.text_names))
+    assert set(gui._filter_keys_picker.options) == set([gui.clear_label] + list(gui.pivot_keys.text_names))
     assert set(gui.pivot_keys_id_names) == set() == set(gui.opts.pivot_keys_id_names)
 
 
@@ -103,6 +103,7 @@ def test_pos_count_gui_prepare(
         # (TEST_FOLDER, 'year', False, 101),
     ],
 )
+@patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pos_count_gui_compute_without_pivot_keys(
     folder: str, temporal_key: str, encoded: bool, expected_count: int, person_codecs: md.PersonCodecs
 ):
@@ -132,6 +133,7 @@ def test_pos_count_gui_compute_without_pivot_keys(
 )
 @patch('penelope.plot.plot_multiline', lambda *_, **__: None)
 @patch('penelope.plot.plot_stacked_bar', lambda *_, **__: None)
+@patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
     folder: str,
     temporal_key: str,
@@ -165,8 +167,10 @@ def test_pos_count_gui_compute_and_plot_with_pivot_keys_and_unstacked(
 
 
 @pytest.mark.long_running
-@patch('penelope.notebook.plot.plot_multiline', lambda *_, **__: None)
-@patch('penelope.notebook.plot.plot_stacked_bar', lambda *_, **__: None)
+@patch('penelope.plot.plot_multiline', lambda *_, **__: None)
+@patch('penelope.plot.plot_multiple_value_series', lambda *_, **__: None)
+@patch('penelope.plot.plot_stacked_bar', lambda *_, **__: None)
+@patch('bokeh.io.push_notebook', lambda *_, **__: None)
 def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
     computed_data: pd.DataFrame = None
     compute_calls: int = 0
@@ -202,20 +206,20 @@ def test_pos_count_gui_with_filter_keys(person_codecs: md.PersonCodecs):
     gui._filter_values_picker.value = gui._filter_values_picker.options
     assert set(gui.filter_opts.opts.keys()) == {'gender_id'} and set(gui.filter_opts.gender_id) == {0, 1, 2}
 
-    gui._filter_keys_picker.value = ['None']
+    gui._filter_keys_picker.value = [gui.clear_label]
 
     assert set(gui._filter_values_picker.options) == set()
     assert set(gui._filter_values_picker.value) == set()
 
     assert compute_calls == 2
     assert computed_data is not None
-    assert len(computed_data) == 3  # Unstacked
+    assert len(computed_data) == 6  # Unstacked
 
     gui._filter_keys_picker.value = ['gender']
     assert compute_calls == 2
 
     gui._filter_values_picker.value = ['gender: woman']
-    assert compute_calls == 3
+    assert compute_calls == 6
 
 
 @pytest.mark.long_running

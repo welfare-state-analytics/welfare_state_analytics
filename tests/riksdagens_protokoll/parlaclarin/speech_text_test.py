@@ -89,28 +89,24 @@ def test_speech_text_service(speech_index: pd.DataFrame, protocol_name: str, n_u
 @pytest.mark.parametrize(
     'protocol_name', ['prot-1933--fk--5', 'prot-1955--ak--22', 'prot-199192--127', 'prot-199192--21', 'prot-199596--35']
 )
-def test_speech_to_dict(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame, protocol_name: str):
-    repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-        source=TAGGED_CORPUS_FOLDER, person_codecs=person_codecs, document_index=speech_index
-    )
-
+def test_speech_to_dict(speech_repository: sr.SpeechTextRepository, speech_index: pd.DataFrame, protocol_name: str):
     speech_infos: list[str] = speech_index[speech_index['document_name'].str.startswith(protocol_name)].to_dict(
         'records'
     )
 
     for speech_info in speech_infos:
-        speech = repository.speech(speech_name=speech_info['document_name'], mode='dict')
+        speech = speech_repository.speech(speech_name=speech_info['document_name'], mode='dict')
 
         assert all(speech[k] == speech_info[k] for k in set(speech.keys()).intersection(speech_info.keys()))
         assert speech.get("speaker_note")
 
-        html_speech: str = repository.speech(speech_info['document_name'], mode='html')
+        html_speech: str = speech_repository.speech(speech_info['document_name'], mode='html')
 
         assert isinstance(html_speech, str)
         assert "Protokoll:" in html_speech
         assert speech.get("speaker_note", "") in html_speech
 
-        text_speech = repository.speech(speech_info['document_name'], mode='text')
+        text_speech = speech_repository.speech(speech_info['document_name'], mode='text')
 
         assert isinstance(text_speech, str)
 

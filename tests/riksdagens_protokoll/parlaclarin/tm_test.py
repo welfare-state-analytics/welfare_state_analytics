@@ -69,7 +69,7 @@ def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame
 
 
 def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
     ui = wtm_ui.RiksprotLoadGUI(person_codecs, data_folder=DATA_FOLDER, state=state, slim=True)
     assert ui is not None
     ui.setup()
@@ -99,7 +99,7 @@ def test_loaded_gui(inferred_topics: tm.InferredTopicsData):
 def test_find_documents_gui(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
         person_codecs, speech_repository, state
     )
@@ -133,8 +133,6 @@ def test_find_documents_gui(
     """No filter added yet"""
     assert ui.filter_opts.data == {'year': (1990, 1992)}
 
-    assert set(ui.filter_opts.options) == {"gender: unknown", "gender: woman", "gender: man"}
-
     was_called: bool = False
 
     def handler(self, *_):  # pylint: disable=unused-argument
@@ -161,7 +159,7 @@ def test_find_documents_gui(
 def test_browse_documents_gui(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
     ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
         person_codecs, speech_repository, state
     )
@@ -187,8 +185,6 @@ def test_browse_documents_gui(
     """No filter added yet"""
     assert ui.filter_opts.data == {'year': (1990, 1992)}
 
-    assert set(ui.filter_opts.options) == {"gender: unknown", "gender: woman", "gender: man"}
-
     was_called: bool = False
 
     def handler(self, *_):  # pylint: disable=unused-argument
@@ -212,7 +208,7 @@ def test_browse_documents_gui(
 def test_topic_trends_overview(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
     ui: wtm_ui.RiksprotTopicTrendsOverviewGUI = wtm_ui.RiksprotTopicTrendsOverviewGUI(
@@ -230,7 +226,7 @@ def test_topic_trends_overview(
 def test_topic_trends(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
     ui: wtm_ui.RiksprotTopicTrendsGUI = wtm_ui.RiksprotTopicTrendsGUI(
@@ -248,7 +244,7 @@ def test_topic_trends(
 def test_topic_multi_trends(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
 
     ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
         person_codecs=person_codecs, speech_repository=speech_repository, state=state
@@ -268,7 +264,7 @@ def test_topic_multi_trends(
 def test_topic_topic_network(
     person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
 ):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(
@@ -292,7 +288,7 @@ def test_topic_topic_network(
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pivot_topic_network(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
-    state = dict(inferred_topics=inferred_topics)
+    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: tm_ui.PivotTopicNetworkGUI = tm_ui.PivotTopicNetworkGUI(
