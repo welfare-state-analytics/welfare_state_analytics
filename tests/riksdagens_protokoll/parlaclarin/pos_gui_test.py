@@ -10,7 +10,7 @@ import pytest
 from notebooks.riksdagens_protokoll.token_counts import pos_statistics_gui as tc
 from westac.riksprot.parlaclarin import codecs as md
 
-# pylint: disable=protected-access,redefined-outer-name
+# pylint: disable=protected-access,redefined-outer-name,no-member
 
 TEST_FOLDER: str = 'tests/test_data/riksprot/main/dtm_test.5files'
 
@@ -38,7 +38,7 @@ def test_pos_count_gui_load_create(folder: str, encoded: bool, person_codecs: md
     assert len(gui._pos_groups.options) > 0
     assert gui._temporal_key.options == ('decade', 'lustrum', 'year')
 
-    gui.observe(False)
+    gui.observe(False, handler=lambda *_: None)
 
     assert gui.PoS_tag_groups is not None
     assert list(gui.selected_pos_groups) == ['Total']
