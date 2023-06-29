@@ -32,7 +32,10 @@
 import __paths__  # pylint: disable=unused-import
 
 from IPython.display import display
-from penelope.notebook.token_counts import pipeline_gui
+from penelope import pipeline as pp
+from penelope.notebook.token_counts import TokenCountsGUI
 
-gui = pipeline_gui.create_token_count_gui(corpus_folder=__paths__.corpus_folder, resources_folder="..")
+config_filenames: list[str] = pp.CorpusConfig.list_all(folder="..", recursive=True, try_load=True)
+gui = TokenCountsGUI().setup(config_filenames=config_filenames)
+
 display(gui.layout())

@@ -28,7 +28,7 @@ def test_compute_gui_compute_dry_run():
         compute_called = True
 
     gui: ComputeGUI = create_compute_gui(
-        corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
+        config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
         compute_callback=compute_patch,  # type: ignore
@@ -51,7 +51,7 @@ def test_compute_gui_compute_dry_run():
 def test_compute_gui_compute_hot_run():
     corpus_tag: str = f"{str(uuid.uuid4())[:8]}"
     gui: ComputeGUI = create_compute_gui(
-        corpus_config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
+        config=pipeline.CorpusConfig.load(CONFIG_FILENAME),
         data_folder=TEST_DATA_FOLDER,
         corpus_folder=TEST_DATA_FOLDER,
         compute_callback=workflow.compute,

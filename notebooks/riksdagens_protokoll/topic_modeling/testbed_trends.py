@@ -54,11 +54,10 @@ tagged_frames_folder: str = jj(data_folder, f"tagged_frames_{corpus_version}")
 
 person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 
+# FIXME: #198 Copy corpus config to all TM folders
 state = {
     'inferred_model': tm.InferredModel.load(folder=model_folder, lazy=True),
-    'inferred_topics': tm.InferredTopicsData.load(
-        folder=model_folder, filename_fields=r'year:prot\_(\d{4}).*', slim=True
-    ),
+    'inferred_topics': tm.InferredTopicsData.load(folder=model_folder, slim=True),
 }
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
     source=tagged_frames_folder, person_codecs=person_codecs, document_index=state.get('inferred_topics').document_index
