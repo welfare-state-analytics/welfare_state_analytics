@@ -1,0 +1,4 @@
+Usage: vectorize-id [OPTIONS]
+Try 'vectorize-id --help' for help.
+
+Error: Got unexpected extra arguments (/data/riksdagen_corpus_data/v0.9.0/tagged_frames_speeches.feather/corpus.yml /data/riksdagen_corpus_data/v0.9.0/tagged_frames_speeches.feather ./data dtm_v0.9.0_1500000.TF20.mask)

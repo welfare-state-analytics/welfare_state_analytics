@@ -1,12 +1,15 @@
 alpha: asymmetric
 chunk_size: 10000
+config_filename: null
+corpus_source: /data/riksdagen_corpus_data/v0.9.0/tagged_frames_speeches.feather
 engine: gensim_mallet-lda
 filename_pattern: null
 lemmatize: true
-max_iter: 3500
-num_top_words: 500
+max_iter: 3000
 max_tokens: 1500000
 minimum_probability: 0.02
+n_topics: 100
+num_top_words: 500
 passes: 1
 per_word_topics: false
 pos_excludes: null
@@ -14,7 +17,9 @@ pos_includes: null
 random_seed: null
 store_compressed: true
 store_corpus: true
+target_folder: /data/riksdagen_corpus_data/v0.9.0/topic_models
 target_mode: both
+target_name: null
 tf_threshold: 5
 to_lower: false
 train_corpus_folder: null
