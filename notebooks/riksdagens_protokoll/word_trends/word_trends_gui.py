@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import glob
 import os
+import re
 from dataclasses import dataclass
-from os.path import join as jj
-from typing import List
+from os.path import basename, dirname, join
 
 import ipywidgets as w
 import pandas as pd
@@ -132,7 +133,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
             self.observe(True)
         return self
 
-    # def plot_current_displayer(self, data: List[pd.DataFrame] = None):
+    # def plot_current_displayer(self, data: list[pd.DataFrame] = None):
     #     self.current_displayer.clear()
     #     with self.current_displayer.output:
     #         for d in data:
@@ -140,7 +141,7 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
     def load_corpus(self, overload: bool = False) -> pc.VectorizedCorpus:
         folder: str = self.source_folder
-        tags: List[str] = pc.VectorizedCorpus.find_tags(folder=folder)
+        tags: list[str] = pc.VectorizedCorpus.find_tags(folder=folder)
 
         if len(tags) != 1:
             raise FileNotFoundError("No (unique) DTM corpus found in folder")
@@ -201,31 +202,54 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
         return super().layout()
 
 
-def display_gui(data_folder: str, versions: list[str]):
-    corpus_versions: w.Dropdown = w.Dropdown(options=versions, value=None)
-    gui_output = w.Output()
+def parse_version(path) -> str:
+    try:
+        return re.search('(v\d\.\d{1,2}\.\d{1,2})', path).group(1)
+    except:
+        return None
 
-    def corpus_version_handler(*_):
-        gui_output.clear_output()
-        corpus_version: str = corpus_versions.value
 
-        metadata_filename: str = jj(data_folder, f'metadata/riksprot_metadata.{corpus_version}.db')
-        dtm_folder: str = jj(data_folder, f"dtm_{corpus_version}_1500000.TF20.mask")
+def find_models(root) -> list[dict[str, str]]:
+    return [
+        {
+            'folder': dirname(path),
+            'tag': basename(path)[: -len("_vectorizer_data.json")],
+            'version': parse_version(path),
+        }
+        for path in glob.glob(join(root, "**/*vectorizer_data.json"), recursive=True)
+        if parse_version(path)
+    ]
 
-        with gui_output:
+
+def display_gui(data_folder: str):
+    models: list[dict[str, str]] = find_models(data_folder)
+
+    models_widget: w.Dropdown = w.Dropdown(
+        description="Select model:", options=[(f"{m['version']}: {m['tag']}", m) for m in models], value=None
+    )
+    output_widget = w.Output()
+
+    def model_select_handler(*_):
+        output_widget.clear_output()
+        version: str = models_widget.value['version']
+        folder: str = models_widget.value['folder']
+
+        metadata_filename: str = join(data_folder, f'metadata/riksprot_metadata.{version}.db')
+
+        with output_widget:
             if not os.path.isfile(metadata_filename):
                 print(f"error: metadata file '{metadata_filename}' not found")
                 return
 
-            if not os.path.isdir(dtm_folder):
-                print(f"error: DTM folder '{dtm_folder}' not found")
+            if not os.path.isdir(folder):
+                print(f"error: DTM folder '{folder}' not found")
                 return
 
             person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=metadata_filename)
-            gui = RiksProtTrendsGUI(default_folder=dtm_folder, person_codecs=person_codecs).setup()
+            gui = wt.RiksProtTrendsGUI(default_folder=folder, person_codecs=person_codecs).setup()
 
             display(gui.layout())
             gui.load()
 
-    corpus_versions.observe(corpus_version_handler, names='value')
-    display(w.VBox([corpus_versions, gui_output]))
+    models_widget.observe(model_select_handler, names='value')
+    display(w.VBox([models_widget, output_widget]))
