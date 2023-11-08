@@ -7,10 +7,10 @@ import uuid
 import pandas as pd
 import pytest
 from penelope.co_occurrence import ContextOpts
-from penelope.corpus import TextReaderOpts, TokensTransformOpts, VectorizeOpts
-from penelope.corpus.readers import ExtractTaggedTokensOpts
+from penelope.corpus import ExtractTaggedTokensOpts, TextReaderOpts, TokensTransformOpts, VectorizeOpts
+from penelope.corpus.serialize import SerializeOpts
 from penelope.notebook.dtm import ComputeGUI
-from penelope.pipeline import CheckpointOpts, CorpusConfig, CorpusType, PipelinePayload
+from penelope.pipeline import CorpusConfig, CorpusType, PipelinePayload
 from penelope.workflows import co_occurrence as workflow
 from penelope.workflows.interface import ComputeOpts
 
@@ -58,7 +58,7 @@ def test_bug_load_word_trends():
         corpus_name='riksdagens-protokoll',
         corpus_type=CorpusType.SparvCSV,
         corpus_pattern='*sparv4.csv.zip',
-        checkpoint_opts=CheckpointOpts(
+        serialize_opts=SerializeOpts(
             content_type_code=1,
             document_index_name=None,
             document_index_sep=None,
@@ -235,7 +235,7 @@ def test_checkpoint_feather():
         ),
     )
 
-    corpus_config.checkpoint_opts.feather_folder = feather_folder
+    corpus_config.serialize_opts.feather_folder = feather_folder
     corpus_config.pipeline_payload.files(source=compute_opts.corpus_source, document_index_source=None)
     bundle = workflow.compute(
         args=compute_opts, corpus_config=corpus_config, tagged_corpus_source='./tests/output/test.zip'
