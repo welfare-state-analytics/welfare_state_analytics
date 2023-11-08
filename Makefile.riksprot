@@ -9,39 +9,101 @@ endif
 today=$(shell date '+%Y%m%d')
 
 DATA_FOLDER=/data/riksdagen_corpus_data
-SPEECH_FOLDER=$(DATA_FOLDER)/tagged_frames_$(RIKSPROT_VERSION)_speeches.feather
+SPEACH_CORPUS_FORMAT=feather
 
 ##########################################################################################################
-# Default model recepies (penelope)
+# Default DTM model recepies (penelope)
 ##########################################################################################################
 
-default-riksprot-dtm: data_dirs
-	@PYTHONPATH=. poetry run vectorize-id --options-filename ./opts/dtm_riksprot.yml \
-		$(SPEECH_FOLDER)/corpus.yml $(SPEECH_FOLDER) ./data \
-		dtm_$(RIKSPROT_VERSION)_1500000.TF20.mask &>> ./logs/dtm_riksprot_$(RIKSPROT_VERSION)_$(today).out
+.PHONY: default-riksprot-dtms
+default-riksprot-dtms: data_dirs
+	@for opts_file in ./opts/dtm/*.yml; do \
+		lemmatize=$$(yq '.lemmatize' $${opts_file}) ; \
+		if [ "$${lemmatize}" == "true" ]; then \
+			tok="lemma"; \
+		else \
+			tok="text"; \
+		fi; \
+		filename=$$(basename $${opts_file}); \
+		dtm_tag="$${filename%.*}" ; \
+		vrt_speech_corpus_folder=$(DATA_FOLDER)/$(RIKSPROT_VERSION)/corpus/$${tok}_vrt_speeches.$(SPEACH_CORPUS_FORMAT) ; \
+		dtm_target_folder=$(DATA_FOLDER)/$(RIKSPROT_VERSION)/dtm ; \
+		if [ ! -d "$${vrt_speech_corpus_folder}" ]; then \
+			echo "skipping: VRT corpus $${vrt_speech_corpus_folder} not found"; \
+			continue; \
+		fi; \
+		if [ ! -f "$${vrt_speech_corpus_folder}/corpus.yml" ]; then \
+			echo "skipping: VRT corpus config file $${vrt_speech_corpus_folder}/corpus.yml not found"; \
+			continue; \
+		fi; \
+		echo "info: creating $${tok} DTM speeches in $(SPEACH_CORPUS_FORMAT) format"; \
+		echo "info: target tag: $${dtm_tag} "; \
+		PYTHONPATH=. poetry run vectorize-id \
+			--options-filename $${opts_file} \
+				--config-filename $${vrt_speech_corpus_folder}/corpus.yml \
+					--corpus-source $${vrt_speech_corpus_folder} \
+						--output-folder $${dtm_target_folder} \
+							--output-tag $${dtm_tag} ; \
+	done
 
-X=apa-%.txt
+##########################################################################################################
+# Default topic model model recepies (penelope)
+##########################################################################################################
+
+TM_OPTS_FILE=./opts/tm_riksprot.yml
+TM_TARGET_FOLDER=$(DATA_FOLDER)/$(RIKSPROT_VERSION)/topic_models
+
+OPTS_TM_MAX_TOKENS=$(shell yq '.max_tokens' ${TM_OPTS_FILE})
+OPTS_TM_TOP_WORDS=$(shell yq '.num_top_words' ${TM_OPTS_FILE})
+OPTS_TM_TF_THRESHOLD=$(shell yq '.tf_threshold' ${TM_OPTS_FILE})
+OPTS_TM_TF_MASK=$(shell yq '.tf_threshold_mask' ${TM_OPTS_FILE})
+OPTS_TM_LEMMATIZED=$(shell yq '.lemmatize' ${TM_OPTS_FILE})
+OPTS_TM_ENGINE=$(shell yq '.engine' ${TM_OPTS_FILE})
+
+ifeq ($(OPTS_TM_TF_MASK), true)
+ OPTS_TM_TF_MASK=.mask
+else
+ OPTS_TM_TF_MASK=
+endif
+
+ifeq ($(OPTS_TM_LEMMATIZED), true)
+ OPTS_TM_TOK=lemma
+else
+ OPTS_TM_TOK=text
+endif
+
+TM_PREFIX=tm_riksprot_$(RIKSPROT_VERSION)
+TM_OPTS=$(OPTS_TM_MAX_TOKENS).TF$(OPTS_TM_TF_THRESHOLD)$(OPTS_TM_TF_MASK)_$(OPTS_TM_TOK).$(OPTS_TM_ENGINE)
+TM_NAME=$(TM_PREFIX)_%-$(TM_OPTS)
+
 NS := 100 200 500
-apor: $(patsubst %,data/$(X),$(NS))
-data/apa-%.txt : NOTE.md
-	echo touch $< --year $* --outfile $@
 
-TM_OPTS=TF5-MP0.02.500000.lemma.mallet
-TM_DIR=data
-TM_NAME=tm_riksprot_$(RIKSPROT_VERSION)_%-$(TM_OPTS)
-
-default-riksprot-topic-models: $(patsubst %,$(TM_DIR)/$(TM_NAME),$(NS))
-$(TM_DIR)/$(TM_NAME): data_dirs
-	@rm -rf $(TM_DIR)/tm_riksprot_$(RIKSPROT_VERSION)_$*-$(TM_OPTS)
-	@PYTHONPATH=. poetry run tm-train-id --options-filename ./opts/tm_riksprot.yml \
-		--corpus-source $(SPEECH_FOLDER) \
+default-riksprot-topic-models: $(patsubst %,$(TM_TARGET_FOLDER)/$(TM_NAME),$(NS))
+$(TM_TARGET_FOLDER)/$(TM_NAME): data_dirs
+	@rm -rf $(TM_TARGET_FOLDER)/$(TM_PREFIX).$*-$(TM_OPTS)
+	@mkdir -p $(TM_TARGET_FOLDER)/$(TM_PREFIX).$*-$(TM_OPTS)
+	@vrt_speech_corpus_folder=$(DATA_FOLDER)/$(RIKSPROT_VERSION)/corpus/$${OPTS_TM_TOK}_vrt_speeches.$(SPEACH_CORPUS_FORMAT) ; \
+	if [ -d "$${vrt_speech_corpus_folder}" ]; then \
+		echo "skipping: VRT source corpus $${vrt_speech_corpus_folder} not found"; \
+		exit 64; \
+	fi; \
+	echo PYTHONPATH=. poetry run tm-train-id \
+		--options-filename ./opts/tm_riksprot.yml \
+		--corpus-source $${vrt_speech_corpus_folder} \
 		--n-topics $* \
-		--target-folder $(TM_DIR) \
-		$(SPEECH_FOLDER)/corpus.yml \
-		tm_riksprot_$(RIKSPROT_VERSION)_$*-$(TM_OPTS) &> ./logs/tm_riksprot_$(RIKSPROT_VERSION)_$*_$(today).log &
+		--target-folder $(TM_TARGET_FOLDER) \
+		$${vrt_speech_corpus_folder}/corpus.yml \
+		$(TM_PREFIX).$*-$(TM_OPTS)
+		
+# &> $(TM_TARGET_FOLDER)/$(TM_PREFIX).$*-$(TM_OPTS)/tm_run_$*_$(today).log &
 
 data_dirs:
-	@mkdir -p ./logs $(TM_DIR)
+	@mkdir -p ./logs $(TM_TARGET_FOLDER)
+
+
+yq-install:
+	wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O $(HOME)/bin/yq \
+	 && chmod +x $(HOME)/bin/yq
 
 ##########################################################################################################
 # Test recepies

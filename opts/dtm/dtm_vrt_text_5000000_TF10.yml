@@ -4,10 +4,10 @@ deserialize_processes: 6
 filename_pattern: "**/prot-*.feather"
 keep_numerals: true
 keep_symbols: true
-lemmatize: true
-max_tokens: 1500000
+lemmatize: false
+max_tokens: 5000000
 max_word_length: null
-min_word_length: 2
+min_word_length: 1
 phrase_file: null
 phrase: null
 pos_excludes: null
@@ -15,5 +15,5 @@ pos_includes: null
 pos_paddings: null
 remove_stopwords: null
 tf_threshold_mask: true
-tf_threshold: 20
+tf_threshold: 10
 to_lower: false
