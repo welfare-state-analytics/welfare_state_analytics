@@ -23,8 +23,7 @@
 import os
 
 import pandas as pd
-from penelope.corpus import TokenizedCorpus, TokensTransformOpts
-from penelope.corpus.readers import PandasCorpusReader
+from penelope.corpus import PandasCorpusReader, TokenizedCorpus, TokensTransformOpts
 
 import __paths__  # isort:skip pylint: disable=import-error, unused-import
 

@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 from penelope.co_occurrence import to_co_occurrence_matrix
-from penelope.corpus.readers import PandasCorpusReader
+from penelope.corpus import PandasCorpusReader
 
 # NOTE THIS FILE COMPUTES COUCCURRENCE FROM PREDEFINED WINDOWS READ FROM EXCEL FILE!
 
