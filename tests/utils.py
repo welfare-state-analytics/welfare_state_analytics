@@ -65,6 +65,6 @@ def create_bigger_vectorized_corpus(
         persist=True,
         vectorize_opts=None,
     )
-    corpus: VectorizedCorpus = workflow.compute(args=args, corpus_config=None)
+    corpus: VectorizedCorpus = workflow.compute(opts=args, config=None)
 
     return corpus

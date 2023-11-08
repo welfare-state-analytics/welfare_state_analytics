@@ -64,6 +64,4 @@ from notebooks.riksdagens_protokoll.word_trends import word_trends_gui as wt
 
 output_notebook()  # resources=INLINE)
 
-wt.display_gui(jj(__paths__.data_folder, "riksdagen_corpus_data"), ["v0.4.1", "v0.4.2", "v0.4.3"])
-
-# %%
+wt.display_gui(data_folder=jj(__paths__.data_folder, "riksdagen_corpus_data"))

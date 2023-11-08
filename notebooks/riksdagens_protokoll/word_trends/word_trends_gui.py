@@ -204,8 +204,8 @@ class RiksProtTrendsGUI(wt.TrendsGUI):
 
 def parse_version(path) -> str:
     try:
-        return re.search('(v\d\.\d{1,2}\.\d{1,2})', path).group(1)
-    except:
+        return re.search(r'(v\d\.\d{1,2}\.\d{1,2})', path).group(1)
+    except:  # pylint: disable=bare-except
         return None
 
 
