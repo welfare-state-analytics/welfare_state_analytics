@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -23,36 +23,20 @@ import __paths__  # pylint: disable=unused-import
 import os
 from typing import Callable
 
-import pandas as pd
 from bokeh.io import output_notebook
 from IPython.display import display
 from penelope import utility as pu
 from penelope.notebook import topic_modelling as ntm
 
-import westac.riksprot.parlaclarin.speech_text as sr
 from notebooks.riksdagens_protokoll import topic_modeling as wtm
-from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
 output_notebook()
 pu.set_default_options()
 
 current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
-
-current_version: str = "v0.4.3"
-
 data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
-codecs_filename: str = jj(data_folder, f"metadata/riksprot_metadata.{current_version}.db")
-speech_index_filename: str = jj(data_folder, current_version, 'tagged_frames.feather/document_index.feather')
-speech_folder: str = jj(data_folder, current_version, 'tagged_frames')
 
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
-speech_index: pd.DataFrame = pd.read_feather(speech_index_filename)
-speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
-    source=speech_folder, person_codecs=person_codecs, document_index=speech_index
-)
-
-default_args: dict = dict(person_codecs=person_codecs, speech_repository=speech_repository, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green'>SETUP </span> Load Model<span style='float: right; color: red'>MANDATORY</span>
