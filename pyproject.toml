@@ -43,7 +43,7 @@ bar-chart-race = "^0.1.0"
 
 # Pinning urllib3 to 1.26.15 due to build failues with 1.26.6
 urllib3 = "1.26.15"
-humlab-penelope = {extras = ["full"], version = "^0.7.47"}
+humlab-penelope = {extras = ["full"], path = "../../penelope", develop = true}
 
 [tool.poetry.dev-dependencies]
 black = "*"
@@ -73,6 +73,9 @@ pyright = "*"
 
 [tool.poetry.scripts]
 parlaclarin-vectorize = "scripts.riksdagens_protokoll.parlaclarin.vectorize.py:process"
+
+[tool.poetry.group.dev.dependencies]
+poetry-plugin-export = "^1.6.0"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
