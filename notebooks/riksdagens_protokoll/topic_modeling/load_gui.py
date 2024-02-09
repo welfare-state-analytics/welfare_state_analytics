@@ -9,10 +9,9 @@ from westac.riksprot.parlaclarin import codecs as md
 
 class RiksprotLoadGUI(ntm.LoadGUI):
     def __init__(
-        self, person_codecs: md.PersonCodecs, data_folder: str, state: ntm.TopicModelContainer, slim: bool = False
+        self, data_folder: str, state: ntm.TopicModelContainer, slim: bool = False
     ):
         super().__init__(data_folder, state, slim)
-        self.person_codecs: md.PersonCodecs = person_codecs
         self.version: str = None
 
     def load(self) -> None:
@@ -66,3 +65,6 @@ class RiksprotLoadGUI(ntm.LoadGUI):
             if isfile(candidate):
                 return candidate
         raise FileNotFoundError(f"Could not find any of {candidates}")
+
+    # list(glob.glob("./**/v0.9.0/**/tagged_frames", recursive=True))
+    # list(glob.glob("./**/tagged_frames_v0.*.?", recursive=True))
