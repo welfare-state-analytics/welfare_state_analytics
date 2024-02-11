@@ -68,9 +68,9 @@ def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame
     return repository
 
 
-def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
+def test_load_gui(inferred_topics: tm.InferredTopicsData):
     state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
-    ui = wtm_ui.RiksprotLoadGUI(person_codecs, data_folder=DATA_FOLDER, state=state, slim=True)
+    ui = wtm_ui.RiksprotLoadGUI(data_folder=DATA_FOLDER, state=state, slim=True)
     assert ui is not None
     ui.setup()
     ui._model_name.value = MODEL_NAME
@@ -319,7 +319,7 @@ def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
     assert (topic_labels.label == inferred_topics.topic_token_overview.label).all()
     assert inferred_topics.is_satisfied_topic_token_overview(topic_labels)
 
-    state = dict(inferred_topics=inferred_topics)
+    state: tm_ui.TopicModelContainer = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
     ui = tm_ui.EditTopicLabelsGUI(folder=folder, state=state)
     ui.setup()
 
