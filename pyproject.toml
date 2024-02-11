@@ -76,6 +76,7 @@ parlaclarin-vectorize = "scripts.riksdagens_protokoll.parlaclarin.vectorize.py:p
 
 [tool.poetry.group.dev.dependencies]
 poetry-plugin-export = "^1.6.0"
+pytest-mock = "^3.12.0"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
