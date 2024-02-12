@@ -55,7 +55,7 @@ def _probe_vrt_folder(folder: str, version: str) -> str:
     return _probe_paths(
         [
             jj(folder, 'corpus', version, f"tagged_frames_{version}"),
-            jj(folder, 'corpus', version, f"tagged_frames"),
+            jj(folder, 'corpus', version, "tagged_frames"),
             jj(folder, 'corpus' f'tagged_frames_{version}'),
             jj(folder, version, 'tagged_frames'),
             jj(folder, version, 'corpus/tagged_frames'),
