@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from penelope.topic_modelling import ModelFolder
 
-from notebooks.riksdagens_protokoll.topic_modeling.utility import RiksprotLoadGUI, load_metadata, TopicModelContainer
+from notebooks.riksdagens_protokoll.topic_modeling.utility import RiksprotLoadGUI, TopicModelContainer, load_metadata
 from notebooks.riksdagens_protokoll.topic_modeling.utility.metadata import (
     _probe_corpus_version,
     _probe_document_index,
