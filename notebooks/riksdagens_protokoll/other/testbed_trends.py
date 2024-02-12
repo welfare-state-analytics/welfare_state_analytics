@@ -34,8 +34,7 @@ from penelope import utility as pu
 
 import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
-from notebooks.riksdagens_protokoll import topic_modeling as wtm  # pylint: disable=unused-import
-from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
+from notebooks.riksdagens_protokoll.topic_modeling import utility as wtm  # pylint: disable=unused-import
 
 # pylint: disable=protected-access
 output_notebook(hide_banner=True)
@@ -52,20 +51,21 @@ tagged_frames_folder: str = jj(data_folder, f"tagged_frames_{corpus_version}")
 # model_folder: str = jj(data_folder, "tm_test.5files.mallet")
 # tagged_frames_folder: str = jj(data_folder, "tagged_frames")
 
-person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 
 # FIXME: #198 Copy corpus config to all TM folders
-state = {
-    'inferred_model': tm.InferredModel.load(folder=model_folder, lazy=True),
-    'inferred_topics': tm.InferredTopicsData.load(folder=model_folder, slim=True),
-}
+state: wtm.TopicModelContainer = wtm.TopicModelContainer().update(
+    trained_model=tm.InferredModel.load(folder=model_folder, lazy=True),
+    inferred_topics=tm.InferredTopicsData.load(folder=model_folder, slim=True),
+)
+
+person_codecs: md.PersonCodecs = md.PersonCodecs().load(source=codecs_filename)
 speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
     source=tagged_frames_folder, person_codecs=person_codecs, document_index=state.get('inferred_topics').document_index
 )
 
-ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
-    person_codecs, speech_repository=speech_repository, state=state
-).setup()
+state.store(corpus_version='v1.2.3', person_codecs=person_codecs, speech_repository=speech_repository)
+
+ui: wtm.RiksprotTopicMultiTrendsGUI = wtm.RiksprotTopicMultiTrendsGUI(state=state).setup()
 
 display(ui.layout())
 

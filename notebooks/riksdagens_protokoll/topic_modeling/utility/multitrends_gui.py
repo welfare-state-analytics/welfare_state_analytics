@@ -12,8 +12,6 @@ from penelope.notebook import topic_modelling as ntm
 from penelope.notebook.grid_utility import table_widget
 from penelope.plot import plot_multiple_value_series
 
-import westac.riksprot.parlaclarin.codecs as md
-import westac.riksprot.parlaclarin.speech_text as sr
 import westac.riksprot.parlaclarin.utility as ru
 
 from .mixins import RiksProtMetaDataMixIn
@@ -22,12 +20,10 @@ from .mixins import RiksProtMetaDataMixIn
 
 
 class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMixIn, ntm.TopicTrendsGUI):
-    def __init__(self, person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, state: dict):
+    def __init__(self, state: ntm.TopicModelContainer):
         super(RiksprotTopicMultiTrendsGUI, self).__init__(  # pylint: disable=super-with-arguments
-            pivot_key_specs=person_codecs.property_values_specs,
+            pivot_key_specs=state.person_codecs.property_values_specs,
             color_presets=ru.PARTY_COLOR_BY_ABBREV,
-            person_codecs=person_codecs,
-            speech_repository=speech_repository,
             state=state,
         )
         self._output_format.value = None
@@ -124,8 +120,8 @@ class RiksprotTopicMultiTrendsGUI(RiksProtMetaDataMixIn, mx.MultiLinePivotKeysMi
         """user must press update"""
         return self
 
-    def topic_changed(self, *_):
-        ...
+    def topic_changed(self, *_) -> None:
+        pass
 
     def layout(self):
         self._lines.layout.width = '135px'
