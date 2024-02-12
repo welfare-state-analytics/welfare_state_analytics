@@ -25,3 +25,9 @@ class TopicModelContainer(ntm.TopicModelContainer):
     @property
     def speech_index(self) -> pd.DataFrame:
         return self.get('speech_index')
+
+    @property
+    def pivot_key_specs(self) -> list[dict[str, str | dict[str, int]]] | None:
+        if self.person_codecs is not None:
+            return self.person_codecs.property_values_specs
+        return None
