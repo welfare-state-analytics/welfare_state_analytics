@@ -8,7 +8,9 @@ from .container import TopicModelContainer
 
 
 class RiksprotLoadGUI(ntm.LoadGUI):
-    def __init__(self, data_folder: str, state: TopicModelContainer, slim: bool = False):  # pylint: disable=useless-parent-delegation
+    def __init__(
+        self, data_folder: str, state: TopicModelContainer, slim: bool = False
+    ):  # pylint: disable=useless-parent-delegation
         super().__init__(data_folder, state, slim)
 
     def load(self) -> None:
