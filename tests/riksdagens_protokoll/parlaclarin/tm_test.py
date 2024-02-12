@@ -77,13 +77,10 @@ def store(person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextReposi
         'speech_index': speech_repository.document_index,
     }
 
+
+@mock.patch('penelope.notebook.topic_modelling.load_topic_model_gui.LoadGUI.load', mock.MagicMock())
 @mock.patch(
-    'penelope.notebook.topic_modelling.load_topic_model_gui.LoadGUI.load',
-    mock.MagicMock()
-)
-@mock.patch(
-    'notebooks.riksdagens_protokoll.topic_modeling.utility.metadata.load_metadata',
-    mock.MagicMock(return_value={})
+    'notebooks.riksdagens_protokoll.topic_modeling.utility.metadata.load_metadata', mock.MagicMock(return_value={})
 )
 def test_load_gui(store: dict, inferred_topics: tm.InferredTopicsData):
     state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
@@ -170,7 +167,9 @@ def test_find_documents_gui(store: dict, inferred_topics: tm.InferredTopicsData)
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_browse_documents_gui(store: dict, inferred_topics: tm.InferredTopicsData):
-    state: wtm_ui.TopicModelContainer = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    state: wtm_ui.TopicModelContainer = (
+        wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    )
     ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(state)
 
     ui.setup()
