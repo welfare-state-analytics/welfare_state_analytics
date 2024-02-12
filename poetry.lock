@@ -1609,51 +1609,49 @@ test-win = ["POT", "mock", "pytest", "pytest-cov", "testfixtures"]
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.50"
+version = "0.7.51"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 optional = false
 python-versions = "==3.11.*"
-files = []
-develop = true
+files = [
+    {file = "humlab_penelope-0.7.51-py3-none-any.whl", hash = "sha256:39162a49ac7c32bc71c5a5ca175379ebd5a3175a869a133b9fce5d3ea5bb16f0"},
+    {file = "humlab_penelope-0.7.51.tar.gz", hash = "sha256:47b0a90819612fb044454670b0c629cdcd6d502c7e8d716659e1a9600b10a4ab"},
+]
 
 [package.dependencies]
 bokeh = "*"
-click = ">=8.1.*"
+click = {version = ">=8.1", optional = true, markers = "extra == \"full\""}
 ftfy = "*"
-gensim = {version = "*", optional = true}
+gensim = {version = "*", optional = true, markers = "extra == \"full\""}
 ipycytoscape = "*"
-ipydatagrid = "^1.1.8"
+ipydatagrid = ">=1.1.8,<2.0.0"
 ipyfilechooser = "*"
 ipywidgets = "*"
 jupyter_bokeh = "*"
 loguru = "*"
 lxml = "*"
 more_itertools = ">=10.1.0"
-msgpack = "^1.0.2"
-networkx = "^3.1"
-nltk = "^3.5"
+msgpack = ">=1.0.2,<2.0.0"
+networkx = ">=3.1,<4.0"
+nltk = ">=3.5,<4.0"
 numpy = "*"
-openpyxl = "^3.0.5"
-pandas = "==1.5.3"
-pyarrow = {version = "*", optional = true}
-python-dotenv = "^1.0.0"
-PyYAML = {version = "*", optional = true}
-requests = "^2.24.0"
+openpyxl = ">=3.0.5,<4.0.0"
+pandas = "1.5.3"
+pyarrow = {version = "*", optional = true, markers = "extra == \"full\""}
+python-dotenv = ">=1.0.0,<2.0.0"
+PyYAML = {version = "*", optional = true, markers = "extra == \"full\""}
+requests = ">=2.24.0,<3.0.0"
 scipy = "*"
-smart-open = ">=6.4.*"
-spacy = {version = "*", optional = true}
-textacy = {version = "*", optional = true}
-toml = "^0.10.2"
-tqdm = "^4.62.3"
+smart-open = ">=6.4"
+spacy = {version = "*", optional = true, markers = "extra == \"full\""}
+textacy = {version = "*", optional = true, markers = "extra == \"full\""}
+toml = ">=0.10.2,<0.11.0"
+tqdm = ">=4.62.3,<5.0.0"
 urllib3 = "*"
-wordcloud = {version = "*", optional = true}
+wordcloud = {version = "*", optional = true, markers = "extra == \"full\""}
 
 [package.extras]
 full = ["PyYAML", "click (>=8.1)", "gensim", "pyarrow", "spacy", "textacy", "wordcloud"]
-
-[package.source]
-type = "directory"
-url = "../../penelope"
 
 [[package]]
 name = "identify"
@@ -6472,4 +6470,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "==3.11.*"
-content-hash = "469862cb688566e91d27d84fc3ce0f36ac1e58a64a96961c177df733e9207ec4"
+content-hash = "4493580c9596ab97dca8ed7cba98ad49e74fa94b7d35edef77c2318e44172366"
