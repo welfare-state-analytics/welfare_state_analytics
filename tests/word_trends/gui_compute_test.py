@@ -17,7 +17,7 @@ jj = os.path.join
 
 
 def monkey_patch(*_, **__):
-    ...
+    pass
 
 
 def test_compute_gui_compute_dry_run():

@@ -51,3 +51,5 @@ dist
 export
 typings
 .jupyterlite*
+
+symlinks

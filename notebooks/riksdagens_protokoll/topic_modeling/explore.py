@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -28,14 +28,23 @@ from IPython.display import display
 from penelope import utility as pu
 from penelope.notebook import topic_modelling as ntm
 
-from notebooks.riksdagens_protokoll import topic_modeling as wtm
+from notebooks.riksdagens_protokoll.topic_modeling import utility as utm
 
-jj = os.path.join
 output_notebook()
 pu.set_default_options()
 
-current_state: Callable[[], ntm.TopicModelContainer] = ntm.TopicModelContainer.singleton
-data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
+current_state: Callable[[], utm.TopicModelContainer] = utm.TopicModelContainer.singleton
+data_folder: str = os.path.join(__paths__.data_folder, "riksdagen_corpus_data")
+
+
+def display_gux(cls, *, state: utm.TopicModelContainer, **kwargs):
+    if state.inferred_topics is None:
+        print("No model loaded. Please load, then rerun this cell")
+        return None
+
+    ui = cls(state=state, **kwargs).setup()
+    display(ui.layout())
+    return ui
 
 
 # %% [markdown]
@@ -43,59 +52,54 @@ data_folder: str = jj(__paths__.data_folder, "riksdagen_corpus_data")
 #
 
 # %%
-load_gui: wtm.RiksprotLoadGUI = wtm.RiksprotLoadGUI(
-    person_codecs, data_folder=data_folder, state=current_state(), slim=True
-).setup()
+load_gui: utm.RiksprotLoadGUI = utm.RiksprotLoadGUI(data_folder=data_folder, state=current_state(), slim=True).setup()
 display(load_gui.layout())
 # %% [markdown]
 # ### <span style='color: green'>PREPARE </span> Edit Topic Labels<span style='float: right; color: red'></span>
 #
 
 # %%
-display(ntm.EditTopicLabelsGUI(folder=load_gui.model_info.folder, state=current_state()).setup().layout())
-
+display_gux(ntm.EditTopicLabelsGUI, folder=load_gui.model_info.folder, state=current_state())
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Display Topic's Word Distribution as a Wordcloud<span style='color: red; float: right'> TRY IT</span>
 
 # %%
-wc_ui = ntm.WordcloudGUI(current_state()).setup()
-display(wc_ui.layout())
-wc_ui.update_handler()
+wc_ui = display_gux(ntm.WordcloudGUI, state=current_state())
+if wc_ui:
+    wc_ui.update_handler()
 
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Find topic's documents by token<span style='color: red; float: right'>TRY IT</span>
 # Displays documents having topics in which given token is in toplist of dominant words.
 
 # %%
-display(wtm.RiksprotFindTopicDocumentsGUI(**default_args).setup().layout())
+display_gux(utm.RiksprotFindTopicDocumentsGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Word Distribution<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-ntm.display_topic_word_distribution_gui(current_state())
-
+display_gux(ntm.TopicWordDistributionGUI, state=current_state())
 # %% [markdown]
 # ### <span style='color: green;'>BROWSE</span> Browse Topic Documents<span style='color: red; float: right'>TRY IT</span>
 #
 # Displays documents in which a topic occurs above a given threshold.
 
 # %%
-display(wtm.RiksprotBrowseTopicDocumentsGUI(**default_args).setup().layout())
+display_gux(utm.RiksprotBrowseTopicDocumentsGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends over Time<span style='color: red; float: right'>RUN</span>
 
 # %%
-display(wtm.RiksprotTopicTrendsGUI(**default_args).setup().layout())
+display_gux(utm.RiksprotTopicTrendsGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span>Topic Trends over Time (Multiple Lines)<span style='color: red; float: right'>RUN</span>
 
 # %%
-ui: wtm.RiksprotTopicMultiTrendsGUI = wtm.RiksprotTopicMultiTrendsGUI(**default_args).setup()
-display(ui.layout())
+display_gux(utm.RiksprotTopicMultiTrendsGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Trends Overview<span style='color: red; float: right'>TRY IT</span>
@@ -103,7 +107,7 @@ display(ui.layout())
 #
 
 # %%
-display(wtm.RiksprotTopicTrendsOverviewGUI(**default_args).setup().layout())
+display_gux(utm.RiksprotTopicTrendsOverviewGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic Topic Network<span style='color: red; float: right'>TRY IT</span>
@@ -111,29 +115,21 @@ display(wtm.RiksprotTopicTrendsOverviewGUI(**default_args).setup().layout())
 # Computes weighted graph of topics co-occurring in the same document. Topics are defined as co-occurring in a document if they both have a weight above given threshold. The edge weights are the number of co-occurrences (binary yes or no). Node size reflects topic proportions over the entire corpus computed in accordance to LDAvis topic proportions.
 
 # %%
-display(wtm.RiksprotTopicTopicGUI(**default_args).setup().layout())
+display_gux(utm.RiksprotTopicTopicGUI, state=current_state())
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Pivot Topic Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-display(
-    ntm.PivotTopicNetworkGUI(pivot_key_specs=person_codecs.property_values_specs, state=current_state())
-    .setup()
-    .layout()
-)
+display_gux(ntm.PivotTopicNetworkGUI, state=current_state(), pivot_key_specs=current_state().pivot_key_specs)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Focus-Topic Document Network<span style='color: red; float: right'>TRY IT</span>
 #
 
 # %%
-display(
-    ntm.FocusTopicDocumentNetworkGui(pivot_key_specs=person_codecs.property_values_specs, state=current_state())
-    .setup()
-    .layout()
-)
+display_gux(ntm.FocusTopicDocumentNetworkGui, state=current_state(), pivot_key_specs=current_state().pivot_key_specs)
 
 # %% [markdown]
 # ### <span style='color: green;'>VISUALIZE</span> Topic-Token  Network<span style='color: red; float: right'>TRY IT</span>

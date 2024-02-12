@@ -12,11 +12,8 @@ from westac.riksprot.parlaclarin import speech_text as st
 
 
 class RiksProtMetaDataMixIn:
-    def __init__(self, person_codecs: md.PersonCodecs, speech_repository: st.SpeechTextRepository, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.person_codecs: md.PersonCodecs = person_codecs
-        self.speech_repository: st.SpeechTextRepository = speech_repository
 
         """Display speech text stuff"""
         self._content: w.HTML = w.HTML(layout={'width': '48%', 'background-color': 'lightgreen'})
@@ -36,3 +33,11 @@ class RiksProtMetaDataMixIn:
 
         except Exception as ex:
             self._content.value = str(ex)
+
+    @property
+    def person_codecs(self) -> md.PersonCodecs:
+        return self.state.person_codecs  # pylint: disable=no-member
+
+    @property
+    def speech_repository(self) -> st.SpeechTextRepository:
+        return self.state.speech_repository  # pylint: disable=no-member

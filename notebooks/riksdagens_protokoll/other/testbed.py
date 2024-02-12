@@ -28,7 +28,7 @@ from penelope import utility as pu
 
 import westac.riksprot.parlaclarin.codecs as md
 import westac.riksprot.parlaclarin.speech_text as sr
-from notebooks.riksdagens_protokoll import topic_modeling as wtm  # pylint: disable=unused-import
+from notebooks.riksdagens_protokoll.topic_modeling import utility as wtm  # pylint: disable=unused-import
 
 # pylint: disable=protected-access
 
@@ -65,32 +65,31 @@ speech_repository: sr.SpeechTextRepository = sr.SpeechTextRepository(
     source=tagged_frames_folder, person_codecs=person_codecs, document_index=inferred_topics.document_index
 )
 
-state = dict(inferred_topics=inferred_topics)
-wtm.RiksprotLoadGUI(person_codecs, data_folder=corpus_folder, state=state, slim=True).setup().load()
+state: wtm.TopicModelContainer = wtm.TopicModelContainer().update(inferred_topics=inferred_topics)
+state.store(corpus_version='v1.2.3', inferred_topics=inferred_topics, speech_repository=speech_repository)
+wtm.RiksprotLoadGUI(data_folder=corpus_folder, state=state, slim=True).setup().load()
 
 # ui: ntm.WordcloudGUI = ntm.WordcloudGUI(state).setup()
 # display(ui.layout())
 # ui.update_handler()
 
-ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(
-    person_codecs, speech_repository=speech_repository, state=state
-).setup()
+ui: wtm.RiksprotFindTopicDocumentsGUI = wtm.RiksprotFindTopicDocumentsGUI(state=state).setup()
 ui._find_text.value = "byggnad"  # pylint: disable=no-member
 ui._compute.click()
 display(ui.layout())
 
-# ui: wtm.RiksprotBrowseTopicDocumentsGUI = wtm.RiksprotBrowseTopicDocumentsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+# ui: wtm.RiksprotBrowseTopicDocumentsGUI = wtm.RiksprotBrowseTopicDocumentsGUI(state=state).setup()
 # ui.update_handler()
 
 # ui: ntm.TopicWordDistributionGUI = ntm.TopicWordDistributionGUI(state=state).setup()
 # ui.update_handler()
 
-# ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(person_codecs, speech_repository=speech_repository, state=state).setup()
+# ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(state=state).setup()
 # ui.update_handler()
 
 # ui: ntm.TopicOverviewGUI = ntm.TopicOverviewGUI(state=state).setup()
 # ui: wtm.RiksprotTopicTrendsOverviewGUI = wtm.RiksprotTopicTrendsOverviewGUI(
-#     person_codecs, speech_repository=speech_repository, state=state
+#     state=state
 # ).setup()
 # ui.update_handler()
 
@@ -98,7 +97,7 @@ display(ui.layout())
 # ui.update_handler()
 
 # ui: wtm.RiksprotTopicTrendsGUI = wtm.RiksprotTopicTrendsGUI(
-#     person_codecs, speech_repository=speech_repository, state=state
+#     state=state
 # ).setup()
 # ui.update_handler()
 
@@ -106,7 +105,7 @@ display(ui.layout())
 # ui.update_handler()
 
 # ui: wtm.RiksprotTopicTopicGUI = wtm.RiksprotTopicTopicGUI(
-#     person_codecs, speech_repository=speech_repository, state=state
+#     state=state
 # ).setup()
 # ui._output_format.value = "table"
 # ui._year_range.value = (1920, 2020)

@@ -8,7 +8,7 @@ from penelope import topic_modelling as tm
 from penelope.plot import plot_multiple_value_series
 
 import westac.riksprot.parlaclarin.speech_text as sr
-from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
+from notebooks.riksdagens_protokoll.topic_modeling.utility import RiksprotTopicMultiTrendsGUI, TopicModelContainer
 from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
@@ -37,11 +37,13 @@ def test_topic_multitrends():
     )
     inferred_topics: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
 
-    state = dict(inferred_topics=inferred_topics)
-
-    ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
-        person_codecs=person_codecs, speech_repository=speech_repository, state=state
+    state: TopicModelContainer = (
+        TopicModelContainer()
+        .update(inferred_topics=inferred_topics)
+        .store(corpus_version='v1.2.3', person_codecs=person_codecs, speech_repository=speech_repository)
     )
+
+    ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(state=state)
 
     ui.setup()
     ui.add_line(name="man", color="#00ff00", values=["gender: man"])

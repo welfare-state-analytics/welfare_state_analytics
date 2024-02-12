@@ -11,8 +11,7 @@ from penelope import topic_modelling as tm
 from penelope.notebook.topic_modelling import mixins as mx
 
 import westac.riksprot.parlaclarin.speech_text as sr
-from notebooks.riksdagens_protokoll import topic_modeling as wtm_ui
-from notebooks.riksdagens_protokoll.topic_modeling.multitrends_gui import RiksprotTopicMultiTrendsGUI
+from notebooks.riksdagens_protokoll.topic_modeling import utility as wtm_ui
 from westac.riksprot.parlaclarin import codecs as md
 
 jj = os.path.join
@@ -68,9 +67,24 @@ def speech_repository(person_codecs: md.PersonCodecs, speech_index: pd.DataFrame
     return repository
 
 
-def test_load_gui(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
-    ui = wtm_ui.RiksprotLoadGUI(person_codecs, data_folder=DATA_FOLDER, state=state, slim=True)
+@pytest.fixture
+def store(person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository) -> dict:
+    return {
+        'corpus_version': "v1.2.3",
+        'data_folder': DATA_FOLDER,
+        'person_codecs': person_codecs,
+        'speech_repository': speech_repository,
+        'speech_index': speech_repository.document_index,
+    }
+
+
+@mock.patch('penelope.notebook.topic_modelling.load_topic_model_gui.LoadGUI.load', mock.MagicMock())
+@mock.patch(
+    'notebooks.riksdagens_protokoll.topic_modeling.utility.metadata.load_metadata', mock.MagicMock(return_value={})
+)
+def test_load_gui(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    ui = wtm_ui.RiksprotLoadGUI(data_folder=DATA_FOLDER, state=state, slim=True)
     assert ui is not None
     ui.setup()
     ui._model_name.value = MODEL_NAME
@@ -96,13 +110,9 @@ def test_loaded_gui(inferred_topics: tm.InferredTopicsData):
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_find_documents_gui(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
-    ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(
-        person_codecs, speech_repository, state
-    )
+def test_find_documents_gui(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    ui: wtm_ui.RiksprotFindTopicDocumentsGUI = wtm_ui.RiksprotFindTopicDocumentsGUI(state)
     """
     Protokoll: prot-198586--152 sidan 5, Enkammarriksdagen
     Källa (XML): main  (main)  dev  (dev)
@@ -156,13 +166,11 @@ def test_find_documents_gui(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_browse_documents_gui(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
-    ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(
-        person_codecs, speech_repository, state
+def test_browse_documents_gui(store: dict, inferred_topics: tm.InferredTopicsData):
+    state: wtm_ui.TopicModelContainer = (
+        wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
     )
+    ui: wtm_ui.RiksprotBrowseTopicDocumentsGUI = wtm_ui.RiksprotBrowseTopicDocumentsGUI(state)
 
     ui.setup()
     ui._year_range.value = (1990, 1992)
@@ -205,15 +213,11 @@ def test_browse_documents_gui(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_topic_trends_overview(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
+def test_topic_trends_overview(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
-    ui: wtm_ui.RiksprotTopicTrendsOverviewGUI = wtm_ui.RiksprotTopicTrendsOverviewGUI(
-        person_codecs=person_codecs, speech_repository=speech_repository, state=state
-    )
+    ui: wtm_ui.RiksprotTopicTrendsOverviewGUI = wtm_ui.RiksprotTopicTrendsOverviewGUI(state=state)
 
     ui.setup()
     ui._year_range.value = (1920, 2020)
@@ -223,15 +227,11 @@ def test_topic_trends_overview(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_topic_trends(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
+def test_topic_trends(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
     # ui = tm_ui.TopicTrendsOverviewGUI(state=state, calculator=calculator).setup()
-    ui: wtm_ui.RiksprotTopicTrendsGUI = wtm_ui.RiksprotTopicTrendsGUI(
-        person_codecs=person_codecs, speech_repository=speech_repository, state=state
-    )
+    ui: wtm_ui.RiksprotTopicTrendsGUI = wtm_ui.RiksprotTopicTrendsGUI(state=state)
 
     ui.setup()
 
@@ -241,14 +241,10 @@ def test_topic_trends(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_topic_multi_trends(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
+def test_topic_multi_trends(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
-    ui: RiksprotTopicMultiTrendsGUI = RiksprotTopicMultiTrendsGUI(
-        person_codecs=person_codecs, speech_repository=speech_repository, state=state
-    )
+    ui: wtm_ui.RiksprotTopicMultiTrendsGUI = wtm_ui.RiksprotTopicMultiTrendsGUI(state=state)
 
     ui.setup()
     ui.add_line(name="man", color="#00ff00", values=["gender: man"])
@@ -261,15 +257,11 @@ def test_topic_multi_trends(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_topic_topic_network(
-    person_codecs: md.PersonCodecs, speech_repository: sr.SpeechTextRepository, inferred_topics: tm.InferredTopicsData
-):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
+def test_topic_topic_network(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
-    ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(
-        person_codecs=person_codecs, speech_repository=speech_repository, state=state
-    )
+    ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(state=state)
 
     ui.setup()
     _ = ui.layout()
@@ -287,12 +279,12 @@ def test_topic_topic_network(
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
-def test_pivot_topic_network(person_codecs: md.PersonCodecs, inferred_topics: tm.InferredTopicsData):
-    state = tm_ui.TopicModelContainer().update(inferred_topics=inferred_topics)
+def test_pivot_topic_network(store: dict, inferred_topics: tm.InferredTopicsData):
+    state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
     # ui: tm_ui.TopicTopicGUI = tm_ui.TopicTopicGUI(state=state).setup()
     ui: tm_ui.PivotTopicNetworkGUI = tm_ui.PivotTopicNetworkGUI(
-        pivot_key_specs=person_codecs.property_values_specs, state=state
+        pivot_key_specs=state.person_codecs.property_values_specs, state=state
     )
 
     ui.setup()
@@ -305,7 +297,7 @@ def test_pivot_topic_network(person_codecs: md.PersonCodecs, inferred_topics: tm
     assert len(ui.network_data) > 0
 
 
-def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
+def test_topic_labels_gui(store: dict, inferred_topics: tm.InferredTopicsData):
     folder: str = f'tests/output/{str(uuid.uuid4())[:6]}'
     os.makedirs(folder)
 
@@ -319,7 +311,9 @@ def test_topic_labels_gui(inferred_topics: tm.InferredTopicsData):
     assert (topic_labels.label == inferred_topics.topic_token_overview.label).all()
     assert inferred_topics.is_satisfied_topic_token_overview(topic_labels)
 
-    state = dict(inferred_topics=inferred_topics)
+    state: tm_ui.TopicModelContainer = (
+        wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    )
     ui = tm_ui.EditTopicLabelsGUI(folder=folder, state=state)
     ui.setup()
 
