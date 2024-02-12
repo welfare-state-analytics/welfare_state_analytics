@@ -54,10 +54,12 @@ def _probe_vrt_folder(folder: str, version: str) -> str:
 
     return _probe_paths(
         [
+            jj(folder, 'corpus', version, f"tagged_frames_{version}"),
+            jj(folder, 'corpus', version, f"tagged_frames"),
+            jj(folder, 'corpus' f'tagged_frames_{version}'),
             jj(folder, version, 'tagged_frames'),
             jj(folder, version, 'corpus/tagged_frames'),
             jj(folder, version, f'corpus/tagged_frames_{version}'),
-            jj(folder, f'corpus/tagged_frames_{version}'),
         ]
     )
 
@@ -77,9 +79,11 @@ def _probe_document_index(folder: str, version: str) -> pd.DataFrame:
     # FIXME: better probing
     filename: str = _probe_paths(
         [
-            jj(folder, version, 'tagged_frames.feather/document_index.feather'),
+            jj(folder, "corpus", version, f"tagged_frames_{version}_speeches.feather/document_index.feather"),
+            jj(folder, "corpus", version, 'tagged_frames_speeches.feather/document_index.feather'),
+            jj(folder, f'tagged_frames.feather_{version}_speeches/document_index.feather'),
         ]
-    )[0]
+    )
     di: pd.DataFrame = pd.read_feather(filename)
     return di
 
