@@ -4,7 +4,7 @@ name = "humlab-westac"
 version = "0.5.37"
 description = "Welfare State Analytics"
 authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
-packages = [{ include = "notebooks" }]
+packages = [{ include = "notebooks" }, { include = "westac" }]
 classifiers = [
     'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
