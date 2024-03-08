@@ -279,6 +279,42 @@ def test_topic_topic_network(store: dict, inferred_topics: tm.InferredTopicsData
 
 
 @mock.patch('bokeh.plotting.show', lambda *_, **__: None)
+def test_topic_topic_network_with_labels(store: dict):
+    inferred_topics: tm.InferredTopicsData = tm.InferredTopicsData.load(folder=MODEL_FOLDER, slim=True)
+
+    inferred_topics.topic_token_overview['label'] = [
+        f'topic #{i}' for i in inferred_topics.topic_token_overview.index.values
+    ]
+
+    state: wtm_ui.TopicModelContainer = (
+        wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
+    )
+
+    ui: wtm_ui.RiksprotTopicTopicGUI = wtm_ui.RiksprotTopicTopicGUI(state=state).setup()
+
+    assert ui._alert.value == '&nbsp;'
+
+    ui.layout()
+
+    assert ui._alert.value == '&nbsp;'
+
+    ui._threshold.value = 0.05
+    assert ui._alert.value == '😡 No data, please change filters..'
+
+    ui._year_range.value = (1920, 2020)
+    assert ui._alert.value == '✅ 20 records found.'
+
+    ui._n_docs.value = 1
+    assert ui._alert.value == '✅ 41 records found.'
+
+    ui.update_handler()
+    ui.display_handler()
+
+    assert ui._alert.value == '✅ 41 records found.'
+    assert ui is not None
+
+
+@mock.patch('bokeh.plotting.show', lambda *_, **__: None)
 def test_pivot_topic_network(store: dict, inferred_topics: tm.InferredTopicsData):
     state = wtm_ui.TopicModelContainer().store(**store).update(inferred_topics=inferred_topics)
 
@@ -304,7 +340,9 @@ def test_topic_labels_gui(store: dict, inferred_topics: tm.InferredTopicsData):
     expected_filename: str = jj(folder, 'topic_token_overview_label.csv')
     assert not os.path.isfile(expected_filename)
 
-    topic_labels: pd.DataFrame = inferred_topics.load_topic_labels(folder=folder, sep='\t', header=0, index_col=0)
+    topic_labels: pd.DataFrame = inferred_topics.load_topic_token_label_overview(
+        folder=folder, sep='\t', header=0, index_col=0
+    )
 
     assert topic_labels is not None
     assert 'label' in topic_labels.columns
