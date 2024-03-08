@@ -1523,13 +1523,13 @@ test-win = ["POT", "mock", "pytest", "pytest-cov", "testfixtures"]
 
 [[package]]
 name = "humlab-penelope"
-version = "0.7.67"
+version = "0.7.68"
 description = "Utilities that simplify enelpeing in Jupyter Lab"
 optional = false
 python-versions = "==3.11.*"
 files = [
-    {file = "humlab_penelope-0.7.67-py3-none-any.whl", hash = "sha256:1ad57045bb722ce35971644167228a98c182b2dca7ad8da9763e90bc96ab59b1"},
-    {file = "humlab_penelope-0.7.67.tar.gz", hash = "sha256:b927f85a3b37fd6ae4c8a81fd447fb8e2bc7cb42f04bc7e0e46d466742ea8719"},
+    {file = "humlab_penelope-0.7.68-py3-none-any.whl", hash = "sha256:a7a1984e75d1983f67562b8aa3653d0a23e67b148f878eb12071a7635ed309eb"},
+    {file = "humlab_penelope-0.7.68.tar.gz", hash = "sha256:f471a6ee3fc73583fb1812994b8ff9868b442a89d01522b1ed6b9bc388c69571"},
 ]
 
 [package.dependencies]
@@ -4238,13 +4238,13 @@ files = [
 
 [[package]]
 name = "pyright"
-version = "1.1.352"
+version = "1.1.353"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.352-py3-none-any.whl", hash = "sha256:0040cf173c6a60704e553bfd129dfe54de59cc76d0b2b80f77cfab4f50701d64"},
-    {file = "pyright-1.1.352.tar.gz", hash = "sha256:a621c0dfbcf1291b3610641a07380fefaa1d0e182890a1b2a7f13b446e8109a9"},
+    {file = "pyright-1.1.353-py3-none-any.whl", hash = "sha256:8d7e6719d0be4fd9f4a37f010237c6a74d91ec1e7c81de634c2f3f9965f8ab43"},
+    {file = "pyright-1.1.353.tar.gz", hash = "sha256:24343bbc2a4f997563f966b6244a2e863473f1d85af6d24abcb366fcbb4abca9"},
 ]
 
 [package.dependencies]
@@ -6182,4 +6182,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "==3.11.*"
-content-hash = "8e0cf0adf314da24dbf577d064e069ae5f430180ab491faac8a30e9ee9624308"
+content-hash = "f2100bfc9e4bb8922e9e9d3c6ced93c2c0f0655e5c503823b46e38b3671a4464"

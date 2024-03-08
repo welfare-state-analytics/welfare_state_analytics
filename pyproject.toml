@@ -43,7 +43,7 @@ bar-chart-race = "^0.1.0"
 
 # Pinning urllib3 to 1.26.15 due to build failues with 1.26.6
 urllib3 = "1.26.15"
-humlab-penelope = {version = "0.7.67", extras = ["full"]}
+humlab-penelope = {extras = ["full"], version = "0.7.68"}
 
 [tool.poetry.dev-dependencies]
 black = "*"
